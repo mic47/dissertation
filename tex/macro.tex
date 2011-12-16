@@ -1,0 +1,58 @@
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lema}{Lema}
+
+\newtheorem{notation}{Notation}
+\newenvironment{proof}{\trivlist\item[\hskip \labelsep{\bfseries Proof.}]}{\endtrivlist}
+\newenvironment{note}{\trivlist\item[\hskip \labelsep{\bfseries Note.}]}{\endtrivlist}
+
+\def\QED{QED}
+
+\definecolor{darkgreen}{RGB}{0,50,0}
+\newcommand\colornote[2]{\mbox{}\marginpar{\footnotesize\raggedright\hspace{0pt}\color{#1}{#2}}}
+\newcounter{correctioncolor}[page]
+\newcommand\correction[2]{%
+	\underline{#1}%
+	\mbox{}%
+	\marginpar{%
+		\footnotesize%
+		\raggedright%
+		\hspace{0pt}%
+		\ifthenelse%
+			{\isodd{\value{correctioncolor}}}%
+			{\color{green}}%
+			{\color{darkgreen}}%
+		\addtocounter{correctioncolor}{1}%
+		{\bf #2}%
+}}
+
+\newcounter{todocolor}[page]
+\newcommand\todo[1]{%
+	\mbox{}%
+	\marginpar{%
+		\footnotesize%
+		\raggedright%
+		\hspace{0pt}%
+		\ifthenelse%
+			{\isodd{\value{todocolor}}}%
+			{\color{blue}}%
+			{\color{red}}%
+		\addtocounter{todocolor}{1}%
+		{\bf #1}%
+}%
+}
+
+
+\newcommand\firstUseOf[1]{%
+	{\emph{#1}}%
+%	\mbox{}
+%	\marginpar{
+%		\footnotesize
+%		\raggedright
+%		\hspace{0pt}
+%		{\bf #1}
+%	}
+}
+
+

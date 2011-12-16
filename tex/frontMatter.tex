@@ -1,0 +1,123 @@
+\thispagestyle{empty}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%                       FRONT PAGE                        %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\noindent
+\begin{minipage}{0.20\textwidth}
+	\includegraphics[width=0.9\textwidth]{../figures/logouni}
+\end{minipage}
+\begin{minipage}{0.79\textwidth}
+	\begin{center}
+		\sc \mfuniversity \\
+		\mffaculty \\
+		\mfdepartment  
+	\end{center}
+\end{minipage}
+
+\vfill
+\begin{center}
+	\begin{minipage}{0.8\textwidth}
+		\hrule
+		\bigskip\bigskip
+		\centerline{\LARGE\sc\mftitlea}
+		\centerline{\LARGE\sc\mftitleb}
+		\smallskip
+		\centerline{(\mfthesistype)}
+		\bigskip
+		\bigskip
+		\centerline{\large\sc\mfauthor}
+		\bigskip\bigskip
+		\hrule
+	\end{minipage}
+\end{center}
+\vfill
+{\bf Thesis advisor:} \mfadvisor
+\hfill\mfplacedate
+\eject % EOP i
+
+\pagebreak
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%                  TITLE PAGE                               %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\thispagestyle{empty}
+\begin{center}
+  \Large \sc \mfuniversity \\
+  \mffaculty 
+\end{center}
+\vspace{7cm}
+\begin{center}
+  {\Huge \mftitle}\\
+  \large \mfthesistype
+\end{center}
+\vspace{7cm}
+
+\noindent
+{\bf Study Program}: \mfstudyprogram\\
+{\bf Branch of Study}: \mfbranchofstudy\\
+{\bf Supervisor}: \mfadvisor
+
+\vfill
+\noindent
+\mfplacedate \hfill {\large \mfauthor}\\
+\pagebreak 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%               DECLARATION                                %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter*{}
+
+{~}\vspace{10cm}
+
+\begin{minipage}{0.25\textwidth}~\end{minipage}
+\begin{minipage}{0.69\textwidth}
+\mfdeclaration
+
+\bigskip\bigskip
+
+\hfill\hbox to 6cm{\dotfill}
+\end{minipage}
+\vfill % EOP iii
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%               ACKNOWLEDGMENTS                            %%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\chapter*{Acknowledgments} 
+
+\mfacknowledgments
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%       TOC, list of tables, list of figures                %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+\listoftables
+\listoffigures
+
+\chapter*{Abstract}
+
+\begin{tabular}{l l}
+Author: & \mfauthor \\
+Title: & \mftitle \\
+University: & \mfuniversity\\
+Faculty: & \mffaculty\\
+Department: & \mfdepartment\\
+Supervisor: & \mfadvisor\\
+Number of Pages: & \pageref{LastPage} \\
+Year: & \mfyear
+\end{tabular}
+
+\bigskip
+
+\input ../tex/abstract.tex
+
+\medskip
+\noindent
+{\sc Keywords}: \mfkeywords

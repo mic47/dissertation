@@ -1,0 +1,91 @@
+\documentclass[12pt,oneside]{book}
+%\usepackage{slovak}
+\usepackage[utf8x]{inputenc}
+%\usepackage{url}
+\usepackage{amsfonts , amsmath, amsfonts, amssymb}
+\usepackage{a4wide}
+%\usepackage{alltt}
+%\usepackage{epsfig}
+\usepackage{graphicx} 
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumerate}
+\usepackage{subfigure}
+\usepackage{listings}
+\usepackage{ifthen}
+\lstset{language=python, numbers=left, frame=shadowbox, tabsize=2}
+
+\renewcommand\baselinestretch{1.10} %riadkovanie jeden a pol
+
+\usepackage{amsmath}
+
+\input ../tex/macro.tex
+
+\input ../tex/config.tex
+
+
+\ifx\pdfoutput\undefined\relax\else\pdfinfo{ /Title (\mftitle) /Author (\mfauthor) /Creator (PDFLaTeX) } \fi
+\begin{document}
+
+\frontmatter
+
+\input ../tex/frontMatter.tex
+
+\mainmatter
+
+\input mainMatter.tex
+
+\backmatter
+
+\input ../tex/backMatter.tex
+
+\nocite{*}
+\bibliographystyle{alpha}
+\bibliography{reference}
+
+\chapter*{Abstrakt}
+\begin{tabular}{l l}
+Autor: & Michal Nánási \\
+Názov práce: & Biological sequence annotation with hidden Markov models\\
+Univerzita: & Univerzita komenského v Bratislave \\
+Fakulta: & Fakulta matematiky, fyziky a informatiky\\
+Katedra: & Katedra informatiky \\
+Vedúci diplomovej práce: & Mgr. Broňa Brejová PhD.\\
+Rozsah práce: & \pageref{LastPage} \\
+Rok: & 2010
+\end{tabular}
+
+\bigskip
+
+
+Skryté Markovove modely (HMM) sú dôležitým nástrojom na modelovanie
+biologických sekvencii a ich anotácii. Anotovaním sekvencie myslíme priradenie
+popisov jednotlivým symbolom sekvencie podľa ich významu. Napríklad ak hľadáme
+gény, tak sa snažíme rozdeliť DNA sekvenciu na časti, ktoré kódujú proteíny
+(gény) a na tie, ktoré génmi nie sú.  Skryté Markovove modely definujú
+pravdepodobnostnú distribúciu sekvencii a ich anotácii.
+
+Dekódovanie zo skrytých Markovovych modelov je obyčajne realizované pomocou
+Viterbiho algoritmu. Viterbiho algoritmus nájde najpravdepodobnejšiu anotáciu
+len pre podtriedu všetkých skrytých Markových modelov.  Vo všeobecnosti je anotácia
+sekvencii NP-ťažká a preto Viterbiho algoritmus môžeme použiť len ako
+heuristickú metódu.
+
+V posledných rokoch sa ukázalo, že v určitých aplikáciach iné dekódovacie
+metódy majú lepšie výsledky ako Viterbiho algoritmus. V tejto práci predkladáme
+novú dekódovaciu metódu, ktorá berie do úvahy neurčitosť v presnej polohe hraníc
+jednotlivých regiónov. Naša metóda považuje anotácie, ktoré sa len trochu líšia
+v hraniciach regiónov za rovnaké. Nazvali sme ju dekódovanie s najvyššou
+predpokladanou odmenou (the highest expected reward decoding -- HERD) a je
+založená na dekódovaní pomocou maximalizácie strednej hodnoty presnosti hraníc
+(maximum expected boundary accuracy decoding) \cite{Gross2007}.
+
+Náš algoritmus sme testovali na probléme detekcie rekombinácií v genóme vírusu
+HIV a porovnali sme ho s existujúcim nástrojom, ktorý sa volá preskakujúce HMM
+(jumping HMM). HERD má lepšiu presnosť predikcie v rámci špecifickosti a
+senzitívnosti správne predikovaných jednofarebných regiónov.
+
+\medskip
+\noindent
+{\sc Kľúčové slová}: Skryté Markovove modely, anotácia sekvencií, rekombinácie vírusov
+
+\end{document}
