@@ -6,7 +6,7 @@ main.pdf: buildtmp/main.pdf */*tex
 
 buildtmp/main.pdf: */*tex templates/*
 	cp templates/* buildtmp
-	ls tex/0*tex | sort |sed -e 's/^/\\input ..\//' > buildtmp/mainMatter.tex
+	ls tex/[0-9]*tex | sort |sed -e 's/^/\\input ..\//' > buildtmp/mainMatter.tex
 	cd buildtmp;$(MAKE) Makefile main.pdf;cd ..
 
 
