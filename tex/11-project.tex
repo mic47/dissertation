@@ -1,0 +1,93 @@
+\chapter{PhD project}
+
+Poznamka pre seba -- toto chcem asi kratsie ako som to zacal pisat. Celkovo by
+to mohlo mat tak par stran
+
+\section{Hidden Markov Models}
+
+\subsection{Measures for decoding algorithms}
+
+Traditionally used algorithm for decoding \abbreviation{Hidden Markov
+Models}{HMMs} is Viterbi
+algorithm. \abbreviation{Viterbi algorithm}{VA} finds the most probable state path, which is
+state path $\pi$ that maximizes $\Pr\left(\pi \mid X\right)$. Other commonly
+used criteria, the \abbreviation{Posterior Decoding}{PD}, is maximizing the sum of the posterior
+probability for every state in state sequence independently. Therefore PD finds
+the state path $\pi$ that maximizes $\sum_{i=1}^{|\pi|} \Pr\left(\pi_i \mid
+X\right)$ \todo{Trosku upravit oznacenia vo vzorcoch}. Both VA and PD can be
+computed in effectively in $O(NM)$ time and memory, where $N$ is the
+length of the sequence and $M$ is the size of the model (number of states plus
+number of transitions). There are also couple of tricks how to lower the memory
+requirements of such algorithms or even exploit repetition of the sequences to
+decrease running time.
+
+In some practical HMMs some states have same role (i.e. they encode same thing)
+\todo{chcelo by to predtym poriadne zaviest co su anotacie a tak -- este v
+prehlade}
+but for some reasons can not be merged into same states. Therefore does not have
+to distinguish between state paths, that differs only in those states. In
+general, we can assign to each state annotation symbol (or "color") and we want
+to account into probability of some state path $\pi$ probabilities of all state
+spaces, that has same sequence of annotation symbols. Therefore we are
+maximizing following criteria
+\[\sum_{\pi'\textrm{ has same annotation as }\pi}\Pr\left( \pi' \mid X \right)\]
+
+However, maximizing such criteria is NP-hard \cite{???} and even if we fix the
+HMM \cite{Brejova2005}. Since maximizing this criteria is not tractable, we have
+to use some heuristics that can possibly find only local maxima. It possible to
+find HMM, for which VA finds annotation that has exponentially smaller
+probability than the most probable annotation. Similarly, since PD maximizes
+each state in state path independently, it can reconstruct state path/annotation
+that has zero probability.
+
+We can generalize all those into framework in which we will define gain function
+and where we are trying to find annotation that has highest possible gain with
+respect to correct annotation. Since we do not know the correct annotation, we
+are treating the correct annotation as an random variable with distribution
+$\Pr\left(\cdot\mid X\right)$. We can express all decoding methods that are
+described above in terms of gain functions and therefore finding the annotation
+with the highest expected gain (if gain function is computable function) is
+NP-hard. But some HMM's and gain functions we can find annotation with the
+maximum expected gain in polynomial time. 
+
+-- proste ze chceme sa venovat takym veciam, ze ktore funkcie sa daju pocitat
+efentivne a ktore nie. A podobne.
+
+Gain functions described above are not the only ones that can be in practice
+used. There are several ??
+
++ study those measures for pair-hidden Markov Models
+
+%nieco o mierach -- vo vseobecnosti niektore miery su NP-tazke, 
+%vo vseobecnosti to moze byt az nerozhodnutelne -- redukcia na PKP, alebo nieco
+%take.
+%
+%Rozne miery su vhodne pre rozne situacie -- niekedy chceme len lokalne
+%vlastnosti,  niekedy globalne, optimalizujeme rozne funkcie, nie vsetky
+%vlastnosti su zachytene modelom (otazka: preco potom radsej nechceme zmenit
+%model?) 
+
+\subsection{Improving existing algorithms}
+
+
+
+%* Vyut niektore teoreticke vlastnosti na zlepsenie algoritmov -- pamatova
+%narocnost,
+
+%Ako sa daju vylepsiet terajsie algoritmy -- cez mixing time -- napriklad
+%ak vypocitame mixing time pre model -- definovat sa na napriklad tromi sposobmi
+%-- najhorsia sekvencia, nahodna (uniformna) alebo nahodna z modelu.
+%Neda sa to robit normalne, lebo nevieme ako vyzera sekvencia. Ale vieme robit
+%napriklad normalizovany forward -- teda ako velmi sa budu lisit tieto sekvencie
+%aj zafixujeme sekvenciu -- alebo predpokladame ze je nahodna.
+
+%Definovane rovnako ako mixing time -- rozdiel distribucii --
+
+%Takto vieme spravit trenovanie rychlejsie -- jednak ho vieme 
+%lahsie distribuovat, dvak vieme znizit pamatovu narocnost. Vieme nieco spravit
+%napriklad pre Viterbiho? Da sa urcit nieco z modelu? 
+
+\section{Pairwise sequence alignment}
+
+
+\label{LastPage}
