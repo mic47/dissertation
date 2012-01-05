@@ -1,5 +1,4 @@
 \chapter{PhD project}
-
 Poznamka pre seba -- toto chcem asi kratsie ako som to zacal pisat. Celkovo by
 to mohlo mat tak par stran
 
@@ -7,8 +6,14 @@ to mohlo mat tak par stran
 
 \subsection{Measures for decoding algorithms}
 
+%Predpoklady co som uz vysvetlil:
+% HMM, Viterbi, Posterior, most probable annotation, balls, herd, -- gain
+% functions
+
+
 Traditionally used algorithm for decoding \abbreviation{Hidden Markov
-Models}{HMMs} is Viterbi
+Models}{HMMs} is Viterbi \todo{Aj tak si myslim, ze cele toto by som asi mal
+presunut o kapitoly vyssie}
 algorithm. \abbreviation{Viterbi algorithm}{VA} finds the most probable state path, which is
 state path $\pi$ that maximizes $\Pr\left(\pi \mid X\right)$. Other commonly
 used criteria, the \abbreviation{Posterior Decoding}{PD}, is maximizing the sum of the posterior
@@ -56,7 +61,8 @@ efentivne a ktore nie. A podobne.
 Gain functions described above are not the only ones that can be in practice
 used. There are several ??
 
-+ study those measures for pair-hidden Markov Models
++ extend those measures to pair-hidden Markov Models
+
 
 %nieco o mierach -- vo vseobecnosti niektore miery su NP-tazke, 
 %vo vseobecnosti to moze byt az nerozhodnutelne -- redukcia na PKP, alebo nieco
@@ -69,7 +75,17 @@ used. There are several ??
 
 \subsection{Improving existing algorithms}
 
+Recently it has been shown, that traditional algorithms for working with HMMs
+can be improved by various techniques. For example we can reduce the memory
+footprint of the Viterbi algorithm by discarding 
 
+Similar approach is used in Treeterbi algorithm. There is also variant of this
+technique, that improve memory footprint of k-best algorithm. This approaches
+works in practice, but 
+
+However analysis of such algorithm consists of 
+
++ extend to pHMM
 
 %* Vyut niektore teoreticke vlastnosti na zlepsenie algoritmov -- pamatova
 %narocnost,

@@ -1,0 +1,41 @@
+\chapter{Hidden Markov Models}
+
+\abbreviation{Hidden Markov Models}{HMM} are graphical probabilistic model
+commonly used to sequence annotation or sequence annotation. HMM is
+probabilistic finite state machine that in every state emit one symbol. There
+are variants of HMMs that emits more symbols or which emits symbols on multiple
+tracks, we will discuss them later.
+
+\section{Definitions}
+
+%HMM
+%Pravdepodobnost
+%Posterior pravdepodobnost
+%Anotacia
+%Pravdepodobnost anotacie
+%Footprint
+
+Hidden Markov Model is defined by it's finite state space $Q=\{q_1,q_2,\dots,
+q_k\}$ of size $k$, finite alphabet $\Sigma=(b_1,b_2,\dots,b_{\sigma})$ of size
+$\sigma$, emission and transition distribution over $\Sigma$ and $Q$
+respectively defined for every state independently. We denote emission
+distribution of state $q$ by $e_q$ and transition distribution by
+$a_{q}$. 
+
+We will abuse the notation and by $e_q(\cdot)$ we mean row vector
+$\left(e_q(b_1),\dots,e_q(b_{\sigma})\right)$. Similarly,
+$a_q(\cdot)=\left(a_q(q_1),\dots,a_q(q_k)\right)$ is row vector that contain
+transition probabilities from the state $q$.  $a_q(\cdot)$ have therefore
+dimension $1\times k$. By $A$ we will denote the $|Q|\times |Q|$ matrix
+consisting from vectors $a_{q_1},a_{q_2},\dots,a_{q_k}$.  Therefore
+$A[q_i,q_j]$ contains probability of transition from state $q_i$ to $q_j$.
+
+Hidden Markov Models are generative probabilistic models. When HMM is in state
+$q$, it emits symbol from $\Sigma$ according distribution $e_q$ and move to
+another state according transition distribution $a_q$. By this process we can
+generate sequence $X$. Let $\pi$ be the process.
+
+
+
+
+\section{}
