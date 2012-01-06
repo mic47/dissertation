@@ -4,38 +4,86 @@
 commonly used to sequence annotation or sequence annotation. HMM is
 probabilistic finite state machine that in every state emit one symbol. There
 are variants of HMMs that emits more symbols or which emits symbols on multiple
-tracks, we will discuss them later.
+tracks, we will discuss them later. In this chapter we will describe basic
+definitions and algorithms that are used with HMMs.
 
 \section{Definitions}
-
+                       
 %HMM
 %Pravdepodobnost
 %Posterior pravdepodobnost
 %Anotacia
 %Pravdepodobnost anotacie
 %Footprint
+HMMs are generative probabilistic models. Initially HMM is in random state $q$
+according to \firstUseOf{initial distribution} $I$.  When HMM is in arbitrary
+state $q$ it emits one symbol from some alphabet $\Sigma$ according distribution
+$e_q$ and move to another state according transition distribution $a_q$. Note
+that emission and transition distribution can be different for every state.
+This process produce two sequences: sequence of states
+$\pi=\pi_0\pi_1\pi_2\dots$ called \firstUseOf{state path} and output sequence
+$X=X_0X_1X_2\dots$ over alphabet $\Sigma$. In this work we will use only
+discrete versions of HMMs and state space and alphabet will be always finite.
+HMMs can have several final states. If final states are present, once HMM reach
+that state generation of a sequence stops. In this chapter we will ignore final
+states. \todo{Budeme ich vobec niekde potrebovat?}
 
-Hidden Markov Model is defined by it's finite state space $Q=\{q_1,q_2,\dots,
-q_k\}$ of size $k$, finite alphabet $\Sigma=(b_1,b_2,\dots,b_{\sigma})$ of size
-$\sigma$, emission and transition distribution over $\Sigma$ and $Q$
+Formally, Hidden Markov Model is defined by it's finite state space
+$Q=\{q_0,q_2,\dots, q_{k-1}\}$ of size $k$, initial probabilistic distribution
+$I$ over state space, finite alphabet $\Sigma = (\sigma_0, \sigma_1, \dots,
+\sigma_{m-1})$ of
+size $m$, emission and transition distribution over $\Sigma$ and $Q$
 respectively defined for every state independently. We denote emission
-distribution of state $q$ by $e_q$ and transition distribution by
-$a_{q}$. 
+distribution of state $q$ by $e_q$ and transition distribution by $a_{q}$. 
 
+
+The probability of emission of sequence $X$ with state path $\pi$
+is \[\Pr\left(X,\pi\mid H\right) =
+I(\pi_0)e_{\pi_0}\left(X_0\right)\prod_{i=1}^{|X|-1}e_{\pi_i}a_{\pi_{i-1}}\left(\pi_i\right)\]
+Generally, there are many ways how to generate every sequence.  Therefore every
+HMM $H$ defines probability distribution \[\Pr\left(X\mid H\right) =
+\sum_{\pi,|\pi|=|X|}\Pr\left(X,\pi\mid H\right)\].  Since in every step HMM
+generates one symbol from $\Sigma$ and one state, state path has same length as
+generated sequence.
+
+\begin{definotion}
+State path $\pi$ is sequence of states.
+\end{definition}
+
+\begin{definition}
+Annotation is the mo
+\end{definition}
+
+\todo{Tento text chcem dat asi trosku neskor, Az ked to budem potrebovat}
 We will abuse the notation and by $e_q(\cdot)$ we mean row vector
 $\left(e_q(b_1),\dots,e_q(b_{\sigma})\right)$. Similarly,
 $a_q(\cdot)=\left(a_q(q_1),\dots,a_q(q_k)\right)$ is row vector that contain
 transition probabilities from the state $q$.  $a_q(\cdot)$ have therefore
 dimension $1\times k$. By $A$ we will denote the $|Q|\times |Q|$ matrix
-consisting from vectors $a_{q_1},a_{q_2},\dots,a_{q_k}$.  Therefore
-$A[q_i,q_j]$ contains probability of transition from state $q_i$ to $q_j$.
+consisting from vectors $a_{q_1},a_{q_2},\dots,a_{q_k}$.  Therefore $A[q_i,q_j]$
+contains probability of transition from state $q_i$ to $q_j$.
 
-Hidden Markov Models are generative probabilistic models. When HMM is in state
-$q$, it emits symbol from $\Sigma$ according distribution $e_q$ and move to
-another state according transition distribution $a_q$. By this process we can
-generate sequence $X$. Let $\pi$ be the process.
+\begin{example}
+Some example
+\end{example}
 
+\section{Basic Algorithms}
+In this section we will describe commonly used algorithms that are used with
+HMMs.
+\subsection{Viterbi algorithm}
 
+Viterbi algorithm is probably the most used decoding algorithm for Hidden Markov
+models
+Viterbi algorithm answer straightforward question: given the sequence $X$, what
+is the most-likely state path $\pi$ that generates $X$? Formally, Viterbi
+algorithm finds a state path maximizing $\Pr\left( \pi\mid X,H \right)$. Since
+\[\Pr\left(\pi\mid X,H\right) = \frac{\Pr\left(\pi,X,\mid
+H\right)}{\Pr\left(X\mid H\right)}\] and quantity $\Pr\left(\right)$ is fixed,
+this is same as maximizing $\Pr\left(X,\pi\mid H\right)$. 
 
-
-\section{}
+\subsection{Forward algorithm}
+\subsection{Backward algorighm}
+\subsection{Forward-backward algorithm}
+\section{Training}
+\section{Variants of HMMs}
+\section{Other Decoding Methods}
