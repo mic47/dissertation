@@ -6,3 +6,4 @@ main.pdf: main.tex ../*tex ../tex/*tex ../tex/*bib
 	bibtex main
 	pdfcslatex main.tex
 	pdfcslatex main.tex
+	pdfcslatex main.tex

@@ -7,7 +7,7 @@ are variants of HMMs that emits more symbols or which emits symbols on multiple
 tracks, we will discuss them later. In this chapter we will describe basic
 definitions and algorithms that are used with HMMs.
 
-\section{Definitions}
+\section{Definitions}\label{SECTION:HMMDEF}
                        
 %HMM
 %Pravdepodobnost
@@ -28,7 +28,7 @@ HMMs can have several final states. If final states are present, once HMM reach
 that state generation of a sequence stops. In this chapter we will ignore final
 states. \todo{Budeme ich vobec niekde potrebovat?}
 
-\begin{definition}
+\begin{definition}\label{DEF:HMM}
 A tuple $H=(\Sigma,V,I,e,a)$ is \abbreviation{Hidden Markov Model}{HMM} where
 $\Sigma=\{\sigma_0,\dots\sigma_{m-1}\}$ is finite alphabet of size $m$,
 $V=\{v_0,\dots,v_{k-1}\}$ is finite set of state of size $k$. $I$ is
@@ -55,7 +55,7 @@ distribution.
 \begin{example}
 \end{example}
 
-\begin{definition}
+\begin{definition}\label{DEF:STATEPATH}
 Let $H=(\Sigma,V,I,e,a)$ be an HMM.
 We say that there is \firstUseOf{transition} from state $u$ to state $v$ if
 $a_{u,v}>0$. We will transition from $u$ to $v$ as $u\to v$ and $T=\{u\to v\mid
@@ -86,11 +86,13 @@ probability that state path generated sequence $X$ is
 \[\Pr\left(X,\pi\mid H\right) =
 I_{\pi_0}e_{\pi_0,X_0}\prod_{i=1}^{|X|-1}e_{\pi_i}a_{\pi_{i-1},\pi_i}\]
 
-If length of the sequence $X$ is not equal to length of the state path $\pi$, that
+If length of the sequence $X$ is not equal to length of the state path $\pi$,
+then
 probability that $\pi$ generates $X$ is zero.
 \end{definition}
 
 \begin{example}
+Example of HMM
 \end{example}
 
 \begin{definition}
@@ -182,6 +184,7 @@ reconstruct the state path or at least give good approximation of the correct
 annotation. 
 
 \begin{example}
+Example of coloring function.
 \end{example}
 
 %Since many states of the HMM can have assigned same label, there may be may be
@@ -195,6 +198,7 @@ $X$. The probability of annotation $\Lambda$ given sequence $X$ if length $n$ is
 \end{definition}
 
 \begin{example}
+Example of annotation and its probability.
 \end{example}
 
 \section{Viterbi Algorithm}
@@ -239,12 +243,296 @@ state path. By traversing back through back-links  we can reconstruct the most
 probable state path.
 
 \begin{example}
+Example of Viterbi Table with back-links
 \end{example}
 
-V
+We can use Viterbi algorithm to annotate sequence $X$ by finding the most
+probable state path $\pi$ and then computing $\lambda(\pi)$. In coloring
+function $\lambda$ is identity function, this will find the most probable
+annotation, but in general, Viterbi algorithm not even good approximation of the
+most probable annotation.
 
-\section{Backward algorighm}
-\section{Forward-backward algorithm}
-\section{Training}
-\section{Variants of HMMs}
+\begin{example}
+Why Viterbi is not good enough
+\end{example}
+
+\section{Backward Algorithm}
+Backward algorithm is backward version of the Froward algorithm. ???
+\section{Forward-Backward Algorithm and Posterior Decoding}
+\firstUseOf{Posterior Decoding} is another commonly used decoding method. In
+contrast to Viterbi algorithm, posterior decoding assign labels individually to
+every symbol of input sequence and does not care about overall structure of
+reconstructed state path. 
+
+Given sequence $X$, posterior decoding find state path $\pi$ with following
+property:
+\[\forall 0\leq i< n, \pi_i=\arg\max_{v\in V}\Pr\left(\pi_i=v\mid X,H\right) \]
+where \[\Pr\left(\pi_i=v\mid X,H\right) = \sum_{\pi\in V^n,\pi_i=v}\Pr\left(\pi\mid X,H\right)\]
+
+Values $\Pr\left(\pi_i=v\mid X,H\right)$ can be computed with Forward-Backward
+algorithm. This algorithm computes $\Pr\left(\pi_i=v\mid X,H\right)$ for every
+combination of position $i$ and state $v$. Then for every position chooses state
+that maximizes posterior probability.
+
+Now we derive formula for effective computation of  $\Pr\left(\pi_i=v\mid
+X,H\right)$.
+\begin{eqnarray}
+\Pr\left(\pi_i=v,X\mid H\right) &=&  
+%\sum_{\pi\in V^n,\pi_i=v}\Pr\left(\pi\mid X,H\right)
+%					\label{PosteriorDer1} \\
+%				&=& 
+				\sum_{\pi\in
+				V^n,\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}\prod_{j=1}^{|X|-1}e_{\pi_j}a_{\pi_{j-1},\pi_j}
+					\label{PosteriorDer2}\\
+				&=& \sum_{\pi\in V^n,\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}
+				\left( 
+					\prod_{j=1}^{i-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+				\right)
+				a_{\pi_{i-1},\pi_i}e_{\pi_i,X_i}
+				\left(  
+					\prod_{j=i+1}^{|X|-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+				\right)
+					\label{PosteriorDer3}\\
+				&=& \sum_{\pi\in V^n,\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}
+				\left( 
+					\prod_{j=1}^{i-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+				\right)
+				a_{\pi_{i-1},v}e_{v,X_i}
+				\left(  
+					\prod_{j=i+1}^{|X|-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+				\right)
+					\label{PosteriorDer4}\\
+				&=& 
+				\left(
+					\sum_{\pi\in V^{i+1},\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}
+					\left(
+						\prod_{j=1}^{i} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+					\right)
+				\right)
+				\left( 
+					\sum_{\pi\in V^{|X|-i},\pi_0=v}
+					\prod_{j=1}^{|X|-i-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+				\right)
+					\label{PosteriorDer5}\\
+				&=& F[i,v]
+				\left( 
+					\sum_{\pi\in V^{|X|-i},\pi_0=v}
+					\prod_{j=1}^{|X|-i-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+				\right)
+					\label{PosteriorDer6}
+\end{eqnarray}
+\todo{$e_{x}$ chyba jeden parameter.}
+Equations \ref{PosteriorDer2} and \ref{PosteriorDer3} is from definition of
+posterior probability. In \ref{PosteriorDer4} we just replace $\pi_i$ with $v$.
+Next equality we have from the fact that the left part of the formula
+\ref{PosteriorDer4} uses only left part of the state path and right part of the
+formula uses only right part of the state path. Last equation follows from
+definition of $F[i,v]$. Right part of the formula \ref{PosteriorDer6} has
+similar structure than $F[i,v]$, but it uses last part of the state path and
+sequence and also is lacks of using initial distribution. We can compute 
+this formula using Backward algorithm, which is very similar to forward
+algorithm. Let $B[i,v]$ be the right part of formula \ref{PosteriorDer6}.
+\begin{eqnarray}
+B[i,v]&=&
+\sum_{\pi\in V^{|X|-i},\pi_0=v}
+	\prod_{j=1}^{|X|-i-1}
+		e_{\pi_j,X_{|X|+j-1}}a_{\pi_{j-1},\pi_j}\\
+ &=& 
+ \sum_{u\in V}
+ 	e_{u,X{|X|+j-1}}a_{v,u}
+	\sum_{\pi\in V^{|X|-i},pi_0=v,\pi_1=u}
+		\prod_{j=2}^{|X|-i-1}
+			e_{\pi_j,X_{|X|+j-1}}a_{\pi_{j-1},\pi_j}\\
+ &=& 
+ \sum_{u\in V}
+ 	e_{u,X{|X|+j-1}}a_{v,u}
+	\sum_{\pi\in V^{|X|-i-1},pi_0=u}
+		\prod_{j=1}^{|X|-i-2}
+			e_{\pi_j,X_{|X|+j-2}}a_{\pi_{j-1},\pi_j}\\
+ &=& 
+ \sum_{u\in V}
+ 	e_{\pi_j,X{|X|+j-1}}a_{\pi_0,\pi_1}B[i+1,u]
+\end{eqnarray}
+If we set $B[n,v]$ to $1$, we have recursive formula, to compute values
+$B[i,v]$. This formula differs from Forward algorithm by going
+backwards\footnote{Therefore it is called Backward algorithm.}.
+
+
+Therefore \[\Pr\left(\pi_i=v\mid X,H\right) = \frac{F[i,v]\cdot
+B[i,v]}{\Pr\left( X\mid H \right)}\]
+
+We can compute this values in $O(nm^2)$ time and $O(nm)$ memory. By
+check-pointing technique we can achieve $O(m^2\sqrt{n})$ memory requirements
+with only constant slowdown.
+
+As we can seem time complexity and memory requirement of posterior decoding is
+same as for Viterbi algorithm, but in practice Forward-Backward algorithm is
+slower and requires more memory.
+
+Since posterior decoding does not care about overall structure of state path, it
+can reconstruct inadmissible state path. One example is given below.
+\begin{example}
+Bad example
+\end{example}
+
+\section{Training} 
+
+Training is process of estimating parameters of probabilistic models. In this
+section we will describe several approaches how to estimate transition and
+emission distributions. We will describe several approaches to do this thing
+
+\subsection{Baum-Welsch algorithm}
+\subsection{Viterbi Training}
+
+Viterbi training is same as Baum-Welsch train
+
+\subsection{Other Training Methods}
+There are several other approaches how to similar
+\section{Variants of Hidden Markov Models}
+
+Hidden Markov models described in section \ref{SECTION:HMMDEF} are the Hidden
+Markov models. In this section we describe several other variants of HMMs, some
+of them with same expressing power and some not.
+
+\subsection{Silent states}
+
+One common variant of HMMs are HMMs with silent states. Silent state are states
+that does not emit any symbol. One of the consequences is, that state path can
+be longer then sequence. However, the number of non-silent states in state path
+have to be equal to sequence length. Silent states does not add any expressing
+power to HMMs, but in some cases they allow to reduce the number of transitions
+by factor $m$.
+
+\begin{definition}
+Formally, Hidden Markov Model with silent states is tuple $H=(\Sigma,V,Q,I,e,a)$
+where $\Sigma,V,I,a$ are defined as in definition \ref{DEF:HMM}. $Q\subseteq V$ is set of
+silent states. $e$ must satisfy following conditions:
+\begin{enumerate}
+\item $\forall u\in V\backslash Q,\forall \sigma\in\Sigma, e_{u,\sigma}\geq0$
+\item $\forall u\in Q,\forall \sigma\in\Sigma, e_{u,\sigma}=0$
+\item $\forall u\in V\backslash Q, \sum_{\sigma\in \Sigma}e_{u,\sigma}=1$
+\end{enumerate}
+\end{definition}
+
+\begin{definition}
+Transitions and state path are defined as in definition \ref{DEF:STATEPATH}. 
+
+Let $\pi$ be an state path. \firstUseOf{Non-silent state path} $\pi^Q$ is
+maximal subsequence of $\pi$ that consists of non-silent states.
+\end{definition}
+
+\begin{definition}
+Let $H=(\Sigma,V,Q,I,e,a)$ be a HMM and $X=X_0X_1\dots X_{n-1}$ be sequence over
+alphabet $\Sigma$ of length $n$. Let $\pi$ be state path for which $\pi^Q$ have
+length $n$. Then the probability that state path generated sequence $X$ is 
+
+\[\Pr\left(X,\pi\mid H\right) =
+I_{\pi_0}\left(\prod_{i=1}^{|\pi|-1}a_{\pi_{i-1},\pi_i}\right)\left(\prod_{i=0}^{|X|-1}e_{\pi^Q_i,X_i}\right)\]
+
+If length of the sequence $X$ is not equal to length of the non-silent state
+path $\pi^Q$, then
+probability that $\pi$ generates $X$ is zero.
+\end{definition}
+
+\begin{example}
+Example of HMM with silent states that reduces the number of edges by factor
+$m$.
+
+Consider following HMM: $H=(\Sigma,V,I,e,a)$ where
+$|V|=m$, $I$ is arbitrary distribution over $V$, $e$ is also arbitrary and in
+every row of $a$ is uniform distribution over $V$. In other words, there is
+transition between any two pairs of states from $V$, that is exactly $n^2$
+transitions\footnote{$u\to u$ is also transition}.
+
+If remove all those transitions, add one silent state $s$ and add transitions
+from state $s$ to all states from $V$ with probability $\frac1m$  and we add
+transition from every state $V$ to $s$ with probability $1$. This new HMM
+defines same distribution of sequences, but have one more state and only $2m$
+transitions. 
+\end{example}
+
+
+
+\subsection{Start and Final state}
+
+Sometimes it is useful to have special start state and special final state. We
+will describe both states independently, since they affect models in different
+ways. 
+
+Having special start state $v$ is equivalent to $I_v=1$. 
+
+HMM defined in section \ref{SECTION:HMMDEF} lacks conditions 
+We can extend definition of HMMs to one or several final states.  
+
+
+Final states affects distribution of model. HMM defined in section
+\ref{SECTION:HMMDEF} define distribution over sequences of same length. HMM with
+final states defines distribution over sequences of all length. 
+
+\subsection{High Order HMMs}
+
+This extenstion 
+
+\subsection{Generalized HMMs}
+
+If we start observing then length of stay in one stay, we quickly end in 
+with the conclusion that this is according geometric distribution.
+The probability we will leave state $v$ after exactly $n$ steps is
+$e_{v,v}^{n-1}(1-e_{v,v}$ which is geometric distribution. For some
+applications in speech processing and ??? is this behaviour no appropriate.
+
+\abbreviation{Generalized HMM}{GHMM} have with every state $v$ associated
+duration distribution $d_v(\cdot)$.  When GHMM is in state $v$, it decides how
+long string it will generate according $d_v$. Let it be $l$. Afterwards it
+generates string $x\in\Sigma^l$ with probability $e_{v,x}$. Usually each symbol
+of generated string is generated independently and therefore
+$e_{v,x}=\prod_{i=0}^{|x|-1}e_{v,x}$. Output of GHMM is three sequences: state
+path $\pi=\pi_0\pi_1\dots\pi_{l-1}$, \firstUseOf{duration sequence}
+$D=D_0D_1\dots D_{l-1}$ and sequence $X=X_0X_1\dots X_{n-1}$.  State path and
+duration sequence has to have same length and \[\sum_{i=0}^{|D|-1}D_i = |X|\].
+
+
+
+Generalized HMMs, or HMMs with explicit state duration density 
+
+Unlike hight order HMMs, emission and transition distribution depends only on
+current state. In \abbreviation{generalized hidden Markov model}{GHMM} every
+state can emit any finite string over alphabet $\Sigma$ according some
+distribution. This distribution can be, and usually is, different for every
+state. 
+
+Formally, each 
+\subsection{Pair HMMs and Generalized Pair HMMs}
+
+Unlike previous variant of HMMs, \abbreviation{pair hidden Markov models}{pHMM}
+are not equivalent to standard HMMs defined in section \ref{SECTION:HMMDEF}.
+pHMM generates pair of sequences. Every state generate none or one symbol in
+every sequence (it cat generate one symbol in first sequence and zero symbol in
+other sequence). Formally, pHMM generates in every state pair of strings, each
+of length at most one. 
+
+
+
+\abbreviation{Generalized pair HMM}{GpHMM} like pHMM generates in every state
+pair of string but GpHMM like GHMM do not have restriction on the length of the
+generated strings. Only restriction is, that generated string has to be final.
+Since GpHMM generalization of pHMM, we will define only GpHMM.
+
+\begin{definition}
+GpHMM is tuple $H=(\Sigma,V,I,e,a)$ where $\Sigma$ is finite alphabet, $V$ is 
+\end{definition}
+
 \section{Other Decoding Methods}
+%balls, herd, hybridizing viterbi
+
+
+
+
+
+
+
+
+
+
+
+
