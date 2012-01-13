@@ -766,11 +766,60 @@ expected gain $f_P$ is equivalent to Posterior decoding.
 
 Now we will show other decoding functions and their relations to
 
-\subsection{Maximum Expected Boundary Accuracy Decoding}
+\subsection{Maximum Boundary Accuracy Decoding}
+
+\abbreviation{Maximum boundary accuracy decoding}{MBAD}\cite{} is used in gene-finder
+CONTRAST\cite{}. It
+was proposed for \abbreviation{conditional random fields}{CRF}, but since CRF
+are similar to HMM, we will defined them in the terms of HMM.
+
+This decoding method tries to maximize weighted difference between the expected
+number of true-positive and false-positive coding region boundaries.
+
+\begin{definition}
+Let $\Lambda=\Lambda_0\Lambda_1\dots\Lambda_{n-1}$ be an annotation. Boundary of
+annotation $\Lambda$ is every position $i$ where $\Lambda_{i-1}\not=\Lambda_i$. 
+\end{definition}
+
+Maximum boundary accuracy decoding have one parameter $\kappa$. Let $B$ be the
+set of all boundaries. Then MBAD maximize folowing function:
+\begin{equation}
+f(\Lambda,\Lambda')=\sum_{b\in B}
+\begin{cases}
+1 & \text{if $\Lambda_{i-1}=\Lambda'_{i-1}$ and $\Lambda_{i}=\Lambda'_{i}$}\\
+-\frac1\kappa & \text{otherwise}
+\end{cases}
+\end{equation}
 
 \subsection{Highest Expected Reward Decoding}
 
+\abbreviation{Highest Expected Reward Decoding}{HERD} is extension of maximum
+boundary accuracy decoding. We have used this decoding prediction of
+recombination of HIV virus. In this subsection we will describe it's gain
+function and basic properties. Further details can be found in \cite{} and in my
+Master thesis\cite{}.
+
+
+In the problem of recombination detection in virus RNA is usually jumping
+HMM\cite{}. It is hard to find exact recombination point and annotations with
+slightly shifted boundaries are very similar. Therefore we defined following
+gain function.
+
+Boundary on position $i$ is correctly predicted, if in the correct annotation is
+same boundary (on position $j$) within distance $W$ symbols, if it is boundary
+between same labels and if there is no other boundary between position $i$ and
+$j$ in both annotations. Let $x$ be the number of correctly predicted boundaries
+and $y$ be the number of other boundaries in the proposed annotation. Then
+$f(\Lambda,\Lambda')=x-\gamma y$ where $\gamma$ is defined constant. If $W=1$
+then this is equivalent to Maximum Boundary Accuracy Decoding.
+
+Optimizing this criteria can be done in $O(nW|C||T| + n|C|^2W^2)$ time  and
+$O(\sqrt{n}|C||V|+W|C||V|+n|C|^2)$ memory. Experimental evaluation of this
+algorithm can be found in \cite{}.
+
 \subsection{Distance Measures}
+
+Another approach to solve similar problem was in the 
 
 \subsection{Hybridizing Viterbi and Posterior Decoding}
 
