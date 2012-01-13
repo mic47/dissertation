@@ -817,13 +817,45 @@ Optimizing this criteria can be done in $O(nW|C||T| + n|C|^2W^2)$ time  and
 $O(\sqrt{n}|C||V|+W|C||V|+n|C|^2)$ memory. Experimental evaluation of this
 algorithm can be found in \cite{}.
 
-\subsection{Distance Measures}
+\subsection{Distance Measures on Annotations}
 
-Another approach to solve similar problem was in the 
+Another approach to solve similar problem was proposed by {\it Brown,
+Truszkowski} in \cite{}. Originally their implementation was aimed on prediction
+of boundaries in transmebrane proteins\cite{}, but later they successfully
+adapted their algorithm on jumping HMMs\cite{}.
+
+\begin{definition}
+Let $d$ be any distance measure defined on annotations. Ball of radius $r$
+around annotation $\Lambda$ is 
+\begin{equation}
+B_d(\Lambda,r) = \{\Lambda'\mid d(\Lambda,\Lambda')\leq r\}
+\end{equation}
+\end{definition}
+
+\begin{definition}
+Let $\Lambda=\Lambda_0\Lambda_1\dots\Lambda_{n-1}$ be an annotations. Footprint
+of $\Lambda$ is maximal subsequence of $\Lambda$ that does not contain two same
+consecutive labels.
+\end{definition}
+
+{\it Brown,
+Truszkowski} maximized following function
+\begin{equation}
+f_d(\Lambda,\Lambda') = 
+\begin{cases}
+\infty & \text{if $\Lambda$ and $\Lambda'$ have different footprint}\\
+d(\Lambda,\Lambda') & \text{otherwise}
+\end{cases}
+\end{equation}
+
+Where $d$ was either Hamming distance, Border shift distance or Border shift sum
+distance\cite{}.
+
 
 \subsection{Hybridizing Viterbi and Posterior Decoding}
 
-This approach tries to combine Viterbi algorithm and 
+There are approaches to combine Viterbi and Posterior decoding. It is
+interesting that 
 
 
 \section{Algorithmic improvements}
