@@ -68,6 +68,69 @@ develop a way, how to assess the quality of an alignment. On way of doing it is
 to define scoring scheme. There are many ways how to develop good scoring
 scheme. We will assess 
 
-\section{Algorithms}
-\section{Gap Models}
+\section{Needleman-Wunsch algorithm}
+
+Alignment with scoring scheme with previous section can be found by
+Needleman-Wunsch algorithm. 
+%TODO: nieco o tom ze to bol povodne kubicky, ale sankoff spravil lepsiu verziu
+
+This algorithm uses score table $S$, affine gap model with gap penalty $d$ and
+gap opening penalty $g$ is zero. To align sequences $X$ and $Y$ with length $n$
+and $m$ respectively, we define matrix $M$ of size $n\times m$. $M[i,j]$ will be
+the score of the best alignment of sequences $X[:i]$ and $Y[:j]$. We can compute
+$M[i,j]$ by following equations:
+
+\begin{align}
+M[0,0] &= S(X_0,Y_0)\\
+M[0,i] &= i\cdot d, 0< i < m\\
+M[i,0] &= i\cdot d, 0< i < n\\
+M[i,j] &= \max
+\begin{cases}
+ M[i-1,j-1]+S(X_i,X_j)\\M[i,j-1]+d\\
+ M[i-1,j]+d
+\end{cases}, 0<i<n,0<j<m
+\end{align}
+
+By computing $M[n-1,m-1]$ we have the score of the alignment of $X$ and $Y$ with
+the highest score. We can reconstruct such alignment by back-tracing matrix $M$.
+Matrix 
+
+To cope with gap opening penalty, we have to slightly change the algorithm.
+We define two other matrices $M_X$ and $M_Y$ of same size as $M$. $M_X[i,j]$
+will contain the score of alignment of sequences $X[:i]$ and $Y[:j]$ than ends
+with gap in sequence $X$. $M_Y$ is analogous. Now we show how to compute $M,M_X$
+and $M_Y$. \todo{Skontroluj to}
+
+\begin{align}
+M[0,0] &= S(X_0,Y_0)\\
+M[0,i] &= M_X[0,i] = i\cdot d+g, 0 < i < m\\
+M[i,0] &= M_Y[i,0] = i\cdot d+g, 0 < i < n\\
+M[i,j] &= \max
+\begin{cases}
+ M[i-1,j-1]+S(X_i,X_j)\\
+ M[i,j-1]+d\\
+ M[i-1,j]+d\\
+ M_X[i,j]\\
+ M_Y[i,j]
+\end{cases}, 0<i<n,0<j<m\\
+M_X[i,0] &= -\infty, 0\leq i< n\\
+M_Y[0,i] &= \infty, 0 \leq i< m\\
+M_X[i,j] &= \max
+\begin{cases}
+M[i-1,j]+g+d\\
+M_X[i-1,j]+d
+\end{cases}, 0<i<n,0<j<m\\
+M_Y[i,j] &= \max
+\begin{cases}
+M[i,j-1]+g+d\\
+M_Y[i,j-1]+d
+\end{cases}, 0<i<n,0<j<m
+\end{align}
+\todo{Je vlastne vobec treba taketo vypisovat?}
+As in previous case, values of $M,M_X$ and $M_Y$ can be computed by simple
+dynamic and by back-tracing these matrices we can obtain optimal alignment of
+$X$ and $Y$.
+Both algorithms have time complexity of $O(nm)$ and memory complexity $O(mn)$.
+Using tricks described in later section, the memory and even time comple
+\section{Gap Models} 
 \section{Algorithmic Improvements}
