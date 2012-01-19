@@ -1,9 +1,8 @@
-\thispagestyle{empty}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%                       FRONT PAGE                        %%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\ifx\draft\undefined
+\thispagestyle{empty}
 \noindent
 \begin{minipage}{0.20\textwidth}
 	\includegraphics[width=0.9\textwidth]{../figures/logouni}
@@ -38,12 +37,13 @@
 \eject % EOP i
 
 \pagebreak
-
+\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                  TITLE PAGE                               %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\ifx\draft\undefined
 \thispagestyle{empty}
 \begin{center}
   \Large \sc \mfuniversity \\
@@ -65,11 +65,12 @@
 \noindent
 \mfplacedate \hfill {\large \mfauthor}\\
 \pagebreak 
-
+\fi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%               DECLARATION                                %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\ifx\draft\undefined
 \chapter*{}
 
 {~}\vspace{10cm}
@@ -83,25 +84,28 @@
 \hfill\hbox to 6cm{\dotfill}
 \end{minipage}
 \vfill % EOP iii
-
+\fi
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%               ACKNOWLEDGMENTS                            %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+\ifx\draft\undefined
 \chapter*{Acknowledgments} 
 
 \mfacknowledgments
+\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%       TOC, list of tables, list of figures                %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\ifx\draft\undefined
 \tableofcontents
 \listoftables
 \listoffigures
 
-\chapter*{Abstract}
+ \chapter*{Abstract}
 
 \begin{tabular}{l l}
 Author: & \mfauthor \\
@@ -121,3 +125,4 @@ Year: & \mfyear
 \medskip
 \noindent
 {\sc Keywords}: \mfkeywords
+\fi
