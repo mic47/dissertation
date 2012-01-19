@@ -1,0 +1,73 @@
+\chapter{Alignment}
+\begin{note}
+Prerekvizity: co je to sekvencia DNA, pripadne sekvencia proteinu
+\end{note}
+\section{Definitions}
+
+Parts of two sequences are homologous, if they have evolved from same part of
+their ancestral sequence. Aim of sequence alignment is to identify homologous
+sequences. There are several evolution events, that usually happens:
+mutation of residue into another residue, deletion of part of the sequence,
+insertion of residues into the sequence. We omit rearrangements of sequence,
+because it cannot be represented by alignment. Alignment is one way of
+representing of comparisons of two sequences. We obtain alignment of $k$
+sequences by inserting dashes into sequence in a way, that they will have same
+length. Therefore we can represent alignment as matrix or table. Row of the
+alignment is a sequence with inserted dashes and column is list of residues from
+all row on certain position.
+
+Alignments have biological meaning. We try to create alignment in a way, that
+homologous residues are in same row. Dashes represents either the parts of
+sequence that were deleted during evolution (deletions) or that on those
+positions were inserted some sequences to other sequence (insertions). If we
+have alignment of sequences from current organisms then without some prior
+knowledge it is not possible to distinguish between insertions and deletions.
+Therefore we will refer to those as to indels.
+
+\begin{example} 
+Consider following evolution history of hypothetical DNA sequences of two current organism $X$ and $Y$:
+\begin{verbatim}
+X:      C C     G C G A C C T T G C             A C C A
+X':     C C     G           T T G C             A G C A
+P:      A C T G G           T C G C T G A G C T A G C A
+Y':     T C T G G           C C           G C T A G C A
+Y:      T C T A G           C C           G A T A G C A
+\end{verbatim}
+$X$ and $Y$ evolved from parent sequence $P$ through sequences $X'$ and $Y'$.
+During evolution from $P$ to $X'$, four events occurred: deletion of 
+sequences ``TG''  and ``TGAGCT'' and mutations of two bases. Evolution of $X$
+was ended by  
+positions bases were substituted. In change from $X'$ to $X$, one base was
+changes and siequence ``CGACC'' was inserted.  Similarly, from 
+REmove this paragraph
+
+\begin{verbatim}
+X:      C C     G C G A C C T T G C             A C C A
+Y:      T C T A G           C C           G A T A G C A
+\end{verbatim}
+We obtain actual alignment by removing columns that contains only gaps a
+replacing gaps with dashes (gap symbols). 
+\begin{verbatim}
+X:      C C - - G C G A C C T T G C - - - A C C A
+Y:      T C T A G - - - - - C C - - G A T A G C A
+\end{verbatim}
+If two residues are in same column in alignment then they are homologous.
+Being homologous does not tell that those symbols are equal. 
+\end{example}
+
+There is only one alignment that reflects evolution history. Our goal is to find
+this alignment, or at least find the alignment, that is as close as possible.
+\correction{We
+will consider only pairwise alignments (alignments of two sequences).}{Urvat ak
+zacneme robit multiple}
+
+\section{Scoring Schemes}
+
+Since we want to construct alignments that have biological meaning, we have to
+develop a way, how to assess the quality of an alignment. On way of doing it is
+to define scoring scheme. There are many ways how to develop good scoring
+scheme. We will assess 
+
+\section{Algorithms}
+\section{Gap Models}
+\section{Algorithmic Improvements}
