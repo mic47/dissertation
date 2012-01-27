@@ -61,6 +61,7 @@ this alignment, or at least find the alignment, that is as close as possible.
 will consider only pairwise alignments (alignments of two sequences).}{Urvat ak
 zacneme robit multiple}
 
+
 \section{Scoring Schemes}
 
 Since we want to construct alignments that have biological meaning, we have to
@@ -68,6 +69,7 @@ develop a way, how to assess the quality of an alignment. On way of doing it is
 to define scoring scheme. There are many ways how to develop good scoring
 scheme. We will assess 
 
+\todo{Local vs. global alignment}
 \section{Needleman-Wunsch algorithm}
 
 Alignment with scoring scheme with previous section can be found by
@@ -82,13 +84,13 @@ $M[i,j]$ by following equations:
 
 \begin{align}
 M[0,0] &= S(X_0,Y_0)\\
-M[0,i] &= i\cdot d, 0< i < m\\
+M[0,i] &= i\cdot d, 0< i < m\\\
 M[i,0] &= i\cdot d, 0< i < n\\
 M[i,j] &= \max
 \begin{cases}
  M[i-1,j-1]+S(X_i,X_j)\\M[i,j-1]+d\\
  M[i-1,j]+d
-\end{cases}, 0<i<n,0<j<m
+\end{cases}, 0<i<n,0<j<m \label{ALIGN:ALGO:AFFINE}
 \end{align}
 
 By computing $M[n-1,m-1]$ we have the score of the alignment of $X$ and $Y$ with
@@ -99,7 +101,8 @@ To cope with gap opening penalty, we have to slightly change the algorithm.
 We define two other matrices $M_X$ and $M_Y$ of same size as $M$. $M_X[i,j]$
 will contain the score of alignment of sequences $X[:i]$ and $Y[:j]$ than ends
 with gap in sequence $X$. $M_Y$ is analogous. Now we show how to compute $M,M_X$
-and $M_Y$. \todo{Skontroluj to}
+and $M_Y$. \todo{Skontroluj to! Navyse som si nie isty ci affine nie je len bez
+$g$ a s $g$ je to generalized affine}
 
 \begin{align}
 M[0,0] &= S(X_0,Y_0)\\
@@ -132,5 +135,113 @@ dynamic and by back-tracing these matrices we can obtain optimal alignment of
 $X$ and $Y$.
 Both algorithms have time complexity of $O(nm)$ and memory complexity $O(mn)$.
 Using tricks described in later section, the memory and even time comple
-\section{Gap Models} 
-\section{Algorithmic Improvements}
+
+\section{Dynamic Programming}
+
+Algorithm defined above were defined In this section we show how to compute
+those values effectively and describe \correcction{three}{Subject to change}
+methods how to decrease memory footprint and/or time complexity.
+
+\begin{lstlisting}
+Initialize M[i,0] and M[0,i]
+for i in 1...n-1
+  for j in 1...n-1
+    M[i,j] = F(M[i-1,j-1],M[i-1,j],M[i,j-1])
+i = j = n - 1
+while i > 0
+  (i,j) = F'(M[i-1,j-1],M[i-1,j],M[i,j-1])
+  print (i,j)
+\end{lstlisting}
+
+For simplicity, we will expect that both sequences has same length $n$. This
+will allow us to express complexity in more readable way.  At first we show how
+to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$ 
+
+\subsection{Checkpointing}
+
+Checkpointing is general trick in dynamic programming, that allows us to save
+$O(\sqrt n)$ rows of dynamic programming matrix while doubling running time.
+We will treat matrices $M,M_X$ and $M_Y$ as one matrix containing triples.
+
+In order to compute $i$-th row of matrix $M$, we need only row
+$i-1$. As mentioned above, to compute just the score of the best alignment we
+need to remember only two rows (previous and current which are we trying to
+compute). However, if we want to back-trace the optimal alignment, after we
+compute it's score, we need all those rows of matrix $M$ again so we would have
+to compute them again. Since we need for back-tracing rows in decreasing order,
+this would lead to $O(n^4)$ time, since every time we need previous row, we
+would have to recompute it from beginning.
+
+Checkpointing solves this problem by remembering every $k$-th row of matrix $M$.
+For this we need to remember $\lceil n/k\rceil$ rows.
+While backtracing, we will remember additional block $B$ of consecutive $k$ rows in
+some interval $<ik,(i+1)k-1>$. We can compute such block on $O(kn)$ time. 
+If we need row that is outside $B$, we replace block $B$ with block that contain
+such row. Since we access every row only once and in decreasing order, we
+recompute every block at most once. Therefore time complexity of back-tracing
+will be $O(n^2)$. We have to remember every $k$-th row and one block of size
+$k$, so memory complexity is $O(\lceil n/k\rceil n+ kn)$. If we set $k=\sqrt n$
+then memory complexity will be $O(n\sqrt n)$ while time complexity will remain
+same.
+
+
+\subsection{Hirschberg Algorithm}
+
+Hirschberg algorithm is divide and conquer approach to reduce memory
+requirements of sequence alignment. Idea is following:
+
+Let $(i,j)$ be the cell in the matrix $M$, that will be intersected by
+back-tracking procedure. That means, that value $M[n-1,n-1]$ was computed 
+from $(i,j)$ and therefore submatrices $M[0:i,j+1:n]$ and $M[i+1:n,0:j]$
+are not necessary for computation of best alignment. Therefore we do not have to 
+
+
+Even 
+
+
+Hirschberg Algorithm (HA) reduce memory more than checkpointing, but HA can be
+only applied to algorithm that use back-tracing. For example Forward-Backward
+algorithm can be improved by checkpointing but not by HA. More in chapter TODO.
+
+\subsection{Exploiting Sequence Repetition}
+
+This technique uses 
+
+\section{Non-Affine Gap Models} 
+
+Reason why affine gap models are used in sequence alignment is because they are
+simple, easy to compute and gave reasonable results. While affine gap score
+works fine for short gaps, it gave too high score for the TODO
+
+Let $f(x)$ be the gap penalty where $x$ is the length of the gap. In case of
+affine gap models, $f(x)=g+dx$. In case of general gap function, we have to
+reformulate equation \ref{ALIGN:ALGO:AFFINE} in following way:
+\begin{align}
+M[i,j] &= \max
+\begin{cases}
+ M[i-1,j-1]+S(X_i,X_j)\\
+ M[i,j-y]+f(y)\\
+ M[i-x,j]+f(x)
+\end{cases}, 0<x\leq i<n,0<y\leq j<m
+\end{align}
+This algorithm has time complexity of $O(n^3)$ where $n$ is the length of the
+longest sequence. Note that this was the original Needleman-Wunsch\cite{}
+algorithm and later ?? improved algorithm for affine gap functions\cite{}.
+Unlike previous recursive equations, int this algorithm $M[i,j]$ depends not
+only on neighbouring cells, but also on all previous in same row and column.
+Therefore just computation 
+
+\subsection{Convex Gap Functions}
+
+Now we describe algorithm to compute best alignment with convex gap function.
+Function $f(x)$ is convex, if and only if
+\[f(x+y)\leq f(x)+f(y)\]
+We will denote several 
+
+%tu chcem definiciu convexnej gap funkcie
+%algoritmus ktory je v case n^2 log(n)
+%algoritmus, ktory bezi v case n^2 alpha(n)
+%kubicky algoritmus v worstcase, ale prakticky konstantny (budem musiet najst 
+%citaciu -- nepodarilo sa mi to najst. Zaujimave\ldots)
+
+
