@@ -193,10 +193,8 @@ requirements of sequence alignment. Idea is following:
 Let $(i,j)$ be the cell in the matrix $M$, that will be intersected by
 back-tracking procedure. That means, that value $M[n-1,n-1]$ was computed 
 from $(i,j)$ and therefore submatrices $M[0:i,j+1:n]$ and $M[i+1:n,0:j]$
-are not necessary for computation of best alignment. Therefore we do not have to 
-
-
-Even 
+are not necessary for computation of best alignment and we do not have to
+compute them. If $i=n/2$ then we 
 
 
 Hirschberg Algorithm (HA) reduce memory more than checkpointing, but HA can be
@@ -236,7 +234,7 @@ Therefore just computation
 Now we describe algorithm to compute best alignment with convex gap function.
 Function $f(x)$ is convex, if and only if
 \[f(x+y)\leq f(x)+f(y)\]
-We will denote several 
+ 
 
 %tu chcem definiciu convexnej gap funkcie
 %algoritmus ktory je v case n^2 log(n)
