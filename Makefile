@@ -1,8 +1,11 @@
 all: main.pdf
 
 
-main.pdf: buildtmp/main.pdf */*tex
+main.pdf: buildtmp/main.pdf */*tex figures/*pdf
 	cp buildtmp/main.pdf  ./
+
+figures/%.pdf: figures/%.tex
+	cd figures; $(MAKE) Makefile $* ; cd ..
 
 buildtmp/main.pdf: */*tex templates/*
 	cp templates/* buildtmp
