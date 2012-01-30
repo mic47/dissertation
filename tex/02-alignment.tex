@@ -138,9 +138,15 @@ Using tricks described in later section, the memory and even time comple
 
 \section{Dynamic Programming}
 
-Algorithm defined above were defined In this section we show how to compute
-those values effectively and describe \correcction{three}{Subject to change}
-methods how to decrease memory footprint and/or time complexity.
+For simplicity, we will assume that both sequences has same length $n$. This
+will allow us to express complexity in simple way.  At first we show how
+to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$ 
+
+In this section we show how to compute
+those values effectively and describe \correcction{four}{Subject to change}
+methods how to decrease memory footprint and/or time complexity. Needleman-Wunch
+algorithm can be computed by following code. Note that $F$ is function, that
+computes value of $M[i,j]$ as in equation \ref{ALIGN:ALGO:AFFINE}.
 
 \begin{lstlisting}
 Initialize M[i,0] and M[0,i]
@@ -153,9 +159,10 @@ while i > 0
   print (i,j)
 \end{lstlisting}
 
-For simplicity, we will expect that both sequences has same length $n$. This
-will allow us to express complexity in more readable way.  At first we show how
-to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$ 
+Lines 2-5 fills matrix $M$ and lines 6-8 implements the back-tracing procedure.
+From printed positions we can reconstruct alignment easily (move in diagonal
+corresponds to aligned bases, move in other direction corresponds to gap).
+
 
 \subsection{Checkpointing}
 
@@ -188,7 +195,10 @@ same.
 \subsection{Hirschberg Algorithm}
 
 Hirschberg algorithm is divide and conquer approach to reduce memory
-requirements of sequence alignment. Idea is following:
+requirements of sequence alignment. Idea is following.: Let $L()$ be algorithm, 
+
+
+
 
 Let $(i,j)$ be the cell in the matrix $M$, that will be intersected by
 back-tracking procedure. That means, that value $M[n-1,n-1]$ was computed 
@@ -198,12 +208,40 @@ compute them. If $i=n/2$ then we
 
 
 Hirschberg Algorithm (HA) reduce memory more than checkpointing, but HA can be
-only applied to algorithm that use back-tracing. For example Forward-Backward
+only applied to algorithms that use back-tracing. For example Forward-Backward
 algorithm can be improved by checkpointing but not by HA. More in chapter TODO.
 
 \subsection{Exploiting Sequence Repetition}
 
-This technique uses 
+This technique reduce time complexity of alignment algorithm to $O(n^2/log n)$.
+Unlike four-russian trick \cite{}, this technique enables usage of any cost
+matrix.  This idea combines LZ78 factorization \cite{} and $O(A+B)$ algorithm
+for computing row minima/maxima in totally monotone matrix of size $A\times B$\cite{}. 
+
+LZ78 factorization divide sequence $S$ into $k$ strings $S_0,\dots,S_{k-1}$, where
+$S_1S_2\dots S_k=S$ and for every index  $i,0< i <k$ there is index $0\leq j<i$
+such that $S_j$ is prefix of $S_j$ of size $|S_i|-1$. We will call $S_j$ to be a
+predecessor of $S_i$. We have guarantee, that $k$ is in $O(\frac{n}{log n})$
+\cite{}. If we want to align sequences $S$ and $T$, we factorize $S$ and $T$
+into sequences of strings $\{S_i\}_{0\leq i < k_s}$ and $\{T_i\}_{0\leq i<
+k_t}$. Every pair $(S_i,T_j)$ defines rectangular block of matrix $M$.
+We say that $(S_k,T_l)$ is predecessor of $(S_i,T_j)$ if one of the folowing
+conditions is true:
+
+\begin{itemize}
+\item $S_k$ is predecessor of $S_i$ and $l=j$
+\item $k=i$ and $T_l$ is predecessor of $T_j$
+\item $S_k$ is predecessor of $S_i$ and $T_l$ is predecessor of $T_j$
+\end{itemize}
+
+Computation in blocks. 
+
+\subsection{Restricting Search Space}
+
+Another approach how to decrease running time (and memory requirements) is to 
+restrict search space in which we search for best alignment.
+There are several approaches how to do that. If the sequence 
+
 
 \section{Non-Affine Gap Models} 
 
