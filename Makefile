@@ -9,6 +9,7 @@ figures/%.pdf: figures/%.tex
 
 buildtmp/main.pdf: */*tex templates/*
 	cp templates/* buildtmp
+	cp tex/references.bib buildtmp
 	ls tex/[0-9]*tex | sort |sed -e 's/^/\\input ..\//' > buildtmp/mainMatter.tex
 	cd buildtmp;$(MAKE) Makefile main.pdf;cd ..
 

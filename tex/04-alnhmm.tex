@@ -39,8 +39,34 @@ As mentioned before, score of the alignment is the probability of state path
 that correspond to such alignment. Therefore we can find the alignment with 
 highest score by two dimensional version of Viterbi algorithm. 
 
-\section{Decoding Methods for Pair HMM}
+\section{More Complex models}
 
+In this section we will review several PHMMs and GPHMMs that were used to
+sequence alignment or other purpose, for example gene finding. We will review
+the application domain of the model, its topology, decoding function,
+parameter estimation and optimisation heuristics.
+
+\subsection{SLAM}
+
+SLAM is comparative-based gene finder \cite{SLAM2003} based on generalized pair hidden
+Markov model \cite{Alexanderson2004}. It predicts gene structures for pair of
+related eukaryotic organisms. SLAM's decoding method is Viterbi algorithm. 
+
+
+Emission of pairs of codons were assigned from codon-based PAM matrix.
+
+To reduce running time of the algorithm, they restrict computation of alignment
+in following way. At first they  align input sequences using AVID alignment
+tool. After that they relaxed alignment in a way, that every pair of aligned
+bases were extended to intervals of size $3$ bases of bases surrounding each
+matching base.
+
+
+\subsection{GeneWise}
+\subsection{FEAST}
+\subsection{Doublescan}
+\subsection{Twine}
+\subsection{Pairagon}
 
 \section{More Complex Gap Models}
 Gapmodel defined by PHMM is in fact affine gapmodel.
