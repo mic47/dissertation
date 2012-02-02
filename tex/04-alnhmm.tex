@@ -52,7 +52,33 @@ topologie.
 
 \subsection{Genes}
 
-Gene, codon, exon, intron, triplets,..., evolution rate
+Gene, codon, exon, intron, triplets,..., evolution rate, splice site
+
+\subsection{Doublescan}
+Meyer {\it et al. (2002)} developed gene finder, that used evidence from the
+sequences of two organism to find genes. Their GPHMM has 54 states. Generally,
+they have three types of states: {\it match} states, which generated same number
+of symbols in both sequences;   {\it emit} states, which generate sequences only
+in one sequence and silent states. Doublescan's HMM contains structures for
+exons, introns and intron-like structures that are outside genes. Every such
+structure has three version: one matching version, which emit aligned residues
+and one structure per sequence to emit indels.  Overview of Doublescan's HMM
+structure is in figure \ref{}. 
+\nocite{Meyer2002}
+
+Emission probabilities if the {\it match exon} state were estimated from
+relating frequencies in the training set with Dirichlet priors.
+Emission probabilities of other states were generated  by marginalizing
+emissions of the match exon state. Transition probabilities from begin state
+were even, transition probabilities for splice sites were estimated from splice
+site predictor and other transitions were observed from train data and tuned by
+hand.
+
+Doublescan uses Viterbi algorithm as decoding method.  To reduce running time of
+Viterbi algorithm they use stepping stone algorithm: at first they run BLASTN to
+find local alignments. Then Doublescan choose consistent subset of matching by
+greedy method. They restrict Viterbi algorithm to such subset allowing with
+tolerance of 15 bases.
 
 \subsection{SLAM}
 
@@ -72,7 +98,7 @@ tool\cite{} to get anchor alignment. They restrict Viterbi algorithm in such way
 way, that every base from  bases were extended to intervals of size $3$ bases of
 bases surrounding each matching base.
 
- 
+
 \subsection{GeneWise}
 \subsection{FEAST}
 FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple PHMM from figure
@@ -94,7 +120,6 @@ Estimation of parameters was done by expectation maximization approach (with
 Baum-Welch or Viterbi training). They forced gap parameters to be same in all
 submodels.
 
-\subsection{Doublescan}
 \subsection{Twine}
 \subsection{Pairagon}
 
