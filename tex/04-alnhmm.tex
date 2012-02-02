@@ -84,11 +84,15 @@ one additional submodel for generating unaligned sequences (once PHMM enters
 such model, it won't leave). Model topology is described in picture
 \ref{}.
 
-To find construct alignment (either local or global) FEAST used the Viterbi
-algorithm. 
+To construct alignment (either local or global) FEAST uses the Viterbi
+algorithm. Like many local aligners, FEAST at first use six different space
+seeds to get hits and extended those hits using x-drop heuristic \cite{}.
+However, they use ungapped version of Forward algorithm during extension
+(Viterbi algorithm is usually used during extension phase).
 
-To speedup decoding with Viterbi algorithm, Hudek {\it et al.} use six space seeds
-with ungapped Forward extension. They discard 
+Estimation of parameters was done by expectation maximization approach (with
+Baum-Welch or Viterbi training). They forced gap parameters to be same in all
+submodels.
 
 \subsection{Doublescan}
 \subsection{Twine}
