@@ -44,29 +44,50 @@ highest score by two dimensional version of Viterbi algorithm.
 In this section we will review several PHMMs and GPHMMs that were used to
 sequence alignment or other purpose, for example gene finding. We will review
 the application domain of the model, its topology, decoding function,
-parameter estimation and optimisation heuristics.
+parameter estimation and optimisation heuristics. But at first, we have to introduce small biological background.
+
+\subsection{Genes}
+
+Gene, codon, exon, intron, triplets,..., evolution rate
 
 \subsection{SLAM}
 
-SLAM is comparative-based gene finder \cite{SLAM2003} based on generalized pair hidden
-Markov model \cite{Alexanderson2004}. It predicts gene structures for pair of
-related eukaryotic organisms. SLAM's decoding method is Viterbi algorithm. 
+SLAM is comparative-based gene finder \cite{SLAM2003} based on generalized pair
+hidden Markov model \cite{Alexanderson2004} with some states being also a
+high-order states (with dependence on previous emissions).  It predicts gene
+structures for pair of related eukaryotic organisms. SLAM's decoding method is
+Viterbi algorithm. 
 
-
-Emission of pairs of codons were assigned from codon-based PAM matrix.
+TODO:
+Emission of pairs of codons were assigned from codon-based PAM matrix. Exon
+states were fifth order states.
 
 To reduce running time of the algorithm, they restrict computation of alignment
-in following way. At first they  align input sequences using AVID alignment
-tool. After that they relaxed alignment in a way, that every pair of aligned
-bases were extended to intervals of size $3$ bases of bases surrounding each
-matching base.
+in following way: At first they  align input sequences using AVID alignment
+tool\cite{} to get anchor alignment. They restrict Viterbi algorithm in such way, that it could align  in a
+way, that every base from  bases were extended to intervals of size $3$ bases of
+bases surrounding each matching base.
 
 
 \subsection{GeneWise}
 \subsection{FEAST}
+FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple PHMM from figure
+\ref{PHMM:FIG:SIMPLEPHMM} is optimized for one fixed rate of evolution. However,
+in DNA conservation rate is different on different sites.  FEAST contain $k$
+such submodels, each trained for different rate of evolution, each of them
+connected with single silent state. Since FEAST is local alignment tool, it
+contain several additional states that generates unalignes sequences before and
+after local alignemnt.
+
+To speedup decoding with Viterbi algorithm, Hudek {\it et al.} use six space seeds
+with ungapped Forward extension. They discard 
+
 \subsection{Doublescan}
 \subsection{Twine}
 \subsection{Pairagon}
+
+
+Dalsie modely: TWINSCAN, MCALIGN2, WABA, Catwright (zeta function)
 
 \section{More Complex Gap Models}
 Gapmodel defined by PHMM is in fact affine gapmodel.
