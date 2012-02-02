@@ -43,8 +43,12 @@ highest score by two dimensional version of Viterbi algorithm.
 
 In this section we will review several PHMMs and GPHMMs that were used to
 sequence alignment or other purpose, for example gene finding. We will review
-the application domain of the model, its topology, decoding function,
-parameter estimation and optimisation heuristics. But at first, we have to introduce small biological background.
+the application domain of the model, its topology, decoding function, parameter
+estimation and optimisation heuristics. But at first, we have to introduce small
+biological background.
+
+TODO: Tu bude mega obrazok (asi na jednu stranu), kde budu nakreslene rozne
+topologie.
 
 \subsection{Genes}
 
@@ -68,7 +72,7 @@ tool\cite{} to get anchor alignment. They restrict Viterbi algorithm in such way
 way, that every base from  bases were extended to intervals of size $3$ bases of
 bases surrounding each matching base.
 
-
+ 
 \subsection{GeneWise}
 \subsection{FEAST}
 FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple PHMM from figure
@@ -76,8 +80,12 @@ FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple PHMM from figure
 in DNA conservation rate is different on different sites.  FEAST contain $k$
 such submodels, each trained for different rate of evolution, each of them
 connected with single silent state. Since FEAST is local alignment tool, it
-contain several additional states that generates unalignes sequences before and
-after local alignemnt.
+one additional submodel for generating unaligned sequences (once PHMM enters
+such model, it won't leave). Model topology is described in picture
+\ref{}.
+
+To find construct alignment (either local or global) FEAST used the Viterbi
+algorithm. 
 
 To speedup decoding with Viterbi algorithm, Hudek {\it et al.} use six space seeds
 with ungapped Forward extension. They discard 
@@ -97,6 +105,3 @@ using
 %co chcem povedat: niekedy je lepsie pouzit iny gapmodel -- jeden pre kratke
 %gapy, jeden pre slhe gapy. Preto sa niekedy 
 
-\section{Multiple Rates of Evolution}
-
-We can define alternative function 
