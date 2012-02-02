@@ -88,15 +88,19 @@ high-order states (with dependence on previous emissions).  It predicts gene
 structures for pair of related eukaryotic organisms. SLAM's decoding method is
 Viterbi algorithm. 
 
-TODO:
+Unlike Doublescan, SLAM defines true GPHMM because states at first generates
+duration times according geometric distribution and after that they emit
+sequences. SLAM's topology can by found in picture \ref{}. \todo{Ako pozeram,
+tak pozeram, ta ich toplogia mi teda neni jasna}
+
 Emission of pairs of codons were assigned from codon-based PAM matrix. Exon
 states were fifth order states.
 
 To reduce running time of the algorithm, they restrict computation of alignment
 in following way: At first they  align input sequences using AVID alignment
-tool\cite{} to get anchor alignment. They restrict Viterbi algorithm in such way, that it could align  in a
-way, that every base from  bases were extended to intervals of size $3$ bases of
-bases surrounding each matching base.
+tool\cite{} to get anchor alignment. They restrict Viterbi algorithm in such
+way, that it could align  in a way, that every base from  bases were extended to
+intervals of size $3$ bases of bases surrounding each matching base.
 
 
 \subsection{GeneWise}
