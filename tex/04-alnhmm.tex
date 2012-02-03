@@ -16,7 +16,7 @@ $H$. We can use $\prob{\pi\mid X,Y,H}$ as a score of an alignment $\pi$. Later
 in this chapter we show how to derive different scoring functions.
 
 
-\section{Simple Pair HMM Model}
+\section{Simple Pair HMM  Model}\label{SECTION:SIMPLEPHMM}
 
 We show classical PHMM for sequence alignment. It is equivalent to scoring
 scheme of Needleman-Wunch algorithm with affine gap model. It consists of three
@@ -54,15 +54,15 @@ topologie.
 
 Gene, codon, exon, intron, triplets,..., evolution rate, splice site
 
-\subsection{Doublescan}
+\subsection{DoubleScan}
 Meyer {\it et al. (2002)} developed gene finder, that used evidence from the
 sequences of two organism to find genes. Their GPHMM has 54 states. Generally,
 they have three types of states: {\it match} states, which generated same number
 of symbols in both sequences;   {\it emit} states, which generate sequences only
-in one sequence and silent states. Doublescan's HMM contains structures for
+in one sequence and silent states. DoubleScan's HMM contains structures for
 exons, introns and intron-like structures that are outside genes. Every such
 structure has three version: one matching version, which emit aligned residues
-and one structure per sequence to emit indels.  Overview of Doublescan's HMM
+and one structure per sequence to emit indels.  Overview of DoubleScan's HMM
 structure is in figure \ref{}. 
 \nocite{Meyer2002}
 
@@ -74,9 +74,9 @@ were even, transition probabilities for splice sites were estimated from splice
 site predictor and other transitions were observed from train data and tuned by
 hand.
 
-Doublescan uses Viterbi algorithm as decoding method.  To reduce running time of
+DoubleScan uses Viterbi algorithm as decoding method.  To reduce running time of
 Viterbi algorithm they use stepping stone algorithm: at first they run BLASTN to
-find local alignments. Then Doublescan choose consistent subset of matching by
+find local alignments. Then DoubleScan choose consistent subset of matching by
 greedy method. They restrict Viterbi algorithm to such subset allowing with
 tolerance of 15 bases.
 
@@ -88,7 +88,7 @@ high-order states (with dependence on previous emissions).  It predicts gene
 structures for pair of related eukaryotic organisms. SLAM's decoding method is
 Viterbi algorithm. 
 
-Unlike Doublescan, SLAM defines true GPHMM because states at first generates
+Unlike DoubleScan, SLAM defines true GPHMM because states at first generates
 duration times according geometric distribution and after that they emit
 sequences. SLAM's topology can by found in picture \ref{}. \todo{Ako pozeram,
 tak pozeram, ta ich toplogia mi teda neni jasna}
@@ -104,6 +104,27 @@ intervals of size $3$ bases of bases surrounding each matching base.
 
 
 \subsection{GeneWise}
+
+GeneWise is protein (or profile HMM) to DNA aligner \cite{Birney2004}. It aligns
+proteins to homologous exons in DNA. Instead of PHMM defined as in chapter
+\ref{}, it used probabilistic transducers (which are similar to PHMM). Main
+difference in their model was that emissions were defined for transitions and
+not for states.  It's model was created by combining of the gene prediction
+model (model $S$) and protein homology model (model $T$). Both models were
+represented as PHMM or \correction{transducers}{Napis co to je v kapitole o
+HMM}. While model $S$ translates DNA into protein sequence, $T$ was simple PHMM
+from section \ref{SECTION:SIMPLEPHMM} defined over protein alphabet
+(technically, $T$ translates one protein to another homologous protein).
+Combined model was created by composition of models $T$ and $S$, from which were
+removed unnecessary states. To decrease state space even more, they remove more
+states, for example poly-pyrimidine states. More details are in
+\cite{Birney2004}.
+
+Parameters for match and insert transitions were derived from amino acid
+distribution from the model $T$, from the codon bias in the organism and there
+was allowed one substitution error while translating codons to amino acids (due
+sequencing errors).
+
 \subsection{FEAST}
 FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple PHMM from figure
 \ref{PHMM:FIG:SIMPLEPHMM} is optimized for one fixed rate of evolution. However,
