@@ -1,8 +1,4 @@
 \chapter{Alignment}
-\begin{note}
-Prerekvizity: co je to sekvencia DNA, pripadne sekvencia proteinu
-\end{note}
-\section{Definitions}
 
 Parts of two sequences are homologous, if they have evolved from same part of
 their ancestral sequence. Aim of sequence alignment is to identify homologous
@@ -10,7 +6,7 @@ sequences. There are several evolution events, that usually happens:
 mutation of residue into another residue, deletion of part of the sequence,
 insertion of residues into the sequence. We omit rearrangements of sequence,
 because it cannot be represented by alignment. Alignment is one way of
-representing of comparisons of two sequences. We obtain alignment of $k$
+representing of comparisons of sequences. We obtain alignment of $k$
 sequences by inserting dashes into sequence in a way, that they will have same
 length. Therefore we can represent alignment as matrix or table. Row of the
 alignment is a sequence with inserted dashes and column is list of residues from
@@ -57,9 +53,13 @@ Being homologous does not tell that those symbols are equal.
 
 There is only one alignment that reflects evolution history. Our goal is to find
 this alignment, or at least find the alignment, that is as close as possible.
-\correction{We
-will consider only pairwise alignments (alignments of two sequences).}{Urvat ak
-zacneme robit multiple}
+If we have alignment of two sequences, we ha
+
+In this chapter we will review basic methods how to create alignments. At first
+we will discuss pair alignments (alignment of two sequences). \correction{Later in this
+chapter we will review some methods how to construct multiple alignments.}{urvat
+ak to nie je pravda}
+
 
 
 \section{Scoring Schemes}
@@ -68,6 +68,8 @@ Since we want to construct alignments that have biological meaning, we have to
 develop a way, how to assess the quality of an alignment. On way of doing it is
 to define scoring scheme. There are many ways how to develop good scoring
 scheme. We will assess 
+
+TODO: local vs 
 
 \todo{Local vs. global alignment}
 \section{Needleman-Wunsch algorithm}
