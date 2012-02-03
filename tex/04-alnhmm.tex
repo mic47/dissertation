@@ -103,6 +103,14 @@ way, that it could align  in a way, that every base from  bases were extended to
 intervals of size $3$ bases of bases surrounding each matching base.
 
 
+
+\subsection{Twine}
+
+Twain is another approach to use GPHMM (and evidence from two related genomes) to gene
+finding \cite{Majoros2005}. 
+
+
+
 \subsection{GeneWise}
 
 GeneWise is protein (or profile HMM) to DNA aligner \cite{Birney2004}. It aligns
@@ -124,6 +132,27 @@ Parameters for match and insert transitions were derived from amino acid
 distribution from the model $T$, from the codon bias in the organism and there
 was allowed one substitution error while translating codons to amino acids (due
 sequencing errors).
+ 
+\subsection{Pairagon}
+
+Pairagon alignes \abbreviation{coding DNA}{cDNA} to  genome \cite{Pairagon2009}.
+To do this task, Pairagon's HMM models consists from simple pair HMM submodel,
+which aligns cDNA to DNA and 5 state submodel for intron structures (donor site,
+intron, branch, branch acceptor and acceptor state). This model includes 8 base
+\abbreviation{weighted matrix model}{WMM} at donor site and 6 base WMM at
+acceptor size. Whole topology is in figure \ref{}.
+
+Model was trained using iterative maximum likelihood approach. At first they
+trained almost all parameters on BLAT alignments from the
+\abbreviation{Mammalian Gene Collection}{MGC}. In this phase, probabilities of
+canonical intron, the branch point and the sequence models were set by hand.
+After that they used estimated parameters to align more MGC sequences, from
+which were the rest of the parameters estimated.
+
+Decoding was done by Viterbi algorithm. Runtime of the algorithm was improved by
+stepping stone algorithm \cite{} and memory requirements were improved using
+Treeterbi algorithm. 
+
 
 \subsection{FEAST}
 FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple PHMM from figure
@@ -144,9 +173,6 @@ However, they use ungapped version of Forward algorithm during extension
 Estimation of parameters was done by expectation maximization approach (with
 Baum-Welch or Viterbi training). They forced gap parameters to be same in all
 submodels.
-
-\subsection{Twine}
-\subsection{Pairagon}
 
 
 Dalsie modely: TWINSCAN, MCALIGN2, WABA, Catwright (zeta function)
