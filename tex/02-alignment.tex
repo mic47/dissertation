@@ -53,25 +53,55 @@ Being homologous does not tell that those symbols are equal.
 
 There is only one alignment that reflects evolution history. Our goal is to find
 this alignment, or at least find the alignment, that is as close as possible.
-If we have alignment of two sequences, we ha
+Alignment described above is \firstUseOf{global alignment} because it is
+alignment of whole sequences. Local alignment is alignment of parts of
+sequences: local alignment of sequences $X$ and $Y$ is global alignment of
+strings $X'$ and $Y'$ where $X'$ is substring of $X$ and $Y'$ is substring of
+$Y$.  Since global alignment does not consider rearrangement events
+\footnote{For example duplication, reversal or translocation.}, local alignments
+are useful in such scenarios.  We will mostly consider global alignments, but
+most of the methods can be altered also to local alignments.
 
 In this chapter we will review basic methods how to create alignments. At first
 we will discuss pair alignments (alignment of two sequences). \correction{Later in this
 chapter we will review some methods how to construct multiple alignments.}{urvat
 ak to nie je pravda}
 
-
-
 \section{Scoring Schemes}
 
 Since we want to construct alignments that have biological meaning, we have to
 develop a way, how to assess the quality of an alignment. On way of doing it is
 to define scoring scheme. There are many ways how to develop good scoring
-scheme. We will assess 
+scheme. In this chapter we will consider the basic one.
 
-TODO: local vs 
 
-\todo{Local vs. global alignment}
+Scoring schemes covered in this chapter will score each column of an alignment,
+which does not contain gap, independently and gaps will be penalised by penalty
+that depends on the length of the gap. Score of an alignment is sum of the
+scores of all ungapped columns and gaps. The simplest scoring scheme is
+following. We will score column containing residues $a$ and $b$ by $S[a,b]$.
+Gap have score $g+dx$ where $x$ is the length of an alignment. $g$ is gap
+opening penalty and $d$ is gap extension penalty. Both are usually
+negative\footnote{Having positive gap penalty is probably not very useful.}.  We
+call such gap model affine gap model.  Matrix $S$ is called substitution matrix.
+For alignment of DNA has size $4\times 4$ and for proteins has size $20\times
+20$. Basically, there are two ways of deriving substitution matrices. One way is
+to derive them from alignment that were constructed by hand by biologist. Such
+matrices are for example PAM20 for proteins, or ?? 
+
+Other possible solution is to use theoretical model of evolution, like
+Jukes-Cantor model \cite{}, \todo{este ine priklady}
+
+Intuition behind this scoring system are probabilistic. Assume, that we have
+alignment of $X$ and $Y$ without gaps. We assume that each base in DNA evolves
+independently. Therefore for every pair of residues $a,b$ we have probability
+that $a$ will evolve into $b$. Therefore the probability that $X$ will evolve
+into $Y$ is product of probabilities that $X_i$ will evolve into $Y_i$. By
+taking logarithm we will get sum of logarithm of substitution probabilities.
+Therefore $S[a,b]$ is proportional to the logarithm of probability that $a$
+evolves into $b$. Values of $S$ are usually multiplied by some constant and
+rounded to integers to avoid use of floating point numbers. 
+
 \section{Needleman-Wunsch algorithm}
 
 Alignment with scoring scheme with previous section can be found by
@@ -84,8 +114,8 @@ and $m$ respectively, we define matrix $M$ of size $n\times m$. $M[i,j]$ will be
 the score of the best alignment of sequences $X[:i]$ and $Y[:j]$. We can compute
 $M[i,j]$ by following equations:
 
-\begin{align}
-M[0,0] &= S(X_0,Y_0)\\
+\begin{align} 
+M[0,0] &= S[X_0,Y_0]\\
 M[0,i] &= i\cdot d, 0< i < m\\\
 M[i,0] &= i\cdot d, 0< i < n\\
 M[i,j] &= \max
@@ -187,17 +217,44 @@ matrix $M$, that are too far from diagonal (distance from diagonal is user
 defined value). However, this is not useful for local alignment or global
 alignment of distant sequences.
 
-\subsubsection{Seeds and X-drop Heuristic}
+\subsubsection{Seeds}
 
-Seeds are usually used to reduce time complexity of local or global alignments. 
+Seeds are usually used to reduce time complexity of local alignments.
+They were introduced in BLAST algorithm\cite{}.  Seed is position in both
+sequences, that can be extended to alignment with high score. After is seed
+found, it is extended with extension algorithm to local alignment.
 
+Seeds are usually found by some heuristic algorithm, that computes set
+\firstUseOf{candidate seeds}. After that, each candidate seed is extended into
+local alignment. Those which were not extended to high-scoring alignment are
+discarded. Such candidate seeds are called \abbreviation{false-positive}{FP}.
+Candidate seeds that were extended to high-scoring alignments are called
+\abbreviation{true-positive}{TP}.  Seeds that were not found by our heuristics
+are called \abbreviation{false-negatives}{FN} and rest is called
+\abbreviation{true-negatives}{TN}. It is important that heuristics should have
+high sensitivity ($TP/(TP+FN)$) and high specificity ($TN/(TN+FP)$). If
+heuristics have low sensitivity, many true high-scoring local alignment will not
+be found. Low specificity implies longer running time. 
+
+Traditional approach is to find candidate seeds positions $i$ and $j$ in
+sequences $X$ and $Y$, such that $X[i:i+\tau]=Y[j:j+\tau]$ for some constant
+$\tau$. This approach is used in BLAST \cite{}. Other approaches is to allow some
+constant number of mismatches \cite{}. \firstUseOf{Space seeds} allow to
+contain gaps \cite{}. \firstUseOf{Vector seeds} \cite{} and \firstUseOf{daughter
+seeds} \cite{Csuros2005} are generalization of previous seed methods.
+
+Extension is done in both ways, usually using equation \ref{ALIGN:ALGO:AFFINE}
+(equation is altered in reverse direction). Extension is stopped, when some
+criteria is reached. For example, BLAST introduced X-drop heuristics: extension stops
+if score of alignment is lower than best score that was seen so far minus user
+defined constant \cite{}.
 
 %space seeds, daughter seeds
 
 \subsubsection{Stepping Stone Algorithm}
 
 \abbreviation{Stepping stone algorithm}{SSA} was used in
-\cite{Mayer2002,Pairagon2009} and it is
+\cite{Meyer2002,Pairagon2009} and it is
 suitable for global alignment and it uses local alignment algorithm as
 subprogram. Idea of SSA is to use good local (generated by some local alignment
 tool, i.e. BLAST \cite{}) alignment as anchors. However, local alignments tools 
@@ -221,7 +278,7 @@ constant $\tau$. Similarly, $Y_j$ can be aligned to positions from $i-\tau$ to
 $i+\tau$.
 
 Time complexity and memory requirements of stepping stone algorithm are of order
-of $O(\sqrt{|X|^2+|Y|^2})$ \cite{Mayer2002}.
+of $O(\sqrt{|X|^2+|Y|^2})$ \cite{Meyer2002}.
 
 %At first it runs
 %local alignment tool, like BLAST \cite{}, to get set of good local alignments
