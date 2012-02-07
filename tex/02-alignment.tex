@@ -138,7 +138,7 @@ $X$ and $Y$.
 Both algorithms have time complexity of $O(nm)$ and memory complexity $O(mn)$.
 Using tricks described in later section, the memory and even time comple
 
-\section{Dynamic Programming}
+\section{Dynamic Programming}\label{DYNPROG}
 
 For simplicity, we will assume that both sequences has same length $n$. This
 will allow us to express complexity in simple way.  At first we show how
@@ -196,18 +196,36 @@ same.
 
 \subsection{Hirschberg Algorithm}
 
-Hirschberg algorithm is divide and conquer approach to reduce memory
-requirements of sequence alignment. Idea is following.: Let $L()$ be algorithm, 
+\abbreviation{Hirschberg algorithm}{HA} is divide and conquer approach to reduce
+memory requirements of sequence alignment \cite{Hirschberg1975}. Idea is
+following: if we want alignment of sequences $X$ and $Y$ which has bases $X_i$
+and $Y_i$ aligned, we have do dynamic programming only in submatrices
+$M_1=M[0:i-2,0:j-2]$ and $M_2=M[i=1:n-1,j-1:n-1]$. If $i=\lceil n/2\rceil$ then
+total number of cells in those matrices is roughly half of the number of cells
+in $M$. Hirschberg algorithm incorporates procedure how to compute such $j$ for
+$i=\lceil n/2\rceil$ in optimal alignment of both sequences in $O(n^2)$ time and
+$O(n)$ memory\footnote{There is one problem. $X_i$ does not have to be aligned
+to $X_j$, because $X_i$ is indel. In such case, there is $j$ such that $X_i$ is
+aligned to gap that comes right after $X_j$ and we have to change $M_1$ to
+$M[0:i-2,0:j-1]$}. After that HA uses to determine submatrices $M_1,M_2$ and
+recursively find solution in both submatrices.
 
+To determine $j$, such that $X_i,i=\lceil n/2\rceil$ is aligned to $Y_j$ (or
+$X_i$ is aligned to gap right after $Y_j$) HA uses following algorithm: Let
+$B(X,Y)$ be the algorithm, that computes for $X$ and $Y$ vector $LL(k)$, where
+$LL(k)=M[n-1,k]$ ($LL$ is the last row of $M$). This can be computed in
+$O(|X||Y|)$ time and $O(|X|+|Y|)$ memory by sligtly modified\footnote{After
+computing $i$-th row we have to throw computed values for row $i-1$.} algorithm
+from section \ref{DYNPROG}.  We compute $LL_1=B(X[0:i],Y)$ and $LL_2=B(
+(X[i,n])^R,Y)$. Index of the column from $LL_1+LL_2$ with the maximum value is
+column which we are searching for. \todo{Mam pocit, ze toto je zle a v
+originalnom clanku je chyba}
 
-
-
-Let $(i,j)$ be the cell in the matrix $M$, that will be intersected by
-back-tracking procedure. That means, that value $M[n-1,n-1]$ was computed 
-from $(i,j)$ and therefore submatrices $M[0:i,j+1:n]$ and $M[i+1:n,0:j]$
-are not necessary for computation of best alignment and we do not have to
-compute them. If $i=n/2$ then we 
-
+Since total size of the subproblem is always at most half of the size of the
+original problem (see figure \ref{}), the running time of the algorithm will
+double and therefore running time of HA is still $O(|X||Y|)$. Since HA keeps in
+memory only constant number of rows of $M$ and reconstructed alignment, memory
+requirements are $O(|X|+|Y|)$.
 
 Hirschberg Algorithm (HA) reduce memory more than checkpointing, but HA can be
 only applied to algorithms that use back-tracing. For example Forward-Backward
