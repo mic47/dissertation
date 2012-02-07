@@ -169,6 +169,11 @@ Note, that for computing $i$-th row of matrix $M$ we need only values from row
 $i$ and $i-1$. Therefore if we want to know just score of the optimal alignment
 we can compute it in $O(n)$ memory: after computing of row $i$, we discard row
 $i-1$.
+\subsection{Restricting Search Space}
+
+Another approach how to decrease running time (and memory requirements) is to 
+restrict search space in which we search for best alignment.
+There are several approaches how to do that. If the sequence 
 
 \subsection{Checkpointing}
 
@@ -218,7 +223,7 @@ To determine $j$, such that $X_i,i=\lceil n/2\rceil$ is aligned to $Y_j$ (or
 $X_i$ is aligned to gap right after $Y_j$) HA uses following algorithm: Let
 $B(X,Y)$ be the algorithm, that computes for $X$ and $Y$ vector $LL(k)$, where
 $LL(k)=M[n-1,k]$ ($LL$ is the last row of $M$). This can be computed in
-$O(|X||Y|)$ time and $O(|X|+|Y|)$ memory by sligtly modified\footnote{After
+$O(|X||Y|)$ time and $O(|X|+|Y|)$ memory by slightly modified\footnote{After
 computing $i$-th row we have to throw computed values for row $i-1$.} algorithm
 from section \ref{DYNPROG}.  We compute $LL_1=B(X[0:i],Y)$ and $LL_2=B(
 (X[i,n])^R,Y)$. Index of the column from $LL_1+LL_2$ with the maximum value is
@@ -240,17 +245,77 @@ algorithm can be improved by checkpointing but not by HA. More in chapter TODO.
 This technique reduce time complexity of alignment algorithm to $O(n^2/log n)$.
 Unlike four-russian trick \cite{}, this technique enables usage of any cost
 matrix.  This idea combines LZ78 factorization \cite{} and $O(A+B)$ algorithm
-for computing row minima/maxima in totally monotone matrix of size $A\times B$\cite{}. 
+for computing row minima/maxima in totally monotone matrix of size $A\times
+B$ \cite{Aggarwal1987}.
+
+\subsubsection{Totally Monotone Matrices}
+
+\begin{definition}\cite{Crochemore2002}
+Matrix $A$ of size $n\times m$ is \firstUseOf{totally monotone} (with concave condition),
+if and only if for all $0\leq i,j< n, 0\leq k<l<m$ following condition holds:
+if $M[i,k]\leq M[j,k]$ then $M[i,l]\leq M[j,l]$.
+\end{definition}
+
+If $M$ is totally monotone, then we can compute maximum of every row (or column)
+in $O(n+m)$ time by SMAWK algorithm \cite{Aggarwal1987} (This problem is called
+\firstUseOf{row maxima}).
+
+\begin{definition}\cite{Crochemore2002}
+Let $M$ be matrix and $M'$ be it's
+submatrix. \firstUseOf{Input border} $I_{M'}$ of $M'$ is the left and top
+borders of $G$ and \firstUseOf{output border} $O_{M'}$ of $M'$ is the right and
+bottom border of $M'$. Elements of $I_{M'}$ are ordered in clockwise direction
+and elements of $O_{M'}$ are ordered in counter-clockwise direction.
+\end{definition}
+
+\begin{definition}\cite{Crochemore2002}
+Let $M'$ be submatrix of $M$, $I_{M'}=\{i_0,i_1,\dots,i_{k-1}\}$ be its input
+border, and $O_{M'}=\{o_0,o_1,\dots,o_{l-1}\}$ be its output border then
+matrices
+$DIST$ and $OUT$ of size $k\times l$ are defined in following way:
+$DIST[a,b]$ is the cost of optimal alignment from cell $I_a$ to cell $I_b$.
+$OUT[a,b]=I_a+DIST[a,b]$.
+\end{definition}
+
+Clearly, $O_b=\max_{0\leq a < k}OUT[a,b]$. Therefore by computing row maxima in
+matrix $OUT$, we can compute values of output borders. Matrices $DIST$ and $OUT$
+are totally monotone \cite{Crochemore2002} and their size is $O(n'+m')$ if $M'$ has size
+$n'\times m'$. If we have matrices $DIST$ and $OUT$ in advance, we can compute
+values of output border in time $O(n'+m')$ by SMAWK algorithm.
+
+%Let $M$ be dynamic programming matrix for alignment algorithm for some sequences
+%$X$ and $Y$. Let $M' =
+%M[i:j,k:l]$ be rectangular submatrix of $M$. Values of $M'$ depends on 
+%values cells in submatrices $M[i-1,j:l]$ and $M[i:k,j-1]$ and on value
+%$M[i-1,j-1]$. Let $I_{M'}$ be the set of such cells. Let $O_{M'}$ be the 
+%the set of cells in $M[i-1,j:l]$ and $M[i:k,j-1]$ (the cells in the top row or
+%right column of $M'$). Let $I_0,I_1,\dots$ be enumeration of cells in $I_{M'}$
+%and $O_0,O_1,\dots$ be enumeration of cells in $O_{M'}$.  Now we will construct
+%the  matrix $DIST_{M'}$ of size $|I_{M'}|\times|O_{M'}|$ where  
+%$DIST_{M'}[i,j]$ is the cost of optimal alignment from cell $I_i$ to cell $O_j$.
+%Let $OUT[i,j]=I_i+DIST[i,j]$. Both $DITS$ and $OUT$ are totally monotone with
+%convex condition 
+
+\subsubsection{LZ78 factorization}
 
 LZ78 factorization divide sequence $S$ into $k$ strings $S_0,\dots,S_{k-1}$, where
 $S_1S_2\dots S_k=S$ and for every index  $i,0< i <k$ there is index $0\leq j<i$
 such that $S_j$ is prefix of $S_j$ of size $|S_i|-1$. We will call $S_j$ to be a
-predecessor of $S_i$. We have guarantee, that $k$ is in $O(\frac{n}{log n})$
-\cite{}. If we want to align sequences $S$ and $T$, we factorize $S$ and $T$
-into sequences of strings $\{S_i\}_{0\leq i < k_s}$ and $\{T_i\}_{0\leq i<
-k_t}$. Every pair $(S_i,T_j)$ defines rectangular block of matrix $M$.
-We say that $(S_k,T_l)$ is predecessor of $(S_i,T_j)$ if one of the folowing
-conditions is true:
+\firstUseOf{predecessor} of $S_i$. 
+We have guarantee, that number of strings $k$ is in  $O(\frac{n}{\log n})$ where
+$n$ is the length of $S$ \cite{}. 
+
+To align sequences $X$ and $Y$, we factorize them into sequences of strings
+$\{X_i\}_{0\leq i < k_s}$ and $\{Y_i\}_{0\leq i<k_t}$.  Every pair $(X_i,Y_j)$
+define pair of rectangular block $B_{i,j}$ submatrix of $M$.  All $B_{i,j}$ are
+disjoint and all blocks cover whole matrix $M$. We say that block $B_{k,l}$ is
+predecessor of block $B_{i,j}$ if one of the following conditions is true:
+
+%If we want to align sequences $S$ and $T$, we factorize $S$ and $T$
+%into sequences of strings $\{S_i\}_{0\leq i < k_s}$ and $\{T_i\}_{0\leq i<
+%k_t}$. Every pair $(S_i,T_j)$ defines rectangular block of matrix $M$.
+%We say that $(S_k,T_l)$ is predecessor of $(S_i,T_j)$ if one of the following
+%conditions is true:
 
 \begin{itemize}
 \item $S_k$ is predecessor of $S_i$ and $l=j$
@@ -258,13 +323,18 @@ conditions is true:
 \item $S_k$ is predecessor of $S_i$ and $T_l$ is predecessor of $T_j$
 \end{itemize}
 
-Computation in blocks. 
+Note, that every block can has only $0,1$ or $3$ predecessors. Only block
+$B_{0,0}$ will have $0$ predecessors and only blocks $B_{i,0}$ and $B_{0,i}$
+($i>0$)
+have only $1$ predecessor.  
 
-\subsection{Restricting Search Space}
+{\it Crochemore et al.} gave algorithm how to compute $DIST$ and $OUT$ matrix
+for block \nocite{Crochemore2002} $B_{i,j}$ from its predecessors in time
+$O(|X_i|+|Y_j|)$. Details about this algorithm can be found in
+\cite{Crochemore2002}. Time complexity of this algorithm if proportional to the
+sum of the sizes of all blocks, which is $O(n^2/\log n)$ where $n$ is the length
+of the longer sequence.
 
-Another approach how to decrease running time (and memory requirements) is to 
-restrict search space in which we search for best alignment.
-There are several approaches how to do that. If the sequence 
 
 
 \section{Non-Affine Gap Models} 
