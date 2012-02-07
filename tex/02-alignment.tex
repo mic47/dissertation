@@ -463,7 +463,8 @@ of the longer sequence.
 
 Reason why affine gap models are used in sequence alignment is because they are
 simple, easy to compute and gave reasonable results. While affine gap score
-works fine for short gaps, it gave too high score for the TODO
+works fine for short gaps, penalty for long gaps is too high. Use of different 
+gap models can improve alignments \cite{Gill2004,Cartwright2009}.
 
 Let $f(x)$ be the gap penalty where $x$ is the length of the gap. In case of
 affine gap models, $f(x)=g+dx$. In case of general gap function, we have to
@@ -481,12 +482,22 @@ longest sequence. Note that this was the original Needleman-Wunsch\cite{}
 algorithm and later ?? improved algorithm for affine gap functions\cite{}.
 Unlike previous recursive equations, int this algorithm $M[i,j]$ depends not
 only on neighbouring cells, but also on all previous in same row and column.
-Therefore just computation 
+Therefore some techniques like Hirschberg algorithm or Checkpointing cannot be
+used with general gap penalties.
 
-\subsection{Convex Gap Functions}
+\subsection{Convex/Concave Gap Functions}
+
+Arbitrary gap penalties leads to slow running time, however if we place some
+restrictions on gap penalty, we can use faster algorithms. One such restriction
+is if gap penalty is convex or concave.
+
+\begin{definition}
+Function $f(x)$ is 
+\end{definition}
 
 Now we describe algorithm to compute best alignment with convex gap function.
 Function $f(x)$ is convex, if and only if
+
 \[f(x+y)\leq f(x)+f(y)\]
  
 
