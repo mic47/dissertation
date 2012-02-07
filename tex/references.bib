@@ -1,14 +1,11 @@
 @article{Aggarwal1987,
 	isbn = {0178-4617}, 
-	abstract = {Let A be a matrix with real entries and let j(i) be the index of the leftmost column containing the maximum value in row i of A . A is said to be monotone if i 1 &gt; i 2 implies that j ( i 1 ) ≥ J ( i 2 ). A is totally monotone if all of its submatrices are monotone. We show that finding the maximum entry in each row of an arbitrary n x m monotone matrix requires Θ( m log n ) time, whereas if the matrix is totally monotone the time is Θ( m ) when m ≥ n and is Θ( m (1 + log( n / m ))) when m &lt; n . The problem of finding the maximum value within each row of a totally monotone matrix arises in several geometric algorithms such as the all-farthest-neighbors problem for the vertices of a convex polygon. Previously only the property of monotonicity, not total monotonicity, had been used within these algorithms. We use the Θ( m ) bound on finding the maxima of wide totally monotone matrices to speed up these algorithms by a factor of log n .}, 
 	year = {1987}, 
 	author = {Aggarwal, Alok and Klawe, Maria and Moran, Shlomo and Shor, Peter and Wilber, Robert}, 
-	note = {10.1007/BF01840359}, 
 	journal = {Algorithmica}, 
 	volume = {2}, 
 	pages = {195-208}, 
 	publisher = {Springer New York}, 
-	url = {http://dx.doi.org/10.1007/BF01840359}, 
 	title = {Geometric applications of a matrix-searching algorithm}, 
 }
 
@@ -18,37 +15,30 @@
 	author = {Lior, Pachter and Marina, Alexandersson and Cawley, Simon}, 
 	journal = {Journal of Computational Biology}, 
 	volume = {9}, 
-	url = {/home/mic/Documents/Clanky/10665270252935520.pdf}, 
 	title = {Applications of Generalized Pair Hidden Markov Models to Alignment and Gene Finding Problems}, 
 }
 
 @article{Beal2008,
 	isbn = {1661-8270}, 
-	abstract = {We give a new presentation of two results concerning synchronized automata. The first one gives a linear bound on the synchronization delay of complete local automata. The second one gives a cubic bound for the minimal length of a synchronizing pair in a complete synchronized unambiguous automaton. The proofs are based on results on unambiguous monoids of relations.}, 
 	year = {2008}, 
 	author = {Béal, Marie-Pierre and Czeizler, Eugen and Kari, Jarkko and Perrin, Dominique}, 
-	note = {10.1007/s11786-007-0027-1}, 
 	journal = {Mathematics in Computer Science}, 
 	volume = {1}, 
 	pages = {625-638}, 
 	publisher = {Birkhäuser Basel}, 
-	url = {http://dx.doi.org/10.1007/s11786-007-0027-1}, 
 	title = {Unambiguous Automata}, 
 }
 
 @incollection{Bilo2004,
 	isbn = {978-3-540-22894-3}, 
 	series = {Lecture Notes in Computer Science}, 
-	abstract = {Given an undirected n -node graph and a set of m cuts, the minimum crossing spanning tree is a spanning tree which minimizes the maximum crossing of any cut in , where the crossing of a cut is the number of edges in the intersection of this cut and the tree. This problem finds applications in fields as diverse as Computational Biology and IP Routing Table Minimization. We show that a greedy algorithm gives an O ( r log n ) approximation for the problem where any edge occurs in at most r cuts. We then demonstrate that the problem remains NP-hard even when G is complete. For the latter case, we design a randomized algorithm that gives a tree T with crossing O ((log m +log n ) ·( OPT+ log n )) w.h.p., where OPT is the minimum crossing of any tree. Our greedy analysis extends the traditional one used for set cover. The randomized algorithm rounds a LP relaxation of a corresponding subproblem in stages.}, 
 	year = {2004}, 
-	author = {Bilò, Vittorio and Goyal, Vineet and Ravi, R and Singh, Mohit}, 
+	author = {Bil{\`o}, Vittorio and Goyal, Vineet and Ravi, R and Singh, Mohit}, 
 	booktitle = {Approximation, Randomization, and Combinatorial Optimization. Algorithms and Techniques}, 
-	note = {10.1007/978-3-540-27821-4_5}, 
 	editor = {Jansen, Klaus and Khanna, Sanjeev and Rolim, José and Ron, Dana}, 
 	volume = {3122}, 
 	pages = {51-60}, 
 	publisher = {Springer Berlin / Heidelberg}, 
-	url = {http://dx.doi.org/10.1007/978-3-540-27821-4_5}, 
 	title = {On the Crossing Spanning Tree Problem}, 
 }
 
@@ -60,12 +50,10 @@
 	journal = {Bioinformatics}, 
 	volume = {23}, 
 	pages = {3258-62}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/17804440}, 
 	title = {Transducers: an emerging probabilistic framework for modeling indels on trees}, 
 }
 
 @article{Bradley2009,
-	abstract = {<title>Author Summary</title> <p>Biological sequence alignment is one of the fundamental problems in comparative genomics, yet it remains unsolved. Over sixty sequence alignment programs are listed on Wikipedia, and many new programs are published every year. However, many popular programs suffer from pathologies such as aligning unrelated sequences and producing discordant alignments in protein (amino acid) and codon (nucleotide) space, casting doubt on the accuracy of the inferred alignments. Inaccurate alignments can introduce large and unknown systematic biases into downstream analyses such as phylogenetic tree reconstruction and substitution rate estimation. We describe a new program for multiple sequence alignment which can align protein, RNA and DNA sequence and improves on the accuracy of existing approaches on benchmarks of protein and RNA structural alignments and simulated mammalian and fly genomic alignments. Our approach, which seeks to find the alignment which is closest to the truth under our statistical model, leaves unrelated sequences largely unaligned and produces concordant alignments in protein and codon space. It is fast enough for difficult problems such as aligning orthologous genomic regions or aligning hundreds or thousands of proteins. It furthermore has a companion GUI for visualizing the estimated alignment reliability.</p>}, 
 	number = {5}, 
 	month = {05}, 
 	year = {2009}, 
@@ -75,12 +63,10 @@
 	pages = {e1000392}, 
 	publisher = {Public Library of Science}, 
 	doi = {10.1371/journal.pcbi.1000392}, 
-	url = {http://dx.doi.org/10.1371%2Fjournal.pcbi.1000392}, 
 	title = {Fast Statistical Alignment}, 
 }
 
 @article{Brejova2005,
-	abstract = {MOTIVATION: We present ExonHunter, a new and comprehensive gene finding system that outperforms existing systems and features several new ideas and approaches. Our system combines numerous sources of information (genomic sequences, expressed sequence tags and protein databases of related species) into a gene finder based on a hidden Markov model in a novel and systematic way. In our framework, various sources of information are expressed as partial probabilistic statements about positions in the sequence and their annotation. We then combine these into the final prediction via a quadratic programming method, which we show to be an extension of existing methods. Allowing only partial statements is key to our transparent handling of missing information and coping with the heterogeneous character of individual sources of information. In addition, we give a new method for modeling the length distribution of intergenic regions in hidden Markov models. RESULTS: On a commonly used test set, ExonHunter performs significantly better than the existing gene finders ROSETTA, SLAM and TWINSCAN, with more than two-thirds of genes predicted completely correctly. AVAILABILITY: Supplementary material available at http://www.bioinformatics.uwaterloo.ca/supplements/05eh/}, 
 	month = {Jun}, 
 	year = {2005}, 
 	author = {Brejova, Brona and Brown, Daniel G and Li, Ming and Vinar, Tomas}, 
@@ -88,7 +74,6 @@
 	volume = {21 Suppl 1}, 
 	address = {School of Computer Science, University of Waterloo 200 University Avenue West, Waterloo, ON, Canada N2L 3G1. bbrejova@uwaterloo.ca}, 
 	pages = {i57-65}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/15961499}, 
 	title = {ExonHunter: a comprehensive approach to gene finding}, 
 }
 
@@ -103,31 +88,26 @@
 	pages = {1060-1077}, 
 	publisher = {Academic Press, Inc.}, 
 	doi = {http://dx.doi.org/10.1016/j.jcss.2007.03.011}, 
-	url = {http://dx.doi.org/10.1016/j.jcss.2007.03.011}, 
 	title = {The most probable annotation problem in HMMs and its application to bioinformatics}, 
 }
 
 @article{Brown2009,
-	abstract = {In this tutorial, we discuss two main algorithms for Hidden Markov Models or HMMs: the Viterbi algorithm and the expectation phase of the Baum–Welch algorithm, and we describe ways to improve their naïve implementations. For the Baum–Welch algorithm we first present an implementation of the expectation computations using constant space. We then discuss the classical implementation of this calculation and describe ways to reduce its space usage to logarithmic and , with their respective CPU costs. We also note where each respective algorithm can be parallelized. For the Viterbi algorithm, we describe and logarithmic space algorithms which increase CPU use by a factor of two and by a logarithmic factor respectively. We also present two recent heuristics for decreasing space use, which in practice lead to logarithmic space use. Classical version of Viterbi cannot be parallelized by splitting sequence in several subsequences, but we show a parallelization that works if we are willing to pay a significant extra CPU cost. Finally we show a very simple parallelization trick which enables full usage of multiple CPUs/cores under the condition that they share memory.}, 
 	year = {2009}, 
 	author = {Golod, Daniil and Brown, Daniel G}, 
 	journal = {Journal of Bioinformatics and Computational Biology }, 
 	volume = {7}, 
 	pages = {737-754}, 
-	url = {http://www.worldscinet.com/jbcb/07/0704/S0219720009004242.html}, 
 	title = {A TUTORIAL OF TECHNIQUES FOR IMPROVING STANDARD HIDDEN MARKOV MODEL ALGORITHMS}, 
 }
 
 @inproceedings{Choi2000,
 	isbn = {1520-6149}, 
-	abstract = {Multiresolution signal and image models such as the hidden Markov tree aim to capture the statistical structure of smooth and singular (edgy) regions. Unfortunately, models based on the orthogonal wavelet transform suffer from shift-variance, making them less accurate and realistic. We extend the HMT modeling framework to the complex wavelet transform, which features near shift-invariance and improved angular resolution compared to the standard wavelet transform. The model is computationally efficient (with linear-time computation and processing algorithms) and applicable to general Bayesian inference problems as a prior density for the data. In a simple estimation experiment, the complex wavelet HMT model outperforms a number of high-performance denoising algorithms, including redundant wavelet thresholding (cycle spinning) and the redundant HMT}, 
 	year = {2000}, 
 	author = {Choi, Hyeokho and Romberg, J and Baraniuk, R and Kingsbury, N}, 
 	booktitle = {Acoustics, Speech, and Signal Processing, 2000. ICASSP '00. Proceedings. 2000 IEEE International Conference on}, 
 	volume = {1}, 
 	pages = {133 -136 vol.1}, 
 	doi = {10.1109/ICASSP.2000.861889}, 
-	url = {/home/mic/Documents/Clanky/HiddenMarkovTreeModeling.pdf}, 
 	title = {Hidden Markov tree modeling of complex wavelet transforms}, 
 }
 
@@ -141,23 +121,19 @@
 	address = {Philadelphia, PA, USA}, 
 	pages = {679-688}, 
 	publisher = {Society for Industrial and Applied Mathematics}, 
-	url = {http://dl.acm.org/citation.cfm?id=545381.545472}, 
 	title = {A sub-quadratic sequence alignment algorithm for unrestricted cost matrices}, 
 }
 
 @incollection{Csuros2005,
 	isbn = {978-3-540-28061-3}, 
 	series = {Lecture Notes in Computer Science}, 
-	abstract = {Using a seed to rapidly “hit” possible homologies for further examination is a common practice to speed up homology search in molecular sequences. It has been shown that a collection of higher weight seeds have better sensitivity than a single lower weight seed at the same speed. However, huge memory requirements diminish the advantages of high weight seeds. This paper describes a two-stage extension method, which simulates high weight seeds with modest memory requirements. The paper also proposes the use of so-called daughter seeds, which is an extension of the previously studied vector seed idea. Daughter seeds, especially when combined with the two-stage extension, provide the flexibility to maximize the independence between the seeds, which is a well-known criterion for maximizing sensitivity. Some other practical techniques to reduce memory usage are also discussed in the paper.}, 
 	year = {2005}, 
-	author = {Csűrös, Miklós and Ma, Bin}, 
+	author = {Cs{\H{u}}r{\"o}s, Mikl{\'o}s and Ma, Bin}, 
 	booktitle = {Computing and Combinatorics}, 
-	note = {10.1007/11533719_13}, 
 	editor = {Wang, Lusheng}, 
 	volume = {3595}, 
 	pages = {104-114}, 
 	publisher = {Springer Berlin / Heidelberg}, 
-	url = {http://dx.doi.org/10.1007/11533719_13}, 
 	title = {Rapid Homology Search with Two-Stage Extension and Daughter Seeds}, 
 }
 
@@ -170,7 +146,6 @@
 	address = {Stroudsburg, PA, USA}, 
 	pages = {314-323}, 
 	publisher = {Association for Computational Linguistics}, 
-	url = {http://dl.acm.org/citation.cfm?id=1613715.1613758}, 
 	title = {Sampling alignment structure under a Bayesian translation model}, 
 }
 
@@ -178,12 +153,10 @@
 	year = {2006}, 
 	author = {Do, Chuong B and Gross, Samuel S and Batzoglou, Serafim}, 
 	booktitle = {In: International Conference in Research on Computational Molecular Biology (RECOMB).  year = 2006, pages = 160--174 }}, 
-	url = {/home/mic/Documents/Clanky/ContraAlign.pdf}, 
 	title = {CONTRAlign: discriminative training for protein sequence alignment}, 
 }
 
 @article{Do2008,
-	abstract = {MOTIVATION: The need for accurate and efficient tools for computational RNA structure analysis has become increasingly apparent over the last several years: RNA folding algorithms underlie numerous applications in bioinformatics, ranging from microarray probe selection to de novo non-coding RNA gene prediction. In this work, we present RAF (RNA Alignment and Folding), an efficient algorithm for simultaneous alignment and consensus folding of unaligned RNA sequences. Algorithmically, RAF exploits sparsity in the set of likely pairing and alignment candidates for each nucleotide (as identified by the CONTRAfold or CONTRAlign programs) to achieve an effectively quadratic running time for simultaneous pairwise alignment and folding. RAF's fast sparse dynamic programming, in turn, serves as the inference engine within a discriminative machine learning algorithm for parameter estimation. RESULTS: In cross-validated benchmark tests, RAF achieves accuracies equaling or surpassing the current best approaches for RNA multiple sequence secondary structure prediction. However, RAF requires nearly an order of magnitude less time than other simultaneous folding and alignment methods, thus making it especially appropriate for high-throughput studies. AVAILABILITY: Source code for RAF is available at:http://contra.stanford.edu/contrafold/}, 
 	number = {13}, 
 	month = {Jul}, 
 	year = {2008}, 
@@ -192,19 +165,16 @@
 	volume = {24}, 
 	address = {Computer Science Department, Stanford University, Stanford, CA 94305, USA. chuongdo@cs.stanford.edu}, 
 	pages = {i68-76}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/18586747}, 
 	title = {A max-margin model for efficient simultaneous alignment and folding of RNA sequences}, 
 }
 
 @inproceedings{Du2010,
-	abstract = {The Viterbi algorithm is the compute-intensive kernel in Hidden Markov Model (HMM) based sequence alignment applications. In this paper, we investigate extending several parallel methods, such as the wave-front and streaming methods for the Smith-Waterman algorithm, to achieve a significant speed-up on a GPU. The wave-front method can take advantage of the computing power of the GPU but it cannot handle long sequences because of the physical GPU memory limit. On the other hand, the streaming method can process long sequences but with increased overhead due to the increased data transmission between CPU and GPU. To further improve the performance on GPU, we propose a new tile-based parallel algorithm. We take advantage of the homological segments to divide long sequences into many short pieces and each piece pair (tile) can be fully held in the GPU's memory. By reorganizing the computational kernel of the Viterbi algorithm, the basic computing unit can be divided into two parts: independent and dependent parts. All of the independent parts are executed with a balanced load in an optimized coalesced memory-accessing manner, which significantly improves the Viterbi algorithm's performance on GPU. The experimental results show that our new tile-based parallel Viterbi algorithm can outperform the wave-front and the streaming methods. Especially for the long sequence alignment problem, the best performance of tile-based algorithm is on average about an order magnitude faster than the serial Viterbi algorithm.}, 
 	month = {april}, 
 	year = {2010}, 
 	author = {Du, Zhihui and Yin, Zhaoming and Bader, D A}, 
 	booktitle = {Parallel Distributed Processing, Workshops and Phd Forum (IPDPSW), 2010 IEEE International Symposium on}, 
 	pages = {1 -8}, 
 	doi = {10.1109/IPDPSW.2010.5470903}, 
-	url = {/home/mic/Documents/Clanky/Tile-basedParallelViterbiAlgorihmForBiologicalSequenceAlignmentOnGPUwithCUDA.pdf}, 
 	title = {A tile-based parallel Viterbi algorithm for biological sequence alignment on GPU with CUDA}, 
 }
 
@@ -217,28 +187,24 @@
 	journal = {Computational Biology and Bioinformatics, IEEE/ACM Transactions on}, 
 	volume = {8}, 
 	pages = {698 -709}, 
-	url = {/home/mic/Documents/Clanky/FEASTSensitiveLocalAlignmentWithMultipleRatesOfEvolution.pdf}, 
 	title = {FEAST: Sensitive Local Alignment with Multiple Rates of Evolution}, 
 }
 
 @article{Faigle2011,
 	isbn = {0018-9448}, 
-	abstract = {While two hidden Markov process (HMP) resp. quantum random walk (QRW) parametrizations can differ from one another, the stochastic processes arising from them can be equivalent. Here a polynomial-time algorithm is presented which can determine equivalence of two HMP parametrizations M1, M2 resp. two QRW parametrizations Q1, Q2 in time O(| #x03A3;| max(N1, N2)4), where N1,N2 are the number of hidden states in M1, M2 resp. the dimension of the state spaces associated with Q1, Q2, and #x03A3; is the set of output symbols. Previously avail able algorithms for testing equivalence of HMPs were exponential in the number of hidden states. In case of QRWs, algorithms for testing equivalence had not yet been presented. The core subrou tines of this algorithm can also be used to efficiently test hidden Markov processes and quantum random walks for ergodicity.}, 
 	number = {3}, 
 	month = {march}, 
 	year = {2011}, 
-	author = {Faigle, U and Schö andnhuth, A}, 
+	author = {Faigle, U and Sch{\"o} andnhuth, A}, 
 	journal = {Information Theory, IEEE Transactions on}, 
 	volume = {57}, 
 	pages = {1746 -1753}, 
 	doi = {10.1109/TIT.2011.2104511}, 
-	url = {/home/mic/Documents/Clanky/EfficientTestForEquivalenceOfHiddenMarkovProcessesAndQuantumRandomWalks.pdf}, 
 	title = {Efficient Tests for Equivalence of Hidden Markov Processes and Quantum Random Walks}, 
 }
 
 @article{Fettweis1989,
 	isbn = {0090-6778}, 
-	abstract = {The central unit of a Viterbi decoder is a data-dependent feedback loop which performs an add-compare-select (ACS) operation. This nonlinear recursion is the only bottleneck for a high-speed parallel implementation. A linear scale solution (architecture) is presented which allows the implementation of the Viterbi algorithm (VA) despite the fact that it contains a data-dependent decision feedback loop. For a fixed processing speed it allows a linear speedup in the throughput rate by a linear increase in hardware complexity. A systolic array implementation is discussed for the add-compare-select unit of the VA. The implementation of the survivor memory is considered. The method for implementing the algorithm is based on its underlying finite state feature. Thus, it is possible to transfer this method to other types of algorithms which contain a data-dependent feedback loop and have a finite state property}, 
 	number = {8}, 
 	month = {aug}, 
 	year = {1989}, 
@@ -247,19 +213,16 @@
 	volume = {37}, 
 	pages = {785 -790}, 
 	doi = {10.1109/26.31176}, 
-	url = {/home/mic/Documents/Clanky/ParallelViterbiImplementation.pdf}, 
 	title = {Parallel Viterbi algorithm implementation: breaking the ACS-bottleneck}, 
 }
 
 @article{Frith2010,
-	abstract = {BACKGROUND: Genome sequence alignments form the basis of much research. Genome alignment depends on various mundane but critical choices, such as how to mask repeats and which score parameters to use. Surprisingly, there has been no large-scale assessment of these choices using real genomic data. Moreover, rigorous procedures to control the rate of spurious alignment have not been employed. RESULTS: We have assessed 495 combinations of score parameters for alignment of animal, plant, and fungal genomes. As our gold-standard of accuracy, we used genome alignments implied by multiple alignments of proteins and of structural RNAs. We found the HOXD scoring schemes underlying alignments in the UCSC genome database to be far from optimal, and suggest better parameters. Higher values of the X-drop parameter are not always better. E-values accurately indicate the rate of spurious alignment, but only if tandem repeats are masked in a non-standard way. Finally, we show that gamma-centroid (probabilistic) alignment can find highly reliable subsets of aligned bases. CONCLUSIONS: These results enable more accurate genome alignment, with reliability measures for local alignments and for individual aligned bases. This study was made possible by our new software, LAST, which can align vertebrate genomes in a few hours http://last.cbrc.jp/}, 
 	year = {2010}, 
 	author = {Frith, Martin C and Hamada, Michiaki and Horton, Paul}, 
 	journal = {BMC Bioinformatics}, 
 	volume = {11}, 
 	address = {Computational Biology Research Center, Institute for Advanced Industrial Science and Technology, Tokyo 135-0064, Japan. martin@cbrc.jp}, 
 	pages = {80}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/20144198}, 
 	title = {Parameters for accurate genome alignment}, 
 }
 
@@ -270,29 +233,24 @@
 	journal = {Genome Res.}, 
 	volume = {14}, 
 	pages = {988-995}, 
-	url = {/home/mic/Documents/Clanky/2004-Birney-988-95.pdf}, 
 	title = {GeneWise and Genomewise}, 
 }
 
 @conference{Gill2004,
-	abstract = {In this paper, we consider PLAINS, an algorithm that provides efficient alignment over DNA sequences using piecewise-linear gap penalties that closely approximate more general and meaningful gap-functions. The innovations of PLAINS are fourfold. First, when the number of parts to a piecewise-linear gap function is fixed, PLAINS uses linear space in the worst case, and obtains an alignment that is provably correct under its memory constraints, and thus has an asymptotic complexity similar to the currently best implementations of Smith-Waterman. Second, we score alignments in PLAINS based on important segment pairs; optimize gap parameters based on interspecies alignments, and thus, identify more significant correlations in comparison to other similar algorithms. Third, we describe a practical implementation of PLAINS in the Valis multi-scripting environment with powerful and intuitive visualization interfaces, which allows users to view the alignments with a natural multiple-scale color grid scheme. Fourth, and most importantly, we have evaluated the biological utility of PLAINS using extensive lab results; we report the result of comparing a human sequence to a fugu sequence, where PLAINS was capable of finding more orthologous exon correlations than similar alignment tools.}, 
 	year = {2004}, 
 	author = {Gill, Ofer and Zhou, Yi and Mishra, Bud}, 
 	booktitle = {ADVANCES IN BIOINFORMATICS AND ITS APPLICATIONS}, 
-	url = {http://eproceedings.worldscinet.com/9789812702098/9789812702098_0032.html}, 
 	title = {ALIGNING SEQUENCES WITH NON-AFFINE GAP PENALTY: PLAINS ALGORITHM, A PRACTICAL IMPLEMENTATION, AND ITS BIOLOGICAL APPLICATIONS IN COMPARATIVE GENOMICS}, 
 }
 
 @misc{Gill2006,
 	year = {2006}, 
 	author = {Gill, O and Nyu, Courant Inst}, 
-	url = {/home/mic/Documents/Clanky/PLANARRNASequenceAlignmentUsingNonAffineGapPenaltyAndSecondaryStructure.pdf}, 
 	title = {PLANAR: RNA Sequence Alignment using Non-Affine Gap Penalty and Secondary Structure}, 
 }
 
 @article{Gopalakrishnan1991,
 	isbn = {0018-9448}, 
-	abstract = {The well-known Baum-Eagon inequality (1967) provides an effective iterative scheme for finding a local maximum for homogeneous polynomials with positive coefficients over a domain of probability values. However, in many applications the goal is to maximize a general rational function. In view of this, the Baum-Eagon inequality is extended to rational functions. Some of the applications of this inequality to statistical estimation problems are briefly described}, 
 	number = {1}, 
 	month = {jan}, 
 	year = {1991}, 
@@ -301,18 +259,15 @@
 	volume = {37}, 
 	pages = {107 -113}, 
 	doi = {10.1109/18.61108}, 
-	url = {/home/mic/Documents/Clanky/InequalityForRationalFUnctionsWithApplicationsToSomeStatisticalEstimationProblems.pdf}, 
 	title = {An inequality for rational functions with applications to some statistical estimation problems}, 
 }
 
 @book{GustfieldBook,
 	isbn = {0521585198}, 
-	abstract = {Traditionally an area of study in computer science, string algorithms have, in recent years, become an increasingly important part of biology, particularly genetics. This volume is a comprehensive look at computer algorithms for string processing. In addition to pure computer science, Gusfield adds extensive discussions on biological problems that are cast as string problems and on methods developed to solve them. This text emphasizes the fundamental ideas and techniques central to today's applications. New approaches to this complex material simplify methods that up to now have been for the specialist alone. With over 400 exercises to reinforce the material and develop additional topics, the book is suitable as a text for graduate or advanced undergraduate students in computer science, computational biology, or bio-informatics.}, 
 	year = {2007}, 
 	author = {Gusfield, Dan}, 
 	howpublished = {Hardcover}, 
 	publisher = {Cambridge Univ. Press}, 
-	url = {http://www.amazon.com/exec/obidos/redirect?tag=citeulike07-20\&path=ASIN/0521585198}, 
 	title = {Algorithms on strings, trees, and sequences : computer science and computational biology}, 
 }
 
@@ -327,12 +282,10 @@
 	pages = {341-343}, 
 	publisher = {ACM}, 
 	doi = {http://doi.acm.org/10.1145/360825.360861}, 
-	url = {http://doi.acm.org/10.1145/360825.360861}, 
 	title = {A linear space algorithm for computing maximal common subsequences}, 
 }
 
 @article{Holmes2001,
-	abstract = {MOTIVATION: We review proposed syntheses of probabilistic sequence alignment, profiling and phylogeny. We develop a multiple alignment algorithm for Bayesian inference in the links model proposed by Thorne et al. (1991, J. Mol. Evol., 33, 114-124). The algorithm, described in detail in Section 3, samples from and/or maximizes the posterior distribution over multiple alignments for any number of DNA or protein sequences, conditioned on a phylogenetic tree. The individual sampling and maximization steps of the algorithm require no more computational resources than pairwise alignment. METHODS: We present a software implementation (Handel) of our algorithm and report test results on (i) simulated data sets and (ii) the structurally informed protein alignments of BAliBASE (Thompson et al., 1999, Nucleic Acids Res., 27, 2682-2690). RESULTS: We find that the mean sum-of-pairs score (a measure of residue-pair correspondence) for the BAliBASE alignments is only 13% lower for Handelthan for CLUSTALW(Thompson et al., 1994, Nucleic Acids Res., 22, 4673-4680), despite the relative simplicity of the links model (CLUSTALW uses affine gap scores and increased penalties for indels in hydrophobic regions). With reference to these benchmarks, we discuss potential improvements to the links model and implications for Bayesian multiple alignment and phylogenetic profiling. AVAILABILITY: The source code to Handelis freely distributed on the Internet at http://www.biowiki.org/Handel under the terms of the GNU Public License (GPL, 2000, http://www.fsf.org./copyleft/gpl.html)}, 
 	number = {9}, 
 	month = {Sep}, 
 	year = {2001}, 
@@ -341,24 +294,20 @@
 	volume = {17}, 
 	address = {Group T10, Los Alamos National Laboratory, NM 87545, USA. ihh@fruitfly.org}, 
 	pages = {803-20}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/11590097}, 
 	title = {Evolutionary HMMs: a Bayesian approach to multiple alignment}, 
 }
 
 @article{Holmes2003,
-	abstract = {MOTIVATION: Score-based progressive alignment algorithms do dynamic programming on successive branches of a guide tree. The analogous probabilistic construct is an Evolutionary HMM. This is a multiple-sequence hidden Markov model (HMM) made by combining transducers (conditionally normalised Pair HMMs) on the branches of a phylogenetic tree. METHODS: We present general algorithms for constructing an Evolutionary HMM from any Pair HMM and for doing dynamic programming to any Multiple-sequence HMM. RESULTS: Our prototype implementation, Handel, is based on the Thorne-Kishino-Felsenstein evolutionary model and is benchmarked using structural reference alignments}, 
 	year = {2003}, 
 	author = {Holmes, I}, 
 	journal = {Bioinformatics}, 
 	volume = {19 Suppl 1}, 
 	address = {Department of Statistics, University of Oxford. 1 South Parks Road, Oxford OX1 3TG, UK}, 
 	pages = {i147-57}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/12855451}, 
 	title = {Using guide trees to construct multiple-sequence evolutionary HMMs}, 
 }
 
 @article{Holmes2007,
-	abstract = {Finite-state string transducers are probabilistic tools similar to Hidden Markov Models that can be systematically extended to large number of sequences related by indel and substitution processes on phylogenetic trees. The number of states in such models grows exponentially with the number of nodes in the tree, with the consequence that even quite small trees can be difficult to analyze or visualize. Here, we present two tools, phylocomposer and phylodirector, for working with string transducers. The former tool implements previously described composition algorithms for extending transducers to arbitrary tree topologies, while the latter generates short animations for arbitrary input alignments and phylogenetic trees, illustrating the state path through the composed transducer. AVAILABILITY: Phylocomposer and phylodirector are freely available at http://biowiki.org/PhyloComposer and http://biowiki.org/PhyloDirector}, 
 	number = {23}, 
 	month = {Dec}, 
 	year = {2007}, 
@@ -367,22 +316,18 @@
 	volume = {23}, 
 	address = {Department of Bioengineering, University of California, Berkeley, CA, USA. ihh@berkeley.edu}, 
 	pages = {3263-4}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/17804439}, 
 	title = {Phylocomposer and phylodirector: analysis and visualization of transducer indel models}, 
 }
 
 @phdthesis{Hudek2010 ,
-	abstract = {Pairwise sequence alignment is a fundamental problem in bioinformatics with wide applicability. This thesis presents three new algorithms for this well-studied problem. First, we present a new algorithm, RDA, which aligns sequences in small segments, rather than by individual bases. Then, we present two algorithms for aligning long genomic sequences: CAPE, a pairwise global aligner, and FEAST, a pairwise local aligner. RDA produces interesting alignments that can be substantially different in structure than traditional alignments. It is also better than traditional alignment at the task of homology detection. However, its main negative is a very slow run time. Further, although it produces alignments with different structure, it is not clear if the differences have a practical value in genomic research. Our main success comes from our local aligner, FEAST. We describe two main improvements: a new more descriptive model of evolution, and a new local extension algorithm that considers all possible evolutionary histories rather than only the most likely. Our new model of evolution provides for improved alignment accuracy, and substantially improved parameter training. In particular, we produce a new parameter set for aligning human and mouse sequences that properly describes regions of weak similarity and regions of strong similarity. The second result is our new extension algorithm. Depending on heuristic settings, our new algorithm can provide for more sensitivity than existing extension algorithms, more specificity, or a combination of the two. By comparing to CAPE, our global aligner, we find that the sensitivity increase provided by our local extension algorithm is so substantial that it outperforms CAPE on sequence with 0.9 or more expected substitutions per site. CAPE itself gives improved sensitivity for sequence with 0.7 or more expected substitutions per site, but at a great run time cost. FEAST and our local extension algorithm improves on this too, the run time is only slightly slower than existing local alignment algorithms and asymptotically the same.}, 
 	year = {2010 }, 
 	author = {Hudek, Alexander Karl}, 
 	school = {University of Waterloo}, 
-	url = {http://hdl.handle.net/10012/5074}, 
 	title = {Improvements in the Accuracy of Pairwise Genomic Alignment}, 
 }
 
 @article{Ito1992,
 	isbn = {0018-9448}, 
-	abstract = {If only a function of the state in a finite-state Markov chain is observed, then the stochastic process is no longer Markovian in general. This type of information source is found widely and the basic problem of its identifiability remains open, that is, the problem of showing when two different Markov chains generate the same stochastic process. The identifiability problem is completely solved by linear algebra, where a block structure of a Markov transition matrix plays a fundamental role, and from which the minimum degree of freedom for a source is revealed}, 
 	number = {2}, 
 	month = {mar}, 
 	year = {1992}, 
@@ -391,18 +336,15 @@
 	volume = {38}, 
 	pages = {324 -333}, 
 	doi = {10.1109/18.119690}, 
-	url = {/home/mic/Documents/Clanky/equivalenceExponential.pdf}, 
 	title = {Identifiability of hidden Markov information sources and their minimum degrees of freedom}, 
 }
 
 @misc{Kaplunovsky,
 	author = {Kaplunovsky, Er and Khailenko, Vladimir and Bolshoy, Er and Atambayeva, Shara}, 
-	url = {/home/mic/Documents/Clanky/StatisticsOfExonLengthInAnimalsPlantsFungiAndProtists.pdf}, 
 	title = {Statistics of Exon Lengths in Animals, Plants, Fungi, and Protists}, 
 }
 
 @article{Keibler2007,
-	abstract = {MOTIVATION: Hidden Markov models (HMMs) and generalized HMMs been successfully applied to many problems, but the standard Viterbi algorithm for computing the most probable interpretation of an input sequence (known as decoding) requires memory proportional to the length of the sequence, which can be prohibitive. Existing approaches to reducing memory usage either sacrifice optimality or trade increased running time for reduced memory. RESULTS: We developed two novel decoding algorithms, Treeterbi and Parallel Treeterbi, and implemented them in the TWINSCAN/N-SCAN gene-prediction system. The worst case asymptotic space and time are the same as for standard Viterbi, but in practice, Treeterbi optimally decodes arbitrarily long sequences with generalized HMMs in bounded memory without increasing running time. Parallel Treeterbi uses the same ideas to split optimal decoding across processors, dividing latency to completion by approximately the number of available processors with constant average overhead per processor. Using these algorithms, we were able to optimally decode all human chromosomes with N-SCAN, which increased its accuracy relative to heuristic solutions. We also implemented Treeterbi for Pairagon, our pair HMM based cDNA-to-genome aligner. AVAILABILITY: The TWINSCAN/N-SCAN/PAIRAGON open source software package is available from http://genes.cse.wustl.edu}, 
 	number = {5}, 
 	month = {Mar}, 
 	year = {2007}, 
@@ -411,12 +353,10 @@
 	volume = {23}, 
 	address = {Laboratory for Computational Genomics, Campus Box 1045, Washington University, St. Louis, MO 63130, USA}, 
 	pages = {545-54}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/17237054}, 
 	title = {The Treeterbi and Parallel Treeterbi algorithms: efficient, optimal decoding for ordinary, generalized and pair HMMs}, 
 }
 
 @article{Keich2005,
-	abstract = {We present sFFT, an algorithm for efficiently computing the p-value of the information content, or the entropy score of an alignment of DNA sequences. Applying the FFT algorithm to an exponentially shifted probability mass function allows us perform fast convolutions that do not suffer from the otherwise overwhelming effect of accumulated numerical roundoff errors. Through a rigorous analysis of the propagation of numerical errors across the various steps of sFFT, we provide a theoretical bound on the overall error of our computed p-value. The accuracy of the computed p-value, as well as the utility of the error bound, are empirically demonstrated. Although there are faster algorithms that would compute this p-value, they can err significantly; sFFT is the fastest reliable algorithm. Finally, we note that the basic algorithm is likely to be applicable in a wider context than the one considered here}, 
 	number = {4}, 
 	month = {May}, 
 	year = {2005}, 
@@ -425,7 +365,6 @@
 	volume = {12}, 
 	address = {Computer Science Department, Cornell University, Ithaca, NY 14853, USA. keich@cs.cornell.edu}, 
 	pages = {416-30}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/15882140}, 
 	title = {sFFT: a faster accurate computation of the p-value of the entropy score}, 
 }
 
@@ -440,7 +379,6 @@
 	pages = {81-97}, 
 	publisher = {Society for Industrial and Applied Mathematics}, 
 	doi = {10.1137/0403009}, 
-	url = {http://dl.acm.org/citation.cfm?id=84499.84509}, 
 	title = {An almost linear time algorithm for generalized matrix searching}, 
 }
 
@@ -449,13 +387,11 @@
 	author = {Kohavi, Ron}, 
 	booktitle = {INTERNATIONAL JOINT CONFERENCE ON ARTIFICIAL INTELLIGENCE}, 
 	pages = {1137-1143}, 
-	url = {/home/mic/Documents/Clanky/AStudyOfCross-ValidationAndBootstrapForAccuracyEstimationAndModelSelection.pdf}, 
 	title = {A Study of Cross-Validation and Bootstrap for Accuracy Estimation and Model Selection}, 
 }
 
 @article{Kontorovich2008,
 	isbn = {00911798}, 
-	abstract = {The martingale method is used to establish concentration inequalities for a class of dependent random sequences on a countable state space, with the constants in the inequalities expressed in terms of certain mixing coefficients. Along the way, bounds are obtained on martingale differences associated with the random sequences, which may be of independent interest. As applications of the main result, concentration inequalities are also derived for inhomogeneous Markov chains and hidden Markov chains, and an extremal property associated with their martingale difference bounds is established. This work complements and generalizes certain concentration inequalities obtained by Marton and Samson, while also providing different proofs of some known results.}, 
 	number = {6}, 
 	year = {2008}, 
 	author = {Kontorovich, Leonid (Aryeh) and Ramanan, Kavita}, 
@@ -463,31 +399,26 @@
 	volume = {36}, 
 	pages = {pp. 2126-2158}, 
 	publisher = {Institute of Mathematical Statistics}, 
-	url = {http://www.jstor.org/stable/25450643}, 
 	title = {Concentration Inequalities for Dependent Random Variables via the Martingale Method}, 
 }
 
 @article{Korf2001,
-	abstract = {TWINSCAN is a new gene-structure prediction system that directly extends the probability model of GENSCAN, allowing it to exploit homology between two related genomes. Separate probability models are used for conservation in exons, introns, splice sites, and UTRs, reflecting the differences among their patterns of evolutionary conservation. TWINSCAN is specifically designed for the analysis of high-throughput genomic sequences containing an unknown number of genes. In experiments on high-throughput mouse sequences, using homologous sequences from the human genome, TWINSCAN shows notable improvement over GENSCAN in exon sensitivity and specificity and dramatic improvement in exact gene sensitivity and specificity. This improvement can be attributed entirely to modeling the patterns of evolutionary conservation in genomic sequence}, 
 	year = {2001}, 
 	author = {Korf, I and Flicek, P and Duan, D and Brent, M R}, 
 	journal = {Bioinformatics}, 
 	volume = {17 Suppl 1}, 
 	address = {Department of Computer Science, Washington University, Campus Box 1045, St. Louis, MO, 63130, USA. ikorf@cs.wustl.edu}, 
 	pages = {S140-8}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/11473003}, 
 	title = {Integrating genomic homology into gene structure prediction}, 
 }
 
 @article{Krogh1997,
-	abstract = {A hidden Markov model for gene finding consists of submodels for coding regions, splice sites, introns, intergenic regions and possibly more. It is described how to estimate the model as a whole from labeled sequences instead of estimating the individual parts independently from subsequences. It is argued that the standard maximum likelihood estimation criterion is not optimal for training such a model. Instead of maximizing the probability of the DNA sequence, one should maximize the probability of the correct prediction. Such a criterion, called conditional maximum likelihood, is used for the gene finder 'HMM-gene'. A new (approximative) algorithm is described, which finds the most probable prediction summed over all paths yielding the same prediction. We show that these methods contribute significantly to the high performance of HMMgene}, 
 	year = {1997}, 
 	author = {Krogh, A}, 
 	journal = {Proc Int Conf Intell Syst Mol Biol}, 
 	volume = {5}, 
 	address = {Center for Biological Sequence Analysis, Technical University of Denmark, Lyngby, Denmark. krogh@cbs.dtu.dk}, 
 	pages = {179-86}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/9322033}, 
 	title = {Two methods for improving performance of an HMM and their application for gene finding}, 
 }
 
@@ -502,7 +433,6 @@
 	pages = {20-35}, 
 	publisher = {Academic Press, Inc.}, 
 	doi = {10.1016/S0021-9045(02)00010-2}, 
-	url = {http://dl.acm.org/citation.cfm?id=643408.643410}, 
 	title = {On minimizing sequences for k-centres}, 
 }
 
@@ -512,13 +442,11 @@
 	journal = {BERNOULLI}, 
 	volume = {14}, 
 	pages = {180}, 
-	url = {doi:10.3150/07-BEJ105}, 
 	title = {The adjusted Viterbi training for hidden Markov models}, 
 }
 
 @article{Lember2010,
 	isbn = {0018-9448}, 
-	abstract = {Since the early days of digital communication, hidden Markov models (HMMs) have now been also routinely used in speech recognition, processing of natural languages, images, and in bioinformatics. In an HMM (X t,Y t)t Â¿ 1, observations X 1,X 2,... are assumed to be conditionally independent given a Markov process Y 1,Y 2,..., which itself is not observed; moreover, the conditional distribution of X t depends solely on Y t. Central to the theory and applications of HMM is the Viterbi algorithm to find a maximum a posteriori probability (MAP) estimate v(x 1: T)=(v 1,v 2,...,vT) of Y 1: T given observed data x 1: T. Maximum a posteriori paths are also known as the Viterbi paths, or alignments. Recently, attempts have been made to study behavior of the Viterbi alignments when TÂ¿ Â¿. Thus, it has been shown that in some cases a well-defined limiting Viterbi alignment exists. While innovative, these attempts have relied on rather strong assumptions and involved proofs which are existential. This work proves the existence of infinite Viterbi alignments in a more constructive manner and for a very general class of HMMs.}, 
 	number = {4}, 
 	month = {april}, 
 	year = {2010}, 
@@ -527,21 +455,18 @@
 	volume = {56}, 
 	pages = {2017 -2033}, 
 	doi = {10.1109/TIT.2010.2040897}, 
-	url = {/home/mic/Documents/Clanky/LemberKoloydenkoAConstructiveProofOfViterbiProcess.pdf}, 
 	title = {A Constructive Proof of the Existence of Viterbi Processes}, 
 }
 
 @article{Lember2011,
 	year = {2011}, 
 	author = {Lember, Jüri and Kuljus, Kristi and Koloydenko, Alexey}, 
-	url = {http://www.intechopen.com/articles/show/title/theory-of-segmentation}, 
 	title = {Theory of Segmentation }, 
 }
 
 @article{LemberAdjVit2006,
 	year = {2006}, 
 	author = {Lember, Juri}, 
-	url = {/home/mic/Documents/Clanky/AdjustedViterbiTraining.pdf}, 
 	title = {Adjusted Viterbi Training. A proof of
 concept.
 }, 
@@ -551,26 +476,21 @@ concept.
 	year = {2006}, 
 	author = {Levin, David A and Peres, Yuval and Wilmer, Elizabeth L}, 
 	publisher = {American Mathematical Society}, 
-	url = {http://scholar.google.com/scholar.bib?q=info:3wf9IU94tyMJ:scholar.google.com/&output=citation&hl=en&as_sdt=2000&ct=citation&cd=0}, 
 	title = {Markov chains and mixing times}, 
 }
 
 @article{Lifshits2009,
 	isbn = {0178-4617}, 
-	abstract = {We present a method to speed up the dynamic program algorithms used for solving the HMM decoding and training problems for discrete time-independent HMMs. We discuss the application of our method to Viterbi’s decoding and training algorithms (IEEE Trans. Inform. Theory IT-13:260–269, 1967 ), as well as to the forward-backward and Baum-Welch (Inequalities 3:1–8, 1972 ) algorithms. Our approach is based on identifying repeated substrings in the observed input sequence. Initially, we show how to exploit repetitions of all sufficiently small substrings (this is similar to the Four Russians method). Then, we describe four algorithms based alternatively on run length encoding (RLE), Lempel-Ziv (LZ78) parsing, grammar-based compression (SLP), and byte pair encoding (BPE). Compared to Viterbi’s algorithm, we achieve speedups of Θ (log n ) using the Four Russians method, using RLE, using LZ78, using SLP, and Ω( r ) using BPE, where k is the number of hidden states, n is the length of the observed sequence and r is its compression ratio (under each compression scheme). Our experimental results demonstrate that our new algorithms are indeed faster in practice. We also discuss a parallel implementation of our algorithms.}, 
 	year = {2009}, 
 	author = {Lifshits, Yury and Mozes, Shay and Weimann, Oren and Ziv-Ukelson, Michal}, 
-	note = {10.1007/s00453-007-9128-0}, 
 	journal = {Algorithmica}, 
 	volume = {54}, 
 	pages = {379-399}, 
 	publisher = {Springer New York}, 
-	url = {http://dx.doi.org/10.1007/s00453-007-9128-0}, 
 	title = {Speeding Up HMM Decoding and Training by Exploiting Sequence Repetitions}, 
 }
 
 @article{Liu2010,
-	abstract = {MOTIVATION: Multiple sequence alignment is of central importance to bioinformatics and computational biology. Although a large number of algorithms for computing a multiple sequence alignment have been designed, the efficient computation of highly accurate multiple alignments is still a challenge. RESULTS: We present MSAProbs, a new and practical multiple alignment algorithm for protein sequences. The design of MSAProbs is based on a combination of pair hidden Markov models and partition functions to calculate posterior probabilities. Furthermore, two critical bioinformatics techniques, namely weighted probabilistic consistency transformation and weighted profile-profile alignment, are incorporated to improve alignment accuracy. Assessed using the popular benchmarks: BAliBASE, PREFAB, SABmark and OXBENCH, MSAProbs achieves statistically significant accuracy improvements over the existing top performing aligners, including ClustalW, MAFFT, MUSCLE, ProbCons and Probalign. Furthermore, MSAProbs is optimized for multi-core CPUs by employing a multi-threaded design, leading to a competitive execution time compared to other aligners. AVAILABILITY: The source code of MSAProbs, written in C++, is freely and publicly available from http://msaprobs.sourceforge.net}, 
 	number = {16}, 
 	month = {Aug}, 
 	year = {2010}, 
@@ -579,7 +499,6 @@ concept.
 	volume = {26}, 
 	address = {School of Computer Engineering, Nanyang Technological University, Singapore. liuy0039@ntu.edu.sg}, 
 	pages = {1958-64}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/20576627}, 
 	title = {MSAProbs: multiple sequence alignment based on pair hidden Markov models and partition function posterior probabilities}, 
 }
 
@@ -590,13 +509,11 @@ concept.
 	journal = {Bioinformatics}, 
 	volume = {21}, 
 	pages = {1782-1788}, 
-	url = {/home/mic/Documents/Clanky/Bioinformatics-2005-Majoros-1782-8.pdf}, 
 	title = {Efficient implementation of a generalized pair hidden Markov model for comparative gene finding}, 
 }
 
 @article{Maria1992,
 	isbn = {0196-6774}, 
-	abstract = {Matrix searching in classes of totally monotone partial matrices has many applications in computer science, operations research, and other areas. This paper gives the first superlinear lower bound for matrix searching in classes of totally monotone partial matrices and also contains some new upper bounds for a class with applications in computational geometry and dynamic programming. The precise results of this paper are as follows. We show that any algorithm for finding row maxima or minima in totally monotone partial 2n × n matrices with the property that the non-blank entries in each column form a contiguous segment, can be forced to evaluate Ω(nα(n)) entries of the matrix in order to find the row maxima or minima, where α(n) denotes the very slowly growing inverse of Ackermann's function. A similar result is obtained for n × 2n matrices with contiguous non-blank segments in each row. The lower bounds are proved by introducing the concept of an independence set in a partial matrix and showing that any matrix searching algorithm for these types of partial matrices can be forced to evaluate every element in the independence set. A result involving lower bounds for Davenport-Schinzel sequences is then used to construct an independence set of size Ω(nα(n)) in the matrices of size 2n × n and n × 2n. We also give two algorithms to find row maxima and minima in totally monotone partial n × m matrices with the property that the non-blank entries in each column form a continuous segment ending at the bottom row. The first algorithm evaluates at most O(mα(n) + n) entries of the skyline matrix and performs at most that many comparisons, but may have O(mα(n)log log n + n) total running time. The second algorithm is simpler and has O(m log log n + n) total running time, but makes more comparisons, namely O(m log log n + n), than the first.}, 
 	number = {1}, 
 	year = {1992}, 
 	author = {Klawe, Maria M}, 
@@ -604,12 +521,10 @@ concept.
 	volume = {13}, 
 	pages = {55 - 78}, 
 	doi = {10.1016/0196-6774(92)90005-W}, 
-	url = {http://www.sciencedirect.com/science/article/pii/019667749290005W}, 
 	title = {Superlinear bounds for matrix searching problems}, 
 }
 
 @article{McAuliffe2004,
-	abstract = {MOTIVATION: Phylogenetic shadowing is a comparative genomics principle that allows for the discovery of conserved regions in sequences from multiple closely related organisms. We develop a formal probabilistic framework for combining phylogenetic shadowing with feature-based functional annotation methods. The resulting model, a generalized hidden Markov phylogeny (GHMP), applies to a variety of situations where functional regions are to be inferred from evolutionary constraints. RESULTS: We show how GHMPs can be used to predict complete shared gene structures in multiple primate sequences. We also describe shadower, our implementation of such a prediction system. We find that shadower outperforms previously reported ab initio gene finders, including comparative human-mouse approaches, on a small sample of diverse exonic regions. Finally, we report on an empirical analysis of shadower's performance which reveals that as few as five well-chosen species may suffice to attain maximal sensitivity and specificity in exon demarcation. AVAILABILITY: A Web server is available at http://bonaire.lbl.gov/shadower}, 
 	number = {12}, 
 	month = {Aug}, 
 	year = {2004}, 
@@ -618,7 +533,6 @@ concept.
 	volume = {20}, 
 	address = {Department of Statistics, University of California, 367 Evans Hall, Berkeley, CA 94720, USA}, 
 	pages = {1850-60}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/14988105}, 
 	title = {Multiple-sequence functional annotation and the generalized hidden Markov phylogeny}, 
 }
 
@@ -629,26 +543,21 @@ concept.
 	journal = {Bioinformatics}, 
 	volume = {18}, 
 	pages = {1309-1318}, 
-	url = {/home/mic/Documents/Clanky/Bioinformatics-2002-Meyer-1309-18.pdf}, 
 	title = {Comparative ab initio prediction of gene structures using pair HMMs}, 
 }
 
 @article{Miller1988,
 	isbn = {0092-8240}, 
-	abstract = {We consider efficient methods for computing a difference metric between two sequences of symbols, where the cost of an operation to insert or delete a block of symbols is a concave function of the block's length. Alternatively, sequences can be optimally aligned when gap penalties are a concave function of the gap length. Two algorithms based on the ‘candidate list paradigm’ first used by Waterman (1984) are presented. The first computes significantly more parsimonious candidate lists than Waterman's method. The second method refines the first to the point of guaranteeing O(N 2 lgN) worst-case time complexity, and under certain conditions O(N 2 ). Experimental data show how various properties of the comparison problem affect the methods' relative performance. A number of extensions are discussed, among them a technique for constructing optimal alignments in O(N) space in expectation. This variation gives a practical method for comparing long amino sequences on a small computer.}, 
 	year = {1988}, 
 	author = {Miller, Webb and Myers, Eugene}, 
-	note = {10.1007/BF02459948}, 
 	journal = {Bulletin of Mathematical Biology}, 
 	volume = {50}, 
 	pages = {97-120}, 
 	publisher = {Springer New York}, 
-	url = {http://dx.doi.org/10.1007/BF02459948}, 
 	title = {Sequence comparison with concave weighting functions}, 
 }
 
 @article{Mitrophanov2006,
-	abstract = {One of the major goals of computational sequence analysis is to find sequence similarities, which could serve as evidence of structural and functional conservation, as well as of evolutionary relations among the sequences. Since the degree of similarity is usually assessed by the sequence alignment score, it is necessary to know if a score is high enough to indicate a biologically interesting alignment. A powerful approach to defining score cutoffs is based on the evaluation of the statistical significance of alignments. The statistical significance of an alignment score is frequently assessed by its P-value, which is the probability that this score or a higher one can occur simply by chance, given the probabilistic models for the sequences. In this review we discuss the general role of P-value estimation in sequence analysis, and give a description of theoretical methods and computational approaches to the estimation of statistical signifiance for important classes of sequence analysis problems. In particular, we concentrate on the P-value estimation techniques for single sequence studies (both score-based and score-free), global and local pairwise sequence alignments, multiple alignments, sequence-to-profile alignments and alignments built with hidden Markov models. We anticipate that the review will be useful both to researchers professionally working in bioinformatics as well as to biomedical scientists interested in using contemporary methods of DNA and protein sequence analysis}, 
 	number = {1}, 
 	month = {Mar}, 
 	year = {2006}, 
@@ -657,12 +566,10 @@ concept.
 	volume = {7}, 
 	address = {School of Biology, Georgia Institute of Technology, Atlanta, GA 30332-0230, USA}, 
 	pages = {2-24}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/16761361}, 
 	title = {Statistical significance in biological sequence analysis}, 
 }
 
 @article{Morgenstern1996,
-	abstract = {In this paper, a new way to think about, and to construct, pairwise as well as multiple alignments of DNA and protein sequences is proposed. Rather than forcing alignments to either align single residues or to introduce gaps by defining an alignment as a path running right from the source up to the sink in the associated dot-matrix diagram, we propose to consider alignments as consistent equivalence relations defined on the set of all positions occurring in all sequences under consideration. We also propose constructing alignments from whole segments exhibiting highly significant overall similarity rather than by aligning individual residues. Consequently, we present an alignment algorithm that (i) is based on segment-to-segment comparison instead of the commonly used residue-to-residue comparison and which (ii) avoids the well-known difficulties concerning the choice of appropriate gap penalties: gaps are not treated explicity, but remain as those parts of the sequences that do not belong to any of the aligned segments. Finally, we discuss the application of our algorithm to two test examples and compare it with commonly used alignment methods. As a first example, we aligned a set of 11 DNA sequences coding for functional helix-loop-helix proteins. Though the sequences show only low overall similarity, our program correctly aligned all of the 11 functional sites, which was a unique result among the methods tested. As a by-product, the reading frames of the sequences were identified. Next, we aligned a set of ribonuclease H proteins and compared our results with alignments produced by other programs as reported by McClure et al. [McClure, M. A., Vasi, T. K. & Fitch, W. M. (1994) Mol. Biol. Evol. 11, 571-592]. Our program was one of the best scoring programs. However, in contrast to other methods, our protein alignments are independent of user-defined parameters}, 
 	number = {22}, 
 	month = {Oct}, 
 	year = {1996}, 
@@ -671,12 +578,10 @@ concept.
 	volume = {93}, 
 	address = {National Research Center for Environment and Health, Institute of Mammalian Genetics, Neuherberg, Germany}, 
 	pages = {12098-103}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/8901539}, 
 	title = {Multiple DNA and protein sequence alignment based on segment-to-segment comparison}, 
 }
 
 @article{Mott1999,
-	abstract = {MOTIVATION: Sequence alignments obtained using affine gap penalties are not always biologically correct, because the insertion of long gaps is over-penalised. There is a need for an efficient algorithm which can find local alignments using non-linear gap penalties. RESULTS: A dynamic programming algorithm is described which computes optimal local sequence alignments for arbitrary, monotonically increasing gap penalties, i.e. where the cost g(k) of inserting a gap of k symbols is such that g(k) >/= g(k-1). The running time of the algorithm is dependent on the scoring scheme; if the expected score of an alignment between random, unrelated sequences of lengths m, n is proportional to log mn, then with one exception, the algorithm has expected running time O(mn). Elsewhere, the running time is no greater than O(mn(m+n)). Optimisations are described which appear to reduce the worst-case run-time to O(mn) in many cases. We show how using a non-affine gap penalty can dramatically increase the probability of detecting a similarity containing a long gap. AVAILABILITY: The source code is available to academic collaborators under licence}, 
 	number = {6}, 
 	month = {Jun}, 
 	year = {1999}, 
@@ -685,13 +590,11 @@ concept.
 	volume = {15}, 
 	address = {SmithKline-Beecham Pharmaceuticals R & D, New Frontiers Science Park (North),3rd Avenue, Harlow CM19 5AW, UK. Richard.Mott@well.ox.ac.uk}, 
 	pages = {455-62}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/10383814}, 
 	title = {Local sequence alignments with monotonic gap penalties}, 
 }
 
 @article{Nadas1983,
 	isbn = {0096-3518}, 
-	abstract = {The choice of method for training a speech recognizer is posed as an optimization problem. The currently used method of maximum likelihood, while heuristic, is shown to be superior under certain assumptions to another heuristic: the method of conditional maximum likelihood.}, 
 	number = {4}, 
 	month = {aug}, 
 	year = {1983}, 
@@ -700,13 +603,11 @@ concept.
 	volume = {31}, 
 	pages = {814 - 817}, 
 	doi = {10.1109/TASSP.1983.1164173}, 
-	url = {/home/mic/Documents/Clanky/ADecisionTheoreticFormulationOfTrainingProblemInSPeechRecognitionAndAComparisionOfTrainiingByUncinditionalVersusCOnditionalMaximumLikelihood.pdf}, 
 	title = {A decision theorectic formulation of a training problem in speech recognition and a comparison of training by unconditional versus conditional maximum likelihood}, 
 }
 
 @article{Nadas1988,
 	isbn = {0096-3518}, 
-	abstract = {Training methods for designing better decoders are compared. The training problem is considered as a statistical parameter estimation problem. In particular, the conditional maximum likelihood estimate (CMLE), which estimates the parameter values that maximize the conditional probability of words given acoustics during training, is compared to the maximum-likelihood estimate, which is obtained by maximizing the joint probability of the words and acoustics. For minimizing the decoding error rate of the (optimal) maximum a posteriori probability (MAP) decoder, it is shown that the CMLE (or maximum mutual information estimate, MMIE) may be preferable when the model is incorrect. In this sense, the CMLE/MMIE appears more robust than the MLE}, 
 	number = {9}, 
 	month = {sep}, 
 	year = {1988}, 
@@ -715,26 +616,22 @@ concept.
 	volume = {36}, 
 	pages = {1432 -1436}, 
 	doi = {10.1109/29.90371}, 
-	url = {/home/mic/Documents/Clanky/OnAModelRobustTrainingMethodForSpeechRecognition.pdf}, 
 	title = {On a model-robust training method for speech recognition}, 
 }
 
 @inproceedings{Normandin1991,
 	isbn = {1520-6149}, 
-	abstract = {Recently, Gopalakrishnan et al. (1989) introduced a reestimation formula for discrete HMMs (hidden Markov models) which applies to rational objective functions like the MMIE (maximum mutual information estimation) criterion. The authors analyze the formula and show how its convergence rate can be substantially improved. They introduce a corrective MMIE training algorithm, which, when applied to the TI/NIST connected digit database, has made it possible to reduce the string error rate by close to 50%. Gopalakrishnan's result is extended to the continuous case by proposing a new formula for estimating the mean and variance parameters of diagonal Gaussian densities}, 
 	month = {apr}, 
 	year = {1991}, 
 	author = {Normandin, Y and Morgera, SD}, 
 	booktitle = {Acoustics, Speech, and Signal Processing, 1991. ICASSP-91., 1991 International Conference on}, 
 	pages = {537 -540 vol.1}, 
 	doi = {10.1109/ICASSP.1991.150395}, 
-	url = {/home/mic/Documents/Clanky/ImprovedMMIETrainingAlgorithSPeechRecognition.pdf}, 
 	title = {An improved MMIE training algorithm for speaker-independent, small vocabulary, continuous speech recognition}, 
 }
 
 @article{Normandin1994,
 	isbn = {1063-6676}, 
-	abstract = {Hidden markov models (HMM's) are one of the most powerful speech recognition tools available today. Even so, the inadequacies of HMM's as a ldquo;correct rdquo; modeling framework for speech are well known. In this context, it is argued in this paper that the maximum mutual information estimation (MMIE) formulation for training is more appropriate than maximum likelihood estimation (MLE) for reducing the error rate. Corrective MMIE training is introduced. It is a very efficient new training algorithm which uses a modified version of a discrete reestimation formula recently proposed by Gopalakrishnan et al.( see IEEE Trans. Inform. Theory, Jan. 1991). Reestimation formulas are proposed for the case of diagonal Gaussian densities and their convergence properties are experimentally demonstrated. A description of how these formulas are integrated into our training algorithm is given. Using the MMIE framework for training, it is shown how weighting the contribution of different parameter sets in the computation of output probabilities introduces substantial recognition improvements. Using the TIDIGITS connected digit corpus, a large number of experiments are performed with the ideas, techniques, and algorithms presented in this paper. These experiments show that MMIE systematically provides substantial error rate reductions with respect to MLE alone and that, thanks to the new training techniques, these results can be obtained at an acceptable computational cost. The best results obtained in the experiments were 0.29% word error rate and 0.89% string error rate on the adult portion of the corpus}, 
 	number = {2}, 
 	month = {apr}, 
 	year = {1994}, 
@@ -743,12 +640,10 @@ concept.
 	volume = {2}, 
 	pages = {299 -311}, 
 	doi = {10.1109/89.279279}, 
-	url = {/home/mic/Documents/Clanky/High-performance-connected0digit-recognitionUsingMaximumMutualInformationEstimation.pdf}, 
 	title = {High-performance connected digit recognition using maximum mutual information estimation}, 
 }
 
 @article{Notredame2000,
-	abstract = {We describe a new method (T-Coffee) for multiple sequence alignment that provides a dramatic improvement in accuracy with a modest sacrifice in speed as compared to the most commonly used alternatives. The method is broadly based on the popular progressive approach to multiple alignment but avoids the most serious pitfalls caused by the greedy nature of this algorithm. With T-Coffee we pre-process a data set of all pair-wise alignments between the sequences. This provides us with a library of alignment information that can be used to guide the progressive alignment. Intermediate alignments are then based not only on the sequences to be aligned next but also on how all of the sequences align with each other. This alignment information can be derived from heterogeneous sources such as a mixture of alignment programs and/or structure superposition. Here, we illustrate the power of the approach by using a combination of local and global pair-wise alignments to generate the library. The resulting alignments are significantly more reliable, as determined by comparison with a set of 141 test cases, than any of the popular alternatives that we tried. The improvement, especially clear with the more difficult test cases, is always visible, regardless of the phylogenetic spread of the sequences in the tests}, 
 	number = {1}, 
 	month = {Sep}, 
 	year = {2000}, 
@@ -757,7 +652,6 @@ concept.
 	volume = {302}, 
 	address = {National Institute for Medical Research, The Ridgeway, London, NW7 1AA, UK. cedric.notredame@europe.com}, 
 	pages = {205-17}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/10964570}, 
 	title = {T-Coffee: A novel method for fast and accurate multiple sequence alignment}, 
 }
 
@@ -767,28 +661,23 @@ concept.
 	year = {2010}, 
 	author = {Okhotin, Alexander}, 
 	booktitle = {Mathematical Foundations of Computer Science 2010}, 
-	note = {10.1007/978-3-642-15155-2_49}, 
 	editor = {Hlinený, Petr and Kucera, Antonín}, 
 	volume = {6281}, 
 	pages = {556-567}, 
 	publisher = {Springer Berlin / Heidelberg}, 
-	url = {http://dx.doi.org/10.1007/978-3-642-15155-2_49}, 
 	title = {Unambiguous Finite Automata over a Unary Alphabet}, 
 }
 
 @incollection{Opera2011,
 	isbn = {978-3-642-20035-9}, 
 	series = {Lecture Notes in Computer Science}, 
-	abstract = {Scaffolding, the problem of ordering and orienting contigs, typically using paired-end reads, is a crucial step in the assembly of high-quality draft genomes. Even as sequencing technologies and mate-pair protocols have improved significantly, scaffolding programs still rely on heuristics, with no gaurantees on the quality of the solution. In this work we explored the feasibility of an exact solution for scaffolding and present a first fixed-parameter tractable solution for assembly (Opera). We also describe a graph contraction procedure that allows the solution to scale to large scaffolding problems and demonstrate this by scaffolding several large real and synthetic datasets. In comparisons with existing scaffolders, Opera simultaneously produced longer and more accurate scaffolds demonstrating the utility of an exact approach. Opera also incorporates an exact quadratic programming formulation to precisely compute gap sizes.}, 
 	year = {2011}, 
 	author = {Gao, Song and Nagarajan, Niranjan and Sung, Wing-Kin}, 
 	booktitle = {Research in Computational Molecular Biology}, 
-	note = {10.1007/978-3-642-20036-6_40}, 
 	editor = {Bafna, Vineet and Sahinalp, S.}, 
 	volume = {6577}, 
 	pages = {437-451}, 
 	publisher = {Springer Berlin / Heidelberg}, 
-	url = {http://dx.doi.org/10.1007/978-3-642-20036-6_40}, 
 	title = {Opera: Reconstructing Optimal Genomic Scaffolds with High-Throughput Paired-End Sequences}, 
 }
 
@@ -799,12 +688,10 @@ concept.
 	journal = {Bioinformatics}, 
 	volume = {25}, 
 	pages = {1587-1593}, 
-	url = {/home/mic/Documents/Clanky/Bioinformatics-2009-Lu-1587-93.pdf}, 
 	title = {Pairagon: a highly accurate, HMM-based cDNA-to-genome aligner}, 
 }
 
 @article{Paten2008,
-	abstract = {Pairwise whole-genome alignment involves the creation of a homology map, capable of performing a near complete transformation of one genome into another. For multiple genomes this problem is generalized to finding a set of consistent homology maps for converting each genome in the set of aligned genomes into any of the others. The problem can be divided into two principal stages. First, the partitioning of the input genomes into a set of colinear segments, a process which essentially deals with the complex processes of rearrangement. Second, the generation of a base pair level alignment map for each colinear segment. We have developed a new genome-wide segmentation program, Enredo, which produces colinear segments from extant genomes handling rearrangements, including duplications. We have then applied the new alignment program Pecan, which makes the consistency alignment methodology practical at a large scale, to create a new set of genome-wide mammalian alignments. We test both Enredo and Pecan using novel and existing assessment analyses that incorporate both real biological data and simulations, and show that both independently and in combination they outperform existing programs. Alignments from our pipeline are publicly available within the Ensembl genome browser}, 
 	number = {11}, 
 	month = {Nov}, 
 	year = {2008}, 
@@ -813,12 +700,10 @@ concept.
 	volume = {18}, 
 	address = {Center for Biomolecular Science and Engineering, University of California, Santa Cruz, California 95064, USA. benedict@soe.ucsc.edu}, 
 	pages = {1814-28}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/18849524}, 
 	title = {Enredo and Pecan: genome-wide mammalian consistency-based multiple alignment with paralogs}, 
 }
 
 @article{Pedersen2003,
-	abstract = {MOTIVATION: A growing number of genomes are sequenced. The differences in evolutionary pattern between functional regions can thus be observed genome-wide in a whole set of organisms. The diverse evolutionary pattern of different functional regions can be exploited in the process of genomic annotation. The modelling of evolution by the existing comparative gene finders leaves room for improvement. RESULTS: A probabilistic model of both genome structure and evolution is designed. This type of model is called an Evolutionary Hidden Markov Model (EHMM), being composed of an HMM and a set of region-specific evolutionary models based on a phylogenetic tree. All parameters can be estimated by maximum likelihood, including the phylogenetic tree. It can handle any number of aligned genomes, using their phylogenetic tree to model the evolutionary correlations. The time complexity of all algorithms used for handling the model are linear in alignment length and genome number. The model is applied to the problem of gene finding. The benefit of modelling sequence evolution is demonstrated both in a range of simulations and on a set of orthologous human/mouse gene pairs. AVAILABILITY: Free availability over the Internet on www server: http://www.birc.dk/Software/evogene}, 
 	number = {2}, 
 	month = {Jan}, 
 	year = {2003}, 
@@ -827,12 +712,10 @@ concept.
 	volume = {19}, 
 	address = {Bioinformatics Research Center, Department of Genetics and Ecology, The Institute of Biological Sciences, University of Aarhus, Building 550, Ny Munkegade, 8000 Aarhus C, Denmark. jsp@daimi.au.dk}, 
 	pages = {219-27}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/12538242}, 
 	title = {Gene finding with a hidden Markov model of genome structure and evolution}, 
 }
 
 @article{Qian2001,
-	abstract = {Protein sequence alignment has become a widely used method in the study of newly sequenced proteins. Most sequence alignment methods use an affine gap penalty to assign scores to insertions and deletions. Although affine gap penalties represent the relative ease of extending a gap compared with initializing a gap, it is still an obvious oversimplification of the real processes that occur during sequence evolution. To improve the efficiency of sequence alignment methods and to obtain a better understanding of the process of sequence evolution, we wanted to find a more accurate model of insertions and deletions in homologous proteins. In this work, we extract the probability of a gap occurrence and the resulting gap length distribution in distantly related proteins (sequence identity < 25%) using alignments based on their common structures. We observe a distribution of gaps that can be fitted with a multiexponential with four distinct components. The results suggest new approaches to modeling insertions and deletions in sequence alignments}, 
 	number = {1}, 
 	month = {Oct}, 
 	year = {2001}, 
@@ -841,7 +724,6 @@ concept.
 	volume = {45}, 
 	address = {Biophysics Research Division, University of Michigan, Ann Arbor, USA}, 
 	pages = {102-4}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/11536366}, 
 	title = {Distribution of Indel lengths}, 
 }
 
@@ -852,12 +734,10 @@ concept.
 	journal = {Genome Res.}, 
 	volume = {13}, 
 	pages = {496-502}, 
-	url = {/home/mic/Documents/Clanky/2004-alexandersson-496-502.pdf}, 
 	title = {SLAM: cross-species gene finding and alignment with a generalized pair hidden Markov model}, 
 }
 
 @article{Sahraeian2010,
-	abstract = {Accurate tools for multiple sequence alignment (MSA) are essential for comparative studies of the function and structure of biological sequences. However, it is very challenging to develop a computationally efficient algorithm that can consistently predict accurate alignments for various types of sequence sets. In this article, we introduce PicXAA (Probabilistic Maximum Accuracy Alignment), a probabilistic non-progressive alignment algorithm that aims to find protein alignments with maximum expected accuracy. PicXAA greedily builds up the multiple alignment from sequence regions with high local similarities, thereby yielding an accurate global alignment that effectively grasps the local similarities among sequences. Evaluations on several widely used benchmark sets show that PicXAA constantly yields accurate alignment results on a wide range of reference sets, with especially remarkable improvements over other leading algorithms on sequence sets with local similarities. PicXAA source code is freely available at: http://www.ece.tamu.edu/~bjyoon/picxaa/}, 
 	number = {15}, 
 	month = {Aug}, 
 	year = {2010}, 
@@ -866,7 +746,6 @@ concept.
 	volume = {38}, 
 	address = {Department of Electrical and Computer Engineering, Texas A&M University, College Station, TX 77843, USA}, 
 	pages = {4917-28}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/20413579}, 
 	title = {PicXAA: greedy probabilistic construction of maximum expected accuracy alignment of multiple sequences}, 
 }
 
@@ -880,12 +759,10 @@ concept.
 	volume = {6293}, 
 	pages = {350-361}, 
 	publisher = {Springer Berlin / Heidelberg}, 
-	url = {/home/mic/Documents/Clanky/PHMMBasedGapStatisticsForReEvaluationOfIndelsInAlignmentsWithAffineGapPenalties.pdf}, 
 	title = {Pair HMM Based Gap Statistics for Re-evaluation of Indels in Alignments with Affine Gap Penalties}, 
 }
 
 @article{Schwartz2007,
-	abstract = {MOTIVATION: We introduce a novel approach to multiple alignment that is based on an algorithm for rapidly checking whether single matches are consistent with a partial multiple alignment. This leads to a sequence annealing algorithm, which is an incremental method for building multiple sequence alignments one match at a time. Our approach improves significantly on the standard progressive alignment approach to multiple alignment. RESULTS: The sequence annealing algorithm performs well on benchmark test sets of protein sequences. It is not only sensitive, but also specific, drastically reducing the number of incorrectly aligned residues in comparison to other programs. The method allows for adjustment of the sensitivity/specificity tradeoff and can be used to reliably identify homologous regions among protein sequences. AVAILABILITY: An implementation of the sequence annealing algorithm is available at http://bio.math.berkeley.edu/amap/}, 
 	number = {2}, 
 	month = {Jan}, 
 	year = {2007}, 
@@ -894,26 +771,21 @@ concept.
 	volume = {23}, 
 	address = {EECS, Computer Science Division, University of California Berkeley, CA 94720, USA. sariel@cs.berkeley.edu}, 
 	pages = {e24-9}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/17237099}, 
 	title = {Multiple alignment by sequence annealing}, 
 }
 
 @article{Sherali1992,
 	isbn = {0925-5001}, 
-	abstract = {This paper is concerned with the development of an algorithm to solve continuous polynomial programming problems for which the objective function and the constraints are specified polynomials. A linear programming relaxation is derived for the problem based on a Reformulation Linearization Technique (RLT), which generates nonlinear (polynomial) implied constraints to be included in the original problem, and subsequently linearizes the resulting problem by defining new variables, one for each distinct polynomial term. This construct is then used to obtain lower bounds in the context of a proposed branch and bound scheme, which is proven to converge to a global optimal solution. A numerical example is presented to illustrate the proposed algorithm.}, 
 	year = {1992}, 
 	author = {Sherali, Hanif D and Tuncbilek, Cihan H}, 
-	note = {10.1007/BF00121304}, 
 	journal = {Journal of Global Optimization}, 
 	volume = {2}, 
 	pages = {101-112}, 
 	publisher = {Springer Netherlands}, 
-	url = {http://dx.doi.org/10.1007/BF00121304}, 
 	title = {A global optimization algorithm for polynomial programming problems using a Reformulation-Linearization Technique}, 
 }
 
 @article{Spang1998,
-	abstract = {MOTIVATION: Database search programs such as FASTA, BLAST or a rigorous Smith-Waterman algorithm produce lists of database entries, which are assumed to be related to the query. The computation of statistical significance of similarity scores is well established for single pairs of sequences and using purely random models. However, the multi-trial context of a database search poses new problems. The credibility of a certain score obtained in a database search decreases with the amount of data that is compared. To improve p-value computation for database search experiments, statistical properties of the databases, such as the distribution of sequence length and effects induced by frequently repeated sequence patterns, need to be taken into account. RESULTS: We investigated the SWISS-PROT protein database Release 31.0 running extensive simulations of database searches. A discrepancy is observed between the theoretical predictions and the empirical distribution. To correct for this, we evaluate the statistical significance of scores in the context of a database search by a contrasting semi-random model. This model enhances purely random models by one additional parameter reflecting individual statistical properties of real databases. We call this parameter the effective size of the database. CONTACT: r.spang@dkfz-heidelberg.de;m.vingron@dkfz-hei del berg.de}, 
 	number = {3}, 
 	year = {1998}, 
 	author = {Spang, R and Vingron, M}, 
@@ -921,19 +793,16 @@ concept.
 	volume = {14}, 
 	address = {Deutsches Krebsforschungszentrum (DKFZ), Theoretische Bioinformatik, Im Neuenheimer Feld 280, D-69120 Heidelberg, Germany}, 
 	pages = {279-84}, 
-	url = {http://view.ncbi.nlm.nih.gov/pubmed/9614271}, 
 	title = {Statistics of large-scale sequence searching}, 
 }
 
 @inproceedings{Vazirani1990,
-	abstract = {A model of learning that expands on the Valiant model is introduced. The point of departure from the Valiant model is that the learner is placed in a Markovian environment. The environment of the learner is a (exponentially large) graph, and the examples reside on the vertices of the graph, one example on each vertex. The learner obtains the examples while performing a random walk on the graph. At each step, the learning algorithm guesses the classification of the example on the current vertex using its current hypothesis. If its guess is incorrect, the learning algorithm updates its current working hypothesis. The performance of the learning algorithm in a given environment is judged by the expected number of mistakes made as a function of the number of steps in the random walk. The predictive value of Occam algorithms under this weaker probabilistic model of the learner's environment is studied}, 
 	month = {oct}, 
 	year = {1990}, 
 	author = {Aldous, D and Vazirani, U}, 
 	booktitle = {Foundations of Computer Science, 1990. Proceedings., 31st Annual Symposium on}, 
 	pages = {392 -396 vol.1}, 
 	doi = {10.1109/FSCS.1990.89558}, 
-	url = {/home/mic/Documents/Clanky/MarkovianExtensionOfValiantsLearningModel.pdf}, 
 	title = {A Markovian extension of Valiant's learning model}, 
 }
 
@@ -942,7 +811,6 @@ concept.
 	year = {2005}, 
 	author = {Vinar, Tomas}, 
 	school = {University of Waterloo}, 
-	url = {/home/mic/Documents/Clanky/TomasovaDizertacka.pdf}, 
 	title = {Enhancements to Hidden Markov Models for Gene Finding and Other Biological Applications}, 
 }
 
@@ -950,18 +818,15 @@ concept.
 	year = {2010}, 
 	author = {Visnovska, Martina and Nanasi, Michal and Vinar, Tomas and Brejova, Brona}, 
 	booktitle = {Information Technologies, Applications and Theory (ITAT)}, 
-	note = {Best paper award}, 
 	volume = {683}, 
 	address = {Smrekovica, Slovakia}, 
 	pages = {63-70}, 
 	publisher = {CEUR-WS}, 
-	url = {/home/mic/Documents/Clanky/EstimatingEffectiveDNADatabaseSIzeViaCOmpression.pdf}, 
 	title = {Estimating effective DNA database size via compression}, 
 }
 
 @article{Waterman1984,
 	isbn = {0022-5193}, 
-	abstract = {Sequence alignments are becoming more important with the increase of nucleic acid data. Fitch and Smith have recently given an example where multiple insertion/deletions (rather than a series of adjacent single insertion/deletions) are necessary to achieve the correct alignment. Multiple insertion/deletions are known to increase computation time from O(n2) to O(n3) although Gotoh has presented an O(n2) algorithm in the case the multiple insertion/deletion weighting function is linear. It is argued in this paper that it could be desirable to use concave weighting functions. For that case, an algorithm is derived that is conjectured to be O(n2).}, 
 	number = {3}, 
 	year = {1984}, 
 	author = {Waterman, S Michael}, 
@@ -969,17 +834,14 @@ concept.
 	volume = {108}, 
 	pages = {333 - 337}, 
 	doi = {10.1016/S0022-5193(84)80037-5}, 
-	url = {http://www.sciencedirect.com/science/article/pii/S0022519384800375}, 
 	title = {Efficient sequence alignment algorithms}, 
 }
 
 @phdthesis{Weimann2009,
 	year = {2009}, 
 	author = {Weimann, Oren}, 
-	note = {AAI0822239}, 
 	address = {Cambridge, MA, USA}, 
 	publisher = {Massachusetts Institute of Technology}, 
-	url = {/home/mic/Documents/Clanky/AcceleratingDynamicProgramming.pdf}, 
 	title = {Accelerating dynamic programming}, 
 }
 
@@ -992,13 +854,11 @@ concept.
 	pages = {078101}, 
 	publisher = {American Physical Society}, 
 	doi = {10.1103/PhysRevLett.98.078101}, 
-	url = {http://link.aps.org/doi/10.1103/PhysRevLett.98.078101}, 
 	title = {Probabilistic Sequence Alignments: Realistic Models with Efficient Algorithms}, 
 }
 
 @article{Yishai2004,
 	isbn = {1063-6676}, 
-	abstract = {We introduce a discriminative training algorithm for the estimation of hidden Markov model (HMM) parameters. This algorithm is based on an approximation of the maximum mutual information (MMI) objective function and its maximization in a technique similar to the expectation-maximization (EM) algorithm. The algorithm is implemented by a simple modification of the standard Baum-Welch algorithm, and can be applied to speech recognition as well as to word-spotting systems. Three tasks were tested: isolated digit recognition in a noisy environment, connected digit recognition in a noisy environment and word-spotting. In all tasks a significant improvement over maximum likelihood (ML) estimation was observed. We also compared the new algorithm to the commonly used extended Baum-Welch MMI algorithm. In our tests the algorithm showed advantages in terms of both performance and computational complexity.}, 
 	number = {3}, 
 	month = {may}, 
 	year = {2004}, 
@@ -1007,13 +867,11 @@ concept.
 	volume = {12}, 
 	pages = {204 - 217}, 
 	doi = {10.1109/TSA.2003.822639}, 
-	url = {/home/mic/Documents/Clanky/2004-discriminative-training-hmm-speech-recognition.pdf}, 
 	title = {A discriminative training algorithm for hidden Markov models}, 
 }
 
 @article{Zachariah2005,
 	isbn = {1097-0134}, 
-	abstract = {Sequence alignment underpins common tasks in molecular biology, including genome annotation, molecular phylogenetics, and homology modeling. Fundamental to sequence alignment is the placement of gaps, which represent character insertions or deletions. We assessed the ability of a generalized affine gap cost model to reliably detect remote protein homology and to produce high-quality alignments. Generalized affine gap alignment with optimal gap parameters performed as well as the traditional affine gap model in remote homology detection. Evaluation of alignment quality showed that the generalized affine model aligns fewer residue pairs than the traditional affine model but achieves significantly higher per-residue accuracy. We conclude that generalized affine gap costs should be used when alignment accuracy carries more importance than aligned sequence length. Proteins 2005. © 2004 Wiley-Liss, Inc.}, 
 	number = {2}, 
 	year = {2005}, 
 	author = {Zachariah, Marcus A and Crooks, Gavin E and Holbrook, Stephen R and Brenner, Steven E}, 
@@ -1022,7 +880,6 @@ concept.
 	pages = {329-338}, 
 	publisher = {Wiley Subscription Services, Inc., A Wiley Company}, 
 	doi = {10.1002/prot.20299}, 
-	url = {http://dx.doi.org/10.1002/prot.20299}, 
 	title = {A generalized affine gap model significantly improves protein sequence alignment accuracy}, 
 }
 
