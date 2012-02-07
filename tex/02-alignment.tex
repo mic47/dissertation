@@ -165,6 +165,10 @@ Lines 2-5 fills matrix $M$ and lines 6-8 implements the back-tracing procedure.
 From printed positions we can reconstruct alignment easily (move in diagonal
 corresponds to aligned bases, move in other direction corresponds to gap).
 
+Note, that for computing $i$-th row of matrix $M$ we need only values from row
+$i$ and $i-1$. Therefore if we want to know just score of the optimal alignment
+we can compute it in $O(n)$ memory: after computing of row $i$, we discard row
+$i-1$.
 
 \subsection{Checkpointing}
 
