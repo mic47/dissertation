@@ -113,7 +113,7 @@ to gene finding \cite{Majoros2005}.
 
 \subsection{GeneWise}
 
-GeneWise is protein (or profile HMM) to DNA aligner \cite{Birney2004}. It aligns
+GeneWise is protein (or profile HMM) to DNA aligner \cite{GeneWise2004}. It aligns
 proteins to homologous exons in DNA. Instead of PHMM defined as in chapter
 \ref{}, it used probabilistic transducers (which are similar to PHMM). Main
 difference in their model was that emissions were defined for transitions and
@@ -126,7 +126,7 @@ from section \ref{SECTION:SIMPLEPHMM} defined over protein alphabet
 Combined model was created by composition of models $T$ and $S$, from which were
 removed unnecessary states. To decrease state space even more, they remove more
 states, for example poly-pyrimidine states. More details are in
-\cite{Birney2004}.
+\cite{GeneWise2004}.
 
 Parameters for match and insert transitions were derived from amino acid
 distribution from the model $T$, from the codon bias in the organism and there
