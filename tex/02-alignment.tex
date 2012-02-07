@@ -144,11 +144,11 @@ For simplicity, we will assume that both sequences has same length $n$. This
 will allow us to express complexity in simple way.  At first we show how
 to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$ 
 
-In this section we show how to compute
-those values effectively and describe \correction{four}{Subject to change}
-methods how to decrease memory footprint and/or time complexity. Needleman-Wunch
-algorithm can be computed by following code. Note that $F$ is function, that
-computes value of $M[i,j]$ as in equation \ref{ALIGN:ALGO:AFFINE}.
+In this section we show how to compute those values effectively and describe
+several methods how to decrease memory footprint and/or time complexity.
+Needleman-Wunch algorithm can be computed by following code. Note that $F$ is
+function, that computes value of $M[i,j]$ as in equation
+\ref{ALIGN:ALGO:AFFINE}.
 
 \begin{lstlisting}
 Initialize M[i,0] and M[0,i]
@@ -170,6 +170,9 @@ $i$ and $i-1$. Therefore if we want to know just score of the optimal alignment
 we can compute it in $O(n)$ memory: after computing of row $i$, we discard row
 $i-1$.
 
+In following subsections we will review several techniques that can be used to
+improve performance of dynamic programming used to compute alignment.
+
 \subsection{Restricting Search Space}
 
 The commonly used technique that is used to speedup (and decrease memory
@@ -179,11 +182,15 @@ matrix $M$. In this section we will review few techniques that are used to with
 local or global alignment.
 
 If sequences are quite similar, the optimal global alignment will not be too far
-from 
+from diagonal of matrix $M$. Therefore it is not necessary to compute parts of
+matrix $M$, that are too far from diagonal (distance from diagonal is user
+defined value). However, this is not useful for local alignment or global
+alignment of distant sequences.
 
 \subsubsection{Seeds and X-drop Heuristic}
 
-Seeds are usually used to reduce time complexity of local or global alignments.
+Seeds are usually used to reduce time complexity of local or global alignments. 
+
 
 %space seeds, daughter seeds
 
