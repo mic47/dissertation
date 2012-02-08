@@ -1,27 +1,31 @@
-\chapter{Alignment}
+\chapter{Alignments}
 
 Parts of two sequences are homologous, if they have evolved from same part of
 their ancestral sequence. Aim of sequence alignment is to identify homologous
 sequences. There are several evolution events, that usually happens:
 mutation of residue into another residue, deletion of part of the sequence,
 insertion of residues into the sequence. We omit rearrangements of sequence,
-because it cannot be represented by alignment. Alignment is one way of
-representing of comparisons of sequences. We obtain alignment of $k$
-sequences by inserting dashes into sequence in a way, that they will have same
-length. Therefore we can represent alignment as matrix or table. Row of the
-alignment is a sequence with inserted dashes and column is list of residues from
-all row on certain position.
+because it cannot be represented by alignment. Alignment is data structure that
+represents comparisons of sequences. We obtain alignment of $k$ sequences by
+inserting dashes into sequence in a way, that they will have same length. We can
+represent alignment as matrix or table. Row of the alignment is a sequence with
+inserted dashes and column is list of residues from all row on same position.
 
-Alignments have biological meaning. We try to create alignment in a way, that
-homologous residues are in same row. Dashes represents either the parts of
-sequence that were deleted during evolution (deletions) or that on those
-positions were inserted some sequences to other sequence (insertions). If we
-have alignment of sequences from current organisms then without some prior
-knowledge it is not possible to distinguish between insertions and deletions.
-Therefore we will refer to those as to indels.
+
+Biological meaning of an alignment is following: homologous residues (those that
+have developed from common ancestor) are in same row. Dashes represents either
+the parts of sequence that were deleted during evolution (deletions) or that on
+those positions were inserted some sequences to other sequence (insertions). In
+alignment is not possible to distinguish between insertions and deletions -- we
+cannot tell if something was inserted into one sequence or if there was deletion 
+in the other sequences. Therefore we will refer to insertions and deletions at
+to \firstUseOf{indels}.
 
 \begin{example} 
-Consider following evolution history of hypothetical DNA sequences of two current organism $X$ and $Y$:
+Consider following evolution history of hypothetical DNA sequences of two
+current organism $X$ and $Y$. There was parent sequence $P$ which evolves into
+$X'$ and $Y'$ and after that $X'$ evolves into $X$ and $Y'$ evolves into $Y$.
+This evolution history is described bellow: 
 \begin{verbatim}
 X:      C C     G C G A C C T T G C             A C C A
 X':     C C     G           T T G C             A G C A
@@ -29,26 +33,30 @@ P:      A C T G G           T C G C T G A G C T A G C A
 Y':     T C T G G           C C           G C T A G C A
 Y:      T C T A G           C C           G A T A G C A
 \end{verbatim}
-$X$ and $Y$ evolved from parent sequence $P$ through sequences $X'$ and $Y'$.
+%$X$ and $Y$ evolved from parent sequence $P$ through sequences $X'$ and $Y'$.
 During evolution from $P$ to $X'$, four events occurred: deletion of 
 sequences ``TG''  and ``TGAGCT'' and mutations of two bases. Evolution of $X$
 was ended by  
-positions bases were substituted. In change from $X'$ to $X$, one base was
-changes and siequence ``CGACC'' was inserted.  Similarly, from 
-REmove this paragraph
+positions bases were substituted. During evolution from $X'$ to $X$, one base was
+changed and sequence ``CGACC'' was inserted.  
 
-\begin{verbatim}
-X:      C C     G C G A C C T T G C             A C C A
-Y:      T C T A G           C C           G A T A G C A
-\end{verbatim}
-We obtain actual alignment by removing columns that contains only gaps a
+From evolution history described above, we can create alignment of current
+sequences $X$ and $Y$ by removing ancestral sequences $X',Y'$ and $P$, 
+%\begin{verbatim}
+%X:      C C     G C G A C C T T G C             A C C A
+%Y:      T C T A G           C C           G A T A G C A
+%\end{verbatim}
+%We obtain actual alignment by 
+removing columns that contains only gaps and
 replacing gaps with dashes (gap symbols). 
 \begin{verbatim}
 X:      C C - - G C G A C C T T G C - - - A C C A
 Y:      T C T A G - - - - - C C - - G A T A G C A
 \end{verbatim}
-If two residues are in same column in alignment then they are homologous.
-Being homologous does not tell that those symbols are equal. 
+In this alignment symbols that are in same column are truly homologous (they
+evolved from same symbol in $P$).
+%If two residues are in same column in alignment then they are homologous.
+As you can see, homologous symbols do not have to be equal.
 \end{example}
 
 There is only one alignment that reflects evolution history. Our goal is to find
@@ -56,63 +64,74 @@ this alignment, or at least find the alignment, that is as close as possible.
 Alignment described above is \firstUseOf{global alignment} because it is
 alignment of whole sequences. Local alignment is alignment of parts of
 sequences: local alignment of sequences $X$ and $Y$ is global alignment of
-strings $X'$ and $Y'$ where $X'$ is substring of $X$ and $Y'$ is substring of
+strings $\bar{X}$ and $\bar{Y}$ where $\bar{X}$ is substring of $X$ and $\bar{Y}$ is substring of
 $Y$.  Since global alignment does not consider rearrangement events
 \footnote{For example duplication, reversal or translocation.}, local alignments
 are useful in such scenarios.  We will mostly consider global alignments, but
 most of the methods can be altered also to local alignments.
 
-In this chapter we will review basic methods how to create alignments. At first
-we will discuss pair alignments (alignment of two sequences). \correction{Later in this
-chapter we will review some methods how to construct multiple alignments.}{urvat
-ak to nie je pravda}
+In this chapter we will review basic methods how to create alignments. We will
+discuss basic scoring schemes and algorithms that finds optimal alignment under
+such scheme.
+
+%At first
+%we will discuss pair alignments (alignment of two sequences).
+%\correction{Later in this
+%chapter we will review some methods how to construct multiple alignments.}{urvat
+%ak to nie je pravda}
 
 \section{Scoring Schemes}
 
 Since we want to construct alignments that have biological meaning, we have to
 develop a way, how to assess the quality of an alignment. On way of doing it is
 to define scoring scheme. There are many ways how to develop good scoring
-scheme. In this chapter we will consider the basic one.
+scheme. 
 
 
 Scoring schemes covered in this chapter will score each column of an alignment,
-which does not contain gap, independently and gaps will be penalised by penalty
-that depends on the length of the gap. Score of an alignment is sum of the
-scores of all ungapped columns and gaps. The simplest scoring scheme is
-following. We will score column containing residues $a$ and $b$ by $S[a,b]$.
-Gap have score $g+dx$ where $x$ is the length of an alignment. $g$ is gap
+which does not contain gap, independently. Gaps will be penalised by penalty
+that depends on the length of the gap. Score of an entire alignment is sum of
+the scores of all ungapped columns plus sum of the scores of all gaps. The
+simplest scoring scheme is following. 
+
+We will expect, that all sequences are from finite alphabet $\Sigma$. For DNA,
+$\Sigma=\{A,C,G,T\}$, for proteins sigma contains $20$ codes of amino acids.
+We will score column containing residues
+$a$ and $b$ by $S[a,b]$ where $S$ is matrix of size $|\Sigma|\times|\Sigma|$.
+$S$ is called \firstUseOf{substitution matrix}.
+Every gap gap has score $g+dx$ where $x$ is the length of an alignment. $g$ is gap
 opening penalty and $d$ is gap extension penalty. Both are usually
 negative\footnote{Having positive gap penalty is probably not very useful.}.  We
-call such gap model affine gap model.  Matrix $S$ is called substitution matrix.
-For alignment of DNA has size $4\times 4$ and for proteins has size $20\times
-20$. Basically, there are two ways of deriving substitution matrices. One way is
-to derive them from alignment that were constructed by hand by biologist. Such
-matrices are for example PAM20 for proteins, or ?? 
+call such gap model affine gap model. 
 
-Other possible solution is to use theoretical model of evolution, like
-Jukes-Cantor model \cite{}, \todo{este ine priklady}
-
-Intuition behind this scoring system are probabilistic. Assume, that we have
-alignment of $X$ and $Y$ without gaps. We assume that each base in DNA evolves
-independently. Therefore for every pair of residues $a,b$ we have probability
+Intuition behind this scoring system are probabilistic. Assume that we have
+alignment of $X$ and $Y$ without gaps and that each base in DNA evolves
+independently. Therefore for every pair of residues $a,b$ there is probability
 that $a$ will evolve into $b$. Therefore the probability that $X$ will evolve
 into $Y$ is product of probabilities that $X_i$ will evolve into $Y_i$. By
 taking logarithm we will get sum of logarithm of substitution probabilities.
-Therefore $S[a,b]$ is proportional to the logarithm of probability that $a$
-evolves into $b$. Values of $S$ are usually multiplied by some constant and
-rounded to integers to avoid use of floating point numbers. 
+Therefore values $S[a,b]$ are proportional to the logarithm of probability that
+$a$ evolves into $b$. Values of $S$ are usually probabilities multiplied by some
+constant and rounded to integers to avoid use of floating point numbers. 
+
+Basically, there are two ways of deriving substitution matrices. One way is
+to derive them from alignments that were constructed manually by biologists. Such
+matrices are for example PAM or BLOSUM matrices. Other possible solution is to
+use theoretical model of evolution, for example Jukes-Cantor model. More details
+can be found in \cite{Durbin1998}.
 
 \section{Needleman-Wunsch algorithm}
 
 Alignment with scoring scheme with previous section can be found by
-Needleman-Wunsch algorithm. 
-%TODO: nieco o tom ze to bol povodne kubicky, ale sankoff spravil lepsiu verziu
-
-This algorithm uses score table $S$, affine gap model with gap penalty $d$ and
-gap opening penalty $g$ is zero. To align sequences $X$ and $Y$ with length $n$
-and $m$ respectively, we define matrix $M$ of size $n\times m$. $M[i,j]$ will be
-the score of the best alignment of sequences $X[:i]$ and $Y[:j]$. We can compute
-$M[i,j]$ by following equations:
+Needleman-Wunsch algorithm \cite{Durbin1998}.
+\todo{nieco o tom ze to bol povodne kubicky, ale sankoff spravil lepsiu verziu}
+This algorithm uses arbitrary score table $S$, affine gap model with gap penalty
+$d$ with
+gap opening penalty $g=0$ (this model is sometimes called linear gap model). To
+align sequences $X$ and $Y$ with length $n$ and $m$ respectively, we define
+matrix $M$ of size $n\times m$. $M[i,j]$ will be the score of the best alignment
+of sequences $X[:i]$ and $Y[:j]$. We can compute $M[i,j]$ by following
+equations:
 
 \begin{align} 
 M[0,0] &= S[X_0,Y_0]\\
@@ -127,29 +146,29 @@ M[i,j] &= \max
 
 By computing $M[n-1,m-1]$ we have the score of the alignment of $X$ and $Y$ with
 the highest score. We can reconstruct such alignment by back-tracing matrix $M$.
-Matrix 
+Back-tracing procedure will be described later.
 
 To cope with gap opening penalty, we have to slightly change the algorithm.
 We define two other matrices $M_X$ and $M_Y$ of same size as $M$. $M_X[i,j]$
 will contain the score of alignment of sequences $X[:i]$ and $Y[:j]$ than ends
 with gap in sequence $X$. $M_Y$ is analogous. Now we show how to compute $M,M_X$
-and $M_Y$. \todo{Skontroluj to! Navyse som si nie isty ci affine nie je len bez
-$g$ a s $g$ je to generalized affine}
+and $M_Y$. 
 
+\todo{Je vlastne vobec treba taketo vypisovat?}
 \begin{align}
 M[0,0] &= S(X_0,Y_0)\\
 M[0,i] &= M_X[0,i] = i\cdot d+g, 0 < i < m\\
 M[i,0] &= M_Y[i,0] = i\cdot d+g, 0 < i < n\\
+M_X[i,0] &= -\infty, 0\leq i< n\\
+M_Y[0,i] &= \infty, 0 \leq i< m\\
 M[i,j] &= \max
-\begin{cases}
+\begin{cases}\label{ALIGN:ALGO:REALAFFINESTART}
  M[i-1,j-1]+S(X_i,X_j)\\
  M[i,j-1]+d\\
  M[i-1,j]+d\\
  M_X[i,j]\\
  M_Y[i,j]
 \end{cases}, 0<i<n,0<j<m\\
-M_X[i,0] &= -\infty, 0\leq i< n\\
-M_Y[0,i] &= \infty, 0 \leq i< m\\
 M_X[i,j] &= \max
 \begin{cases}
 M[i-1,j]+g+d\\
@@ -159,49 +178,69 @@ M_Y[i,j] &= \max
 \begin{cases}
 M[i,j-1]+g+d\\
 M_Y[i,j-1]+d
-\end{cases}, 0<i<n,0<j<m
+\end{cases}, 0<i<n,0<j<m\label{ALIGN:ALGO:REALAFFINEEND}
 \end{align}
-\todo{Je vlastne vobec treba taketo vypisovat?}
 As in previous case, values of $M,M_X$ and $M_Y$ can be computed by simple
 dynamic and by back-tracing these matrices we can obtain optimal alignment of
-$X$ and $Y$.
-Both algorithms have time complexity of $O(nm)$ and memory complexity $O(mn)$.
-Using tricks described in later section, the memory and even time comple
+$X$ and $Y$.  Both algorithms have time complexity of $O(nm)$ and memory
+complexity $O(mn)$.  Using tricks described later, the memory and even time
+complexity will be improved.
 
 \section{Dynamic Programming}\label{DYNPROG}
 
-For simplicity, we will assume that both sequences has same length $n$. This
-will allow us to express complexity in simple way.  At first we show how
-to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$ 
-
 In this section we show how to compute those values effectively and describe
-several methods how to decrease memory footprint and/or time complexity.
-Needleman-Wunch algorithm can be computed by following code. Note that $F$ is
-function, that computes value of $M[i,j]$ as in equation
-\ref{ALIGN:ALGO:AFFINE}.
+several methods how to decrease memory footprint and/or time complexity. 
 
+Both algorithm from previous sections contain recursive procedure, that update
+matrix $M$ (or three matrices $M,M_X$ and $M_Y$). It used only values from
+neighbouring cells which have at least one coordinate smaller. Let $F$ be the
+function, that takes as input matrix $M$ (or $M, M_X$ and $M_Y$ in case of
+$g\not=0$) and coordinate $(i,j)$ and computes
+$M[i,j]$ according equation \ref{ALIGN:ALGO:AFFINE} (or equations
+\ref{ALIGN:ALGO:REALAFFINESTART}-\ref{ALIGN:ALGO:REALAFFINEEND}).
+Let $F'$ be same function as $F$, but with $\max$ replaced with $\arg\max$.
+Clearly, $F'(M,(i,j))$ will return which cell was used to computation of
+$F(M,(i,j))$.
+
+%For simplicity, we will assume that both sequences has same length $n$. This
+%will allow us to express complexity in simple way.  At first we show how
+%to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$ 
+Needleman-Wunch algorithm can be computed by following code. Note that in case
+of gap opening penalty is not zero, matrix $M$ should be replaced with triple of
+matrices $(M,M_X,M_Y)$. 
+
+\lstset{showstringspaces=false}
 \begin{lstlisting}
 Initialize M[i,0] and M[0,i]
 for i in 1...n-1
-  for j in 1...n-1
-    M[i,j] = F(M[i-1,j-1],M[i-1,j],M[i,j-1])
-i = j = n - 1
+  for j in 1...m-1
+    M[i,j] = F(M,(i,j))
+(i,j) = (n-1,m-1)
 while i > 0
-  (i,j) = F'(M[i-1,j-1],M[i-1,j],M[i,j-1])
-  print (i,j)
+  (i',j') = F'(M,(i,j))
+  (a,b) = (X[i],Y[j])
+  if i' = i then a = '-'
+  if j' = j then b = '-'
+  print column of alignment (a,b)
+  (i,j) = (i',j')
 \end{lstlisting}
 
-Lines 2-5 fills matrix $M$ and lines 6-8 implements the back-tracing procedure.
-From printed positions we can reconstruct alignment easily (move in diagonal
-corresponds to aligned bases, move in other direction corresponds to gap).
+Lines 2-5 fills matrix $M$ and lines 6-12 implements the back-tracing procedure.
+Time complexity of this algorithm is $O(nm)$ and memory requirements are $O(mn)$
+since we keep in memory matrix $M$.
 
 Note, that for computing $i$-th row of matrix $M$ we need only values from row
 $i$ and $i-1$. Therefore if we want to know just score of the optimal alignment
-we can compute it in $O(n)$ memory: after computing of row $i$, we discard row
-$i-1$.
+we can compute it in $O(m+n)$ memory: after computing of row $i$, we can discard
+row $i-1$.
 
 In following subsections we will review several techniques that can be used to
 improve performance of dynamic programming used to compute alignment.
+
+\bigskip
+{\large\bf Stihol som toho menej, takze odtialto dole to nie je uplne hotove.
+Ale teraz sa snazim, aby vsetko nad tymto napisom bolo viac menej hotove. }
+\bigskip
 
 \subsection{Restricting Search Space}
 
@@ -368,7 +407,8 @@ This technique reduce time complexity of alignment algorithm to $O(n^2/log n)$.
 Unlike four-russian trick \cite{}, this technique enables usage of any cost
 matrix.  This idea combines LZ78 factorization \cite{} and $O(A+B)$ algorithm
 for computing row minima/maxima in totally monotone matrix of size $A\times
-B$ \cite{Aggarwal1987}.
+B$ \cite{Aggarwal1987}. We will discuss only two main ideas behind this
+algorithm.
 
 \subsubsection{Totally Monotone Matrices}
 
@@ -419,6 +459,8 @@ values of output border in time $O(n'+m')$ by SMAWK algorithm.
 %convex condition 
 
 \subsubsection{LZ78 factorization}
+
+TODO: co je LZ78
 
 LZ78 factorization divide sequence $S$ into $k$ strings $S_0,\dots,S_{k-1}$, where
 $S_1S_2\dots S_k=S$ and for every index  $i,0< i <k$ there is index $0\leq j<i$
