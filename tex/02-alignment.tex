@@ -237,29 +237,26 @@ row $i-1$.
 In following subsections we will review several techniques that can be used to
 improve performance of dynamic programming used to compute alignment.
 
-\bigskip
-{\large\bf Stihol som toho menej, takze odtialto dole to nie je uplne hotove.
-Ale teraz sa snazim, aby vsetko nad tymto napisom bolo viac menej hotove. }
-\bigskip
-
 \subsection{Restricting Search Space}
 
 The commonly used technique that is used to speedup (and decrease memory
-requirements) of sequence alignment is to restrict the search space. By
-restricting search space we mean to compute alignment only in some parts of
-matrix $M$. In this section we will review few techniques that are used to with
-local or global alignment.
+requirements) of sequence alignment is to restrict the search space of dynamic
+programming. By restricting search space we mean to compute alignment only in
+some parts of matrix $M$. We assume that omitted parts of matrix correspond to
+alignments with low score. In this section we will review few techniques that are
+used to with local or global alignment.
 
 If sequences are quite similar, the optimal global alignment will not be too far
 from diagonal of matrix $M$. Therefore it is not necessary to compute parts of
 matrix $M$, that are too far from diagonal (distance from diagonal is user
 defined value). However, this is not useful for local alignment or global
-alignment of distant sequences.
+alignment of too distant sequences. Now we will discuss some more advanced
+techniques to restricting search space of dynamic programming.
 
 \subsubsection{Seeds}
 
-Seeds are usually used to reduce time complexity of local alignments.
-They were introduced in BLAST algorithm\cite{}.  Seed is position in both
+Seeds are usually used to reduce time complexity of local alignments.  They were
+introduced in BLAST algorithm \cite{Altschul1990}.  Seed is position in both
 sequences, that can be extended to alignment with high score. After is seed
 found, it is extended with extension algorithm to local alignment.
 
@@ -277,16 +274,24 @@ be found. Low specificity implies longer running time.
 
 Traditional approach is to find candidate seeds positions $i$ and $j$ in
 sequences $X$ and $Y$, such that $X[i:i+\tau]=Y[j:j+\tau]$ for some constant
-$\tau$. This approach is used in BLAST \cite{}. Other approaches is to allow some
-constant number of mismatches \cite{}. \firstUseOf{Space seeds} allow to
-contain gaps \cite{}. \firstUseOf{Vector seeds} \cite{} and \firstUseOf{daughter
-seeds} \cite{Csuros2005} are generalization of previous seed methods.
+$\tau$. This approach is used in BLAST \cite{Altschul1990}. Other approaches is
+to allow some constant number of mismatches \cite{Kent2002}. \firstUseOf{Space
+seeds} allow to contain gaps \cite{Ma2002}. \firstUseOf{Vector seeds}
+\cite{Brejova2005vector} are extension of space seeds and \firstUseOf{daughter
+seeds} \cite{Csuros2005} are generalization of previous seed methods. All of
+those methods vary in speed, sensitivity and specificity.
 
 Extension is done in both ways, usually using equation \ref{ALIGN:ALGO:AFFINE}
 (equation is altered in reverse direction). Extension is stopped, when some
 criteria is reached. For example, BLAST introduced X-drop heuristics: extension stops
 if score of alignment is lower than best score that was seen so far minus user
-defined constant \cite{}.
+defined constant \cite{Altschul1997}.
+
+\bigskip
+{\large\bf Stihol som toho menej, takze odtialto dole to nie je uplne hotove.
+Ale teraz sa snazim, aby vsetko nad tymto napisom bolo viac menej hotove. }
+\bigskip
+
 
 %space seeds, daughter seeds
 
