@@ -364,9 +364,6 @@ have to remember every $k$-th row and one block of size $k$, so memory
 complexity is $O(\lceil n/k\rceil n+ kn)$. If we set $k=\sqrt n$ then memory
 complexity will be $O(n\sqrt n)$ while time complexity will remain same.
 
-\bigskip
-{\large\bf Odtialto hore povazujem vsetko za ``hotove''. }
-\bigskip
 
 
 \subsection{Hirschberg Algorithm}
@@ -375,36 +372,41 @@ complexity will be $O(n\sqrt n)$ while time complexity will remain same.
 memory requirements of sequence alignment \cite{Hirschberg1975}. Idea is
 following: if we want alignment of sequences $X$ and $Y$ which has bases $X_i$
 and $Y_i$ aligned, we have do dynamic programming only in submatrices
-$M_1=M[0:i-2,0:j-2]$ and $M_2=M[i=1:n-1,j-1:n-1]$. If $i=\lceil n/2\rceil$ then
+$M_1=M[0:i-2,0:j-2]$ and $M_2=M[i-1:n-1,j-1:m-1]$. If $i=\lceil n/2\rceil$ then
 total number of cells in those matrices is roughly half of the number of cells
 in $M$. Hirschberg algorithm incorporates procedure how to compute such $j$ for
-$i=\lceil n/2\rceil$ in optimal alignment of both sequences in $O(n^2)$ time and
-$O(n)$ memory\footnote{There is one problem. $X_i$ does not have to be aligned
+$i=\lceil n/2\rceil$ in optimal alignment of both sequences in $O(nm)$ time and
+$O(n+m)$ memory\footnote{There is one problem. $X_i$ does not have to be aligned
 to $X_j$, because $X_i$ is indel. In such case, there is $j$ such that $X_i$ is
 aligned to gap that comes right after $X_j$ and we have to change $M_1$ to
-$M[0:i-2,0:j-1]$}. After that HA uses to determine submatrices $M_1,M_2$ and
-recursively find solution in both submatrices.
+$M[0:i-2,0:j-1]$}. HA use such $j$ to determine submatrices $M_1,M_2$. Optimal
+alignment is concatenation of optimal alignments in matrices $M_1$ and $M_2$.
 
 To determine $j$, such that $X_i,i=\lceil n/2\rceil$ is aligned to $Y_j$ (or
 $X_i$ is aligned to gap right after $Y_j$) HA uses following algorithm: Let
 $B(X,Y)$ be the algorithm, that computes for $X$ and $Y$ vector $LL(k)$, where
 $LL(k)=M[n-1,k]$ ($LL$ is the last row of $M$). This can be computed in
-$O(|X||Y|)$ time and $O(|X|+|Y|)$ memory by slightly modified\footnote{After
-computing $i$-th row we have to throw computed values for row $i-1$.} algorithm
-from section \ref{DYNPROG}.  We compute $LL_1=B(X[0:i],Y)$ and $LL_2=B(
-(X[i,n])^R,Y)$. Index of the column from $LL_1+LL_2$ with the maximum value is
-column which we are searching for. \todo{Mam pocit, ze toto je zle a v
-originalnom clanku je chyba}
+$O(nm)$ time and $O(n+m)$ memory using algorithm from section
+\ref{DYNPROG}.  We compute $LL_1=B(X[0:i],Y)$ and $LL_2=B( (X[i,n])^R,Y^R)$.
+While $LL_1[k]$ contains score of optimal alignment of $X[0:i]$ and $Y[0:k]$,
+$LL_2^R[k]$ contains score of optimal alignment of $X[i,n]$ and $Y[k,m]$.
+$j$ is such column, that maximizes $\max\{LL_1[j]+d+LL_2^R[j],
+LL_1[j-1]+LL_2^R[j] \}$.
 
 Since total size of the subproblem is always at most half of the size of the
-original problem (see figure \ref{}), the running time of the algorithm will
-double and therefore running time of HA is still $O(|X||Y|)$. Since HA keeps in
-memory only constant number of rows of $M$ and reconstructed alignment, memory
-requirements are $O(|X|+|Y|)$.
+original problem, the running time of the algorithm will double and therefore
+running time of HA is still $O(|X||Y|)$. HA keeps in memory only constant number
+of rows of $M$ and reconstructed alignment and therefore memory requirements are
+$O(|X|+|Y|)$.
 
 Hirschberg Algorithm (HA) reduce memory more than checkpointing, but HA can be
 only applied to algorithms that use back-tracing. For example Forward-Backward
-algorithm can be improved by checkpointing but not by HA. More in chapter TODO.
+algorithm can be improved by checkpointing but not by HA. More in chapter
+\ref{CHAPTER:HMM}.
+
+\bigskip
+{\large\bf Odtialto hore povazujem vsetko za ``hotove''. }
+\bigskip
 
 \subsection{Exploiting Sequence Repetition}
 
