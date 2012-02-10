@@ -536,10 +536,10 @@ M[i,j] &= \max
  M[i-1,j-1]+S(X_i,X_j)\\
  M[i,j-y]+f(y)\\
  M[i-x,j]+f(x)
-\end{cases}, 0<x\leq i<n,0<y\leq j<m
+\end{cases}, 0<x\leq i<n,0<y\leq j<m\label{ALIGN:ARBITRARYGAPEQUATION}
 \end{align}
 This algorithm has time complexity of $O(n^3)$ where $n$ is the length of the
-longest sequence. Note that this was the original Needleman-Wunsch \cite{}
+longest sequence. Note that this was the original Needleman-Wunsch 
 algorithm \cite{Needleman1970} and later it was improved to $O(n^2)$ algorithm
 \cite{Sankoff1972} for alignment without gap penalties.
 Unlike previous recursive equations, int this algorithm $M[i,j]$ depends not
@@ -553,22 +553,168 @@ Arbitrary gap penalties leads to slow running time, however if we place some
 restrictions on gap penalty, we can use faster algorithms. In this section we
 show algorithm that computes optimal alignment on $O(nm\log n)$ time if gap
 penalty is convex or concave. In some cases this algorithm can be improved to
-$O(nm)$ time.
+$O(nm)$ time. Originally this algotihm was discovered independently by Miller
+{\it et al. (1988)} and Galil {\it et al. (1989)} \nocite{Miller1988,Galil1989}.
 
-\cite{Miller1988,GusfieldBook,Galil1989}
-
-We will present $O(n\log n)$ algorithm for convex gap functions. Algorithm for
-concave gap function is similar. 
+We will present variant $O(nm\log n)$ algorithm for concave gap functions which
+we believe is easiest to explain . Algorithm for convex gap function is similar.
+We consider only concave functions defined on natural numbers (gap length can be only
+natural number). Our definition of concave function is similar to one used in
+\cite{GusfieldBook}.
 
 \begin{definition}
-Function $f(x)$ is 
+We assume that $f(x)$ is nonpositive function defined on natural numbers. $f$
+is concave if and only if 
+\[f(x+1)-f(x)\geq f(x)-f(x-1)\]
+for all $x\in\mathbb{N}$.
 \end{definition}
 
-Now we describe algorithm to compute best alignment with convex gap function.
-Function $f(x)$ is convex, if and only if
+We will improve dynamic programming that computes matrix $M$ according equation
+\ref{ALIGN:ARBITRARYGAPEQUATION}. In this equation there are two
+problematic\footnote{In terms of time complexity} terms: $M[i,j-y]+f(y)$ and
+$M[i-x,j]+f(x)$. In dynamic programming from section \ref{DYNPROG}, we will have
+to add additional nested cycles that goes through all $x$ and $y$. Here we show
+data structure, that can compute $\max_{0\leq y < j}M[i,j-y]+f(y)$ in $O(\log
+n)$ time. This data structure can handle also second problematic term so we will
+focus only on the first one.
 
-\[f(x+y)\leq f(x)+f(y)\]
- 
+We want to find $\max_{0\leq y < j}M[i,j-y]+f(y)$, which is equivalent to
+\begin{equation}
+\max_{0\leq k < j}M[i,k]+f(j-k)\label{CONVEX:MAXFUNCTION}
+\end{equation}
+From now on we will use this second equation since it is more suitable for this
+approach.  Our data structure is list $L_j$ of such $k$'s that can be in future
+maximum. $L_j$ will called \firstUseOf{candidate list} and members of $L_j$ will be
+called \firstUseOf{candidates}. $L_j$ is candidate list for computing $M[i,j]$.
+$L_{j+1}$ will be always computed from $L_j$ by adding $j$ and removing some
+elements of $L_j$. For simplicity, let $G(k,j) = M[i,k]+f(j-k)$. If $k\in L_j$,
+than \firstUseOf{rank} of $k$ is $G(k,j)$. Note that rank of candidates will
+change when we move from $L_j$ to $L_{j+1}$.
+
+We will explain this algorithm in iterative way: we will be adding to algorithm
+new features until it will have desired time complexity. 
+
+%Let $L_j$ be the list of such $k$'s. We will call $L_j$ a \firstUseOf{candidate
+%list} and members of $L_j$ \firstUseOf{candidates}. $L_j$ will be created from
+%$L_{j-1}\cup\{j-1\}$ by removing some elements. Let $G(k,j) =
+%M[i,k]+f(j-k)$.  \firstUseOf{Rank} of candidate $k$ is $G(k,j)$.  
+We start with $L_j$ containing all $k$ that are smaller then $j$.  We can find
+element with maximal rank by computing rank for all candidates from candidate
+list $L_j$. This leads to $O(j)$ algorithm to find maximum and $O(1)$ algorithm
+to update candidate list. This is equivalent to original Needleman-Wunsch
+algorithm \cite{Needleman1970}. At first, we will use following lemma to
+decrease size of list candidate lists.
+
+\begin{lemma}\label{OneStrikeAndOut}
+If $G(k,j)\leq G(k',j)$ for some $k<k'<j$ then
+$F(k,j')\leq G(k,j')$ for all $j'\geq j$. 
+\end{lemma}
+
+Use of this lemma is following. Once we found out that $G(k,j)\leq
+G(k',j),k<k'$, we can remove $k$ from $L_j', j'\geq j$ without affecting result
+of algorithm (because rank of $k$ will be always smaller than rank of $k'$).
+Before we continue, we will prove this lemma.
+
+\begin{proof}
+We show that claim from lemma holds for $j'=j+1$. Lemma can be proved by
+induction. Asi to dokazem inac, alebo vobec
+\end{proof}
+
+Using this lemma, we can improve our algorithm: 
+when we move from $j$ to $j+1$, we set $L_{j+1}=L_{j}\cup\{j\}$ and after that
+we remove from $L_{j+1}$ candidates that have lower or equal rank than following
+candidate (we will remove such candidates while they exists in $L_{j+1}$).
+%when we move from
+%$j-1$ to $j$ we add set $L_j=L_{j-1}\cup\{j-1\}$ and we compute $G(k,j)$ for
+%all $k\in L_j$ and remove all such $k$ where there exists $k'\in L_j$ such that
+%$G(k',j)\geq G(k,j)$. i
+This can be done on $O(|L_{j}|)$ time. After removing such candidates,
+candidates in $L_{j+1}$ will have decreasing rank. Therefore first item in
+$L_{j+1}$ is the maximal one, so we can find it $O(1)$ time.  This improvement
+still does not improve worst-case behaviour of our algorithm, but it might
+significantly reduce size of $L_j$. 
+
+Using this algorithm, $L_j$ will be always ordered by rank. However when we move
+to next column ($j+1$) the ranks will change and we have to remove some elements 
+to have this property again. This can be improved if we can compute column in
+which  candidates will broke order.
+
+%Nice property of $L_j$ is that it's members are ordered by rank. However, 
+%when we move to column $j+1$, ranks of candidates will change and order might be
+%broken and therefore we have to traverse through whole $L$ to fix that.
+\begin{definition}
+Let $H(k,k')=l, k<k'$ be minimal $l$, such that $G(k,l)\leq G(k',l)$. If such $l$ does
+not exists then $l$ is $\infty$ 
+\end{definition}
+
+If rank of $k$ is greater than rank of $k'$ then $H(k,k')$ is the first column
+(of first candidate list $L_{H(k,k')}$) where rank of $k$ is less or equal to
+rank of $k'$. In this column candidate $k$ will be removed for sure.  Note that
+such $l$ can be find using binary search (lemma \ref{OneStrikeAndOut} allows us
+to do it) in $O(\log n)$ time for any concave function. For some concave
+function we can find it in constant time.
+
+\begin{lemma}\label{TimeLemma}
+Let $k,k',k''\in L_j$ and $k<k'<k''$. If $H(k,k')\geq H(k',k'')$ then $k'$ can be
+removed from $L_j$.
+\end{lemma}
+
+\begin{proof}
+Since candidates in $L_j$ are ordered by rank then $G(k,j)>G(k',j)>G(k'',j)$.
+From definition of $H$ we know that 
+$G(k',j')\leq G(k'',k')$ for  all $j'>=H(k',k'')$. Since
+$H(k,k')\geq H(k',k'')$ then $G(k,j')\geq G(k',j')$ for all $j'<j$. Therefore rank
+of $k'$ will never be maximum and $k'$ can be removed.
+
+%and both are in $L_j$ then $k$ has higher rank that $k'$. Therefore
+%it is not maximum. $k'$ have in $H(k',k'')$ lower rank and will be removed from
+%candidate list (using lemma \ref{OneStrikeAndOut}). However, since $H(k,k')\geq
+%H(k',k'')$ rank of $k'$ will never be maximum.
+\end{proof}
+
+Now we can formulate final algorithm.i After updating $L_j$ from $L_{j-1}$,
+$L_j$ will satisfy following invariant.
+\begin{invariant}\label{LogGapInvariant}
+All consecutive elements $k,k'$ in $L_j$ satisfy following properties:
+\begin{enumerate}
+\item $k<k'$
+\item $G(k,j)>G(k',j)$ (decreasing rank)
+\item if $k'$ is not last element of $L_j$ and $k''$ is element right after $k'$
+in $L$ then $H(k,k')> H(k',k'')$ (increasing ``time'' when consecutive
+candidates will broke order of ranks)
+\end{enumerate}
+\end{invariant}
+
+Since rank is decreasing, we can find maximum in $O(1)$ time. Now we show how
+to compute $L_{j+1}$ from $L_j$. $L$ will be our working list.
+Let $L^k$ be $k$-th element of $L$ and $l$ be index of last element of $L$. 
+$L_{j+1}$ can be computed by following algorithm.
+\begin{enumerate}
+\item $L=L_j$
+\item If $G(L^0,j+1)< G(L^1,j+1)$ then remove $L^0$ from
+list (lemma \ref{OneStrikeAndOut}).
+\item While $H(L^{l-1},L^{l})<H(L^l,j-1)$ or $G(L^l,j+1)<G(j,j+1)$ do following: remove $L^l$ from list (lemma
+\ref{TimeLemma} and lemma \ref{OneStrikeAndOut}).
+\item $L_{j+1}=L\cup\{j\}$.
+\end{enumerate}
+First element is also first element that can broke order so we have to only it
+(step 2). Since we will add candidate $j$, we have to remove from the end of the
+list all candidates with smaller rank than $j$. Same arguments hold for ``time''
+when consecutive candidates will broke order of ranks. Since both (ranks and
+times) are ordered, we need to remove candidates only from the end of the list.
+
+It is easy to see that if $L_j$ satisfy invariant then $L_{j+1}$ will satisfy
+invariant. It is also clear that this algorithm will never remove candidate that
+will be maximum later, which conclude correctness of algorithm.
+
+Algorithm described above has running time $O(l\log(n))$, however amortized time
+complexity for computing all columns is $O(n\log n)$ since every candidate 
+will be added/removed to/from list at most once. If we can compute function $H$
+in constant time, time complexity is $O(n)$.
+
+
+
+
 
 %tu chcem definiciu convexnej gap funkcie
 %algoritmus ktory je v case n^2 log(n)
