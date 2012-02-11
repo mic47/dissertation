@@ -1,11 +1,11 @@
 \chapter{Hidden Markov Models}
 \label{CHAPTER:HMM}
 
-\abbreviation{Hidden Markov Models}{HMM} are graphical probabilistic model
-commonly used to sequence annotation or sequence annotation. HMM is
-probabilistic finite state machine that in every state emit one symbol. There
-are variants of HMMs that emits more symbols or which emits symbols on multiple
-tracks, we will discuss them later. In this chapter we will describe basic
+\abbreviation{Hidden Markov Models}{HMM} are graphical probabilistic models
+commonly used to sequence annotation or sequence alignment. An HMM is
+a probabilistic finite state machine that in every state emits one symbol. Later
+we will also discuss variants of HMMs that emit more symbols or that emit symbols on multiple
+tapes. In this chapter, we will describe basic
 definitions and algorithms that are used with HMMs.
 
 \section{Definitions}\label{SECTION:HMMDEF}
@@ -16,60 +16,109 @@ definitions and algorithms that are used with HMMs.
 %Anotacia
 %Pravdepodobnost anotacie
 %Footprint
-HMMs are generative probabilistic models (formal definition is given below). Initially HMM is in random state $q$
-according to \firstUseOf{initial distribution} $I$.  When HMM is in arbitrary
-state $q$ it emits one symbol from some alphabet $\Sigma$ according distribution
-$e_q$ and move to another state according transition distribution $a_q$. Note
-that emission and transition distribution can be different for every state.
-This process produce two sequences: sequence of states
-$\pi=\pi_0\pi_1\pi_2\dots$ called \firstUseOf{state path} and output sequence
-$X=X_0X_1X_2\dots$ over alphabet $\Sigma$. In this work we will use only
-discrete versions of HMMs and state space and alphabet will be always finite.
-HMMs can have several final states. If final states are present, once HMM reach
-that state generation of a sequence stops. In this chapter we will ignore final
-states. \todo{Budeme ich vobec niekde potrebovat?}
+HMMs are generative probabilistic models.
+The generative process of an HMM starts in a random state $q$ sampled according
+to the \firstUseOf{initial
+distribution} $I$.  When an HMM is in some state $q$ it emits one symbol from
+alphabet $\Sigma$ according distribution $e_q$ and moves to another state
+according to transition distribution $a_q$. Note that emission and transition
+distributions can be different for every state.  This process produces two
+sequences: sequence of states $\pi=\pi_0\pi_1\pi_2\dots$ called
+\firstUseOf{state path} and output sequence $X=X_0X_1X_2\dots$ over alphabet
+$\Sigma$. In this work we will use only discrete versions of HMMs with finite state
+space and alphabet.  HMMs can have several final states.
+If final states are present, once HMM reach that state generation of a sequence
+stops. In this chapter we will ignore final states. \todo{Budeme ich vobec
+niekde potrebovat? Final states mozno a zdo poznamky za definiciouu
+pravdepodobnosti sevkvecie (ak ich
+bude treba)}
 
-\begin{definition}\label{DEF:HMM}
-A tuple $H=(\Sigma,V,I,e,a)$ is \abbreviation{Hidden Markov Model}{HMM} where
-$\Sigma=\{\sigma_0,\dots\sigma_{m-1}\}$ is finite alphabet of size $m$,
-$V=\{v_0,\dots,v_{k-1}\}$ is finite set of state of size $k$. $I$ is
-distribution over $V$, $e$ is $k\times m$ matrix where each row contains
-distribution over $\Sigma$ and $a$ is stochastic matrix of size $m\times m$.
 
-We will write members of $e$ and $a$ as subscript, therefore $e_{u,v}$ is
-element from $e$ in $u$-th row and $v$-th column.  
-
-Therefore following conditions holds:
+\begin{definition}
+Any square matrix $M$ of size $n\times n$ is \firstUseOf{stochastic} if satisfy
+following properties.
 \begin{enumerate}
-\item $\forall v\in V, I_v \geq 0$
-\item $\sum_{v\in V}I_v=1$
-\item $\forall u\in V,\forall \sigma\in\Sigma, e_{u,\sigma}\geq0$
-\item $\forall u\in V, \sum_{\sigma\in \Sigma}e_{u,\sigma}=1$
-\item $\forall u,v\in V, a_{u,v}\geq0$
-\item $\forall u\in V, \sum_{v\in V}a_{u,v}=1$
+\item $\forall 0\leq i<n,0\leq j < m, 0\leq M[i,j]\leq 1$
+\item $\forall 0\le i<n, \sum_{i=0}^{m-1}M[i,j]=1$
 \end{enumerate}
 \end{definition}
 
-The conditions $1-6$ just ensure, that everything is correct probabilistic
-distribution.
+\begin{note}
+Stochastic matrix consists from $n$ distributions over set of size $n$.
+\end{note}
 
-\begin{example}
+\begin{definition}\label{DEF:HMM}
+A \abbreviation{Hidden Markov Model}{HMM} is a tuple $H=(\Sigma,V,I,e,a)$ where
+$\Sigma=\{\sigma_0,\dots\sigma_{m-1}\}$ is a finite alphabet of size $m$,
+$V=\{v_0,\dots,v_{k-1}\}$ is a finite set of state of size $k$, $I$ is
+a distribution over $V$, $e$ is $k\times m$ matrix where each row contains
+distribution over $\Sigma$ and $a$ is stochastic matrix of size $m\times m$.
+
+We will index elements of $e$ and $a$ by subscripts, therefore $e_{u,v}$ is
+element in $u$-th row and $v$-th column of $e$.  
+
+%Therefore following conditions hold:
+%\begin{enumerate}
+%\item $\forall v\in V, I_v \geq 0$
+%\item $\sum_{v\in V}I_v=1$
+%\item $\forall u\in V,\forall \sigma\in\Sigma, e_{u,\sigma}\geq0$
+%\item $\forall u\in V, \sum_{\sigma\in \Sigma}e_{u,\sigma}=1$
+%\item $\forall u,v\in V, a_{u,v}\geq0$
+%\item $\forall u\in V, \sum_{v\in V}a_{u,v}=1$
+%\end{enumerate}
+\end{definition}
+
+\begin{example} Consider is HMM $H=(\Sigma,V,I,e,a)$ from figure
+\ref{FIGURE:EXAMPLEHMM}.  Alphabet is $\Sigma=\{A,C,G,T\}$ and set of states is
+$V=\{R,In,E\}$.  Transition and emission distributions are described in figure.
+We can define initial distribution to $I_R=0.5, I_E=0.3$ and $I_{In}=0.2$.
+
+%Let $H=(\Sigma,V,I,e,a)$ be an HMM with
+%$\Sigma=\{A,C,G,T\}$, $V={I,G}$, $I=(0.2,0.8)$,
+%$e_{I,A}=0.1,e_{I,C}=0.2,e_{I,G}=0.3,e_{I,T}=0.4, e_{G,x}=0.25, x\in \Sigma$ and 
+%$a_{I,I}=0.9,a_{I,G}=0.1,a_{G,G}=0.95$ and $a_{G,I}=0.05$.
 \end{example}
 
-\begin{definition}\label{DEF:STATEPATH}
-Let $H=(\Sigma,V,I,e,a)$ be an HMM.
-We say that there is \firstUseOf{transition} from state $u$ to state $v$ if
-$a_{u,v}>0$. We will transition from $u$ to $v$ as $u\to v$ and $T=\{u\to v\mid
-a_{u,v}>0\}$ is the set of all transitions of $H$.
+%The conditions $1-6$ ensure that everything is correct probabilistic
+%distribution.
+\begin{figure}
+\begin{center}
+\includegraphics{../figures/exampleHMM.pdf}
+\end{center}
+\caption[Example of simple Hidden Markov Model]{
+Example of HMM have $3$ states
+that emits symbols from alphabet of size four.  Circles represents states, arc
+from state $u$ to $v$ represents probability $a_{u,v}$. Missing arc from state
+$In$ to $R$ means that $a_{In,R}=0$.  There are also arcs between states and
+fourtouples. Everu fourtuple represents emmision distribution of it's state.
+}\label{FIGURE:EXAMPLEHMM} 
+\end{figure}
 
-\firstUseOf{State path} $\pi=\pi_0\pi_1\dots\pi_{n-1}$ is the sequence of
+
+\begin{definition}\label{DEF:STATEPATH}
+Let $H=(\Sigma,V,I,e,a)$ be an HMM. We say that there is \firstUseOf{transition}
+form state $u$ to state $v$ if $a_{u,v}>0$. We will write transition from $u$ to
+$v$ as $u\to v$ and $T=\{u\to v\mid a_{u,v}>0\}$ is set of all transitions of
+$H$.
+
+\firstUseOf{State path} $\pi=\pi_0\pi_1\dots\pi_{n-1}$ is a sequence of
 states. We say that state path $\pi$ is \firstUseOf{admissible} if $I_{\pi_0}>0$
-and for all $1\leq i < n$ $\pi_{i-1}\to\pi_i\in T$. Otherwise $\pi$ is
+and  $\pi_{i-1}\to\pi_i\in T$ for all $1\leq i < n$. Otherwise $\pi$ is
 \firstUseOf{inadmissible}.
 \end{definition}
 
 \begin{example}
+Consider HMM from figure \ref{FIGURE:EXAMPLEHMM}. Set of transitions is
+$T=\{R\to R,R\to In, R\to E,In\to In, In\to E, E\to E, E\to In, E\to R\}$.
+State path $\pi_1=RRRRInER$ is admissible state path and $\pi_2=RRRInREER$ is inadmissible
+state path, because contain transition with zero probability ($In\to R$).
 \end{example}
+
+\bigskip
+{\large\bf Podtialto su zapracovane pripomienky}
+\bigskip
+
+
 
 %Formally, Hidden Markov Model is defined by it's finite state space
 %$Q=\{q_0,q_2,\dots, q_{k-1}\}$ of size $k$, initial probabilistic distribution
