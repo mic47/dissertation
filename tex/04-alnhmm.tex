@@ -23,11 +23,11 @@ scheme of Needleman-Wunch algorithm with affine gap model. It consists of three
 states: one that generates aligned pairs, and two states for generating
 indels (one for each sequence). Model is shown in figure \ref{PHMM:FIG:SIMPLEPHMM}. 
 
-\begin{figure}[Simple pair HMM model for alignment.]
+\begin{figure}
 \begin{center}
 \includegraphics{../figures/pairHMM.pdf}
 \end{center}
-\caption{Pair hidden Markov model for pair alignment. It has two transitions
+\caption[Simple pair HMM model for alignment]{Pair hidden Markov model for pair alignment. It has two transitions
 parameters $e_{M,M}$ and $e_{I,I}$, since we set $e_{I,M} = 1 - e_{I,I}$ and
 $e_{M,I}=\frac12-\frac12e_{M,M}$. Match state $M$ generates aligned pair of symbols
 and states $I_X$ and $I_Y$ generates symbols only in $X$ or $Y$ respectively.

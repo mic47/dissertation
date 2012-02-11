@@ -372,37 +372,38 @@ probable annotation for special classes of HMMs.
 \bigskip
 
 
-\section{Viterbi Algorithm}
-\todo{Viterbi variable ma rovnake oznacenie ako mnozina stavov. Treba to
-upravit}
-Viterbi algorithm is probably the most used decoding algorithm for Hidden Markov
-models
-Viterbi algorithm answer straightforward question: given the sequence
-$X=X_0X_1\dots X_n$, what
+\section{The Viterbi Algorithm}
+%\todo{Viterbi variable ma rovnake oznacenie ako mnozina stavov. Treba to
+%upravit} -- Brona tvrdi ze netreba
+The Viterbi algorithm  is probably the most frequently used
+\correction{decoding}{Zaviedli sme to len vagne} algorithm for Hidden Markov
+models \cite{Durbin1998}.
+The Viterbi algorithm answer a straightforward question: given the sequence
+$X=X_0X_1\dots X_{n-1}$, what
 is the most-likely state path $\pi$ that generates $X$? Formally, Viterbi
 algorithm finds a state path maximizing $\Pr\left( \pi\mid X,H \right)$. Since
 \[\Pr\left(\pi\mid X,H\right) = \frac{\Pr\left(\pi,X,\mid
-H\right)}{\Pr\left(X\mid H\right)}\] and quantity $\Pr\left(X\mid H\right)$ is fixed
+H\right)}{\Pr\left(X\mid H\right)}\] and quantity $\Pr\left(X\mid H\right)$ is
+fixed,
 this is same as finding $\pi$ maximizing $\Pr\left(X,\pi\mid H\right)$. 
 
-Viterbi algorithm is very similar to Forward algorithm. It starts with computing
-Viterbi variables $V[i,v]$. $V[i,v]$ stores the probability of the most probable 
-state path that generated $X[:i+1]$ and ends in state $v$. Viterbi algorithm
-also computes back-links $B[i,v]$, which contains the previous state in the most
+The Viterbi algorithm is very similar to the  Forward algorithm. It starts with computing
+Viterbi variables $V[i,v]$. Variable $V[i,v]$ stores the probability of the most probable 
+state path that generated $X[:i+1]$ and ends in state $v$. The algorithm
+also computes back-links $B[i,v]$ that contain the previous state in the most
 probable state path that generated $X[:i+1]$ and ends in state $v$. We can
-compute these values by following equations:
+compute these values by the following equations:
 \begin{align}
 V[0,v] &= I_{v}e_{v,X_0}, v\in V\\
 V[i,v] &= \max_{u\in V} V[i-1,u]a_{u,v}e_{v,X_i}, v\in V,0<i<n\\
 B[i,v] &= \arg\max_{u\in V} V[i-1,u]a_{u,v}e_{v,X_i}, v\in V,0<i<n
 \end{align}
 \begin{note}
-We do not specify how $B[0,v],v\in V$ is defined since we will not
-need it to be defined in our computation.
-\end{note}
-\begin{note}
-If we compare Viterbi algorithm with the Forward algorithm, we see that
-Viterbi equations are forward equations if we replace summation with
+Values $B[0,v],v\in V$ are not needed in the algorithm.
+
+Note the similarity of the Viterbi algorithm and the Forward algorithm.
+We can obtain the Viterbi equations from the forward equations by replacing
+summation with
 maximization.
 \end{note}
 
@@ -413,22 +414,24 @@ Variable $B[n-1,v_{\max}]$ contains the previous state of the most probable
 state path. By traversing back through back-links  we can reconstruct the most
 probable state path.
 
-\begin{example}
-Example of Viterbi Table with back-links
-\end{example}
+%\begin{example}
+%Example of Viterbi Table with back-links
+%\end{example}
 
-We can use Viterbi algorithm to annotate sequence $X$ by finding the most
-probable state path $\pi$ and then computing $\lambda(\pi)$. In coloring
-function $\lambda$ is identity function, this will find the most probable
-annotation, but in general, Viterbi algorithm not even good approximation of the
-most probable annotation.
+We can use the Viterbi algorithm to annotate sequence $X$ by finding the most
+probable state path $\pi$ and then computing $\lambda(\pi)$. If the  coloring
+function $\lambda$ is the identity function, this will find the most probable
+annotation, but in general, Viterbi algorithm not even a good approximation of
+the most probable annotation as shown in the following example.
 
 \begin{example}
+Consider HMM from figure \ref{FIGURE:BADVITERBIEXAMPLE}.
 Why Viterbi is not good enough
+
 \end{example}
 
-\section{Backward Algorithm}
-Backward algorithm is backward version of the Froward algorithm. ???
+%\section{Backward Algorithm}
+%Backward algorithm is backward version of the Froward algorithm. ???
 \section{Forward-Backward Algorithm and Posterior Decoding}
 \firstUseOf{Posterior Decoding} is another commonly used decoding method. In
 contrast to Viterbi algorithm, posterior decoding assign labels individually to
