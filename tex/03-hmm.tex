@@ -424,10 +424,40 @@ function $\lambda$ is the identity function, this will find the most probable
 annotation, but in general, Viterbi algorithm not even a good approximation of
 the most probable annotation as shown in the following example.
 
-\begin{example}
-Consider HMM from figure \ref{FIGURE:BADVITERBIEXAMPLE}.
-Why Viterbi is not good enough
+\begin{figure}
+\begin{center}
+\includegraphics{../figures/multiplePathProblemHMM.pdf}
+\end{center}
+\caption[Hidden Markov Model with multiple path problem.]{Example of HMM with
+multiple path problem. States $w_1,w_2,b$ emits symbol $0$ with probability $1$
+and state $e$ emits symbol $1$ with probability $1$. Initial distribution is set
+to $I(w_1)=I(w_2)=\frac14, I(b)=0.5$
+and $I(e)=0$. Annotations of states are represented by colors of states
+($\lambda(w_1)=\lambda(w_2)$ and $\lambda(b)=\lambda(e)$. }\label{FIGURE:BADVITERBIEXAMPLE}
+\end{figure}
 
+\begin{example}
+Consider HMM from figure \ref{FIGURE:BADVITERBIEXAMPLE}. Take sequence $X=0^n1$.
+Since state $e$ is only one that can emit $1$, every state path with non-zero
+probability ends in state $e$. If state path starts in state $b$ then state
+path has form $b^ne$. Annotation of such state path is $\Lambda_1=\lambda(b)^{n+1}$
+and probability of annotation $\Lambda_1$ (and also state path $b^ne$) is $p^n(1-p)$.
+If state path starts in one of the white states, then state path
+has form $w'_0w'_1\dots w'_{n-1}e$ where $w'_i$ is either $w_1$ or $w_2$.
+There are $2^n$ such state paths and each of them have probability $0.5\cdot
+0.25^n$ and annotation $\Lambda_2=\lambda(w_1)\lambda(e)$. Probability of
+annotation $\Lambda_2$ is therefore $0.5^{n+1}$.
+If $n$ is sufficiently high and $\frac14<p<\frac12$ then most probable state
+path is $b^ne$ which corresponds to annotation $\Lambda_1$. However, the most
+probable annotation is $\Lambda_2$ and it's probability is exponentially higher
+then probability of $\Lambda_1$. Therefore the Viterbi algorithm in to even a
+good approximation for the most probable annotation problem.
+
+We say that HMM has \firstUseOf{multiple path problem} if it has annotation that
+corresponds to more than one state path.
+%$\Lambda_2i$
+%is greater then probability if $\Lambda_1$ but the most probable state path is 
+%the $b^ne$ and i
 \end{example}
 
 %\section{Backward Algorithm}
