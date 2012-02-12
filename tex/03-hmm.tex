@@ -457,29 +457,26 @@ corresponds to more than one state path.
 %the $b^ne$ and i
 \end{example}
 
-\bigskip
-{\large\bf Podtialto su zapracovane pripomienky}
-\bigskip
 
 %\section{Backward Algorithm}
 %Backward algorithm is backward version of the Froward algorithm. ???
 \section{Forward-Backward Algorithm and Posterior Decoding}
 \firstUseOf{Posterior Decoding} is another commonly used decoding method. In
-contrast to Viterbi algorithm, posterior decoding assign labels individually to
-every symbol of input sequence and does not care about overall structure of
+contrast to the Viterbi algorithm, posterior decoding assign a label individually to
+every symbol of input sequence and does not care about the overall structure of
 reconstructed state path. 
 
-Given sequence $X$, posterior decoding find state path $\pi$ with following
+Given sequence $X$, posterior decoding finds state path $\pi$ with the following
 property:
 \[\forall 0\leq i< n, \pi_i=\arg\max_{v\in V}\Pr\left(\pi_i=v\mid X,H\right) \]
 where \[\Pr\left(\pi_i=v\mid X,H\right) = \sum_{\pi\in V^n,\pi_i=v}\Pr\left(\pi\mid X,H\right)\]
 
-Values $\Pr\left(\pi_i=v\mid X,H\right)$ can be computed with Forward-Backward
+Values $\Pr\left(\pi_i=v\mid X,H\right)$ can be computed using Forward-Backward
 algorithm. This algorithm computes $\Pr\left(\pi_i=v\mid X,H\right)$ for every
-combination of position $i$ and state $v$. Then for every position chooses state
-that maximizes posterior probability.
+combination of position $i$ and state $v$. Then for every position chooses the
+state that maximizes posterior probability.
 
-Now we derive formula for effective computation of  $\Pr\left(\pi_i=v\mid
+Now we derive formula for efficient computation of  $\Pr\left(\pi_i=v\mid
 X,H\right)$.
 \begin{align}
 \Pr\left(\pi_i=v,X\mid H\right) &=  
@@ -487,98 +484,165 @@ X,H\right)$.
 %					\label{PosteriorDer1} \\
 %				&=& 
 				\sum_{\pi\in
-				V^n,\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}\prod_{j=1}^{|X|-1}e_{\pi_j}a_{\pi_{j-1},\pi_j}
+				V^n,\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}\prod_{j=1}^{n-1}e_{\pi_j,X_j}a_{\pi_{j-1},\pi_j}
 					\label{PosteriorDer2}\\
+%				&= \sum_{\pi\in V^n,\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}
+%				\left( 
+%					\prod_{j=1}^{i-1} e_{\pi_j,X_j}a_{\pi_{j-1},\pi_j}
+%				\right)
+%				a_{\pi_{i-1},\pi_i}e_{\pi_i,X_i}
+%				\left(  
+%					\prod_{j=i+1}^{n-1} e_{\pi_j,X_j}a_{\pi_{j-1},\pi_j}
+%				\right)
+%					\label{PosteriorDer3}\\
 				&= \sum_{\pi\in V^n,\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}
 				\left( 
-					\prod_{j=1}^{i-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
-				\right)
-				a_{\pi_{i-1},\pi_i}e_{\pi_i,X_i}
-				\left(  
-					\prod_{j=i+1}^{|X|-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
-				\right)
-					\label{PosteriorDer3}\\
-				&= \sum_{\pi\in V^n,\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}
-				\left( 
-					\prod_{j=1}^{i-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+					\prod_{j=1}^{i-1} e_{\pi_j,X_j}a_{\pi_{j-1},\pi_j}
 				\right)
 				a_{\pi_{i-1},v}e_{v,X_i}
 				\left(  
-					\prod_{j=i+1}^{|X|-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+					\prod_{j=i+1}^{n-1} e_{\pi_j,X_j}a_{\pi_{j-1},\pi_j}
 				\right)
 					\label{PosteriorDer4}\\
 				&= 
 				\left(
 					\sum_{\pi\in V^{i+1},\pi_i=v}I_{\pi_0}e_{\pi_0,X_0}
 					\left(
-						\prod_{j=1}^{i} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+						\prod_{j=1}^{i} e_{\pi_j,X_j}a_{\pi_{j-1},\pi_j}
 					\right)
 				\right)
 				\left( 
-					\sum_{\pi\in V^{|X|-i},\pi_0=v}
-					\prod_{j=1}^{|X|-i-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+					\sum_{\pi\in V^{n-i},\pi_0=v}
+					\prod_{j=1}^{n-i-1} e_{\pi_j,X_{j+i}}a_{\pi_{j-1},\pi_j}
 				\right)
 					\label{PosteriorDer5}\\
 				&= F[i,v]
 				\left( 
-					\sum_{\pi\in V^{|X|-i},\pi_0=v}
-					\prod_{j=1}^{|X|-i-1} e_{\pi_j}a_{\pi_{j-1},\pi_j}
+					\sum_{\pi\in V^{n-i},\pi_0=v}
+					\prod_{j=1}^{n-i-1} e_{\pi_j,X_{i+j}}a_{\pi_{j-1},\pi_j}
 				\right)
 					\label{PosteriorDer6}
 \end{align}
-\todo{$e_{x}$ chyba jeden parameter.}
-Equations \ref{PosteriorDer2} and \ref{PosteriorDer3} is from definition of
-posterior probability. In \ref{PosteriorDer4} we just replace $\pi_i$ with $v$.
-Next equality we have from the fact that the left part of the formula
-\ref{PosteriorDer4} uses only left part of the state path and right part of the
-formula uses only right part of the state path. Last equation follows from
-definition of $F[i,v]$. Right part of the formula \ref{PosteriorDer6} has
-similar structure than $F[i,v]$, but it uses last part of the state path and
-sequence and also is lacks of using initial distribution. We can compute 
-this formula using Backward algorithm, which is very similar to forward
+%Equations \ref{PosteriorDer2} and \ref{PosteriorDer3} is from definition of
+%posterior probability. In \ref{PosteriorDer4} we just replace $\pi_i$ with $v$.
+%Next equality we have from the fact that the left part of the formula
+%\ref{PosteriorDer4} uses only left part of the state path and right part of the
+%formula uses only right part of the state path. Last equation follows from
+%definition of $F[i,v]$.
+The right part of the formula \ref{PosteriorDer6} has
+similar structure as $F[i,v]$, but it uses last part of the state path and
+sequence and also it lack initial distribution. We can compute 
+this formula using  the Backward algorithm, which is very similar to forward
 algorithm. Let $B[i,v]$ be the right part of formula \ref{PosteriorDer6}.
 \begin{align}
 B[i,v]&=
-\sum_{\pi\in V^{|X|-i},\pi_0=v}
-	\prod_{j=1}^{|X|-i-1}
-		e_{\pi_j,X_{|X|+j-1}}a_{\pi_{j-1},\pi_j}\\
+\sum_{\pi\in V^{n-i},\pi_0=v}
+	\prod_{j=1}^{n-i-1}
+		e_{\pi_j,X_{i+j}}a_{\pi_{j-1},\pi_j}\\
+% &= 
+% \sum_{u\in V}
+% 	e_{u,X{n+j-1}}a_{v,u}
+%	\sum_{\pi\in V^{n-i},pi_0=v,\pi_1=u}
+%		\prod_{j=2}^{n-i-1}
+%			e_{\pi_j,X_{n+j-1}}a_{\pi_{j-1},\pi_j}\\
  &= 
  \sum_{u\in V}
- 	e_{u,X{|X|+j-1}}a_{v,u}
-	\sum_{\pi\in V^{|X|-i},pi_0=v,\pi_1=u}
-		\prod_{j=2}^{|X|-i-1}
-			e_{\pi_j,X_{|X|+j-1}}a_{\pi_{j-1},\pi_j}\\
+ 	e_{u,X_{I+1}}A_{V,u}
+	\sum_{\pi\in V^{n-i-1},\pi_0=u}
+		\prod_{j=1}^{n-i-2}
+			e_{\pi_j,X_{i+j+1}}a_{\pi_{j-1},\pi_j}\\
  &= 
  \sum_{u\in V}
- 	e_{u,X{|X|+j-1}}a_{v,u}
-	\sum_{\pi\in V^{|X|-i-1},pi_0=u}
-		\prod_{j=1}^{|X|-i-2}
-			e_{\pi_j,X_{|X|+j-2}}a_{\pi_{j-1},\pi_j}\\
- &= 
- \sum_{u\in V}
- 	e_{\pi_j,X{|X|+j-1}}a_{\pi_0,\pi_1}B[i+1,u]
+ 	e_{\pi_j,X_{i+1}}a_{v,u}B[i+1,u]
 \end{align}
-If we set $B[n,v]$ to $1$, we have recursive formula, to compute values
-$B[i,v]$. This formula differs from Forward algorithm by going
-backwards\footnote{Therefore it is called Backward algorithm.}.
+If we set $B[n-1,v]$ to $1$, we have a recurrence to compute values
+$B[i,v]$. This recurrence is very similar to recurrence $F[i,b]$ Recall that
+\[F[i,v] = \sum_{u\in V}F[i-1,u] a_{u,v} e_{v,X_i}\]
+$B[i,v]$ depends on next positions in sequence $X$,
+while $F[i,v]$ depends on previous positions in sequence $X$. Another
+difference is that $B[i,v]$ does include emission of $X[i]$ while $F[i,v]$ does.
+
+In addition, it is possible to compute probability
+of $X$ being generated by the model with backward algorithm.
+
+\begin{align}
+\prob{X\mid H} &= 
+	\sum_{\pi\in V^n}
+		e_{\pi_0,X_0}\prod_{i=1}^{n-1}e_{\pi_i,X_i}a_{\pi_{i-1},\pi_i}\\
+	&=
+	\sum_{u\in V}e_{u,X_0}
+	\sum_{\pi\in V^n,\pi_0=u}
+		\prod_{i=1}^{n-1}e_{\pi_i,X_i}a_{\pi_{i-1},\pi_i}\\
+	&=
+	\sum_{u\in V}e_{u,X_0}B[0,u]
+\end{align}
+
+Posterior probabilities can be computed by
+\[\Pr\left(\pi_i=v\mid X,H\right) = \frac{F[i,v]\cdot B[i,v]}{\Pr\left( X\mid H
+ \right)}\]
 
 
-Therefore \[\Pr\left(\pi_i=v\mid X,H\right) = \frac{F[i,v]\cdot
-B[i,v]}{\Pr\left( X\mid H \right)}\]
+We can compute these values in $O(nm^2)$ time and $O(nm)$ memory. Later we will
+discuss possible algorithmic improvements of this algorithm.
+%By
+%check-pointing technique we can achieve $O(m^2\sqrt{n})$ memory requirements
+%with only constant slowdown.
 
-We can compute this values in $O(nm^2)$ time and $O(nm)$ memory. By
-check-pointing technique we can achieve $O(m^2\sqrt{n})$ memory requirements
-with only constant slowdown.
+%As we can see time complexity and memory requirement of posterior decoding is
+%same as for Viterbi algorithm, but in practice Forward-Backward algorithm is
+%slower and requires more memory.
 
-As we can seem time complexity and memory requirement of posterior decoding is
-same as for Viterbi algorithm, but in practice Forward-Backward algorithm is
-slower and requires more memory.
+One drawback of an  posterior decoding is that it can reconstruct inadmissible
+state path. One example is given below.
 
-Since posterior decoding does not care about overall structure of state path, it
-can reconstruct inadmissible state path. One example is given below.
+\begin{figure}
+\begin{center}
+\includegraphics{../figures/posteriorInadmissibleStatePath.pdf}
+\end{center}
+\caption[Hidden Markov Model on which posterior decoding reconstructs
+inadmissible state path]{
+Example of HMM on which posterior decoding reconstructs inadmissible state path. 
+All unlabeled transitions are even ($0.5$). States $w_1,w_2$ and $v$ emits $0$
+with probability $1$ and state $e$ emits $1$ with probability $1$.
+Initial distribution is set to $I(w_1)=I(w_2)=0.3, I(v)=0.4, I(e)=0$.
+}\label{FIGURE:INADMISSIBLESTATEPATH}
+\end{figure}
+
+\todo{Je mozne, ze by sa TU mohlo spomenut a maximalizacii ocakavaneho poctu
+spravne predikovanych stavov}
+
 \begin{example}
-Bad example
+Consider HMM from figure \ref{FIGURE:INADMISSIBLESTATEPATH}. Let $X=001$. There
+are three state paths that have non-zero probability:
+$\pi_1=w_1w_2e,\pi_2=w_2w_1e$ and $\pi_3=vve$. Their probabilities are
+$\prob{\pi_1\mid X,H}=\prob{\pi_2\mid X,H}=0.3, \prob{\pi_3\mid X,H}=0.4$.
+Posterior probabilities are in table \ref{TABLE:INADMISSIBLESTATEPATH}.
+As we can see, maximal posterior probability for the first position have state
+$v$. For the second position it is state $w_2$ and for the third it is state
+$e$. Therefore PD will reconstruct state path $vw_2e$. However, this probability
+is inadmissible.
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+State/Position & $X_0$ & $X_1$ & $X_2$ \\\hline
+$w_1$ & $0.3$ & $0$ & $0$ \\\hline
+$w_2$ & $0.3$ & $0.6$ & $0$ \\\hline
+$v$   & $0.4$ & $0.4$ & $0$\\\hline
+$e$  & $0$ & $0$ & $1$ \\\hline
+\end{tabular}
+\end{center}
+\caption[Example of posterior probabilities.]{Posterior probabilities for
+sequence $X$ and HMM $H$ from figure \ref{FIGURE:INADMISSIBLESTATEPATH}.
+}\label{TABLE:INADMISSIBLESTATEPATH}
+\end{table}
+
 \end{example}
+
+\bigskip
+{\large\bf Podtialto su zapracovane pripomienky}
+\bigskip
 
 \section{Training} 
 
