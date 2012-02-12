@@ -648,8 +648,22 @@ sequence $X$ and HMM $H$ from figure \ref{FIGURE:INADMISSIBLESTATEPATH}.
 
 Training is process of estimating parameters of probabilistic models. In this
 section we will describe several approaches how to estimate transition and
-emission distributions. We will describe several approaches to do this thing
+emission distributions. We will describe several approaches to estimate
+parameters of HMM. We will consider only estimating emission and transition
+probabilities, not topology of a model.
 
+We will use \firstUseOf{maximal likelihood approach}. Let $H_{\theta}$ be an HMM
+where $\theta$ is vector containing emission and transition probabilities and
+$D$ be training data (sequences, possibly with state paths).  We
+will try to find $\theta$ that maximizes likelihood of the data.
+
+\[L(H_\theta\mid D)=\prob{D\mid H_\theta}\]
+
+Where date $D$ is set of pairs $(X,\pi)$ where $X$ is sequence and $\pi\in
+V\cup\{*\}$. $*$ means missing information in state path.
+
+\subsection{Fully Labeled Data}
+At first we consider data without missing information. 
 \subsection{Baum-Welsch algorithm}
 \subsection{Viterbi Training}
 
