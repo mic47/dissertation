@@ -404,12 +404,18 @@ summation with
 maximization.
 \end{note}
 
+
 Variable $V[n-1,v]$ contains the probability of the most probable state path
 that generated $X$ and end in state $v$. Therefore the state $v_{\max} =
 \arg\max_{v\in V}V[n-1,v]$ is the last state of the most probable state path.
 Variable $B[n-1,v_{\max}]$ contains the previous state of the most probable
 state path. By traversing back through back-links  we can reconstruct the most
 probable state path.
+
+Time complexity of the Viterbi algorithm is $O(nm^2)$ where $m$ is the number of
+states. Similarly to the Forward algorithm, if transition matrix is sparse then 
+the Viterbi algorithm can be implemented in $O(n(m+t))$ time where $t$ is the
+number of transitions of HMM.
 
 %\begin{example}
 %Example of Viterbi Table with back-links
@@ -428,8 +434,8 @@ the most probable annotation as shown in the following example.
 \caption[Hidden Markov Model with multiple path problem.]{Example of HMM with
 multiple path problem. States $w_1,w_2,b$ emits symbol $0$ with probability $1$
 and state $e$ emits symbol $1$ with probability $1$. Initial distribution is set
-to $I(w_1)=I(w_2)=\frac14, I(b)=0.5$
-and $I(e)=0$. Annotations of states are represented by colors of states
+to $I_{w_1}=I_{w_2}=\frac14, I_{b}=0.5$
+and $I_e=0$. Annotations of states are represented by colors of states
 ($\lambda(w_1)=\lambda(w_2)$ and $\lambda(b)=\lambda(e)$. }\label{FIGURE:BADVITERBIEXAMPLE}
 \end{figure}
 
@@ -582,8 +588,10 @@ Posterior probabilities can be computed by
  \right)}\]
 
 
-We can compute these values in $O(nm^2)$ time and $O(nm)$ memory. Later we will
-discuss possible algorithmic improvements of this algorithm.
+We can compute these values in $O(nm^2)$ time and $O(nm)$ memory. Again, in case
+of sparse transition matrix, this algorithm can be altered to run in $O(n(m+t))$
+time where $t$ is the number of transitions. We will
+discuss possible algorithmic improvements of this algorithm later.
 %By
 %check-pointing technique we can achieve $O(m^2\sqrt{n})$ memory requirements
 %with only constant slowdown.
@@ -604,7 +612,7 @@ inadmissible state path]{
 Example of HMM on which posterior decoding reconstructs inadmissible state path. 
 All unlabeled transitions are even ($0.5$). States $w_1,w_2$ and $v$ emits $0$
 with probability $1$ and state $e$ emits $1$ with probability $1$.
-Initial distribution is set to $I(w_1)=I(w_2)=0.3, I(v)=0.4, I(e)=0$.
+Initial distribution is set to $I_{w_1}=I_{w_2}=0.3, I_{v}=0.4, I_{e}=0$.
 }\label{FIGURE:INADMISSIBLESTATEPATH}
 \end{figure}
 
@@ -646,6 +654,11 @@ sequence $X$ and HMM $H$ from figure \ref{FIGURE:INADMISSIBLESTATEPATH}.
 
 \section{Training} 
 
+\bigskip
+{\large\bf Tato cast este nie je napisana. Lepsie je skocit na dalsiu sekciu --
+chcem najskor zapracovat pripomienky}
+\bigskip
+
 Training is process of estimating parameters of probabilistic models. In this
 section we will describe several approaches how to estimate transition and
 emission distributions. We will describe several approaches to estimate
@@ -660,10 +673,16 @@ will try to find $\theta$ that maximizes likelihood of the data.
 \[L(H_\theta\mid D)=\prob{D\mid H_\theta}\]
 
 Where date $D$ is set of pairs $(X,\pi)$ where $X$ is sequence and $\pi\in
-V\cup\{*\}$. $*$ means missing information in state path.
+V\cup\{*\}$. $*$ means missing information in state path. Probability that data
+were generated is
+\[
+\prob{D\mid H_\theta} = \prod_{(X,\pi')\in D}\prob{X,\pi'\mid H_\theta}
+\]
+%where
+%\[\prob{X,\pi'\mid H_\theta} = \sum_{\pi\sim\pi'}\prob{X,\pi\mid H_\theta}\]
 
 \subsection{Fully Labeled Data}
-At first we consider data without missing information. 
+At first we consider data without missing information. If we want  
 \subsection{Baum-Welsch algorithm}
 \subsection{Viterbi Training}
 
@@ -673,21 +692,23 @@ Viterbi training is same as Baum-Welsch train
 There are several other approaches how to similar
 \section{Variants of Hidden Markov Models}
 
-Hidden Markov models described in section \ref{SECTION:HMMDEF} are the Hidden
-Markov models. In this section we describe several other variants of HMMs, some
-of them with same expressing power and some not.
+In this section we describe several variants of hidden Markov Models.
+Some of these extension have more expressive power but mostly they are
+introduced for simplifying the models.
 
 \subsection{Silent states}
 
 One common variant of HMMs are HMMs with silent states. Silent state are states
-that does not emit any symbol. One of the consequences is, that state path can
-be longer then sequence. However, the number of non-silent states in state path
-have to be equal to sequence length. Silent states does not add any expressing
-power to HMMs, but in some cases they allow to reduce the number of transitions
-by factor $m$.
+that does not emit any symbol. One of the consequences is  that a state path can
+be longer than the emitted sequence. However, the number of non-silent states in
+the state path has to be equal to the sequence length. Silent states does not
+add any expressing power to HMMs, but in some cases they allow to reduce the
+number of transitions by a factor $m$. This can be used to decrease number of
+parameters and speed up algorithms. 
 
 \begin{definition}
-Formally, Hidden Markov Model with silent states is tuple $H=(\Sigma,V,Q,I,e,a)$
+Hidden Markov Model with silent states is a:w
+tuple $H=(\Sigma,V,Q,I,e,a)$
 where $\Sigma,V,I,a$ are defined as in definition \ref{DEF:HMM}. $Q\subseteq V$ is set of
 silent states. $e$ must satisfy following conditions:
 \begin{enumerate}
@@ -700,57 +721,81 @@ silent states. $e$ must satisfy following conditions:
 \begin{definition}
 Transitions and state path are defined as in definition \ref{DEF:STATEPATH}. 
 
-Let $\pi$ be an state path. \firstUseOf{Non-silent state path} $\pi^Q$ is
-maximal subsequence of $\pi$ that consists of non-silent states.
+Let $\pi$ be a state path. \firstUseOf{Non-silent state path} $\pi^Q$ is
+the maximal subsequence of $\pi$ that consists of non-silent states.
 \end{definition}
 
+\begin{note}
+Non-silent state path $\pi^Q$ can by obtained from a state path $\pi$ by removing all silent
+states.
+\end{note}
+
 \begin{definition}
-Let $H=(\Sigma,V,Q,I,e,a)$ be a HMM and $X=X_0X_1\dots X_{n-1}$ be sequence over
-alphabet $\Sigma$ of length $n$. Let $\pi$ be state path for which $\pi^Q$ have
+Let $H=(\Sigma,V,Q,I,e,a)$ be a HMM with silent states and $X=X_0X_1\dots
+X_{n-1}$ be a sequence over
+alphabet $\Sigma$ of length $n$. Let $\pi$ be a state path for which $\pi^Q$ has
 length $n$. Then the probability that state path generated sequence $X$ is 
 
 \[\Pr\left(X,\pi\mid H\right) =
 I_{\pi_0}\left(\prod_{i=1}^{|\pi|-1}a_{\pi_{i-1},\pi_i}\right)\left(\prod_{i=0}^{|X|-1}e_{\pi^Q_i,X_i}\right)\]
 
-If length of the sequence $X$ is not equal to length of the non-silent state
-path $\pi^Q$, then
+If length of the sequence $X$ is not equal to the length of the non-silent state
+path $\pi^Q$, then the
 probability that $\pi$ generates $X$ is zero.
 \end{definition}
 
 \begin{example}
-Example of HMM with silent states that reduces the number of edges by factor
-$m$.
+Example of HMM with silent states that reduces the number of transitions by factor
+of $\Theta(m)$.
 
-Consider following HMM: $H=(\Sigma,V,I,e,a)$ where
-$|V|=m$, $I$ is arbitrary distribution over $V$, $e$ is also arbitrary and in
-every row of $a$ is uniform distribution over $V$. In other words, there is
-transition between any two pairs of states from $V$, that is exactly $n^2$
+Consider following HMM $H=(\Sigma,V,I,e,a)$ with $m$ states such that every row
+of $a$ is uniform distribution over $V$. In other words, there is transition
+between any two pairs of states from $V$, that is exactly $n^2$
 transitions\footnote{$u\to u$ is also transition}.
 
-If remove all those transitions, add one silent state $s$ and add transitions
-from state $s$ to all states from $V$ with probability $\frac1m$  and we add
-transition from every state $V$ to $s$ with probability $1$. This new HMM
-defines same distribution of sequences, but have one more state and only $2m$
+We create a new HMM $H'$ by removing all transitions from $H$, adding one silent
+state $s$ and adding transitions
+from state $s$ to all states from $V$ with probability $\frac1m$  and from every
+state $V$ to $s$ with probability $1$. This new HMM
+defines the same distribution of sequences, but has one more state and only $2m$
 transitions. 
-\end{example}
 
+The Viterbi algorithm, the Forward algorithm or Posterior decoding can be
+implemented for $H'$ in $O(nm)$ time while these algorithm will have time
+complexity $O(nm^2)$ for $H$.
+\end{example}
+ 
 
 
 \subsection{Start and Final state}
 
 Sometimes it is useful to have special start state and special final state. We
-will describe both states independently, since they affect models in different
+will describe these two states separately, since they affect models in different
 ways. 
 
-Having special start state $v$ is equivalent to $I_v=1$. 
-
-HMM defined in section \ref{SECTION:HMMDEF} lacks conditions 
-We can extend definition of HMMs to one or several final states.  
-
+Start states can be used instead of initial distribution. If state $s$ is start
+state, then $I_v=1$. Therefore generative process always start in start state.
+We can model initial distribution by silent start state $s$ with $a_{s,v}=I_v$ for all $v$.
 
 Final states affects distribution of model. HMM defined in section
 \ref{SECTION:HMMDEF} define distribution over sequences of same length. HMM with
-final states defines distribution over sequences of all length. 
+final states defines distribution over sequences of all length.  We have to make
+few changes to definition of HMM to have final states.
+We add set of final states $F\subseteq V$. Transitions from final states are not
+defined (or set to zero). Emission distribution might be defined (if not, final
+states are silent). Every state path has to end with state that is final and
+final state can be only in the end of a state path.
+
+With final states, HMM stops generating a sequence once it reaches some final
+state. Therefore sum of the probabilities of all sequences is $1$. Recall
+that sum of probabilities of all sequences with length $n$ is $1$ for HMM
+without final states.
+
+Final states slightly affects algorithms. For example in the Forward algorithm we do
+not have to change recurrences, only the final summation: probability of the sequence is $\sum_{q\in F}F[n-1,q]$. 
+Similarly, in the Viterbi algorithm
+we have to find $\max_{q\in F} V[n-1,q]$ not $\max_{q\ni V} V[n-1,q]$. 
+The Backward changed by setting $B[n-1,q]$ to zero for all $q\notin F$.
 
 \subsection{High Order HMMs}
 
