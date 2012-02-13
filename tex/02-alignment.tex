@@ -13,7 +13,7 @@ inserted dashes and column is list of residues from all row on same position.
 
 
 Biological meaning of an alignment is following: homologous residues (those that
-have developed from common ancestor) are in same row. Dashes represents either
+have developed from common etancestor) are in same row. Dashes represents either
 the parts of sequence that were deleted during evolution (deletions) or that on
 those positions were inserted some sequences to other sequence (insertions). In
 alignment is not possible to distinguish between insertions and deletions -- we
@@ -134,14 +134,14 @@ of sequences $X[:i]$ and $Y[:j]$. We can compute $M[i,j]$ by following
 equations:
 
 \begin{align} 
-M[0,0] &= S[X_0,Y_0]\\
-M[0,i] &= i\cdot d, 0< i < m\\\
-M[i,0] &= i\cdot d, 0< i < n\\
+M[-1,-1] &= 0\\
+M[-1,i] &= i\cdot d, 0< i < m\\\
+M[i,-1] &= i\cdot d, 0< i < n\\
 M[i,j] &= \max
 \begin{cases}
  M[i-1,j-1]+S(X_i,X_j)\\M[i,j-1]+d\\
  M[i-1,j]+d
-\end{cases}, 0<i<n,0<j<m \label{ALIGN:ALGO:AFFINE}
+\end{cases}, 0\leq i<n,0\leq j<m \label{ALIGN:ALGO:AFFINE}
 \end{align}
 
 By computing $M[n-1,m-1]$ we have the score of the alignment of $X$ and $Y$ with
@@ -156,11 +156,11 @@ and $M_Y$.
 
 \todo{Je vlastne vobec treba taketo vypisovat?}
 \begin{align}
-M[0,0] &= S(X_0,Y_0)\\
-M[0,i] &= M_X[0,i] = i\cdot d+g, 0 < i < m\\
-M[i,0] &= M_Y[i,0] = i\cdot d+g, 0 < i < n\\
-M_X[i,0] &= -\infty, 0\leq i< n\\
-M_Y[0,i] &= \infty, 0 \leq i< m\\
+M[-1,-1] &= 0\\
+M[-1,i] &= M_X[-1,i] = i\cdot d+g, 0 < i < m\\
+M[i,-1] &= M_Y[i,-1] = i\cdot d+g, 0 < i < n\\
+M_X[i,-1] &= -\infty, 0\leq i< n\\
+M_Y[-1,i] &= \infty, 0 \leq i< m\\
 M[i,j] &= \max
 \begin{cases}\label{ALIGN:ALGO:REALAFFINESTART}
  M[i-1,j-1]+S(X_i,X_j)\\
@@ -168,17 +168,17 @@ M[i,j] &= \max
  M[i-1,j]+d\\
  M_X[i,j]\\
  M_Y[i,j]
-\end{cases}, 0<i<n,0<j<m\\
+\end{cases}, 0\leq i<n,0\leq j<m\\
 M_X[i,j] &= \max
 \begin{cases}
 M[i-1,j]+g+d\\
 M_X[i-1,j]+d
-\end{cases}, 0<i<n,0<j<m\\
+\end{cases}, 0\leq i<n,0\leq j<m\\
 M_Y[i,j] &= \max
 \begin{cases}
 M[i,j-1]+g+d\\
 M_Y[i,j-1]+d
-\end{cases}, 0<i<n,0<j<m\label{ALIGN:ALGO:REALAFFINEEND}
+\end{cases}, 0\leq i<n,0\leq j<m\label{ALIGN:ALGO:REALAFFINEEND}
 \end{align}
 As in previous case, values of $M,M_X$ and $M_Y$ can be computed by simple
 dynamic and by back-tracing these matrices we can obtain optimal alignment of
@@ -211,9 +211,9 @@ matrices $(M,M_X,M_Y)$.
 
 \lstset{showstringspaces=false}
 \begin{lstlisting}
-Initialize M[i,0] and M[0,i]
-for i in 1...n-1
-  for j in 1...m-1
+Initialize M[i,-1] and M[-1,i]
+for i in 0...n-1
+  for j in 0...m-1
     M[i,j] = F(M,(i,j))
 (i,j) = (n-1,m-1)
 while i > 0
