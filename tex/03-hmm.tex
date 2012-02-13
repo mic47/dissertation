@@ -1074,23 +1074,27 @@ chapter \ref{CHAPTER:PAIRHMM}.
 
 
 \section{Other Decoding Methods}
-In the previous sections we described two decoding algorithm: Viterbi algorithm
-that finds the most probable state path  and the Posterior decoding that
-maximizes the expected number of correctly predicted states in state path.
-\correction{We have shown}{Ak nie, umazat to} that in some cases these algorithm
-recover bad annotation. However, maximizing the most probable annotation is
-NP-hard and therefore it is not tractable.
+\todo{MPA moze mat podobne problemy ako Viterbi. Ake?}
+In the previous sections we have described two decoding algorithm: Viterbi algorithm
+that finds the most probable state path  and the Posterior decoding that for
+every symbol of the sequence assigns the state that generated such symbol with
+maximum probability. In following section we show that this is equivalent to
+maximizing the expected number of correctly predicted states in state path.  We
+have shown that in some cases these algorithm recover bad annotation. However,
+maximizing the most probable annotation is NP-hard and therefore it is not
+tractable.
 
-In this section we will describe highest expected reward decoding framework and
-some other decoding methods that were developed in recent years.
+In this section we will describe highest expected gain decoding framework, and
+several other decoding methods developed in recent years.
 
 \subsection{Highest Expected Gain}
 
-We will look on the decoding algorithm in more systematic way. We define gain
-function, which will express similarity between
-two annotations or state paths. The higher output, the more
-similar those two sequences are. Gain function is not similarity in mathematical
-sense and this function does not have to be even symmetric. 
+In this section we will describe a framework for studying decoding algorithm in
+a more systematic way. This framework was introduced introduced originally for 
+We define gain function, which will express similarity
+between two annotations or state paths. The higher output, the more similar
+those two sequences are. Gain function is not similarity in mathematical sense
+and this function does not have to be even symmetric. 
 
 Our goal is to find an annotation, that is as similar as possible to the correct
 annotation. Problem is that we do not know the correct annotation. Our only
