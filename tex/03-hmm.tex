@@ -997,10 +997,6 @@ model $H$ is
 \end{equation}
 \end{definition}
 
-\bigskip
-{\large\bf Podtialto su zapracovane pripomienky}
-\bigskip
-
 
 \subsection{Viterbi algorithm for pair HMM}
 
@@ -1019,21 +1015,38 @@ $X[:i+1]$ and $Y[:j+1]$ and ended in state $v$. Clearly, $\max_{v\in
 V}V[|X|-1,|Y|-1,v]$ is the probability of the most probable state path that
 generated $X$ and $Y$. Let $B[i,j,v]$ be the last but one state of the most
 probable state path that generated $X[:i+1]$ and $Y[:j+1]$ and ended in state
-$v$.
+$v$. To make it easier we expect that all states but one are not silent -- the emit
+symbol in at least one sequence. The one silent state $s$ will have $I_s=1$.
+The two-dimensional Viterbi algorithm given bellow can be altered to work with
+silent states by method given in section \ref{KDE}. Let $n=|X|$ and $m=|Y|$.
 
-Then
+\todo{skontroluj ci sedia indexy a tak}
 \begin{align}
-V[i,j,v] &= \max_{u\in V}V[i-?,j-?,u]a_{u,v}e_{v,(?,?)}\\
-V[-1,j,v] &= V[i,0,v] = 0 \\
-V[0,0,v] &= I_{v}e_{v,(?,?)} \\
-B[i,j,v] &= \arg\max_{u\in V}V[i-?,j-?,u]a_{u,v}e_{v,(?,?)}
+V[-1,-1,s] &= 1\\
+V[-2,i,v] &= V[j,-2,v] = 0, \forall v\in V,-1 \leq i < n, -1\leq j < m\\
+V[i,j,v] &= \max_{u\in
+V}V[i-d^x_{v},j-d^y_v,u]a_{u,v}e_{v,(X[i:i+d^x_v],Y[j:j+d^y_v])}\label{EQUATION:2DVITERBIF}\\
+%V[-1,j,v] &= V[i,0,v] = 0 \\
+%V[0,0,v] &= I_{v}e_{v,(?,?)} \\
+B[i,j,v] &= \arg\max_{u\in
+V}V[i-d^x_{v},j-d^y_v,u]a_{u,v}e_{v,(X[i:i+d^x_v],Y[j:j+d^y_v])}\label{EQUATION:2DVITERBIB}
 \end{align}
 
+In equations \ref{EQUATION:2DVITERBIF} and \ref{EQUATION:2DVITERBIB} boundaries for $i$ and $j$ are $
+-1\leq i< n,-1\leq j< m$ and $i$ or $j$ is greater than $-1$.
+
+
 Finding the last state $v$ of the most probable state path and back-tracing from
-$B[|X|-1,|Y|-1,v]$ we can reconstruct the most probable state path. Time
-complexity of this algorithm is $O(|X||Y||V|^2)$ and memory requirements are
-$O(|X||Y||V|)$. However, we can use various tricks to decrease memory
-requirements of such algorithms.
+$B[n-1,m-1,v]$ we can reconstruct the most probable state path. Time
+complexity of this algorithm is $O(nm|V|^2)$ (or $O(nm(|V|+t)$ where $t$
+is the number of transitions of $H$) and memory requirements are
+$O(nm|V|)$. However, we can use various tricks to decrease memory
+requirements of such algorithms, as shown in section \ref{TODO}.
+
+\bigskip
+{\large\bf Podtialto su zapracovane pripomienky}
+\bigskip
+
 
 \subsection{Generalized Pair HMMs}
 
