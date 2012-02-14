@@ -1199,7 +1199,6 @@ We say that $i$th label of $\Lambda$ is correctly predicted if $f_P(\Lambda_X[i]
 by maximizing $f_P$ we search for an annotation/state path that maximizes the
 expected number of correctly predicted labels/states.
 
-Idea of the algorithm is following. For every possible boundary 
 \subsection{Maximum Boundary Accuracy Decoding}
 
 \abbreviation{Maximum boundary accuracy decoding}{MBAD} is used in gene-finder
@@ -1259,7 +1258,7 @@ $G$ starting in $s$. Moreover weight of every path is expected gain of
 corresponding annotation. $G$ is acyclic and therefore we can find such path in
 polynomial time. This can be implemented in $O(|X||C|^2+|X|m^2)$ time and memory
 where $m$ is the number of states of HMM $H$. More detail can be found in
-\cite{Diplomovka}.
+\cite{Nanasi2010mgr}.
 
 Intuition behind gain function $f$ is following. Like with the Posterior
 decoding, we want to maximize the number of correctly predicted boundaries (the
@@ -1276,16 +1275,16 @@ gain and therefore it is less likely that they appear in optimal annotation.
 \abbreviation{Highest Expected Reward Decoding}{HERD} is extension of maximum
 boundary accuracy decoding. We have developed this decoding for prediction of
 recombination of HIV virus.  Further details can be found in \cite{Nanasi2010}
-and in my Master thesis\cite{Diplomovka}.
+and in my Master thesis \cite{Nanasi2010mgr}.
 
 
 Genome of some viruses (for example HIV or HCV virus) can be divided into
-several subtypes. Moreover occasionally sometimes virus that is mozaic
+several subtypes. Moreover, it is possible that virus is mozaic
 recombination of viruses from different subtypes (we call this virus
 recombinant). In the problem of recombination detection we try to decide if
 given sequence $X$ is recombinant sequence. If $X$ is recombinant then we want to find
 original subtypes of every part of a sequence $X$. Recombinations can be modeled
-by jumping HMMs \cite{} which are HMM with topology specific to this domain.
+by jumping HMMs \cite{Schultz2006} which are HMM with topology specific to this domain.
 In this application is 
 %In the problem of recombination detection in virus genome In the problem of
 %recombination detection in virus RNA is usually jumping HMM \cite{}. 
@@ -1307,7 +1306,7 @@ annotation is boundary between same colors within distance $W=2$.
 %correctly predicted (they have penalty $-\gamma$). Because there is no such
 %boundary in the correct
 %annotation within window.
-This picture was taken from \cite{Diplomovka}.
+This picture was taken from \cite{Nanasi2010mgr}.
 }\label{FIGURE:HERDBUDDY}
 \end{figure}
 
@@ -1332,14 +1331,13 @@ Decoding.
 Optimizing this criteria can be done in $O(|X|W|C||T| + n|C|^2W^2)$ time  and
 $O(\sqrt{|X|}|C||V|+W|C||V|+n|C|^2)$ memory. Experimental evaluation,
 optimization algorithm and implementation details can be found in
-\cite{Diplomovka}.
-
+\cite{Nanasi2010mgr}.
 \subsection{Distance Measures on Annotations}
 
 Another approach to solve similar problem was proposed by {\it Brown,
-Truszkowski} in \cite{}. Originally their implementation was aimed on prediction
-of boundaries in transmebrane proteins\cite{}, but later they successfully
-adapted their algorithm on jumping HMMs\cite{}.
+Truszkowski} in \cite{Brown2010}. Originally their implementation was aimed at prediction
+of boundaries in transmebrane proteins \cite{Brown2010}, but later they successfully
+adapted their algorithm to jumping HMMs\cite{Truszkowski2011}.
 
 \begin{definition}
 Let $d$ be any distance measure defined on annotations. Ball of radius $r$
