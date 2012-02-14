@@ -1068,9 +1068,6 @@ chapter \ref{CHAPTER:PAIRHMM}.
 %\end{definition}
 
 
-\bigskip
-{\large\bf Podtialto su zapracovane pripomienky}
-\bigskip
 
 
 \section{Other Decoding Methods}
@@ -1078,26 +1075,29 @@ chapter \ref{CHAPTER:PAIRHMM}.
 In the previous sections we have described two decoding algorithm: Viterbi algorithm
 that finds the most probable state path  and the Posterior decoding that for
 every symbol of the sequence assigns the state that generated such symbol with
-maximum probability. In following section we show that this is equivalent to
-maximizing the expected number of correctly predicted states in state path.  We
-have shown that in some cases these algorithm recover bad annotation. However,
-maximizing the most probable annotation is NP-hard and therefore it is not
-tractable.
+maximum probability. 
+%In following section we show that the Posterior decoding is
+%equivalent to maximizing the expected number of correctly predicted states in
+%state path.  
+We have shown that in some cases these algorithm recover bad
+annotation. However, maximizing the most probable annotation is NP-hard and
+therefore it is not tractable.
 
-In this section we will describe highest expected gain decoding framework, and
-several other decoding methods developed in recent years.
+In this section we will describe highest expected gain decoding framework,
+describe already discussed algorithm within this framework and show several
+other decoding methods developed in recent years.
 
 \subsection{Highest Expected Gain}
 
 In this section we will describe a framework for studying decoding algorithm in
 a more systematic way. This framework was introduced introduced originally for
-conditional random fields \cite{Gross2007}.
-To use this framework, we need to define a gain function, which will express
-similarity (gain) between two annotations or state paths. The higher the gain,
-the more similar those two sequences are. Gain function is domain specific and
-can penalize differences between state paths that are most important in a
-particular application.  Gain function is not a similarity in the mathematical
-sense; it does not even have to be symmetric.
+conditional random fields \cite{Gross2007}.  To use this framework, we need to
+define a gain function, which will express similarity (gain) between two
+annotations or state paths. The higher the gain, the more similar those two
+sequences are. Gain function is domain specific and can penalize differences
+between state paths that are most important in a particular application.  Gain
+function is not a similarity in the mathematical sense; it does not even have to
+be symmetric.
 
 Our goal is to find an annotation that is as similar as possible to the correct
 annotation. Problem is that we do not know the correct annotation. Our only
@@ -1176,7 +1176,7 @@ NP-hard if gain function is part of the input. However, for specific gain
 functions we can maximize expected gain in polynomial time.
 
 The gain function $f_P$ compares the two annotations of the same length position
-by position and assigns score $1$ fro every position where they are equal.
+by position and assigns score $1$ to every position where they are equal.
 \begin{equation}
 f_P(\Lambda,\Lambda') = 
 \begin{cases}
@@ -1194,7 +1194,7 @@ gain framework give us another interpretation of posterior decoding. Let
 $\Lambda_X$  have same length as $\Lambda$. From linearity of the expectation we
 have
 \[E_{\Lambda_X}[f_P(\Lambda_X,\Lambda)] =
-\sum_{i=0}^{|\Lambda|-1}E_{\Lambda_X[i]}[f(\Lambda_X[i],\Lambda[i])]\]
+\sum_{i=0}^{|\Lambda|-1}E_{\Lambda_X[i]}[f_P(\Lambda_X[i],\Lambda[i])]\]
 We say that $i$th label of $\Lambda$ is correctly predicted if $f_P(\Lambda_X[i],\Lambda[i])=1$. Therefore  
 by maximizing $f_P$ we search for an annotation/state path that maximizes the
 expected number of correctly predicted labels/states.
@@ -1411,6 +1411,10 @@ construct annotation from highly probable ``features''.
 
 %There are approaches to combine Viterbi and Posterior decoding. It is
 %interesting that 
+
+\bigskip
+{\large\bf Podtialto su zapracovane pripomienky}
+\bigskip
 
 
 \section{Algorithmic improvements}
