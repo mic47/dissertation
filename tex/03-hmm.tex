@@ -1332,45 +1332,85 @@ Optimizing this criteria can be done in $O(|X|W|C||T| + n|C|^2W^2)$ time  and
 $O(\sqrt{|X|}|C||V|+W|C||V|+n|C|^2)$ memory. Experimental evaluation,
 optimization algorithm and implementation details can be found in
 \cite{Nanasi2010mgr}.
+
 \subsection{Distance Measures on Annotations}
 
 Another approach to solve similar problem was proposed by {\it Brown,
-Truszkowski} in \cite{Brown2010}. Originally their implementation was aimed at prediction
-of boundaries in transmebrane proteins \cite{Brown2010}, but later they successfully
-adapted their algorithm to jumping HMMs\cite{Truszkowski2011}.
+Truszkowski} in \cite{Brown2010}. Originally their implementation was aimed at
+prediction of boundaries in transmebrane proteins \cite{Brown2010}, but later
+they successfully adapted their algorithm to jumping HMMs \cite{Truszkowski2011}.
+Their approach is trying to solve same problem as HERD: the exact boundaries of
+an annotations are hard to find and grouping similar annotation is useful.
 
 \begin{definition}
 Let $d$ be any distance measure defined on annotations. Ball of radius $r$
 around annotation $\Lambda$ is 
-\begin{equation}
+\begin{equation*}
 B_d(\Lambda,r) = \{\Lambda'\mid d(\Lambda,\Lambda')\leq r\}
-\end{equation}
+\end{equation*}
 \end{definition}
 
 \begin{definition}
 Let $\Lambda=\Lambda_0\Lambda_1\dots\Lambda_{n-1}$ be an annotations. Footprint
-of $\Lambda$ is maximal subsequence of $\Lambda$ that does not contain two same
+of $\Lambda$ is maximal subsequence of $\Lambda$ that does not contain two
+identical 
 consecutive labels.
 \end{definition}
 
+\begin{definition}
+Let $b_i(\Lambda)$ be $i$-th boundary of $\Lambda$ and $b(\Lambda)$ be the
+number of boundaries in $\Lambda$.
+Border shift distance $d_{b}$ is 
+\begin{equation*}
+d_{b}(\Lambda,\Lambda') = \begin{cases}
+\infty & \text{if $\Lambda$ and $\Lambda'$ have different footprint}\\
+\max_{i=0}^{b(\Lambda)-1} d_i(\Lambda)-d_i(\Lambda') & \text{otherwise}
+\end{cases}
+\end{equation*}
+and border shift sum distance $d_s$ is 
+\begin{equation*}
+d_{s}(\Lambda,\Lambda') = \begin{cases}
+\infty & \text{if $\Lambda$ and $\Lambda'$ have different footprint}\\
+\sum_{i=0}^{b(\Lambda)-1} d_i(\Lambda)-d_i(\Lambda') & \text{otherwise}
+\end{cases}
+\end{equation*}
+
+\end{definition}
+
 {\it Brown,
-Truszkowski} maximized following function
-\begin{equation}
+Truszkowski} maximize following function
+\begin{equation*}
 f_d(\Lambda,\Lambda') = 
 \begin{cases}
-\infty & \text{if $\Lambda$ and $\Lambda'$ have different footprint}\\
-d(\Lambda,\Lambda') & \text{otherwise}
+1 & {\text if }\Lambda\in B_d(\Lambda',r)\\
+0 & \text{otherwise}
 \end{cases}
-\end{equation}
+\end{equation*}
 
-Where $d$ was either Hamming distance, Border shift distance or Border shift sum
-distance\cite{}.
+As distance $d$, they have considered Hamming distance, Border shift distance
+and Border shift sum distance \cite{Brown2010}.  If we set $r=0$ then $f_d$ is
+same as $f_A$ and therefore finding annotation that maximize $f_d$ is NP-hard.
+
+Maximizing $f_d$ is NP-hard but finding annotation with footprint $F$ and
+maximal expected gain can be done in polynomial time \cite{Brown2010}. Therefore
+{\it Brown and Truszkowski} used following heuristic algorithm: At first they
+sample the state path to get footprint with hight probability
+
+Gain function $f_d$ is similar to $f_A$: the annotation is considered correct if
+it is same/very similar to th correct one. However, MBAD and HERD and the
+Posterior decoding do not care about overall structure of annotation, they
+construct annotation from highly probable ``features''.
 
 
-\subsection{Hybridizing Viterbi and Posterior Decoding}
 
-There are approaches to combine Viterbi and Posterior decoding. It is
-interesting that 
+
+%\subsection{Hybridizing Viterbi and Posterior Decoding}
+
+%Toto tu asi nebude. Rad by som to tu mal, ale nie je cas a vobec to nie je
+%dolezite. Mozno do dizertacky to napisem.
+
+%There are approaches to combine Viterbi and Posterior decoding. It is
+%interesting that 
 
 
 \section{Algorithmic improvements}
