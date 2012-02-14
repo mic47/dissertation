@@ -1274,28 +1274,65 @@ gain and therefore it is less likely that they appear in optimal annotation.
 \subsection{Highest Expected Reward Decoding}
 
 \abbreviation{Highest Expected Reward Decoding}{HERD} is extension of maximum
-boundary accuracy decoding. We have used this decoding prediction of
-recombination of HIV virus. In this subsection we will describe it's gain
-function and basic properties. Further details can be found in \cite{} and in my
-Master thesis\cite{}.
+boundary accuracy decoding. We have developed this decoding for prediction of
+recombination of HIV virus.  Further details can be found in \cite{Nanasi2010}
+and in my Master thesis\cite{Diplomovka}.
 
 
-In the problem of recombination detection in virus RNA is usually jumping
-HMM\cite{}. It is hard to find exact recombination point and annotations with
-slightly shifted boundaries are very similar. Therefore we defined following
-gain function.
+Genome of some viruses (for example HIV or HCV virus) can be divided into
+several subtypes. Moreover occasionally sometimes virus that is mozaic
+recombination of viruses from different subtypes (we call this virus
+recombinant). In the problem of recombination detection we try to decide if
+given sequence $X$ is recombinant sequence. If $X$ is recombinant then we want to find
+original subtypes of every part of a sequence $X$. Recombinations can be modeled
+by jumping HMMs \cite{} which are HMM with topology specific to this domain.
+In this application is 
+%In the problem of recombination detection in virus genome In the problem of
+%recombination detection in virus RNA is usually jumping HMM \cite{}. 
+hard to find exact recombination point and annotations with slightly shifted
+boundaries are very similar. Therefore we have defined the following gain
+function.
 
-Boundary on position $i$ is correctly predicted, if in the correct annotation is
-same boundary (on position $j$) within distance $W$ symbols, if it is boundary
-between same labels and if there is no other boundary between position $i$ and
-$j$ in both annotations. Let $x$ be the number of correctly predicted boundaries
-and $y$ be the number of other boundaries in the proposed annotation. Then
-$f(\Lambda,\Lambda')=x-\gamma y$ where $\gamma$ is defined constant. If $W=1$
-then this is equivalent to Maximum Boundary Accuracy Decoding.
+\begin{figure}
+\begin{center}
+\includegraphics[width=10cm]{../figures/HERDbuddy.pdf}
+\end{center}
+\caption[Highest Expected Reward Decoding explanation]{
+Triangles corresponds to boundaries. Vertical lines corresponds to the windows
+of size $2W$ or smaller to avoid overlaping. Windows around boundaries
+represents regions where we search for corresponding boundaries in the correct
+annotation.
+The first and the fourth boundary are correctly predicted because in the correct
+annotation is boundary between same colors within distance $W=2$.
+%correctly predicted (they have penalty $-\gamma$). Because there is no such
+%boundary in the correct
+%annotation within window.
+This picture was taken from \cite{Diplomovka}.
+}\label{FIGURE:HERDBUDDY}
+\end{figure}
 
-Optimizing this criteria can be done in $O(nW|C||T| + n|C|^2W^2)$ time  and
-$O(\sqrt{n}|C||V|+W|C||V|+n|C|^2)$ memory. Experimental evaluation of this
-algorithm can be found in \cite{}.
+We say that boundary on position $i$ is correctly predicted, if it satisfy
+following conditions.
+\begin{enumerate}
+\item There is boundary between same labels in the correct annotation on position $j$ and $j$ is
+within distance $W$ from $i$ ($|i-j|\leq W$).
+\item There is no other boundary between $i$ and $j$. 
+\end{enumerate}
+Boundaries are illustrated in figure \ref{FIGURE:HERDBUDDY}. 
+%In addition, the
+%beginning and the end of the sequence are considered to be boundary too (with
+%special start and end label).
+
+Let $x$ be the number of correctly
+predicted boundaries and $y$ be the number of other boundaries in the proposed
+annotation. Then $f(\Lambda,\Lambda')=x-\gamma y$ where $\gamma$ is defined
+constant. If $W=1$ then this is equivalent to Maximum Boundary Accuracy
+Decoding. 
+
+Optimizing this criteria can be done in $O(|X|W|C||T| + n|C|^2W^2)$ time  and
+$O(\sqrt{|X|}|C||V|+W|C||V|+n|C|^2)$ memory. Experimental evaluation,
+optimization algorithm and implementation details can be found in
+\cite{Diplomovka}.
 
 \subsection{Distance Measures on Annotations}
 
