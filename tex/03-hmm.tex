@@ -1417,17 +1417,52 @@ construct annotation from highly probable ``features''.
 \bigskip
 
 
-\section{Algorithmic improvements}
-%balls, herd, hybridizing viterbi
+\section{Algorithmic Improvements}
 
+In this section we review implementation details and several algorithmic
+improvements of the Viterbi algorithm and the Posterior decoding for HMMs and
+pHMMs. Mostly we will assume that HMMs does not have silent states most of these
+techniques are easily adjustable to HMMs with silent states. 
 
+\subsection{Basic Implementations}
 
+Implementation of the Viterbi algorithm and Forward-Backward algorithm can be
+done by two-dimensional dynamic programming, similarly as with the sequence
+alignment. Let $H$ be an HMM, $D[i,v]$ be matrix $n\times m$ where $n$ is the
+length of the sequence and $m$ is the number of states of HMM. $D$ will be the
+dynamic programming matrix for the Viterbi algorithm or the Forward algorithm.
 
+Code for the Viterbi algorithm (without back-links $B$) is following:
+\begin{lstlisting}
+Initialize D[0,*]
+for i = 1...n-1:
+  for v = 0...m-1:
+    val = D[i-1,0]*e[v,X[i]]*a[0,v]
+    for u = 1...m-1:
+      val = max (val, D[i-1,u]*[v,X[i]]*a[u,v]
+    D[i,v] = val
+\end{lstlisting}
 
+This algorithm runs in $O(nm^2)$ and $O(nm)$ memory. Note that values of column
+$D[i,\cdot]$ are computed from rows $D[i-1,\cdot]$ so if we want just the
+probability of the most probable state path, we need to remember only last two
+rows so the memory requirements will be $O(n+m)$. If we replace on line $6$
+maximum with summation, we will obtain the Forward algorithm.
 
+Note that if $a[u,v]$ is zero, then value $val$ will not change on line $6$.
+Therefore we have to iterate only for such $u$, that $u\to v$ is transition in
+$H$. By this we will reduce time complexity to $O(n(m+t))$ where $t$ is the
+number of transitions of $H$ not only for the Viterbi algorithm, but also for
+the Forward algorithm and the Posterior decoding.
 
+\subsection{The Hirschberg Algorithm}
 
+Similarly as with the sequence alignment we can decrease the memory requirement
 
+\subsection{Chceckpointing}
 
+\subsection{Using Sequence Repetition}
+
+\subsection{On-line Viterbi Algotithm}
 
 
