@@ -1461,14 +1461,20 @@ also for the Forward algorithm and the Posterior decoding.
 
 \subsection{Chceckpointing}
 
-Chceckpointing can be used to decrease memory complexity of the Viterbi algorithm wi
-th backtracing procedure and the Posterior decoding to $O(\sqrt n m)$.
-Similarly, this trick can be used to reduce memory complexity of algorithm for
-pHMMs to $O(n\sqrt n m)$ where $n$ is the length of the longer sequences and $m$
-is the number of states of HMM.
+Chceckpointing can be used to decrease memory complexity of the Viterbi
+algorithm with backtracing procedure and the Posterior decoding to $O(\sqrt n
+m)$.  Similarly, this trick can be used to reduce memory complexity of algorithm
+for pHMMs to $O(nm\sqrt n )$ where $n$ is the length of the longer sequences and
+$m$ is the number of states of HMM.
 
-\subsubsection{One-dimensional HMMs}
-\subsubsection{Pair HMMs}
+\subsubsection{One-dimensional Viterbi Algotrithm}
+While back-tracing, we need access to values of matrix $B$ in decreasing order.
+To reduce memory, we can use checkpointing as following:
+We will compute every $k$-th row of $V$.
+
+\subsubsection{One-dimensional Posterior Decoding}
+
+\subsubsection{Two-dimensional Viterbi algorithm}
 
 \subsection{The Hirschberg Algorithm}
 
@@ -1477,6 +1483,60 @@ to $O(n+m)$.
 
 
 \subsection{Using Sequence Repetition}
+
+This techniques uses dictionary based encoding schemes to speedup calculation of
+algorithms. We will show how to use this technique to Forward algorithm. Details
+about how to use this technique to other algorithms can be found in
+\cite{Lifshits2009}.
+
+
+Idea of this speedup is that we reformulate Forward algorithm into sequence of
+matrix multiplication.
+Let $H=(\Sigma,V,I,e,a)$ be a HMM, $|V|=m$.  Let $M_x[u,v]=a_{u,v}e_{v,x},
+u,v\in V,x\in \Sigma$ be $m\times m$ matrix and $I^x_u=I_ue_{u,x}$ be
+$1\times m$ vector. Matrix multiplication
+
+\begin{lemma}\label{LEMA:MATRIXMULTI}
+Let $X=X_1\dots X_n$ be a sequence, $H$ a HMM and $M_x$ and $I^x$ defined as above and
+$F[i,\cdot]$ be column vector from forward
+Then
+\begin{align}
+F[0,\cdot]^T &= I^{X_0}\\
+F[i,\cdot]^T &= I^{X_0}\prod_{j=1}^i M_{X_j}
+\end{align}
+for all $i< n$.
+\end{lemma}
+
+\begin{proof}
+We prove this lemma by induction.  If $|X|=1$ then
+$F[0,v]=I^[X_0]=I_{v}e_{v,X[0]}$ for all $v\in V$.  Assume that for
+$F[k,\cdot]^T = I^{X_0}\prod_{j=1}^k M_{X_j}$ (we assume that product of zero matrices
+is identity matrix). We have 
+\begin{align*}
+\left(I^{X_0}\prod_{j=1}^{k+1} M_{X_j}\right)[v] &= 
+\left(F[k,\cdot]^T M_{X_{k+1}}\right)[v]\\ &= \sum_{u\in V} F[k,u]
+M_{X_{k+1}}[u,v]\\ &= \sum_{u\in V} F[k,u] a_{u,v}e_{v,X_{k+1} } \\&= F[k+1,v] 
+\end{align*}
+for all $v$. 
+\end{proof}
+
+\begin{note}
+In original paper \cite{Lifshits2009} they use little different definition of
+HMM so they do not have problem with first $I$
+
+\end{note}
+
+Consequence is that we can write forward algorithm as the sequence of
+multiplications of $|\Sigma|+1$ different matrices. Since matrix multiplication
+is associative, we can use repetitive patters to speedup calculation. To adapt
+this approach to the Viterbi algorithm we have to use in matrix multiplication
+maximum instead of summation (such multiplication is also associative)
+\cite{Lifshits2009}.
+
+
+
+
+
 
 \subsection{On-line Viterbi Algotithm}
 
