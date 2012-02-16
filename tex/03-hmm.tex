@@ -1444,7 +1444,7 @@ for i=n-1...1:
     statePath[i-1] = B[i,statePath[i]]
 \end{lstlisting}
 
-This algorithm runs in $O(nm^2)$ and $O(nm)$ memory. Note that values of column
+This algorithm runs in $O(nm^2)$ and $O(nm)$ memory. Note that values of row
 $V[i,\cdot]$ and $B[i,\cdot]$ are computed from rows $V[i-1,\cdot]$ so if we
 want just the probability of the most probable state path, we need to remember
 only last two rows of $V$ (and we do not need $B$) so the memory requirements
@@ -1467,19 +1467,55 @@ m)$.  Similarly, this trick can be used to reduce memory complexity of algorithm
 for pHMMs to $O(nm\sqrt n )$ where $n$ is the length of the longer sequences and
 $m$ is the number of states of HMM.
 
-\subsubsection{One-dimensional Viterbi Algotrithm}
+\subsubsection{The Viterbi Algotrithm}
 While back-tracing, we need access to values of matrix $B$ in decreasing order.
-To reduce memory, we can use checkpointing as following:
-We will compute every $k$-th row of $V$.
+We need only matrix $B$ and last row of $F$. If we have $i$-th row of $F$ we can
+recompute submatrix $B[i+1:,\cdot]$. Therefore we will remember every $k$-th row
+of $V$ from which we will recompute blocks of matrix $B$. $B$ will be split into
+blocks
+$B_0=B[1:k+1,\cdot],B_1=[k+1:2k+2,\cdot],\dots,B_i=B[ik+1:{i+1}k+1,\cdot],\dots$
+We will keep in memory exactly one block of $B$. If we need row that is in block
+$B_i$ but $B_i$ is not in memory, we discard current block and compute block
+$B_i$ from $V[ik,\cdot]$. Since we need rows of $B$ in decreasing order, we
+recompute every block exactly once. If $k=\theta(\sqrt n)$ then we need
+$O(n+m\sqrt n)$ memory to find most probable state path.
 
-\subsubsection{One-dimensional Posterior Decoding}
+For two dimensional version we keep every $k$-th matrix $V[ik,\cdot,\cdot]$ and
+algorithm is analogous to two-dimensional version.
 
-\subsubsection{Two-dimensional Viterbi algorithm}
+\subsubsection{The Posterior Decoding}
 
+In the Posterior decoding need to interlace computations of $F[i,v]$ and
+$B[i,v]$ to compute $F[i,v]\cdot B[i,v]$ for all $0\leq i<n,v\in V$. We will
+compute $F$ with the chceckpointing algorithm (we compute every $k$-th row of
+$F$ and keep in memory only one block).  $B[i,v]$ will be computed row by row
+with the $O(m)$ version of Backward algorithm. When we compute $B[i,v]$ we
+compute $F[i,v]$ by checkpointing algorithm (if $i$ is in current block then
+return $F[i,v]$ from current block. Otherwise discard current block and
+recompute block in which $i$ belongs). With this approach we can compute
+posterior values in $O(m\sqrt n)$ memory. We recompute every row at most once
+and therefore time complexity will not change.
+
+
+%Checkpointing approach for posterior decoding is more similar to the
+%sequence-alignment approach. We want to compute $F[i,v]\times B[i,v]$ for all
+%$0\leq i< n$ and $v\in V$. We compute every $k$-th row of $F$ by forward
+%algorithm that remembers only last two rows. After that we interlace computation
+%of $B[i,v]$ for $i$ from $n-1$ to $0$ with $F[i,v]$ which we compute with
+%remembered block and checkpoints. For computation of $B$ we need only $O(m)$
+%memory since we have to remember only two rows. For computation of $F$ we need
+%$O(\sqrt{n}m)$ memory of $k=\theta(\sqrt n)$. We will recompute every block at
+%most once and therefore time complexity is still $O(n(m+t))$ and memory
+%complexity is $O(n+m\sqrt n)$.
+%
 \subsection{The Hirschberg Algorithm}
 
+We can use the Hirschberg trick to reduce memory complexity of the Viterbi
+algorithm for pair hidden Markov models. Similarly as with the most
+
+
 Similarly as with the sequence alignment we can decrease the memory requirement
-to $O(n+m)$. 
+of the Viterbi algorithm for pHMM to $O(nm)$ where $n$ is the length of the  
 
 
 \subsection{Using Sequence Repetition}
@@ -1498,11 +1534,11 @@ $1\times m$ vector. Matrix multiplication
 
 \begin{lemma}\label{LEMA:MATRIXMULTI}
 Let $X=X_1\dots X_n$ be a sequence, $H$ a HMM and $M_x$ and $I^x$ defined as above and
-$F[i,\cdot]$ be column vector from forward
+$F[i,\cdot]$ be row vector from forward
 Then
 \begin{align}
-F[0,\cdot]^T &= I^{X_0}\\
-F[i,\cdot]^T &= I^{X_0}\prod_{j=1}^i M_{X_j}
+F[0,\cdot] &= I^{X_0}\\
+F[i,\cdot] &= I^{X_0}\prod_{j=1}^i M_{X_j}
 \end{align}
 for all $i< n$.
 \end{lemma}
@@ -1510,11 +1546,11 @@ for all $i< n$.
 \begin{proof}
 We prove this lemma by induction.  If $|X|=1$ then
 $F[0,v]=I^[X_0]=I_{v}e_{v,X[0]}$ for all $v\in V$.  Assume that for
-$F[k,\cdot]^T = I^{X_0}\prod_{j=1}^k M_{X_j}$ (we assume that product of zero matrices
+$F[k,\cdot] = I^{X_0}\prod_{j=1}^k M_{X_j}$ (we assume that product of zero matrices
 is identity matrix). We have 
 \begin{align*}
 \left(I^{X_0}\prod_{j=1}^{k+1} M_{X_j}\right)[v] &= 
-\left(F[k,\cdot]^T M_{X_{k+1}}\right)[v]\\ &= \sum_{u\in V} F[k,u]
+\left(F[k,\cdot] M_{X_{k+1}}\right)[v]\\ &= \sum_{u\in V} F[k,u]
 M_{X_{k+1}}[u,v]\\ &= \sum_{u\in V} F[k,u] a_{u,v}e_{v,X_{k+1} } \\&= F[k+1,v] 
 \end{align*}
 for all $v$. 
@@ -1528,7 +1564,16 @@ HMM so they do not have problem with first $I$
 
 Consequence is that we can write forward algorithm as the sequence of
 multiplications of $|\Sigma|+1$ different matrices. Since matrix multiplication
-is associative, we can use repetitive patters to speedup calculation. To adapt
+is associative, we can use repetitive patters to speedup calculation. 
+Let $x$ be subsequence of $X$ that has $k>1$ non-overlaping occurrences in $X$.
+We can compute $M_{x_0}M_{x_1}\dots M_{x_{|x|-1}}$ once and use it several times.
+By proper choosing of substrings $x$ we can speedup computation of Viterbi or
+Forward-Backward algorithm.
+
+Let $X$ be the most probable state path that uses 
+
+
+To adapt
 this approach to the Viterbi algorithm we have to use in matrix multiplication
 maximum instead of summation (such multiplication is also associative)
 \cite{Lifshits2009}.
@@ -1540,4 +1585,14 @@ maximum instead of summation (such multiplication is also associative)
 
 \subsection{On-line Viterbi Algotithm}
 
+Online Viterbi algorithm is different approach to reduce memory complexity of
+Viterbi algorithm. In this approach we will discard parts of matrix $B$ that 
+are not necessary for reconstruction of the most probable state path.
+We can represent $B$ as a forest $G=(V',E)$ where
+\begin{align*}
+V' &= \left\{ (i,v)\mid 0\leq i< n, v\in V  \right\}\\
+E &= \left\{ (i,v)\to (i-1,B[i,v])\mid 0<i<n,v\in V\right\}
+\end{align*}
 
+Where roots of trees are vertices $(0,v),v\in V$. If there is leaf in the tree
+$F$, then  
