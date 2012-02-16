@@ -1611,11 +1611,25 @@ where $M_1$ and $M_2$ are matrices of size $m\times m$. This matrix
 multiplication is also associative.
 
 The second adaptation is that we have to had ability to reconstruct 
-the most probable state path. All mentioned compression schemes has property,
-that for every good string $x$ there are also two good strings $x_1,x_2$ such
-that $x=x_1x_2$. Therefore 
+the most probable state path.i
+After computing $I^{X_0}\prod_{i=0}^{k-1}M_{x_i}$ we do back-trace to obtain 
+partial state path $\pi'_0,\pi'_1,\dots \pi'_{k}$ which is subsequence of the
+most probable state path. Each $\pi'_i$ is state corresponding to the last
+sequence of $x_i$. We have to reconstruct state path between $\pi'_i$s; for
+every $x_i$ we have to reconstruct state path between $\pi'_{i-1}$ and $\pi'_i$.
 
+All mentioned compression schemes has property,
+that for every good string $x$ there are also two good strings $x^1,x^2$ such
+that $x=x^1x^2$. To recover state path for every good string $x$ and $u,v\in V$
+we have to pre-compute \[R_x[u,v] = \arg\max_{i\in V}M_{x^1}[u,i]M_{x^2}[i,v]\]
 
+Let $x=x_i$. Then $R_{x}[\pi'_{i-1},\pi'_{i}]$ corresponds to the state in the
+position of the last symbol of $x^1$. By recursive applying this rule to $x^1$
+and $x^2$ we can reconstruct the most probable state path on $x$. By doing this
+we can reconstruct it the most probable state path in $O(n)$ time.
+
+Lifshits {\it et al.} applied this  speedup to the Posterior decoding and the
+Baum-Welsch training.
 
 %Let $X$ be the most probable state path that uses 
 %To adapt
