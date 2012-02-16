@@ -1637,10 +1637,6 @@ Baum-Welsch training.
 %maximum instead of summation (such multiplication is also associative)
 %\cite{Lifshits2009}.
 
-
-
-
-
 \subsection{On-line Viterbi Algotithm}
 
 Online Viterbi algorithm is different approach to reduce memory complexity of
@@ -1652,5 +1648,7 @@ V' &= \left\{ (i,v)\mid 0\leq i< n, v\in V  \right\}\\
 E &= \left\{ (i,v)\to (i-1,B[i,v])\mid 0<i<n,v\in V\right\}
 \end{align*}
 
-Where roots of trees are vertices $(0,v),v\in V$. If there is leaf in the tree
-$F$, then  
+Where roots of the trees are vertices $(0,v),v\in V$. Most probable state path
+of a sequence $X$ of the length $n$ and ending in vertex $v$ corresponds to the
+path from vertex $(n-1,v)$ to root of it's tree. During computation of the
+Viterbi algorithm,
