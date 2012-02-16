@@ -1510,8 +1510,10 @@ and therefore time complexity will not change.
 %
 \subsection{The Hirschberg Algorithm}
 
+Chcem tu mat aj toto?
+
 We can use the Hirschberg trick to reduce memory complexity of the Viterbi
-algorithm for pair hidden Markov models. Similarly as with the most
+algorithm for pair hidden Markov models. We hav 
 
 
 Similarly as with the sequence alignment we can decrease the memory requirement
@@ -1566,18 +1568,60 @@ Consequence is that we can write forward algorithm as the sequence of
 multiplications of $|\Sigma|+1$ different matrices. Since matrix multiplication
 is associative, we can use repetitive patters to speedup calculation. 
 Let $x$ be subsequence of $X$ that has $k>1$ non-overlaping occurrences in $X$.
-We can compute $M_{x_0}M_{x_1}\dots M_{x_{|x|-1}}$ once and use it several times.
+We can compute $M_{x_0}M_{x_1}\dots M_{x_{|x|-1}}$ once and use it several
+times. Let $M_{x}=\prod_{i=0}^{|x|-1}M_{x[i]}$ for any string $x$.
+
 By proper choosing of substrings $x$ we can speedup computation of Viterbi or
-Forward-Backward algorithm.
+Forward-Backward algorithm. Algorithm has following structure:
+\begin{enumerate}
+\item We choose the \firstUseOf{dictionary} $D$. $D$ is set of string over alphabet $\Sigma$. String is
+\firstUseOf{good} if it belongs to $D$.
+\item We compute $M_x$ for all $x\in D$.
+\item We split input sequence $X[1:]$ into sequence of good words
+$x_0,x_1,\dots,x_{k-1}$ such that $x_0x_1\dots x_{k-1}=X[1:]$.
+%and $x_i\in D$ for
+%all $0\leq i<k$
+\item We compute $I^{X_0}\prod_{i=0}^{k-1}M_{x_i}$ in $O(kf(m))$ time where
+$f(m)$ is time needed to compute multiplication of two matrices of size $m\times m$
+\end{enumerate}
 
-Let $X$ be the most probable state path that uses 
+Lifshits {\it et al.} \cite{Lifshits2009} showed several ways how to choose set
+$D$ and split $X$ into sequence of good words. One is to use LZ78 factorization
+to split $X$ into $O(n/\log n)$ good words. Computation of $M_x$ for all $x\in
+D$ can be done in $O(|D|m^3)$ since $M_x,x\in D$ can be computed in $O(m^3)$
+time with following algorithm: if $|x|=1$ then $M_x$ is already computed.
+If $|x|>1$ then there is $x'\in D$ such that $x=x'a,a\in \Sigma$ and therefore $M_x =
+M_{x'}M_{a}$. Since $|D|=O(n/log n)$, computing $M_x$ takes $\Omega(nm^3/log m)$ if
+we use $O(m^3)$ algorithm for computing matrix multiplication. Computing fourth
+step of algorithm takes also $\Omega(nm^3/\log n)$ time and therefore overall time complexity
+is $\Omega(nm^3/\log n)$, which is $\Omega(\log n/m)$ speedup.
+
+It is possible to use different encoding methods. Speedup for the run length encoding 
+is $\Omega(r/\log r)$, for the straight-line programs $\Omega(r/m)$ and for the
+byte pair encoding $\Omega(r)$ where $r$ is the compression ratio under each
+compression scheme. We will not discuss details of this implementations, they
+can be found in \cite{Lifshits2009}.
+
+To adapt this approach to the Viterbi algorithm we have to make two adjustments. 
+We have to use max-time matrix multiplication instead of matrix multiplication
+\cite{Lifshits2009}. Max-time matrix multiplication is matrix multiplication
+where summation is replaced with maximization:
+\[M_1\odot M_2 [u,v] = \max_{0\leq i\leq m-1}M_1[u,i]M_2[i,v] \]
+where $M_1$ and $M_2$ are matrices of size $m\times m$. This matrix
+multiplication is also associative.
+
+The second adaptation is that we have to had ability to reconstruct 
+the most probable state path. All mentioned compression schemes has property,
+that for every good string $x$ there are also two good strings $x_1,x_2$ such
+that $x=x_1x_2$. Therefore 
 
 
-To adapt
-this approach to the Viterbi algorithm we have to use in matrix multiplication
-maximum instead of summation (such multiplication is also associative)
-\cite{Lifshits2009}.
 
+%Let $X$ be the most probable state path that uses 
+%To adapt
+%this approach to the Viterbi algorithm we have to use in matrix multiplication
+%maximum instead of summation (such multiplication is also associative)
+%\cite{Lifshits2009}.
 
 
 
