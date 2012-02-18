@@ -669,24 +669,59 @@ will try to find $\theta$ that maximizes likelihood of the data.
 
 \[L(H_\theta\mid D)=\prob{D\mid H_\theta}\]
 
+\todo{definovat $\sim$}
+
 Where date $D$ is set of pairs $(X,\pi)$ where $X$ is sequence and $\pi\in
 V\cup\{*\}$. $*$ means missing information in state path. Probability that data
 were generated is
 \[
 \prob{D\mid H_\theta} = \prod_{(X,\pi')\in D}\prob{X,\pi'\mid H_\theta}
 \]
-%where
-%\[\prob{X,\pi'\mid H_\theta} = \sum_{\pi\sim\pi'}\prob{X,\pi\mid H_\theta}\]
+where
+\[\prob{X,\pi'\mid H_\theta} = \sum_{\pi\sim\pi'}\prob{X,\pi\mid H_\theta}\]
 
-\subsection{Fully Labeled Data}
-At first we consider data without missing information. If we want  
-\subsection{Baum-Welsch algorithm}
-\subsection{Viterbi Training}
+In following paragraph we briefly discuss several methods of estimation of
+parameters.
 
-Viterbi training is same as Baum-Welsch train
+\paragraph{Fully labeled data:} Consider situation when $D$ consists of pairs
+$(X,\pi)$ where $\pi$ is full state path (without symbol $*$). In such situation
+we use frequencies of occurred events as the parameters of the model.
+Let $A_{u,v}$ be the number of transitions from $u$ to $v$ in $D$.
+Let $E_{u,x}$ be the number times when state $u$ emitted $x$ in training data
+$D$.
+Then 
+\begin{align*}
+&a_{u,v}=\frac{A_{u,v}}{\sum_{w\in V}A_{u,w}}
+&e_{u,x}=\frac{E_{u,x}}{\sum_{y\in\Sigma}E_{y,x}}
+\end{align*}
+for all $u,v\in V, x\in\Sigma$. $e$ and $a$ maximizes the likelihood
+\cite{Durbin1998}. If case of insufficient data some events that in reality have
+nonzero probability may not occur and therefore it's probability will be
+estimated to zero. To avoid this behavior we can use pseudo-counts
+\cite{Durbin1998}. We artificially add constant $k_x$ to all events $x$ that we expect
+to have non-zero probability.
 
-\subsection{Other Training Methods}
-There are several other approaches how to similar
+\paragraph{The Baum-Welsch training:} Baum-Welsch training is instance of more
+general expectation maximization algorithm. It is iterative algorithm that
+computes expectations of missing data and use such expectations to compute 
+new model. This algorithm has guarantee that it will converge to local maxima.
+Expectations are computed with variant of Forward-Backward algorithm.
+\paragraph{The Viterbi training: }
+
+Viterbi training is similar to Baum-Welsch training, but instead of computing
+expectations for missing data by Forward-Backward algorithm, we compute the most
+probable state path with the Viterbi training and estimate new model with by
+from frequencies of events. Advantage of this approach is that in practice this
+training is faster than Baum-Welsch training. However, the Viterbi training and
+Baum-Welsch training does not have to converge to same parameters
+\cite{Durbin1998}.
+
+In practice we can use the Viterbi training for the estimation of the reasonably
+good starting estimation for Baum-Welsch training. One such application can be
+found in \cite{FEAST2011}.
+
+%\subsection{Other Training Methods}
+%There are several other approaches how to similar
 \section{Variants of Hidden Markov Models}
 
 In this section we describe several variants of hidden Markov Models.
@@ -964,7 +999,21 @@ and first $D^y_{i-1}$ symbols in $Y$).
 
 
 \begin{example}
-Example of pair HMM (alignment?)
+In figure \ref{FIGURE:EXAMPLEPAIRHMM} is pair hidden Markov models modeling
+sequence alignment with affine gap model. State $M$ is called match state and
+generates pair of aligned residues and correspond to matrix $M$ from the sequence
+alignment algorithm. States $I_X$ and $I_Y$ represents gaps,
+generates residues in only one sequence and corresponds to matrices $M_X$ and
+$M_Y$ from the sequence alignment algorithm. \todo{pridaj linku}
+\begin{figure}
+\begin{center}
+\includegraphics{../figures/simplePairHMM.pdf}
+\end{center}
+\caption[Example of pair hidden Markov model.]{
+State $M$ generates aligned pairs of residues residues, $I_X$ ($I_Y$) generates
+symbol only in the first (second) sequence.
+}\label{FIGURE:EXAMPLEPAIRHMM}
+\end{figure}
 \end{example}
 
 \begin{definition}
@@ -1508,16 +1557,16 @@ and therefore time complexity will not change.
 %most once and therefore time complexity is still $O(n(m+t))$ and memory
 %complexity is $O(n+m\sqrt n)$.
 %
-\subsection{The Hirschberg Algorithm}
+%\subsection{The Hirschberg Algorithm}
 
-Chcem tu mat aj toto?
+%It is possible to use Hirschberg algorithm to r
 
-We can use the Hirschberg trick to reduce memory complexity of the Viterbi
-algorithm for pair hidden Markov models. We hav 
+%We can use the Hirschberg trick to reduce memory complexity of the Viterbi
+%algorithm for pair hidden Markov models. We hav 
 
 
-Similarly as with the sequence alignment we can decrease the memory requirement
-of the Viterbi algorithm for pHMM to $O(nm)$ where $n$ is the length of the  
+%Similarly as with the sequence alignment we can decrease the memory requirement
+%of the Viterbi algorithm for pHMM to $O(nm)$ where $n$ is the length of the  
 
 
 \subsection{Using Sequence Repetition}
@@ -1647,8 +1696,41 @@ We can represent $B$ as a forest $G=(V',E)$ where
 V' &= \left\{ (i,v)\mid 0\leq i< n, v\in V  \right\}\\
 E &= \left\{ (i,v)\to (i-1,B[i,v])\mid 0<i<n,v\in V\right\}
 \end{align*}
+Edges in this forest are oriented from the children to parents. Roots of the
+trees are vertices $(0,v),v\in V$.  Most probable state path that generated
+$X[:i]$ and ending in vertex $v$ corresponds to the path from vertex $(i-1,v)$
+to root of it's tree. Let $S_{i,v}$ be the set of vertices path from vertex
+$(i,v)$ to the root of it's tree and $S_i=\Cup_{v\in V}S_{i,v}$.
+After computation of $B[i,v]$ only vertices in $S_i$ can lie on the most
+probable state path so other can be removed. State paths corresponding to
+$S_{i,v}$ may be overlap, so by removing others we can reduce memory
+footprint.
 
-Where roots of the trees are vertices $(0,v),v\in V$. Most probable state path
-of a sequence $X$ of the length $n$ and ending in vertex $v$ corresponds to the
-path from vertex $(n-1,v)$ to root of it's tree. During computation of the
-Viterbi algorithm,
+{\v S}r{\'a}mek {\it et al.} developed data structure that maintains $S_i$
+without introducing significant overhead.  Let $G_i$ be induced subgraph of $G$
+consisting from vertex set $S_i$. Leaf $(j,v)$ is \firstUseOf{unreachable} if
+$j<i$.  $G_i$ does not contain unreachable leaf and therefore $G_i$ contains $m$
+leaves $(i,v),v\in V$. Construction of $G_{i+1}$ is following.
+After computing $B[i+1,\cdot]$ we add vertices $(i+1,v),v\in V$ and edges 
+$(i+1,v)\to (i,B[i+1,v]),v\in V$. Vertices $(i+1,v),v\in V$ are new leaves.
+While in $G_{i+1}$ are some internal leaves, we remove them.
+After removing all internal leaves, $G_{i+1}$ contains only vertices from $S_i$.
+To make $G_i$ smaller, we use compress representation of trees. We compress
+chains of vertices with one children into one edge (but we keep
+corresponding state path of compressed chain). If we do so, every vertex will
+have at most two children and therefore there will be at most $m-1$ internal
+nodes. $G_i$ has therefore always $O(m)$ leaves and updating can be done in
+$O(m)$ time so this technique does not alter asymptotic running time of the
+Viterbi algorithm. In practice this technique increase running time by $5$\%
+\cite{Sramek2007}.
+
+Improvement in memory requirements can be significant. Even when there exists
+HMMs on which this technique will not improve memory requirements
+\cite{Sramek2007}, {\v S}r{\'a}mek {\it et al.} reports polylogarithmic 
+memory requirements for HMM used for gene finding.
+They also proved that for symmetric two
+state HMMs (with one exception), expected memory complexity of this algorithm is
+$O(H\log n)$ where $H$ is constant specific for HMM. Estimation of expected time
+complexity for given HMM is still open problem.
+
+TODO spomienka o treeterbi
