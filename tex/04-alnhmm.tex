@@ -119,7 +119,12 @@ intervals of size $3$ bases of bases surrounding each matching base.
 \subsection{Twain}
 
 Twain is another approach to use GPHMM (and evidence from two related genomes)
-to find genes \cite{Majoros2005}. It is 
+to find genes \cite{Majoros2005}. It uses interesting technique to improve
+running time of the algorithm. It search in the both sequences for the signals
+(like ...,..,..,). After that it creates graph: two signals in one sequence are
+connected by an oriented edge if one signal can follow other signal. They do
+Cartesian product of such graph of both sequences. Resulting graph is used to
+restrict search space of the sequence alignment.
 
 
 
@@ -171,21 +176,23 @@ Treeterbi algorithm.
 FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple PHMM from figure
 \ref{PHMM:FIG:SIMPLEPHMM} is optimized for one fixed rate of evolution. However,
 in DNA conservation rate is different on different sites.  FEAST contain $k$
-such submodels, each trained for different rate of evolution, each of them
+such submodels, each trained for different rate of evolution. Submodels are
 connected with single silent state. Since FEAST is local alignment tool, it one
-additional submodel for generating unaligned sequences (once PHMM enters such
-model, it won't leave). Model topology is described in picture \ref{}.
+additional submodel for generating unaligned pair of the sequences 
 
 To construct alignment (either local or global) FEAST uses the Viterbi
-algorithm. Like many local aligners, FEAST at first use six different space
-seeds to get hits and extended those hits using x-drop heuristic \cite{}.
-However, they use ungapped version of Forward algorithm during extension
-(Viterbi algorithm is usually used during extension phase).
+algorithm. Like many local aligners, FEAST use seeding heuristics to reduce
+computational complexity of finding local alignments.  At first it use six
+different space seeds to get candidate seed and extended those seeds using
+x-drop heuristic \cite{} using ungapped version of Forward algorithm during
+extension (Viterbi algorithm is usually used during extension phase).
 
 Estimation of parameters was done by expectation maximization approach (with
 Baum-Welch or Viterbi training). They forced gap parameters to be same in all
 submodels.
 
+Using different rate of evolution was also used in \cite{NovyLunter}. Such HMM
+contained several states for the most probable alignemnt
 
 Dalsie modely: TWINSCAN, MCALIGN2, WABA, Catwright (zeta function)
 
@@ -219,9 +226,9 @@ this improved quality of alignments.
 
 Modeling non-geometric distributions with several states can be problematic. Set
 of states with same emission distribution used for modeling modeling
-non-geometric distribution is called gadget. Problem with gadgets and the
-Viterbi algorithm are discussed in \cite{TomasovaDizertacka}. We describe this
-problem for the two component mixture models.
+non-geometric distribution is called gadget. Problems with gadgets and the
+Viterbi algorithm are discussed in \cite{TomasovaDizertacka}. We describe
+discuss those problems for the two component mixture models.
 
 Let $H$ be an simple pair hidden Markov model with two pairs of indel states.
 Let $I_1$ and $I_2$ be indel states that generates gaps in the first sequence.
@@ -249,3 +256,12 @@ possible that the Viterbi algorithm reconstruct different alignments.
 
 
 \section{Errors In Alignment}
+
+Lunter {\it et al. (2008)} conducted extensive survey concerning errors in
+alignment. They considered three types of errors (associated with gaps):
+\begin{itemize}
+\item \firstUseOf{Gap wander}
+
+\item \firstUseOf{Gap anihilation}
+\item \firstUseOf{Gap attraction}
+\end{itemize}
