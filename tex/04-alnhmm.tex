@@ -36,8 +36,10 @@ Initial distribution is even.
 \end{figure}
 
 As mentioned before, score of the alignment is the probability of state path
-that correspond to such alignment. Therefore we can find the alignment with 
-highest score by two dimensional version of Viterbi algorithm. 
+that correspond to such alignment. Therefore we can find the alignment with
+highest score by two dimensional version of Viterbi algorithm. Advantage of
+using this model instead of the Needleman-Wunch algorithm is that pHMM gives
+probabilistic explanation of the alignments. 
 
 \section{More Complex models}
 
@@ -50,11 +52,11 @@ biological background.
 TODO: Tu bude mega obrazok (asi na jednu stranu), kde budu nakreslene rozne
 topologie.
 
-\subsection{Genes}
+%\subsection{Genes}
 
-Gene, codon, exon, intron, triplets,..., evolution rate, splice site
+%Gene, codon, exon, intron, triplets,..., evolution rate, splice site
 
-\subsection{DoubleScan}
+\ subsection{DoubleScan}
 Meyer {\it et al. (2002)} developed gene finder, that used evidence from the
 sequences of two organism to find genes. Their GPHMM has 54 states. Generally,
 they have three types of states: {\it match} states, which generated same number
@@ -80,7 +82,7 @@ find local alignments. Then DoubleScan choose consistent subset of matching by
 greedy method. They restrict Viterbi algorithm to such subset allowing with
 tolerance of 15 bases.
 
-\subsection{SLAM}
+\subsection{SLAM} 
 
 SLAM is comparative-based gene finder \cite{SLAM2003} based on generalized pair
 hidden Markov model \cite{Alexanderson2004} with some states being also a
@@ -107,7 +109,7 @@ intervals of size $3$ bases of bases surrounding each matching base.
 \subsection{Twain}
 
 Twain is another approach to use GPHMM (and evidence from two related genomes)
-to gene finding \cite{Majoros2005}. It is 
+to find genes \cite{Majoros2005}. It is 
 
 
 
@@ -132,7 +134,7 @@ Parameters for match and insert transitions were derived from amino acid
 distribution from the model $T$, from the codon bias in the organism and there
 was allowed one substitution error while translating codons to amino acids (due
 sequencing errors).
- 
+  
 \subsection{Pairagon}
 
 Pairagon alignes \abbreviation{coding DNA}{cDNA} to  genome \cite{Pairagon2009}.
@@ -153,8 +155,8 @@ Decoding was done by Viterbi algorithm. Runtime of the algorithm was improved by
 stepping stone algorithm \cite{} and memory requirements were improved using
 Treeterbi algorithm. 
 
-
-\subsection{FEAST}
+ 
+\subsection{FEAST} 
 FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple PHMM from figure
 \ref{PHMM:FIG:SIMPLEPHMM} is optimized for one fixed rate of evolution. However,
 in DNA conservation rate is different on different sites.  FEAST contain $k$
@@ -177,7 +179,7 @@ submodels.
 
 Dalsie modely: TWINSCAN, MCALIGN2, WABA, Catwright (zeta function)
 
-\section{More Complex Gap Models}
+\section{Two Component Mixture Models}
 Gapmodel defined by PHMM is in fact affine gapmodel.
 Gap length have geometric distribution: the probability that gap have length $d$
 is $e_{M,I}e_{I,I}^{d-1}(1-e_{I,I})$ (if we sum out all emissions). However,
@@ -185,3 +187,5 @@ using
 %co chcem povedat: niekedy je lepsie pouzit iny gapmodel -- jeden pre kratke
 %gapy, jeden pre slhe gapy. Preto sa niekedy 
 
+
+\section{Errors In Alignment}
