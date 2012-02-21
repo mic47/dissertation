@@ -203,32 +203,38 @@ geometric distribution: the probability that gap have length $n$ is
 $e_{M,I}e_{I,I}^{n-1}(1-e_{I,I})$ (if we sum out all emissions).  Viterbi
 algorithm is usually computed in log-space: instead of computing product of
 probabilities of events\footnote{Event is emission or transition.}, we compute
-the sum of logarithms of the probabilities. Viterbi algorithm for the simple HMM
+the sum of logarithms of those probabilities, because computation in log-space
+is numerically more stable. Viterbi algorithm for the simple HMM
 will became same as the Needleman-Wunsch algorithm.  Gap penalty will be
 $\log(e_{M,I})+\log(1-e_{I,I})+(n-1)\log(e_{I,I})$. By setting $d=\log(e_{I,I})$
 and $g=\log(e_{M,I})+\log(1-e_{I,I})-d$ we see that this is exactly affine gap
-penalty. Therefore affine gap penalties corresponds to geometric distribution of
-indel lengths.
+penalty. Therefore we can say that affine gap penalties corresponds to geometric
+distribution of indel lengths.
 
 As we mentioned chapter \ref{CHAPTER:ALIGNMENT}, using non-affine gap model can
 improve alignment quality.  Problem with geometric distribution (or affine gap
-penalties) is
-that it gave too high penalty for long indels. Therefore some other distribution
-might be more appropriate, for example zeta distribution \cite{}, or combination
-of several geometric distributions to approximate final distribution \cite{}.
+penalties) is that it gave too high penalty for long indels \cite{} Therefore
+some other distribution might be more appropriate, for example zeta distribution
+\cite{}, or combination of several geometric distributions to approximate final
+distribution \cite{}.
 
-One way of incorporating different gap distribution into pair hidden Markov
-models without using theirs generalized version is to use several (for example
-two) indel states for every sequence. For example FASTA \cite{} and Lunter {\it
-et al. (2008)} used two component mixture models: instead of one indel state for
-every sequence we use two indel states for every sequence. They report that
-this improved quality of alignments.
+GpHMM are suited to usage of different then geometric duration distributions.
+On the other hand, GpHMM are slower to decode so we might want to avoid them if
+possible.  One way of incorporating different gap distribution into pair hidden
+Markov models without using theirs generalized version is to use several (for
+example two) indel states for every sequence. For example FASTA \cite{} and
+Lunter {\it et al. (2008)} used two component mixture models: instead of one
+indel state for every sequence we use two indel states for every sequence. They
+report that this improved quality of alignments.
 
 Modeling non-geometric distributions with several states can be problematic. Set
 of states with same emission distribution used for modeling modeling
-non-geometric distribution is called gadget. Problems with gadgets and the
-Viterbi algorithm are discussed in \cite{TomasovaDizertacka}. We describe
-discuss those problems for the two component mixture models.
+non-geometric distribution is called gadget (There are also additional
+properties: all transitions entering gadget has to either start in same state or
+end in same state. Same holds for transitions that leaves gadget. ). Problems
+with gadgets and the Viterbi algorithm are discussed in
+\cite{TomasovaDizertacka}. We describe discuss those problems for the two
+component mixture models.
 
 Let $H$ be an simple pair hidden Markov model with two pairs of indel states.
 Let $I_1$ and $I_2$ be indel states that generates gaps in the first sequence.
@@ -246,22 +252,72 @@ might be different for $H$ and $H'$.
 
 Problem is that in the generalized model the Viterbi algorithm gaps of length
 $n$ have ``score'' $d(n)$ but in the non-generalized pair hidden Markov model it
-will be $\max\{a_1p_1^n(1-p_1),a_2p_2^n(1-p_2)\}, n>0$ and $1-a_1-a_2$ if $n=0$.
-These two scores are different ($d(n)$ is always higher) and therefore it is
-possible that the Viterbi algorithm reconstruct different alignments.
+will be $m(n)=\max\{a_1p_1^n(1-p_1),a_2p_2^n(1-p_2)\}, n>0$ and
+$m(0)=1-a_1-a_2$.  These two scores are different ($d(n)$ is always higher) and
+therefore it is possible that the Viterbi algorithm reconstruct different
+alignments. Therefore if we are using the Viterbi algorithm we should either
+train such gadget that $m(n)$ will be better approximation of $d(n)$ of the
+original model or to use generalized pair hidden Markov model for the Viterbi
+algorithm or some variant of the most probable state path.
 
 
 %co chcem povedat: niekedy je lepsie pouzit iny gapmodel -- jeden pre kratke
 %gapy, jeden pre slhe gapy. Preto sa niekedy 
 
 
-\section{Errors In Alignment}
+\section{Biases In Alignments}
 
-Lunter {\it et al. (2008)} conducted extensive survey concerning errors in
-alignment. They considered three types of errors (associated with gaps):
+Lunter {\it et al. (2008)} conducted extensive survey concerning biases in
+alignment. They considered three types of biases (associated with gaps). These
+gap biases are also discussed in \cite{Durbin1998} \todo{Naozaj?}. By
+\firstUseOf{true alignment} we mean alignment that corresponds to actual 
+evolution history.
 \begin{itemize}
-\item \firstUseOf{Gap wander}
+\item \firstUseOf{Gap wander} means that gap is in different location that in
+true alignment. Is is due to random short similarities around the borders of
+a gaps that are indistinquishable from true homologies. Lunter {\it et al.} gave
+explicit formula for computing the expected proportion of incorrectly aligned
+regions due to gap wander. \todo{Nie je tento vzorec zbytocny?}
+\[F_w =
+\frac{\sigma}{\gamma}\frac{(4e^{4\sigma/3}-3)(4e^{\sigma/3}-1)}{8e^{4\sigma/3}-3}\]
+where $\gamma$ is th ratio of the substitution rate, $\sigma$, to the indel
+rate, $\sigma$.
 
-\item \firstUseOf{Gap anihilation}
-\item \firstUseOf{Gap attraction}
+\item \firstUseOf{Gap attraction} is caused when two gaps are near each other.
+In such case merging those caps and introducing few mismatches might have higher
+score. 
+\item \firstUseOf{Gap anihilation} occurs when there are two gaps with
+same length in both sequences. Since indels are not so common, removing both
+gaps while introducing new mismatches might increase score of an alignment.
 \end{itemize}
+
+Biases are ordered by their frequency from the most occurring to the least
+occurring \cite{Lunter2008}. They did a simulation study: they simulate
+evolution the human and mouse sequence to get sequences with true alignments.
+After that they align those sequences using several pHMMs with several decoding
+algorithm; from the simple pair hidden Markov model from figure
+\ref{FIGURE:PAIRHMM} to the pHMM with two component geometric mixture models and
+variable evolution rate depending on GC content. They used three decoding
+algorithm: The Viterbi algorithm, the Posterior decoding and the
+\abbreviation{Marginalized posterior decoding}{MPD}.
+
+Let $X$ and $Y$ be input sequences and $H$ be an pHMM. Let $M_{i,j}$ be the
+probability that $X[i]$ and $Y[j]$ are aligned (this corresponds to column
+$(X[i],Y[j])$ in the alignment), $M^X_{i,j}$ be the probability that $X[i]$ is
+aligned to a gap between positions $j$ and $j+1$ in a sequence $Y$ (this
+corresponds to column $(X[i],'-')$ in the alignment) and $M^Y_{i,j}$ be the
+probability that $Y[j]$ is align to a gap between position $i$ and $i+1$ in a
+sequence $X$ (column $('-',Y[j])$ of an alignment). The values $M_{i,j}$,
+$M^X_{i,j}$ and $M^Y_{i,j}$ defines posterior probabilities of all possible
+columns in alignment. Their Posterior algorithm maximizes the sum of logarithms
+of the probabilities of all column in alignments (or the product of their
+probabilities). The MPD differs in the treatment of gaps. Gap probabilities does
+not depend on position. $M^X_{i,j}$ is defined as the probability that $X[i]$ is
+aligned to a gap (at any position) and $M^Y_{i,j}$ is analogous.
+%= \sum_{k}M^X_{i,k}$ and
+%$M^Y'_{i,j}=\sum_{k}M^Y_{k,j}$.
+
+PD and MPD created alignments with higher sensitivity and  false-positive ratio
+independently of the used model.  Usage of mixtu
+
+Their study shows that 
