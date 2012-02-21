@@ -140,10 +140,10 @@ function in $O(|X||Y|)$ time \cite{Lunter2008}.
 
 \section{Pair Hidden Markov Models And Gene Model}
 
-In this section we describe several pair hidden Markov models witch gene
-structures incorporated into their topology. These models were used either to
-alignment of coding DNA or proteins to genome or to the comparative gene
-finding.
+In this section we describe several pair hidden Markov models (or generalized
+pair hidden Markov models) with gene structures incorporated into their
+topology. These models were used either to alignment of coding DNA or proteins
+to genome or to the comparative gene finding.
 
 TODO: Tu bude mega obrazok (asi na jednu stranu), kde budu nakreslene rozne
 topologie.
@@ -154,14 +154,26 @@ topologie.
 
 \subsection{DoubleScan}
 Meyer {\it et al. (2002)} developed gene finder, that used evidence from the
-sequences of two organism to find genes. Their GpHMM has 54 states. Generally,
+sequences of two organism to find genes. Generally,
 they have three types of states: {\it match} states, which generated same number
 of symbols in both sequences;   {\it emit} states, which generate sequences only
 in one sequence and silent states. DoubleScan's HMM contains structures for
-exons, introns and intron-like structures that are outside genes. Every such
-structure has three version: one matching version, which emit aligned residues
-and one structure per sequence to emit indels.  Overview of DoubleScan's HMM
-structure is in figure \ref{}. 
+exons, introns and intron-like structures that are outside genes. 
+
+Basic structure of GpHMM consists from three types of substructures:
+substructures that emits exons, substructure that emits introns and substructure
+that generates intergenic regions. Each structure was in the alignment three
+times: once from match states and twice as emit states. Exon substructure was
+single state emitting codons (triplets that will be translated into proteins).
+There was one additional intron substructure that was connected to states that
+generated intergenic regions. This additional intron substructure was in the
+model to avoid detecting of pseudogenes. This GpHMM has total $54$ states in
+total.
+
+%Every such
+%structure has three version: one matching version, which emit aligned residues
+%and one structure per sequence to emit indels.  Overview of DoubleScan's HMM
+%structure is in figure \ref{}. 
 \nocite{Meyer2002}
 
 Emission probabilities if the {\it match exon} state were estimated from
