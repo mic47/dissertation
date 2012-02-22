@@ -233,7 +233,7 @@ where $t$ is number of transitions.  Forward variables are also used in other
 algorithms. 
 %Storing all of the forward variables requires soring $O(nm)$ numbers.
 
-\section{Sequence Annotation}
+\section{Sequence A nnotation}
 
 %definujeme annotation, footprint, set of colors
 
@@ -242,7 +242,7 @@ HMMs can be used for sequence annotation. By sequence annotation we mean
 assigning ``labels'' to parts of the input sequence according to their meaning.
 Now we give few examples.
 
-\paragraph{Gene finding:} in living organisms parts of DNA sequences are
+\paragraph{Gen e finding:} in living organisms parts of DNA sequences are
 translated into proteins. Those parts of sequences which were used during
 translation to proteins (we include also introns) are called genes. In gene
 finding we want to find which parts of the input sequence are genes and which
@@ -266,7 +266,7 @@ subtypes. For example beginning and end of RNA sequence of virus can be from
 one subtype and the middle of a sequence is from different subtype. In
 recombination prediction we want to annotate RNA sequence of a virus by subtypes
 from which that part of sequence originates.
-\paragraph{}
+\paragraph{} 
 In general, we have a finite set of labels $C=\{c_0,c_1,\dots,c_{l-1}\}$ and we
 want to assign one label to every symbol of the input sequence. We do it by
 assigning one label to every state of HMM.
@@ -279,10 +279,10 @@ symbol. We can formalized this in the following way.
 
 \todo{Aby nebol bordel medzi label a color}
 
-\begin{definition}
+\begin{definition}\label{DEFINITION:ANNOTATION}
 Let $H=(\Sigma,V,I,e,a)$ be HMM and $C=\{c_0,c_1,\dots,c_{l-1}\}$ be the finite
 sets of labels (or colors). Then \firstUseOf{coloring funcion} 
-$\lambda: V^*\to C^*$ is function, that satisfies following properties:
+$\lambda: V^*\to C^*$ is function that satisfies following properties:
 \begin{enumerate}
 \item $\lambda(v)\in C$ for all $v\in V$.
 \item $\lambda(xy) = \lambda(x)\lambda(y)$ for all $x,y\in V^*$.
@@ -1137,6 +1137,8 @@ describe already discussed algorithm within this framework and show several
 other decoding methods developed in recent years.
 
 \subsection{Highest Expected Gain}
+
+\label{SECTION:HEG}
 
 In this section we will describe a framework for studying decoding algorithm in
 a more systematic way. This framework was introduced introduced originally for

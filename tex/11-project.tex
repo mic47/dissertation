@@ -2,6 +2,8 @@
 Poznamka pre seba -- toto chcem asi kratsie ako som to zacal pisat. Celkovo by
 to mohlo mat tak par stran
 
+\section{Pairwise sequence alignment}
+
 \section{Hidden Markov Models}
 
 \subsection{Measures for decoding algorithms}
@@ -10,58 +12,198 @@ to mohlo mat tak par stran
 % HMM, Viterbi, Posterior, most probable annotation, balls, herd, -- gain
 % functions
 
+In section \ref{SECTION:HEG} we have discussed
+the highest expected gain framework. This framework generalizes decoding methods
+for HMMs. Recall that decoding method is the method of obtaining an annotation
+of a sequence from the sequence and the model. At first we briefly review the
+highest expected reward framework.
 
-Traditionally used algorithm for decoding \abbreviation{Hidden Markov
-Models}{HMMs} is Viterbi \todo{Aj tak si myslim, ze cele toto by som asi mal
-presunut o kapitoly vyssie}
-algorithm. \abbreviation{Viterbi algorithm}{VA} finds the most probable state path, which is
-state path $\pi$ that maximizes $\Pr\left(\pi \mid X\right)$. Other commonly
-used criteria, the \abbreviation{Posterior Decoding}{PD}, is maximizing the sum of the posterior
-probability for every state in state sequence independently. Therefore PD finds
-the state path $\pi$ that maximizes $\sum_{i=1}^{|\pi|} \Pr\left(\pi_i \mid
-X\right)$ \todo{Trosku upravit oznacenia vo vzorcoch}. Both VA and PD can be
-computed in effectively in $O(NM)$ time and memory, where $N$ is the
-length of the sequence and $M$ is the size of the model (number of states plus
-number of transitions). There are also couple of tricks how to lower the memory
-requirements of such algorithms or even exploit repetition of the sequences to
-decrease running time.
+Hidden Markov models defined probability distribution over state paths $\pi$
+given sequence $X$ and model $H$: $\prob{\pi\mid X,H}$. Given annotation
+function $\lambda$, HMMs also defines probability distribution of annotations
+$\Lambda=\lambda(\pi)$ given sequence $X$: $\prob{\Lambda\mid X,H}$.  The state
+path (or an annotation) that generated a sequence $X$ is hidden.
+We will denote by
+the \firstUseOf{correct state path} of sequence $X$ the state path that
+generated $X$ and the \firstUseOf{correct annotation} is annotation of the
+correct state path. Our goal is to find the correct annotation/state path of
+given sequence $X$ or at least the good approximation of it.
 
-In some practical HMMs some states have same role (i.e. they encode same thing)
-\todo{chcelo by to predtym poriadne zaviest co su anotacie a tak -- este v
-prehlade}
-but for some reasons can not be merged into same states. Therefore does not have
-to distinguish between state paths, that differs only in those states. In
-general, we can assign to each state annotation symbol (or "color") and we want
-to account into probability of some state path $\pi$ probabilities of all state
-spaces, that has same sequence of annotation symbols. Therefore we are
-maximizing following criteria
-\[\sum_{\pi'\textrm{ has same annotation as }\pi}\Pr\left( \pi' \mid X \right)\]
+This is usually done by finding the most probable state path. However,
+in case of HMMs that have multiple path problems, there might be many 
+Event the most probable annotation does not have to give us useful approximation
+of the correct annotation.
 
-However, maximizing such criteria is NP-hard \cite{} and even if we fix the
-HMM \cite{Brejova2005}. Since maximizing this criteria is not tractable, we have
-to use some heuristics that can possibly find only local maxima. It possible to
-find HMM, for which VA finds annotation that has exponentially smaller
-probability than the most probable annotation. Similarly, since PD maximizes
-each state in state path independently, it can reconstruct state path/annotation
-that has zero probability.
+We have shown earlier that the most probable annotation can be different from 
+the most probable state path, but searching for the most probable annotation is
+NP-hard \cite{Lyngso2002,Brejova2007mpa}. In some cases the most probable
+annotation does not have to be the thing we should look for.
 
-We can generalize all those into framework in which we will define gain function
-and where we are trying to find annotation that has highest possible gain with
-respect to correct annotation. Since we do not know the correct annotation, we
-are treating the correct annotation as an random variable with distribution
-$\Pr\left(\cdot\mid X\right)$. We can express all decoding methods that are
-described above in terms of gain functions and therefore finding the annotation
-with the highest expected gain (if gain function is computable function) is
-NP-hard. But some HMM's and gain functions we can find annotation with the
-maximum expected gain in polynomial time. 
+\todo{Nesedi poradie argumentov, skontroluj to v celej minimovke!}
+Since the correct annotation/state path is unknown, we treat correct annotation
+as a random variable with distribution $\prob{\Lambda\mid X,H}$. We define gain
+function $f:\bar{\Lambda}\times\bar{\Lambda}\to \mathbb{R}$.
+$f(\Lambda_1,\Lambda_2)$ is the ``measure'' of an approximation of $\Lambda_2$
+by $\Lambda_1$. This function is not mathematical measure, it can be arbitrary
+function. Function $f$ is application specific, it should reflect the features
+that are we interested in.
 
--- proste ze chceme sa venovat takym veciam, ze ktore funkcie sa daju pocitat
-efentivne a ktore nie. A podobne.
+After defining function $f$, we seek the for the annotation $\Lambda$ with the highest expected gain:
+\[\Lambda = \arg\max_{\Lambda} 
+E_{\Lambda_X\mid X,H}[f(\Lambda_X,\Lambda)] =
+\sum_{\Lambda_X}f(\Lambda_X,\Lambda)\Pr\left(\Lambda_X\mid X,H\right)
+\]
+We have shown that problem of finding the annotation with the highest expected
+gain given sequence $X$ and annotation function $f$ is NP-hard, but some gain
+functions can be decoded in polynomial time (for example gain functions for the
+Viterbi algorithm or gain function for  the Posterior decoding).
 
-Gain functions described above are not the only ones that can be in practice
-used. There are several ??
+There is a big gap between the time complexity of the Viterbi algorithm and the
+NP-hard problems. While decoding some functions gan be 
 
-+ extend those measures to pair-hidden Markov Models
+We want to study gain functions (or measures of decoding from HMM) 
+
+Highest expected gain can be also extended to pair hidden Markov models. In such
+case we need to properly define annotations for the pHMM. In general, pHMM are
+used to annotation and comparison of two sequences at once: In case of
+comparative gene finding, pHMM finds genes in both sequences and alignment was
+not main issue. In case of actual alignments, we were not so much interested in
+the annotation of the sequences, but only in relation between the symbols of the
+sequences. From state path (for pHMM) we can uniquely reconstruct alignment, so
+we could define annotations as for the HMMs. However, it could create following
+problem:
+
+Let $H$ be simple pHMM from figure \ref{FIGURE:SIMPLEPHMM} (simple three state
+pHMM for sequence alignment). Let $C=\{M,I\}$ be the set of labels and 
+$\lambda$ be annotation function, such that $\lambda(M)=M, \lambda(I_X)=I$ and
+$\lambda(I_Y)=I$. In such case it is not possible to assign annotation symbols
+to input sequences $X$ and $Y$ and even it is not possible to assign unique
+annotation. For example let $X=Y=ACGT$ and $\Lambda = IIMMII$. Then
+following $6$ alignments are possible:
+\begin{verbatim}
+Annotation:    IIMMII    IIMMII    IIMMII    IIMMII    IIMMII    IIMMII
+X:             --ACGT    ACGT--    A-CGT-    A-CG-T    -ACGT-    -ACG-T
+Y:             ACGT--    --ACGT    -ACG-T    -ACGT-    A-CG-T    A-CGT-
+\end{verbatim}
+Note that last four  alignments are equivalent -- they only differ in the order
+of indels in sequences. All symbols from both $X$ and $Y$ can be aligned to gap
+or to some symbol in other sequence. All symbols from both sequences can be
+annotated by $I$ or $M$. Therefore such annotation does not give us much
+information (but still we can choose the most probable explanation from all
+candidate alignments/annotations but it miss the sense).
+For this reason the definition of annotation function for the pHMM
+should be following:
+
+\todo{ujednotit annotation function, labeling function a coloring function}
+\begin{definition}
+Let $H=(\Sigma,V,I,d,e,a)$ be an HMM and $C=\{c_0,c_1,\dots,c_{l-1}\}$ be the
+finite set of labels (or colors). The \firstUseOf{coloring function}
+$\lambda:V^*\to C^*$ is function that satisfies following properties: 
+\begin{enumerate}
+\item $\lambda(v)\in C$ for all $v\in V$.
+\item $\lambda(xy) = \lambda(x)\lambda(y)$ for all $x,y\in V^*$.
+\item If $\lambda(u)=\lambda(v)$ then $d^x_u=d^x_v$ and $d^y_u=d^y_v$ for all
+$u,v\in V$.
+\end{enumerate}
+Let $X$ and $Y$ be sequences that were generated by state path $\pi$. Then
+\firstUseOf{pairwise annotation} $\Lambda$ of sequences $X$ and $Y$ is 
+$\Lambda=\lambda(\pi)$.
+\end{definition}
+
+\todo{mozno to nie je najstastnejsia definicia}
+Note that this definition is almost same as the definition
+\ref{DEFINITION:ANNOTATION} with exception of using pHMMs and with added 
+third condition on coloring function. This condition ensures that with
+annotation we will not lose the information from state duration $d$ and we will
+be able to derive unique alignment from annotation and uniquely assign
+annotations to symbols of input sequences.
+
+Similarly as with the HMMs, sequences $X$ and $Y$ and pHMM $H$ define
+probability distribution of pairwise annotations $\Lambda$
+\[\prob{\Lambda\mid X,Y,H} = \sum_{\pi,\lambda(\pi)=\Lambda}\prob{\pi\mid
+X,Y,H}\]
+
+Similarly we can define gain function as any function $f:C^*\times C^*\to
+\mathbb{R}$. In highest expected gain problem for pHMM we search for
+the pairwise annotation $\Lambda$ of input sequences $X$ and $Y$ that maximizes
+expected gain:
+\[\Lambda = \arg\max_{\Lambda} E_{\Lambda'\mid X,Y,H}[f(\Lambda',\Lambda)]
+=  \sum_{\Lambda'}f(\Lambda',\Lambda)\prob{\Lambda'\mid X,Y,H}\]
+
+Similarly as with HMM, finding the most probable pairwise annotation, which is equivalent
+to finding the most probable state path if $\lambda$ is identity function,
+is equivalent to fining pairwise annotation with highest expected gain with
+function
+\[f_{ID}(\Lambda',\Lambda) = \begin{cases}
+1 & \text{if $\Lambda'=\Lambda$}\\
+0 & \text{otherwise}
+\end{cases}\]
+In this case, the expected gain of an pairwise annotation $\Lambda$ is
+equivalent to the probability of $\Lambda$ and therefore by maximizing the
+expected gain we also maximize the probability $\prob{\Lambda\mid X,Y,H}$.
+
+By extending this concept we want to develop gain functions that will
+
+
+%Once we have an pairwise annotation, we can define the highest expected gain
+%problem for
+%pair hidden Markov models. 
+%Skumanie jednorozmernych dekodovacich funckii
+
+%Skumanie dvojrozmernych dekodovacich funkcii
+
+
+%Traditionally used algorithm for decoding \abbreviation{Hidden Markov
+%Models}{HMMs} is Viterbi \todo{Aj tak si myslim, ze cele toto by som asi mal
+%presunut o kapitoly vyssie}
+%algorithm. \abbreviation{Viterbi algorithm}{VA} finds the most probable state path, which is
+%state path $\pi$ that maximizes $\Pr\left(\pi \mid X\right)$. Other commonly
+%used criteria, the \abbreviation{Posterior Decoding}{PD}, is maximizing the sum of the posterior
+%probability for every state in state sequence independently. Therefore PD finds
+%the state path $\pi$ that maximizes $\sum_{i=1}^{|\pi|} \Pr\left(\pi_i \mid
+%X\right)$ \todo{Trosku upravit oznacenia vo vzorcoch}. Both VA and PD can be
+%computed in effectively in $O(NM)$ time and memory, where $N$ is the
+%length of the sequence and $M$ is the size of the model (number of states plus
+%number of transitions). There are also couple of tricks how to lower the memory
+%requirements of such algorithms or even exploit repetition of the sequences to
+%decrease running time.
+%
+%In some practical HMMs some states have same role (i.e. they encode same thing)
+%\todo{chcelo by to predtym poriadne zaviest co su anotacie a tak -- este v
+%prehlade}
+%but for some reasons can not be merged into same states. Therefore does not have
+%to distinguish between state paths, that differs only in those states. In
+%general, we can assign to each state annotation symbol (or "color") and we want
+%to account into probability of some state path $\pi$ probabilities of all state
+%spaces, that has same sequence of annotation symbols. Therefore we are
+%maximizing following criteria
+%\[\sum_{\pi'\textrm{ has same annotation as }\pi}\Pr\left( \pi' \mid X \right)\]
+%
+%However, maximizing such criteria is NP-hard \cite{} and even if we fix the
+%HMM \cite{Brejova2005}. Since maximizing this criteria is not tractable, we have
+%to use some heuristics that can possibly find only local maxima. It possible to
+%find HMM, for which VA finds annotation that has exponentially smaller
+%probability than the most probable annotation. Similarly, since PD maximizes
+%each state in state path independently, it can reconstruct state path/annotation
+%that has zero probability.
+%
+%We can generalize all those into framework in which we will define gain function
+%and where we are trying to find annotation that has highest possible gain with
+%respect to correct annotation. Since we do not know the correct annotation, we
+%are treating the correct annotation as an random variable with distribution
+%$\Pr\left(\cdot\mid X\right)$. We can express all decoding methods that are
+%described above in terms of gain functions and therefore finding the annotation
+%with the highest expected gain (if gain function is computable function) is
+%NP-hard. But some HMM's and gain functions we can find annotation with the
+%maximum expected gain in polynomial time. 
+
+%-- proste ze chceme sa venovat takym veciam, ze ktore funkcie sa daju pocitat
+%efentivne a ktore nie. A podobne.
+
+%Gain functions described above are not the only ones that can be in practice
+%used. There are several ??
+
+%+ extend those measures to pair-hidden Markov Models
 
 
 %nieco o mierach -- vo vseobecnosti niektore miery su NP-tazke, 
@@ -76,7 +218,13 @@ used. There are several ??
 \subsection{Improving existing algorithms}
 
 Recently it has been shown, that traditional algorithms for working with HMMs
-can be improved by various techniques. For example we can reduce the memory
+can be improved by various techniques. In section \ref{} we discussed several
+approaches how to improve this algorithms by checkpointing \cite{}, compression
+\cite{} or ``garbage collection'' \cite{}. There is still space for improvements
+and analysis of improvements of basic algorithm for HMMs.
+
+
+For example we can reduce the memory
 footprint of the Viterbi algorithm by discarding 
 
 Similar approach is used in Treeterbi algorithm. There is also variant of this
@@ -103,7 +251,6 @@ However analysis of such algorithm consists of
 %lahsie distribuovat, dvak vieme znizit pamatovu narocnost. Vieme nieco spravit
 %napriklad pre Viterbiho? Da sa urcit nieco z modelu? 
 
-\section{Pairwise sequence alignment}
 
 
 \label{LastPage}
