@@ -592,13 +592,6 @@ We can compute these values in $O(nm^2)$ time and $O(nm)$ memory. Again, in case
 of sparse transition matrix, this algorithm can be altered to run in $O(n(m+t))$
 time where $t$ is the number of transitions. We will
 discuss possible algorithmic improvements of this algorithm later.
-%By
-%check-pointing technique we can achieve $O(m^2\sqrt{n})$ memory requirements
-%with only constant slowdown.
-
-%As we can see time complexity and memory requirement of posterior decoding is
-%same as for Viterbi algorithm, but in practice Forward-Backward algorithm is
-%slower and requires more memory.
 
 One drawback of an  posterior decoding is that it can reconstruct inadmissible
 state path. One example is given below.
