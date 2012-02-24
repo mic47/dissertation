@@ -238,7 +238,10 @@ matching base.
 
 \subsection{Twain}
 
-Twain is another approach to use GpHMM to find genes \cite{Majoros2005}. 
+Twain is another approach to use GpHMM to find genes \cite{Majoros2005}
+and is interesting because of it's decoding algorithm. At first 
+twain annotated input sequence with the gene-finder
+
 It uses interesting technique to improve
 running time of the algorithm. It search in the both sequences for the signals
 (like ...,..,..,). After that it creates graph: two signals in one sequence are
@@ -344,45 +347,16 @@ requirements were improved using the Treeterbi algorithm \cite{Keibler2007},
 which is similar to the On-line Viterbi algorithm discussed in section
 \ref{SECTION:ONLINEVITERBI}.
 
-\section{Aligning Using Different Rates of Evolution}
- 
-%\subsection{FEAST} 
-
-FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple pHMM from figure
-\ref{FIGURE:SIMPLEPHMM} is optimized for one fixed rate of evolution. However,
-in DNA conservation rate is different for different sites.  FEAST contain $k$
-such submodels, each trained for different rate of evolution. Submodels are
-connected with single silent state. Since FEAST is local alignment tool, it one
-additional submodel for generating unaligned pair of the sequences 
-
-To construct alignment (either local or global) FEAST uses the Viterbi
-algorithm. Like many local aligners, FEAST use seeding heuristics to reduce
-computational complexity of finding local alignments.  At first it use six
-different space seeds to get candidate seed and extended those seeds using
-x-drop heuristic \cite{Altschul1997} using ungapped version of Forward algorithm during
-extension (Viterbi algorithm is usually used during extension phase).
-
-Estimation of parameters was done by expectation maximization approach (with
-Baum-Welch or Viterbi training). They forced gap parameters to be same in all
-submodels.
-
-Using different rate of evolution was also used in \cite{Satija2010} in whole
-genome aligner GRAPe. It consisted from two submodels: one parts of the
-sequences with fast evolution rate with two component geometric mixture model
-for indels and the second submodel for the parts with the slow evolution rate
-with the geometric distribution of the lengths of the indels.
-
-Dalsie modely: TWINSCAN, MCALIGN2, WABA, Catwright (zeta function)
 
 \section{Non-Geometric Indel Models}
 \todo{Povedat niekde ze preco je afiinne rozdelenie geometricke}
 In simple pHMM described in figure \ref{SECTION:SIMPLEPHMM}, gap's length have
 geometric distribution: the probability that gap have length $n$ is
-$e_{M,I}e_{I,I}^{n-1}(1-e_{I,I})$ (if we sum out all emissions).  Viterbi
+$e_{M,I}e_{I,I}^{n-1}(1-e_{I,I})$ (if we sum out all emissions). The Viterbi
 algorithm is usually computed in log-space: instead of computing product of
 probabilities of events\footnote{Event is emission or transition.}, we compute
 the sum of logarithms of those probabilities, because computation in log-space
-is numerically more stable. Viterbi algorithm for the simple HMM
+is numerically more stable. The Viterbi algorithm for the simple HMM
 will became same as the Needleman-Wunsch algorithm.  Gap penalty will be
 $\log(e_{M,I})+\log(1-e_{I,I})+(n-1)\log(e_{I,I})$. By setting $d=\log(e_{I,I})$
 and $g=\log(e_{M,I})+\log(1-e_{I,I})-d$ we see that this is exactly affine gap
@@ -393,26 +367,28 @@ As we mentioned chapter \ref{CHAPTER:ALIGNMENT}, using non-affine gap model can
 improve alignment quality.  Problem with geometric distribution (or affine gap
 penalties) is that it gave too high penalty for long indels \cite{} Therefore
 some other distribution might be more appropriate, for example zeta distribution
-\cite{}, or combination of several geometric distributions to approximate final
-distribution \cite{}.
+\cite{Cartwright2009}, or combination of several geometric distributions to
+approximate the distribution of gap length \cite{Gill2004,Gill2006}.
 
-GpHMM are suited to usage of different then geometric duration distributions.
+GpHMM are suited for use of arbitrary duration distributions.
 On the other hand, GpHMM are slower to decode so we might want to avoid them if
 possible.  One way of incorporating different gap distribution into pair hidden
 Markov models without using theirs generalized version is to use several (for
-example two) indel states for every sequence. For example FASTA \cite{} and
+example two) indel states for every sequence. For example FASTA
+\cite{Bradley2009} and
 Lunter {\it et al. (2008)} used two component mixture models: instead of one
 indel state for every sequence we use two indel states for every sequence. They
 report that this improved quality of alignments.
+\nocite{Lunter2008}
 
 Modeling non-geometric distributions with several states can be problematic. Set
 of states with same emission distribution used for modeling modeling
 non-geometric distribution is called gadget (There are also additional
-properties: all transitions entering gadget has to either start in same state or
+property: all transitions entering gadget has to either start in same state or
 end in same state. Same holds for transitions that leaves gadget. ). Problems
-with gadgets and the Viterbi algorithm are discussed in
-\cite{TomasovaDizertacka}. We describe discuss those problems for the two
-component mixture models.
+with gadgets and the Viterbi algorithm are discussed in \cite{Vinar2005}. We
+describe discuss the example of such problem for the two component mixture
+model.
 
 Let $H$ be an simple pair hidden Markov model with two pairs of indel states.
 Let $I_1$ and $I_2$ be indel states that generates gaps in the first sequence.
@@ -426,22 +402,54 @@ sequence which have $d(n)$ as it's duration distribution. Both models defines
 same distributions of alignments (but not distribution of alignments and state
 paths) and running the Forward-Backward algorithm or the Forward algorithm will 
 give same results. However, alignments constructed by the Viterbi algorithm
-might be different for $H$ and $H'$.
+can be different for $H$ and $H'$.
 
 Problem is that in the generalized model the Viterbi algorithm gaps of length
 $n$ have ``score'' $d(n)$ but in the non-generalized pair hidden Markov model it
 will be $m(n)=\max\{a_1p_1^n(1-p_1),a_2p_2^n(1-p_2)\}, n>0$ and
 $m(0)=1-a_1-a_2$.  These two scores are different ($d(n)$ is always higher) and
 therefore it is possible that the Viterbi algorithm reconstruct different
-alignments. Therefore if we are using the Viterbi algorithm we should either
-train such gadget that $m(n)$ will be better approximation of $d(n)$ of the
-original model or to use generalized pair hidden Markov model for the Viterbi
-algorithm or some variant of the most probable state path.
-
+alignments. Therefore if we are using the Viterbi algorithm, we should either
+train such gadget so that $m'(n)$ will be better approximation of $d(n)$ ($d(n)$
+is the distribution for the original model) or use generalized pair hidden
+Markov model for the Viterbi algorithm.
 
 %co chcem povedat: niekedy je lepsie pouzit iny gapmodel -- jeden pre kratke
 %gapy, jeden pre slhe gapy. Preto sa niekedy 
 
+\section{Aligning Sequences with Variable Rate of Evolution}
+ 
+%\subsection{FEAST} 
+
+The rate of the evolution (the expected number of substitution per position in
+sequence over some period of time) is not constant for whole genome. It does not
+have to be constant even within one gene. FEAST is pairwise local alignment tool
+\cite{FEAST2011} that take into account the variable evolution rate. Simple pHMM
+from figure \ref{FIGURE:SIMPLEPHMM} is optimized for one fixed rate of
+evolution.  FEAST contain $k$ such submodels, each trained for different rate of
+evolution.  Submodels are connected with single silent state.  Since FEAST is
+local alignment tool, it one additional submodels for generating unaligned pair
+of the sequences in the beginning and the end of the sequences.
+
+To construct alignment (either local or global) FEAST uses the Viterbi
+algorithm. Like many local aligners, FEAST use seeding heuristics to reduce
+computational complexity of finding local alignments.  At first it use six
+different space seeds to get candidate seed and extended those seeds using
+x-drop heuristic \cite{Altschul1997} using ungapped version of Forward algorithm
+during extension (Viterbi algorithm is usually used during extension phase).
+
+Estimation of parameters was done by expectation maximization approach (with
+Baum-Welch or Viterbi training). They forced gap parameters to be same in all
+submodels.
+
+Using different rate of evolution was also used  in the whole genome aligner
+GRAPe \cite{Satija2010}. GRAPe's HMM  consisted from two submodels: one for the
+parts of the with fast evolution rate with two component geometric mixture model
+for indels and the second submodel for the parts with the lower evolution rate
+with the geometric distribution of the lengths of the indels. GRAPe uses the
+Posterior decoding as a decoding method.
+
+%Dalsie modely: TWINSCAN, MCALIGN2, WABA, Catwright (zeta function)
 
 \section{Biases In Alignments}
 
@@ -451,51 +459,104 @@ gap biases are also discussed in \cite{Durbin1998} \todo{Naozaj?}. By
 \firstUseOf{true alignment} we mean alignment that corresponds to actual 
 evolution history.
 \begin{itemize}
+
 \item \firstUseOf{Gap wander} means that gap is in different location that in
 true alignment. Is is due to random short similarities around the borders of
-a gaps that are indistinquishable from true homologies. Lunter {\it et al.} gave
-explicit formula for computing the expected proportion of incorrectly aligned
-regions due to gap wander. \todo{Nie je tento vzorec zbytocny?}
-\[F_w =
-\frac{\sigma}{\gamma}\frac{(4e^{4\sigma/3}-3)(4e^{\sigma/3}-1)}{8e^{4\sigma/3}-3}\]
-where $\gamma$ is th ratio of the substitution rate, $\sigma$, to the indel
-rate, $\sigma$.
+a gaps that are indistinquishable from true homologies.
+%Lunter {\it et al.} gave
+%explicit formula for computing the expected proportion of incorrectly aligned
+%regions due to gap wander. \todo{Nie je tento vzorec zbytocny?}
+%\[F_w =
+%\frac{\sigma}{\gamma}\frac{(4e^{4\sigma/3}-3)(4e^{\sigma/3}-1)}{8e^{4\sigma/3}-3}\]
+%where $\gamma$ is the ratio of the substitution rate, $\sigma$, to the indel
+%rate, $\sigma$.
 
 \item \firstUseOf{Gap attraction} is caused when two gaps are near each other.
 In such case merging those caps and introducing few mismatches might have higher
 score. 
+
 \item \firstUseOf{Gap anihilation} occurs when there are two gaps with
 same length in both sequences. Since indels are not so common, removing both
 gaps while introducing new mismatches might increase score of an alignment.
+
 \end{itemize}
 
 Biases are ordered by their frequency from the most occurring to the least
-occurring \cite{Lunter2008}. They did a simulation study: they simulate
-evolution the human and mouse sequence to get sequences with true alignments.
-After that they align those sequences using several pHMMs with several decoding
-algorithm; from the simple pair hidden Markov model from figure
-\ref{FIGURE:PAIRHMM} to the pHMM with two component geometric mixture models and
-variable evolution rate depending on GC content. They used three decoding
-algorithm: The Viterbi algorithm, the Posterior decoding and the
-\abbreviation{Marginalized posterior decoding}{MPD}.
+occurring \cite{Lunter2008}. Now we will discuss their simulation study. We will
+not go into all details, we will review only the basic setup of their
+experiments and main outcomes of the study.
 
-%Let $X$ and $Y$ be input sequences and $H$ be an pHMM. Let $M_{i,j}$ be the
-%probability that $X[i]$ and $Y[j]$ are aligned (this corresponds to column
-%$(X[i],Y[j])$ in the alignment), $M^X_{i,j}$ be the probability that $X[i]$ is
-%aligned to a gap between positions $j$ and $j+1$ in a sequence $Y$ (this
-%corresponds to column $(X[i],'-')$ in the alignment) and $M^Y_{i,j}$ be the
-%probability that $Y[j]$ is align to a gap between position $i$ and $i+1$ in a
-%sequence $X$ (column $('-',Y[j])$ of an alignment). The values $M_{i,j}$,
-%$M^X_{i,j}$ and $M^Y_{i,j}$ defines posterior probabilities of all possible
-%columns in alignment. Their Posterior algorithm maximizes the sum of logarithms
-%of the probabilities of all column in alignments (or the product of their
-%probabilities). The MPD differs in the treatment of gaps. Gap probabilities does
-%not depend on position. $M^X_{i,j}$ is defined as the probability that $X[i]$ is
-%aligned to a gap (at any position) and $M^Y_{i,j}$ is analogous.
-%%= \sum_{k}M^X_{i,k}$ and
-%%$M^Y'_{i,j}=\sum_{k}M^Y_{k,j}$.
-%
-%PD and MPD created alignments with higher sensitivity and  false-positive ratio
-%independently of the used model.  Usage of mixtu
+At first we define one measure of the quality of the alignment:
+\firstUseOf{sensitivity} is the ``ratio of the correct alignment columns to all
+homologous columns'' \cite{Lunter2008}. 
 
-Their study shows that 
+In the first experiment, Lunter {\it et al.} they
+simulate evolution using Jukes-Cantor model with $0.375$ expected substitution
+per position (the expected sequence identity is $0.705$) with geometric gap
+model. From simulation they obtained sequences with true alignments which they
+realigned using the Viterbi algorithm with the same model as was used for the
+simulation. Alignment accuracy was lowest for the  columns near gaps ($56$\%)
+and the sequence identity for columns near gaps was $85$\% which does not agree
+with the expectation  $0.705$\% of the sequence identity. Moving away from gaps
+the average sequence identity dropped to the $0.68$\%. The increased sequence
+identity near gaps is due to gap wander bias. The gap attraction effect caused
+that the number of gaps that are in near each other positions was lower then
+expected value (obtained from the used gap model).
+
+They run Viterbi algorithm parametrized by range of the substitution and indel
+rates. The maximal sensitivity was obtain for the parameters that were identical
+to the parameters of the simulated evolution. However, the sensitivity for the
+correct model was only $84$\% indicating that even if we have right evolution
+models, some biases in the alignments are inevitable.  
+
+The second experiment study the effect of the use of different decoding methods
+and different models on the quality of the alignment (however, we will omit some
+models from this review).  The overview of the experiment is following.  Lunter
+{\it et al.\nocite{Lunter2008}} simulated evolution with parameters that are
+close to parameters of human-mouse evolution. They simulated for example the
+large-scale variation of GC content, GC-content dependent indel and substitution
+rates and GC-indepependent local substitution rave variation \cite{Lunter2008}.
+From simulation they obtained $20,000$ homologous sequence pairs with average
+length of $700$ nucleotides. They add the flanking sequences to the generated
+sequences of length $100$ nucleotides to simulate local alignments.
+
+\todo{Tento odstavec je skaredo formulovany, treba ho upravit}
+After simulation they realigned homologous sequences using the Viterbi algorithm
+(VA), the Posterior decoding (PD) and the Marginalized posterior decoding (MPD)
+with different models: three state pHMM ($H_S$); $H_S$ with two indel states for
+every sequence to get two component geometric mixture gap model ($H_M$) and the
+full model with all parameters that were used for simulation ($H_F$) like the
+variable indel and substitution rate. 
+%After realignment phase they compare new alignments with true alignments
+%obtained from simulation.
+
+Now we define two additional measures of the quality of the alignment. The
+\firstUseOf{false positive fraction (FPF)} is ``the proportion of the wrongly
+aligned columns among all nongapped columns'' \cite{Lunter2008}. ``The
+proportion of columns containing padding sequence among all aligned columns'' is
+the \firstUseOf{the nonhomologous fraction (NHF)}.
+
+
+The use of the different models has little impact on the sensitivity of the
+constructed alignments. Interesting is that for the full $H_3$ model and the
+Viterbi algorithm the sensitivity was lower than with the use of the simple
+model $H_1$. With other decoding algorithm the models $H_2$ and $H_3$ has
+slightly higher sensitivity then the $H_1$ model. However the FPF  was higher
+for the model $H_1$ was lower for $H_2$ and higher for $H_3$.
+
+While the using the ``better'' model does not significantly improve the quality
+of an alignments, using the Posterior decoding and Marginalized Posterior
+decoding improved the sensitivity by approximately $2.5$\% regardless of the
+model. On the other hand the FPF and the NHF was increased with use of the PD
+and MPD. The sensitivity of the PD and the MPD were similar but the FPF was
+lower for the MPD. 
+
+The main outcome of this experiment that proper decoding method can improve
+quality of the alignment while the use of the simpler model doest not
+significantly reduce the quality of the alignments. However, Lunter {\it et al.}
+in their simulations models only relatively simple model of the evolution. By
+incorporating structural information into the alignment models combined with the
+use of the right decoding algorithm we can improve alignments.  This will be
+discussed in the next chapter. 
+
+
