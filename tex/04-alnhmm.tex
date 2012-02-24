@@ -195,18 +195,6 @@ algorithm to such subset allowing tolerance 15 bases.
 
 \subsection{SLAM} 
 
-SLAM \cite{SLAM2003}  is comparative gene finder based on generalized pair
-hidden Markov model \cite{Alexanderson2004} with some states being also a
-high-order states (with dependence on previous emissions).  It predicts gene
-structures for pair of related eukaryotic organisms. SLAM's decoding method is
-Viterbi algorithm. 
-
-Unlike DoubleScan, SLAM defines true GpHMM because state durations are not
-constant, but are sampled from some distribution (however, distribution they
-used in not specified). Topology of the model can be found in figure
-\ref{FIGURE:SLAM}.
-Emission of pairs of codons were assigned from codon-based PAM matrix.
-
 \begin{figure}
 \begin{center}
 \includegraphics{../figures/slam.pdf}
@@ -226,6 +214,19 @@ and the end of a gene.  $Intron_i$ models intron that interrupted codon on
 $i$-th position ($0$ means that intron is not interrupting any codon).
 }\label{FIGURE:SLAM} \end{figure}
 
+SLAM \cite{SLAM2003}  is comparative gene finder based on generalized pair
+hidden Markov model \cite{Alexanderson2004} with some states being also a
+high-order states (with dependence on previous emissions).  It predicts gene
+structures for pair of related eukaryotic organisms. SLAM's decoding method is
+Viterbi algorithm. 
+
+Unlike DoubleScan, SLAM defines true GpHMM because state durations are not
+constant, but are sampled from some distribution (however, distribution they
+used in not specified). Topology of the model can be found in figure
+\ref{FIGURE:SLAM}.
+Emission of pairs of codons were assigned from codon-based PAM matrix.
+
+
 To reduce running time of the algorithm, they restrict the computation of
 alignment in following way: At first they  align input sequences using AVID
 alignment tool\cite{Bray2003} to get anchor alignment. They restrict the Viterbi
@@ -237,64 +238,119 @@ matching base.
 
 \subsection{Twain}
 
-Twain is another approach to use GpHMM (and evidence from two related genomes)
-to find genes \cite{Majoros2005}. It uses interesting technique to improve
+Twain is another approach to use GpHMM to find genes \cite{Majoros2005}. 
+It uses interesting technique to improve
 running time of the algorithm. It search in the both sequences for the signals
 (like ...,..,..,). After that it creates graph: two signals in one sequence are
 connected by an oriented edge if one signal can follow other signal. They do
 Cartesian product of such graph of both sequences. Resulting graph is used to
 restrict search space of the sequence alignment.
-
+TODO
 
 
 \subsection{GeneWise}
 
-GeneWise is protein (or profile HMM) to DNA aligner \cite{GeneWise2004}. It aligns
-proteins to homologous exons in DNA. Instead of pHMM defined as in chapter
-\ref{}, it used probabilistic transducers (which are similar to pHMM). Main
-difference in their model was that emissions were defined for transitions and
-not for states.  It's model was created by combining of the gene prediction
-model (model $S$) and protein homology model (model $T$). Both models were
-represented as pHMM or \correction{transducers}{Napis co to je v kapitole o
-HMM}. While model $S$ translates DNA into protein sequence, $T$ was simple pHMM
-from section \ref{SECTION:SIMPLEPHMM} defined over protein alphabet
-(technically, $T$ translates one protein to another homologous protein).
-Combined model was created by composition of models $T$ and $S$, from which were
-removed unnecessary states. To decrease state space even more, they remove more
-states, for example poly-pyrimidine states. More details are in
+GeneWise predict genes by aligning protein (\correction{or profile HMM}{nikde to
+nie je spomenute, ze co to je}) to similar gene structures in DNA
+\cite{GeneWise2004}. Instead of pHMM defined as in section \ref{SECTION:PAIRHMM}
+it used probabilistic transducers. Probabilistic transducer are very similar to
+pHMM. They are both probabilistic finite state machines but unlike pHMM which
+are generating two sequences, probabilistic transducers transform one sequence
+into other sequence.  Second difference is that transducers have ``emissions''
+associated with transitions, not with states.  Therefore the ``emission'' of
+transducer $e_{u\to v,(x,y)}=p$ means that during transition $u\to v$ symbol $x$
+is read from the input sequence ($x$ has to be on the input) and symbol $y$ is
+written to the output probability $p$ ($x$ and $y$ might be also gap symbol and
+in such case it represents insertion or deletion).  While pHMM defines
+distribution $\prob{X,Y\mid H}$, the probabilistic transducers defines
+distribution $\prob{X\mid Y,H}$, the probability that sequence $Y$ will be
+transformed into sequence $X$.
+
+Advantage of transducers over the pHMM is that they easily allow compositions of
+such models together with probabilistic interpretation of the compositions.
+Composition of two transducers $A$ and $B$ is transducer $C$ that transform
+sequence $X$ into sequence $Y$ using transducer $A$ and then it transform $Y$
+into sequence $Z$ using transducer $B$. %The probability that $X$ is transformed
+%into $Z$ using $C$ is $\sum_{Y}\prob{Y\mid X,A}\prob{Z\mid Y,A}$.
+
+%Main difference in their model was that emissions were defined for transitions
+%and not for states.  
+Model was created by composition of the gene prediction model $S$ which
+translates genomic sequence into protein sequence and protein homology model $T$
+which maps protein sequence into homologous protein sequence.
+%While model $S$ translates DNA into protein sequence, $T$ was simple pHMM
+
+Gene prediction model $S$ consists from the single exon state which translates
+series of codons into amino-acids. Advantage of It has three submodels for
+modeling introns, each from $3$ states. In introns they model splice sites, 
+poly-pyrimidine tract and central intron section.
+%Each consists from $5$ sections : 5J splice site, central intron section,
+%poly-pyrimidine tract, a spacer following the poly-pyrimidine tract and the 3J
+%splice site. These $5$ sections are modeled by $4$ states and transitions
+%between them
+
+Protein homology model $T$ was simple pHMM from section \ref{SECTION:SIMPLEPHMM}
+defined over protein alphabet.  The composition of the models $T$ and $S$ has
+$30$ states. Authors removed unnecessary states and they also removed
+poly-pyrimidine states to reduce the number of states and transitions
 \cite{GeneWise2004}.
 
-Parameters for match and insert transitions were derived from amino acid
-distribution from the model $T$, from the codon bias in the organism and there
-was allowed one substitution error while translating codons to amino acids (due
-sequencing errors).
-  
+%Combined model was created by composition of models $T$ and $S$, from which were
+%removed unnecessary states. To decrease state space even more, they remove more
+%states, for example poly-pyrimidine states. More details are in
+%\cite{GeneWise2004}.
+
+%Parameters for match and insert transitions were derived from amino acid
+%distribution from the model $T$, from the codon bias in the organism and there
+%was allowed one substitution error while translating codons to amino acids (due
+%sequencing errors).
+
+
 \subsection{Pairagon}
 
-Pairagon alignes \abbreviation{coding DNA}{cDNA} to  genome \cite{Pairagon2009}.
-To do this task, Pairagon's HMM models consists from simple pair HMM submodel,
-which aligns cDNA to DNA and 5 state submodel for intron structures (donor site,
-intron, branch, branch acceptor and acceptor state). This model includes 8 base
-\abbreviation{weighted matrix model}{WMM} at donor site and 6 base WMM at
-acceptor size. Whole topology is in figure \ref{}.
+\begin{figure}
+\begin{center}
+\includegraphics{../figures/pairagon.pdf}
+\end{center}
+\caption[Topology of Pairagon generalized pair hidden Markov model.]{
+Topology of Pairagon GpHMM. All states with excetion to states
+$D,B$ and $A$ have self transition.
+Shaded states corresponds to the exons: $M$ emits
+aligned pairs of symbols, $I_c$ is insertion in coding DNA and $I_g$ is
+insertion in genome. States $I^1_c,I^1_g,I^2_c$ and $I^2_g$ corresponds to
+unaligned parts of the DNA and cDNA in the beginning and the end of the
+sequences. States $D,In,B,BA,A$ corresponds to intron structure and stand for 
+Donor, Intron, Branch, Branch Acceptor and Acceptor respectively.
+Donor site emitted $8$ symbols and acceptor site emitted $6$ symbols.
+}\label{FIGURE:PAIRAGON}
+\end{figure}
 
-Model was trained using iterative maximum likelihood approach. At first they
-trained almost all parameters on BLAT alignments from the
-\abbreviation{Mammalian Gene Collection}{MGC}. In this phase, probabilities of
-canonical intron, the branch point and the sequence models were set by hand.
-After that they used estimated parameters to align more MGC sequences, from
-which were the rest of the parameters estimated.
+
+Aim of Pairagon is to do local alignments of \abbreviation{coding DNA}{cDNA} and
+genome \cite{Pairagon2009}. By aligning cDNA to genome we are able to study
+intron and exon structures.  To do this task, Pairagon's HMM models consists
+from simple pair HMM submodel, which aligns cDNA to DNA and $5$ state submodel
+for intron structures.  Whole topology is in figure \ref{FIGURE:PAIRAGON}. 
+
+Model was trained using iterative maximum likelihood approach. At first
+parameters was trained on the alignments from the \abbreviation{Mammalian Gene
+Collection}{MGC}. In this phase the parameters for intron submodel were set by
+hand. Then they align more MGC sequences using this model. Final parameters were
+estimated from the new alignments.
 
 Decoding was done by Viterbi algorithm. Runtime of the algorithm was improved by
-stepping stone algorithm \cite{} and memory requirements were improved using
-Treeterbi algorithm. 
+stepping stone algorithm described in section \ref{SECTION:SSA} and memory
+requirements were improved using the Treeterbi algorithm \cite{Keibler2007},
+which is similar to the On-line Viterbi algorithm discussed in section
+\ref{SECTION:ONLINEVITERBI}.
 
 \section{Aligning Using Different Rates of Evolution}
  
 %\subsection{FEAST} 
+
 FEAST is pairwise local alignment tool \cite{FEAST2011}. Simple pHMM from figure
 \ref{FIGURE:SIMPLEPHMM} is optimized for one fixed rate of evolution. However,
-in DNA conservation rate is different on different sites.  FEAST contain $k$
+in DNA conservation rate is different for different sites.  FEAST contain $k$
 such submodels, each trained for different rate of evolution. Submodels are
 connected with single silent state. Since FEAST is local alignment tool, it one
 additional submodel for generating unaligned pair of the sequences 
@@ -303,15 +359,18 @@ To construct alignment (either local or global) FEAST uses the Viterbi
 algorithm. Like many local aligners, FEAST use seeding heuristics to reduce
 computational complexity of finding local alignments.  At first it use six
 different space seeds to get candidate seed and extended those seeds using
-x-drop heuristic \cite{} using ungapped version of Forward algorithm during
+x-drop heuristic \cite{Altschul1997} using ungapped version of Forward algorithm during
 extension (Viterbi algorithm is usually used during extension phase).
 
 Estimation of parameters was done by expectation maximization approach (with
 Baum-Welch or Viterbi training). They forced gap parameters to be same in all
 submodels.
 
-Using different rate of evolution was also used in \cite{NovyLunter}. Such HMM
-contained several states for the most probable alignemnt
+Using different rate of evolution was also used in \cite{Satija2010} in whole
+genome aligner GRAPe. It consisted from two submodels: one parts of the
+sequences with fast evolution rate with two component geometric mixture model
+for indels and the second submodel for the parts with the slow evolution rate
+with the geometric distribution of the lengths of the indels.
 
 Dalsie modely: TWINSCAN, MCALIGN2, WABA, Catwright (zeta function)
 
