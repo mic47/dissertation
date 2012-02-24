@@ -200,7 +200,7 @@ algorithm to such subset allowing tolerance 15 bases.
 \includegraphics{../figures/slam.pdf}
 \end{center}
 \caption[HMM topology of SLAM's GpHMM]{
-Topology of GpHMM used by slam (states for genes on reverse strand are omitted).
+Topology of GpHMM used by SLAM (states for genes on reverse strand are omitted).
 Gray states has geometric distribution (modeled with self-loop which are omitted
 in the figure). Emissions of shaded states are done with three state pHMM. White
 states econdes exons. Each has associated duration distribution and emmisions
@@ -238,9 +238,29 @@ matching base.
 
 \subsection{Twain}
 
-Twain is another approach to use GpHMM to find genes \cite{Majoros2005}
-and is interesting because of it's decoding algorithm. At first 
-twain annotated input sequence with the gene-finder TIGRscan
+Twain is another approach to use GpHMM to find genes \cite{Majoros2005} and is
+interesting because of it's decoding algorithm. Twain GpHMM have two type of
+states: the states with fixed durations and the states with the variable
+duration lengths which are associated with some distribution.  The stated with
+fixed durations corresponds to the specific signals line splice sites,
+start/stop codons, donor sites, \dots  Additionally, the states with variable
+duration are not connected with each other; the transitions from/to such states
+are only to/from states with fixed duration length. This property allows to use
+following heuristic to speed up the Viterbi algorithm.
+
+Twain at first annotate input sequences with the gene-finder TIGRscan
+\cite{} which finds the signals in the both se 
+
+At first twain annotated input
+sequence with the gene-finder TIGRscan to construct parse graph. Vertices of the
+parse graph are specific signals (splice sites, start codon, stop codon,
+promoters, \dots) with their positions in the genome.  Edges in the parse graph
+are between signals that can be adjacent in the gene.  For example there are
+edges from the start codons to the following stop codons, 3' splice sites, and
+so on. Not all such edges are permitted in the parse graph, for example for
+non-coding predecessors edges only the top $r$ scoring edges are preserved.
+
+When the parse graph of both sequences is computed
 
 It uses interesting technique to improve
 running time of the algorithm. It search in the both sequences for the signals
