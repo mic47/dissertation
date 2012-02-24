@@ -152,13 +152,17 @@ topologie.
 
 %Gene, codon, exon, intron, triplets,..., evolution rate, splice site
 
+At first we introduce several comparative gene finders. Comparative gene finders
+use evidence from two organism to find genes. They use pHMM to simultaneously  
+align and annotate sequences. 
+
 \subsection{DoubleScan}
-Meyer {\it et al. (2002)} developed gene finder, that used evidence from the
-sequences of two organism to find genes. Generally,
-they have three types of states: {\it match} states, which generated same number
-of symbols in both sequences;   {\it emit} states, which generate sequences only
-in one sequence and silent states. DoubleScan's HMM contains structures for
-exons, introns and intron-like structures that are outside genes. 
+Meyer {\it et al. (2002)} developed comparative gene DoubleScan.
+Generally, DoubleScan has three types of
+states: {\it match} states, which generated same number of symbols in both
+sequences;   {\it emit} states, which generate sequences only in one sequence
+and silent states. DoubleScan's HMM contains structures for exons, introns and
+intron-like structures that are outside genes. 
 
 Basic structure of GpHMM consists from three types of substructures:
 substructures that emits exons, substructure that emits introns and substructure
@@ -167,8 +171,7 @@ times: once from match states and twice as emit states. Exon substructure was
 single state emitting codons (triplets that will be translated into proteins).
 There was one additional intron substructure that was connected to states that
 generated intergenic regions. This additional intron substructure was in the
-model to avoid detecting of pseudogenes. This GpHMM has total $54$ states in
-total.
+model to avoid detecting of pseudogenes. This GpHMM has $54$ states.
 
 %Every such
 %structure has three version: one matching version, which emit aligned residues
@@ -177,40 +180,58 @@ total.
 \nocite{Meyer2002}
 
 Emission probabilities if the {\it match exon} state were estimated from
-relating frequencies in the training set with Dirichlet priors.
-Emission probabilities of other states were generated  by marginalizing
-emissions of the match exon state. Transition probabilities from begin state
-were even, transition probabilities for splice sites were estimated from splice
-site predictor and other transitions were observed from train data and tuned by
-hand.
+relative frequencies in the training set with Dirichlet priors
+\cite{Meyer2002,Durbin1998}.  Emission probabilities of other states were
+generated  by marginalizing emissions of the match exon state. Transition
+probabilities from initial state were even, transition probabilities for splice
+sites were estimated by splice site predictor. Other transitions were observed
+from train data and tuned by hand.
 
 DoubleScan uses Viterbi algorithm as decoding method.  To reduce running time of
 Viterbi algorithm they use stepping stone algorithm: at first they run BLASTN to
 find local alignments. Then DoubleScan choose consistent subset of matching by
-greedy method. They restrict Viterbi algorithm to such subset allowing with
-tolerance of 15 bases.
+greedy method described in section \ref{SECTION:SSA}. They restrict Viterbi
+algorithm to such subset allowing tolerance 15 bases.
 
 \subsection{SLAM} 
 
-SLAM is comparative-based gene finder \cite{SLAM2003} based on generalized pair
+SLAM \cite{SLAM2003}  is comparative gene finder based on generalized pair
 hidden Markov model \cite{Alexanderson2004} with some states being also a
 high-order states (with dependence on previous emissions).  It predicts gene
 structures for pair of related eukaryotic organisms. SLAM's decoding method is
 Viterbi algorithm. 
 
-Unlike DoubleScan, SLAM defines true GpHMM because states at first generates
-duration times according geometric distribution and after that they emit
-sequences. SLAM's topology can by found in picture \ref{}. \todo{Ako pozeram,
-tak pozeram, ta ich toplogia mi teda neni jasna}
+Unlike DoubleScan, SLAM defines true GpHMM because state durations are not
+constant, but are sampled from some distribution (however, distribution they
+used in not specified). Topology of the model can be found in figure
+\ref{FIGURE:SLAM}.
+Emission of pairs of codons were assigned from codon-based PAM matrix.
 
-Emission of pairs of codons were assigned from codon-based PAM matrix. Exon
-states were fifth order states.
+\begin{figure}
+\begin{center}
+\includegraphics{../figures/slam.pdf}
+\end{center}
+\caption[HMM topology of SLAM's GpHMM]{
+Topology of GpHMM used by slam (states for genes on reverse strand are omitted).
+Gray states has geometric distribution (modeled with self-loop which are omitted
+in the figure). Emissions of shaded states are done with three state pHMM. White
+states econdes exons. Each has associated duration distribution and emmisions
+are done also with three-state pHMM ($5$-th order that emitted codons at once).
+Since introns can be inside codon model contain exon state for every possible
+interruption: $E_{i,j},0\leq i,j<3$ is exon that begin with end of the prevous
+exon of length $((3-i)\mod 3)$ and end with the beginning of the exon with
+length $j$. $I$ stands for start codon and $F$ stand for stop codon: states
+$E_{I,\cdot},E_{\cdot,F}$ and $E_{I,F}$ models exons adjecent to the begininning
+and the end of a gene.  $Intron_i$ models intron that interrupted codon on
+$i$-th position ($0$ means that intron is not interrupting any codon).
+}\label{FIGURE:SLAM} \end{figure}
 
-To reduce running time of the algorithm, they restrict computation of alignment
-in following way: At first they  align input sequences using AVID alignment
-tool\cite{} to get anchor alignment. They restrict Viterbi algorithm in such
-way, that it could align  in a way, that every base from  bases were extended to
-intervals of size $3$ bases of bases surrounding each matching base.
+To reduce running time of the algorithm, they restrict the computation of
+alignment in following way: At first they  align input sequences using AVID
+alignment tool\cite{Bray2003} to get anchor alignment. They restrict the Viterbi
+algorithm in such way, that it could align  in a way, that every base from
+bases were extended to intervals of size $3$ bases of bases surrounding each
+matching base.
 
 
 
