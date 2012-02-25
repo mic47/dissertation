@@ -224,39 +224,34 @@ M_Y[i,j-1]+d
 \end{cases}, 0\leq i<n,0\leq j<m\label{ALIGN:ALGO:REALAFFINEEND}
 \end{align}
 
-\bigskip
-{\Large\bf Podtialto su zapracovane pripomienky }
-\bigskip
 
 
 
-\section{Dynamic Programming}\label{DYNPROG}
-As in previous case, values of $M,M_X$ and $M_Y$ can be computed by simple
-dynamic and by back-tracing these matrices we can obtain optimal alignment of
-$X$ and $Y$.  Both algorithms have time complexity of $O(nm)$ and memory
-complexity $O(mn)$.  Using tricks described later, the memory and even time
-complexity will be improved.
-
-In this section we show how to compute those values effectively and describe
-several methods how to decrease memory footprint and/or time complexity. 
-
-Both algorithm from previous sections contain recursive procedure, that update
-matrix $M$ (or three matrices $M,M_X$ and $M_Y$). It used only values from
-neighbouring cells which have at least one coordinate smaller. Let $F$ be the
-function, that takes as input matrix $M$ (or $M, M_X$ and $M_Y$ in case of
-$g\not=0$) and coordinate $(i,j)$ and computes
-$M[i,j]$ according equation \ref{ALIGN:ALGO:AFFINE} (or equations
-\ref{ALIGN:ALGO:REALAFFINESTART}-\ref{ALIGN:ALGO:REALAFFINEEND}).
-Let $F'$ be same function as $F$, but with $\max$ replaced with $\arg\max$.
-Clearly, $F'(M,(i,j))$ will return which cell was used to computation of
-$F(M,(i,j))$.
-
+Not we show how to compute  values of $M$ (and optionally $M_X$ and $M_Y$)
+effectively.
+Both algorithms from previous sections contain recurrent equations for computing
+values of matrix $M$ (or three matrices $M,M_X$ and $M_Y$). To compute the
+value of $M[i,j]$, these equations use only values
+from neighbouring cells which have at least one coordinate smaller. 
+Therefore we can order computation so that when we compute value $M[i,j]$ the
+necessary values are already computed.
+Let $F$ be
+the function, that takes as input matrix $M$  and coordinates $(i,j)$ and computes $M[i,j]$ according equation
+\ref{ALIGN:ALGO:AFFINE}.  Let $F'$ be
+same function as $F$, but with $\max$ replaced with $\arg\max$.  Function
+$F'(M,(i,j))$ will thus return which cell was used to computation of $F(M,(i,j))$.
+Note that if $g$ is not zero, then $F$ would take as input the matrices $M,M_X,$
+and $M_Y$ and compute computed $M[i,j],M_X[i,j],$ and $M_Y[i,j]$ according 
+ equations
+\ref{ALIGN:ALGO:REALAFFINESTART}-\ref{ALIGN:ALGO:REALAFFINEEND}
 %For simplicity, we will assume that both sequences has same length $n$. This
 %will allow us to express complexity in simple way.  At first we show how
-%to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$ 
-Needleman-Wunch algorithm can be computed by following code. Note that in case
-of gap opening penalty is not zero, matrix $M$ should be replaced with triple of
+%to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$
+
+The Needleman-Wunch algorithm can be computed by the following code. Note that
+if gap opening penalty is not zero, matrix $M$ should be replaced with triple of
 matrices $(M,M_X,M_Y)$. 
+
 
 \lstset{showstringspaces=false}
 \begin{lstlisting}
@@ -265,7 +260,7 @@ for i in 0...n-1
   for j in 0...m-1
     M[i,j] = F(M,(i,j))
 (i,j) = (n-1,m-1)
-while i > 0
+while i > 0 or j > 0
   (i',j') = F'(M,(i,j))
   (a,b) = (X[i],Y[j])
   if i' = i then a = '-'
@@ -274,69 +269,90 @@ while i > 0
   (i,j) = (i',j')
 \end{lstlisting}
 
-Lines 2-5 fills matrix $M$ and lines 6-12 implements the back-tracing procedure.
-Time complexity of this algorithm is $O(nm)$ and memory requirements are $O(mn)$
-since we keep in memory matrix $M$.
+Lines 2-5 fills matrix $M$ and lines 6-12 implement the back-tracing procedure.
+Time complexity of this algorithm is $O(mn)$ and memory requirements are $O(mn)$
+since we keep matrix $M$ in memory (same complexity for the algorithm for
+affine gap model with $g\not=0$).
 
-Note, that for computing $i$-th row of matrix $M$ we need only values from row
-$i$ and $i-1$. Therefore if we want to know just score of the optimal alignment
+
+Note that for computing the  $i$-th row of matrix $M$ we need only values from row
+$i$ and $i-1$. Therefore if we want to know just the score of the optimal
+alignment,
 we can compute it in $O(m+n)$ memory: after computing of row $i$, we can discard
-row $i-1$.
+row $i-1$. However if we want find the optimal alignment we have to keep matrix
+$M$ in the memory or use one of the techniques that are described in following
+chapter.
 
-In following subsections we will review several techniques that can be used to
-improve performance of dynamic programming used to compute alignment.
 
-\ subsection{Restricting Search Space}
+\section{Dynamic Programming}  
+%effectively and describe several methods how to decrease memory footprint and/or
+%time complexity. 
 
-The commonly used technique that is used to speedup (and decrease memory
-requirements) of sequence alignment is to restrict the search space of dynamic
-programming. By restricting search space we mean to compute alignment only in
-some parts of matrix $M$. We assume that omitted parts of matrix correspond to
-alignments with low score. In this section we will review few techniques that are
-used to with local or global alignment.
+%As in previous case, values of $M,M_X$ and $M_Y$ can be computed by simple
+%dynamic programming and by back-tracing these matrices we can obtain optimal alignment of
+%$X$ and $Y$.  Both algorithms have time complexity of $O(nm)$ and memory
+%complexity $O(mn)$.  Using tricks described later, the memory and even time
+%complexity will be improved.
 
-If sequences are quite similar, the optimal global alignment will not be too far
-from diagonal of matrix $M$. Therefore it is not necessary to compute parts of
-matrix $M$, that are too far from diagonal (distance from diagonal is user
-defined value). However, this is not useful for local alignment or global
-alignment of too distant sequences. Now we will discuss some more advanced
-techniques to restricting search space of dynamic programming.
+In this section review several techniques that can be used to improve
+performance of dynamic programming used to compute alignment.
+
+\subsection{Restricting Search Space}
+
+One commonly used technique for speedup (and decreasing memory requirements) of
+sequence alignment is to restrict the search space of dynamic programming. We
+compute alignment only in some parts of matrix $M$ and we assume that omitted
+parts of matrix correspond to alignments with low score. In this section we will
+review a few techniques that are used to restrict the search space of local or
+global alignment.
+
+If the two sequences are quite similar, the optimal global alignment will not be
+too far from the main diagonal of matrix $M$. Therefore it is not necessary to compute
+parts of matrix $M$ that are too far from the main diagonal \cite{Chao1992} (distance from
+diagonal a is
+user-defined value or can be computed during alignment \cite{GusfieldBook}).
+However, this method is not useful for local alignment or global alignment of 
+distant sequences. Now we will discuss some more advanced techniques to
+restricting search space of dynamic programming.
+
+
 
 \subsubsection{Seeds}
 
-Seeds are usually used to reduce time complexity of local alignments.  They were
-introduced in BLAST algorithm \cite{Altschul1990}.  Seed is position in both
-sequences, that can be extended to alignment with high score. After is seed
-found, it is extended with extension algorithm to local alignment.
+Seeds are a technique frequently  used to reduce time complexity of local alignment.  They were
+introduced in BLAST algorithm \cite{Altschul1990}.  Seed a short alignment which
+is likely to be a part of an alignment with high score. After a seed is
+found, it is extended with an extension algorithm to a local alignment.
 
-Seeds are usually found by some heuristic algorithm, that computes set
-\firstUseOf{candidate seeds}. After that, each candidate seed is extended into
-local alignment. Those which were not extended to high-scoring alignment are
-discarded. Such candidate seeds are called \abbreviation{false-positive}{FP}.
-Candidate seeds that were extended to high-scoring alignments are called
-\abbreviation{true-positive}{TP}.  Seeds that were not found by our heuristics
-are called \abbreviation{false-negatives}{FN} and rest is called
-\abbreviation{true-negatives}{TN}. It is important that heuristics should have
-high sensitivity ($TP/(TP+FN)$) and high specificity ($TN/(TN+FP)$). If
-heuristics have low sensitivity, many true high-scoring local alignment will not
-be found. Low specificity implies longer running time. 
+Seeds that cannot be extended to high-scoring alignments are
+discarded. Such candidate seeds are called false-positives.
+Alignments that were not found by our heuristics
+are called false-negatives.
+It is important that heuristics used to find seeds has a small number of
+false-negatives and large number of true-positives,
+otherwise many true high-scoring local alignment will not be found. On the other
+hand, high number of false positives implies longer running time. 
 
-Traditional approach is to find candidate seeds positions $i$ and $j$ in
+
+The most traditional approach is to as seeds all positions $i$ and $j$ in
 sequences $X$ and $Y$, such that $X[i:i+\tau]=Y[j:j+\tau]$ for some constant
-$\tau$. This approach is used in BLAST \cite{Altschul1990}. Other approaches is
-to allow some constant number of mismatches \cite{Kent2002}. \firstUseOf{Space
-seeds} allow to contain gaps \cite{Ma2002}. \firstUseOf{Vector seeds}
-\cite{Brejova2005vector} are extension of space seeds and \firstUseOf{daughter
-seeds} \cite{Csuros2005} are generalization of previous seed methods. All of
-those methods vary in speed, sensitivity and specificity.
+$\tau$. This approach is used in BLAST \cite{Altschul1990}.  Various
+generalization of BLAST heuristic were developed to improve trade off between
+speed and accuracy, such as seeds with mismatches \cite{Kent2002}, space seeds
+\cite{Ma2002}, vector seeds \cite{Brejova2005vector} or daughter seeds
+\cite{Csuros2005}. All of those methods vary in speed and accuracy.
 
-Extension is done in both ways, usually using equation \ref{ALIGN:ALGO:AFFINE}
+Extension of a seed to a full alignment is done in both directions, usually using equation \ref{ALIGN:ALGO:AFFINE}
 (equation is altered in reverse direction). Extension is stopped, when some
-criteria is reached. For example, BLAST introduced X-drop heuristics: extension stops
-if score of alignment is lower than best score that was seen so far minus user
-defined constant \cite{Altschul1997}.
+criterion is reached. For example, BLAST introduced X-drop heuristics: extension stops
+if the score of an alignment is lower than the best score that was seen so far
+minus some user-defined constant \cite{Altschul1997}.
 
 %space seeds, daughter seeds
+
+\bigskip
+{\Large\bf Podtialto su zapracovane pripomienky }
+\bigskip
 
 \subsubsection{Stepping Stone Algorithm}
 \label{SECTION:SSA}
