@@ -165,6 +165,7 @@ be found in \cite{Durbin1998}.
 
 
 \section{Needleman-Wunsch algorithm}
+\label{SECTION:NEEDLE}
 
 Recall that the higher score mean better alignment so we want to search for an
 alignment with the highest score.  Alignment with scoring scheme with previous
@@ -385,39 +386,38 @@ Time complexity and memory requirements of the stepping stone algorithm are of
 order of $O(\sqrt{|X|^2+|Y|^2})$ under the assumption that the maximum area between
 two anchors is independent of the sequence length \cite{Meyer2002}.
 
-\bigskip
-{\Large\bf Podtialto su zapracovane pripomienky }
-\bigskip
-
 
 \subsection{Checkpointing}
 
-Checkpointing is general trick in dynamic programming, that allows us to save
-$O(\sqrt n)$ rows of dynamic programming matrix while doubling running time
+Checkpointing is a general technique in dynamic programming, which allows reduce
+the number of rows of the dynamic programming matrix to $O(\sqrt n)$ while
+doubling the running time
 \cite{Grice1997}. 
-%We will treat matrices $M,M_X$ and $M_Y$ as one matrix
-%containing triples.
 
-In order to compute $i$-th row of matrix $M$, we need only row $i-1$. As
-mentioned above, to compute score of the best alignment we need to remember only
-two rows (previous and current which we are computing).  If we want to
-back-trace the optimal alignment, after we compute it's score, we need all
-rows of matrix $M$ again, therefore we would have to compute them again.
-Since we need for back-tracing rows in decreasing order, this would lead to
-$O(m^2n^2)$ time, since every time we need previous row we would have to recompute
-it from beginning.
+In order to compute the $i$-th row of matrix $M$, we need only row $i-1$. As
+mentioned in section \ref{SECTION:NEEDLE}, to compute the score of the best
+alignment we need to store only
+two consecutive rows.  If we want to
+recover the optimal alignment, after we have computed its score, we need all
+rows of matrix $M$ again, in decreasing order.
+A naive algorithm that recompute needed rows from the beginning have
+time complexity $O(m^2n^2)$
 
-Checkpointing solves this problem by remembering every $k$-th row of matrix $M$.
-For this we need to remember $\lceil n/k\rceil$ rows.  While back-tracing, we
-will remember additional block $B$ of consecutive $k$ rows in interval
-$<ik,(i+1)k-1>$. We can compute such block on $O(kn)$ time using simple
-non-optimized dynamic programming described above.  If we need row that
+Checkpointing solves this problem by storing every $k$-th row of matrix $M$,
+$\lceil n/k\rceil$ rows in total.  While back-tracing, we
+will remember an additional block $B$ of consecutive $k$ rows in interval
+$[ik,(i+1)k)$. We can compute such a block in $O(kn)$ time using the basic
+ dynamic programming, starting from row number $ik$ which is stored in memory.  If we need row that
 is outside $B$, we replace block $B$ with block that contain such row. Since we
 access every row only once and in decreasing order, we recompute every block at
-most once. Therefore time complexity of back-tracing will be still $O(n^2)$. We
+most once. Therefore the time complexity of back-tracing will be still $O(mn)$. We
 have to remember every $k$-th row and one block of size $k$, so memory
-complexity is $O(\lceil n/k\rceil n+ kn)$. If we set $k=\sqrt n$ then memory
-complexity will be $O(n\sqrt n)$ while time complexity will remain same.
+complexity is $O(\lceil n/k\rceil m+ km)$. If we set $k=\sqrt n$ then the memory
+complexity will be $O(m\sqrt n)$ while the time complexity will remain same.
+
+\bigskip
+{\Large\bf Podtialto su zapracovane pripomienky }
+\bigskip
 
 
  
