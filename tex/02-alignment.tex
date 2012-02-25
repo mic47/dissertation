@@ -1,31 +1,42 @@
 \chapter{Alignments}
 \label{CHAPTER:ALIGNMENT}
-Parts of two sequences are homologous, if they have evolved from same part of
-their ancestral sequence. Aim of sequence alignment is to identify homologous
-sequences. There are several evolution events, that usually happens:
-mutation of residue into another residue, deletion of part of the sequence,
-insertion of residues into the sequence. We omit rearrangements of sequence,
-because it cannot be represented by alignment. Alignment is data structure that
-represents comparisons of sequences. We obtain alignment of $k$ sequences by
-inserting dashes into sequence in a way, that they will have same length. We can
-represent alignment as matrix or table. Row of the alignment is a sequence with
-inserted dashes and column is list of residues from all row on same position.
+In this chapter we define alignments, define basic scoring scheme for alignments
+and describe basic algorithms that compute biologically relevant alignments of
+two sequences. In the end of this chapter we describe several algorithmic
+improvements and heuristics that reduce the computational complexity of the
+sequence alignment algorithms.  
+
+Parts of two sequences are homologous, if they have evolved from same sequence
+in their common ancestor. Aim of sequence alignment is to identify homologous
+sequences. Sequences can be modified by different evolution events:
+mutation of a residue into another residue, deletion of a part of the sequence,
+insertion of residues into the sequence. There are also large-scale
+rearrangement events like duplications (some subsequence is duplicated and
+copied into other part of the sequence), inversions (some subsequence is
+reversed) or relocations in which part of the sequence change position.  We will
+ignore them for now because they cannot be represented by traditional
+alignments. An alignment is a data structure that represents comparisons of two
+or more sequences. We obtain an alignment of $k$ sequences by inserting dashes
+into individual sequences so that they have the same length. We can represent an
+alignment as a matrix or a table. Each row of the alignment is a sequence with
+inserted dashes, and each column is list of residues from all rows at the same
+position.
 
 
-Biological meaning of an alignment is following: homologous residues (those that
-have developed from common etancestor) are in same row. Dashes represents either
-the parts of sequence that were deleted during evolution (deletions) or that on
-those positions were inserted some sequences to other sequence (insertions). In
-alignment is not possible to distinguish between insertions and deletions -- we
-cannot tell if something was inserted into one sequence or if there was deletion 
-in the other sequences. Therefore we will refer to insertions and deletions at
-to \firstUseOf{indels}.
+An alignment has the following biological meaning: homologous residues (those that
+have evolved from a common ancestor) are in same column. Dashes represents
+either the parts of sequence that were deleted during evolution (deletions) or
+positions where some residues were inserted into some other sequence
+(insertions). In an alignment is not possible to distinguish between insertions and
+deletions -- we cannot tell if something was inserted into one sequence or if
+there was deletion in the other sequences. Therefore we will refer to insertions
+and deletions as to \firstUseOf{indels}.
 
 \begin{example} 
-Consider following evolution history of hypothetical DNA sequences of two
-current organism $X$ and $Y$. There was parent sequence $P$ which evolves into
-$X'$ and $Y'$ and after that $X'$ evolves into $X$ and $Y'$ evolves into $Y$.
-This evolution history is described bellow: 
+Consider the  following evolution history of hypothetical DNA sequences of two
+current organisms $X$ and $Y$. There was a parent sequence $P$ which evolved into
+$X'$ and $Y'$ and after that $X'$ evolved into $X$ and $Y'$ evolves into $Y$.
+These sequences are shown bellow: 
 \begin{verbatim}
 X:      C C     G C G A C C T T G C             A C C A
 X':     C C     G           T T G C             A G C A
@@ -35,19 +46,20 @@ Y:      T C T A G           C C           G A T A G C A
 \end{verbatim}
 %$X$ and $Y$ evolved from parent sequence $P$ through sequences $X'$ and $Y'$.
 During evolution from $P$ to $X'$, four events occurred: deletion of 
-sequences ``TG''  and ``TGAGCT'' and mutations of two bases. Evolution of $X$
-was ended by  
-positions bases were substituted. During evolution from $X'$ to $X$, one base was
-changed and sequence ``CGACC'' was inserted.  
+sequences ``TG''  and ``TGAGCT'' and mutations of two bases. During evolution
+from $X'$ to $X$, one base was changed and sequence ``CGACC'' was inserted.  
+Similarly during evolution from $P$ to $Y'$, the two bases mutated and two
+sequences were deleted. During evolution from $Y'$ to $Y$ one base mutated and
+sequence ``CGACC'' was inserted. 
 
-From evolution history described above, we can create alignment of current
+From evolution history described above, we can create an alignment of current
 sequences $X$ and $Y$ by removing ancestral sequences $X',Y'$ and $P$, 
 %\begin{verbatim}
 %X:      C C     G C G A C C T T G C             A C C A
 %Y:      T C T A G           C C           G A T A G C A
 %\end{verbatim}
 %We obtain actual alignment by 
-removing columns that contains only gaps and
+removing columns that contain only gaps and
 replacing gaps with dashes (gap symbols). 
 \begin{verbatim}
 X:      C C - - G C G A C C T T G C - - - A C C A
@@ -59,18 +71,19 @@ evolved from same symbol in $P$).
 As you can see, homologous symbols do not have to be equal.
 \end{example}
 
-There is only one alignment that reflects evolution history. Our goal is to find
-this alignment, or at least find the alignment, that is as close as possible.
-Alignment described above is \firstUseOf{global alignment} because it is
-alignment of whole sequences. Local alignment is alignment of parts of
-sequences: local alignment of sequences $X$ and $Y$ is global alignment of
-strings $\bar{X}$ and $\bar{Y}$ where $\bar{X}$ is substring of $X$ and $\bar{Y}$ is substring of
-$Y$.  Since global alignment does not consider rearrangement events
-\footnote{For example duplication, reversal or translocation.}, local alignments
-are useful in such scenarios.  We will mostly consider global alignments, but
-most of the methods can be altered also to local alignments.
+There is only one alignment that reflects the true evolution history. Our goal
+is to find this alignment, or at least some alignment, that is as close as
+possible. The alignment shown above is a \firstUseOf{global alignment} because it
+is alignment of whole sequences $X$ and $Y$. A local alignment is alignment of
+parts of sequences: local alignment of sequences $X$ and $Y$ is a global alignment
+of strings $\bar{X}$ and $\bar{Y}$ where $\bar{X}$ is a substring of $X$ and
+$\bar{Y}$ is a substring of $Y$.  Since global alignments do not consider
+rearrangement events\footnote{Duplication, reversal or
+translocation.}, local alignments are useful in such scenarios.  We will mostly
+consider global alignments, but most of the methods can be extended also to local
+alignments.
 
-In this chapter we will review basic methods how to create alignments. We will
+In this chapter we will review basic methods for constructing alignments. We will
 discuss basic scoring schemes and algorithms that finds optimal alignment under
 such scheme.
 
