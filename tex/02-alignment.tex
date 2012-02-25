@@ -162,23 +162,19 @@ for example PAM or BLOSUM matrices. Other possible solution is to use a
 theoretical model of evolution, for example Jukes-Cantor model. More details can
 be found in \cite{Durbin1998}.
 
-\bigskip
-{\Large\bf Podtialto su zapracovane pripomienky }
-\bigskip
 
 
 \section{Needleman-Wunsch algorithm}
 
-Alignment with scoring scheme with previous section can be found by
-Needleman-Wunsch algorithm \cite{Durbin1998}.
-\todo{nieco o tom ze to bol povodne kubicky, ale sankoff spravil lepsiu verziu}
-This algorithm uses arbitrary score table $S$, affine gap model with gap penalty
-$d$ with
-gap opening penalty $g=0$ (this model is sometimes called linear gap model). To
-align sequences $X$ and $Y$ with length $n$ and $m$ respectively, we define
-matrix $M$ of size $n\times m$. $M[i,j]$ will be the score of the best alignment
-of sequences $X[:i]$ and $Y[:j]$. We can compute $M[i,j]$ by following
-equations:
+Recall that the higher score mean better alignment so we want to search for an
+alignment with the highest score.  Alignment with scoring scheme with previous
+section can be found by the Needleman-Wunsch algorithm \cite{Durbin1998}.
+This algorithm uses an arbitrary score table $S$, affine gap model with gap penalty
+$d$ and gap opening penalty $g=0$ (if $g=0$ then this model is also called
+linear gap model). To align sequences $X$ and $Y$ of length $n$ and $m$
+respectively, we define matrix $M$ of size $n\times m$. $M[i,j]$ will be the
+score of the best alignment of sequences $X[:i]$ and $Y[:j]$. We can compute
+$M[i,j]$ by the following equations:
 
 \begin{align} 
 M[-1,-1] &= 0\\
@@ -191,14 +187,14 @@ M[i,j] &= \max
 \end{cases}, 0\leq i<n,0\leq j<m \label{ALIGN:ALGO:AFFINE}
 \end{align}
 
-By computing $M[n-1,m-1]$ we have the score of the alignment of $X$ and $Y$ with
-the highest score. We can reconstruct such alignment by back-tracing matrix $M$.
-Back-tracing procedure will be described later.
+By computing $M[n-1,m-1]$ we have the score of the optimal (highest-scoring) alignment of $X$ and $Y$. 
 
 To cope with gap opening penalty, we have to slightly change the algorithm.
 We define two other matrices $M_X$ and $M_Y$ of same size as $M$. $M_X[i,j]$
-will contain the score of alignment of sequences $X[:i]$ and $Y[:j]$ than ends
-with gap in sequence $X$. $M_Y$ is analogous. Now we show how to compute $M,M_X$
+will contain the highest score of an alignment of sequences $X[:i]$ and $Y[:j]$
+that ends
+with a gap in sequence $X$. $M_Y$ is analogous. Now we show how to compute
+$M,M_X,$
 and $M_Y$. 
 
 \todo{Je vlastne vobec treba taketo vypisovat?}
@@ -207,7 +203,7 @@ M[-1,-1] &= 0\\
 M[-1,i] &= M_X[-1,i] = i\cdot d+g, 0 < i < m\\
 M[i,-1] &= M_Y[i,-1] = i\cdot d+g, 0 < i < n\\
 M_X[i,-1] &= -\infty, 0\leq i< n\\
-M_Y[-1,i] &= \infty, 0 \leq i< m\\
+M_Y[-1,i] &= -\infty, 0 \leq i< m\\
 M[i,j] &= \max
 \begin{cases}\label{ALIGN:ALGO:REALAFFINESTART}
  M[i-1,j-1]+S(X_i,X_j)\\
@@ -227,13 +223,19 @@ M[i,j-1]+g+d\\
 M_Y[i,j-1]+d
 \end{cases}, 0\leq i<n,0\leq j<m\label{ALIGN:ALGO:REALAFFINEEND}
 \end{align}
+
+\bigskip
+{\Large\bf Podtialto su zapracovane pripomienky }
+\bigskip
+
+
+
+\section{Dynamic Programming}\label{DYNPROG}
 As in previous case, values of $M,M_X$ and $M_Y$ can be computed by simple
 dynamic and by back-tracing these matrices we can obtain optimal alignment of
 $X$ and $Y$.  Both algorithms have time complexity of $O(nm)$ and memory
 complexity $O(mn)$.  Using tricks described later, the memory and even time
 complexity will be improved.
-
-\section{Dynamic Programming}\label{DYNPROG}
 
 In this section we show how to compute those values effectively and describe
 several methods how to decrease memory footprint and/or time complexity. 
