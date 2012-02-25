@@ -2,9 +2,10 @@
 \label{CHAPTER:ALIGNMENT}
 In this chapter we define alignments, define basic scoring scheme for alignments
 and describe basic algorithms that compute biologically relevant alignments of
-two sequences. In the end of this chapter we describe several algorithmic
-improvements and heuristics that reduce the computational complexity of the
-sequence alignment algorithms.  
+two sequences. Ten we describe several algorithmic improvements and heuristics
+that reduce the computational complexity of the sequence alignment algorithms.
+In the end we will discuss the possibilities of the extension of the algorithm
+to different gap models.
 
 Parts of two sequences are homologous, if they have evolved from same sequence
 in their common ancestor. Aim of sequence alignment is to identify homologous
@@ -96,42 +97,75 @@ such scheme.
 \section{Scoring Schemes}
 
 Since we want to construct alignments that have biological meaning, we have to
-develop a way, how to assess the quality of an alignment. On way of doing it is
-to define scoring scheme. There are many ways how to develop good scoring
-scheme. 
+develop a method for assessing the quality of an alignment. One way of doing so
+is to define a scoring scheme. Scoring scheme is a method that assigns to every
+alignment a real number (called score). The better alignments should have higher
+score than the worse. Once we have scoring scheme we will search for an
+alignments of the input sequences with the highest score.  There are many ways
+how to develop good scoring scheme. 
 
 
-Scoring schemes covered in this chapter will score each column of an alignment,
-which does not contain gap, independently. Gaps will be penalised by penalty
-that depends on the length of the gap. Score of an entire alignment is sum of
-the scores of all ungapped columns plus sum of the scores of all gaps. The
-simplest scoring scheme is following. 
+Scoring schemes covered in this chapter will independently score each column of
+an alignment, which does not contain a gap. Gaps will be scored by a penalty
+that depends on the length of the gap (the number of consecutive dashes). Score
+of an entire alignment is the sum of the scores of all ungapped columns plus the
+sum of the scores of all gaps.
 
-We will expect, that all sequences are from finite alphabet $\Sigma$. For DNA,
-$\Sigma=\{A,C,G,T\}$, for proteins sigma contains $20$ codes of amino acids.
-We will score column containing residues
-$a$ and $b$ by $S[a,b]$ where $S$ is matrix of size $|\Sigma|\times|\Sigma|$.
-$S$ is called \firstUseOf{substitution matrix}.
-Every gap gap has score $g+dx$ where $x$ is the length of an alignment. $g$ is gap
-opening penalty and $d$ is gap extension penalty. Both are usually
-negative\footnote{Having positive gap penalty is probably not very useful.}.  We
-call such gap model affine gap model. 
+In particular
+we will assume that all sequences are from a finite alphabet $\Sigma$. For DNA,
+$\Sigma=\{A,C,G,T\}$, for proteins $\Sigma$ contains $20$ codes of amino acids.
+We will score a column containing residues $a$ and $b$ by $S[a,b]$ where $S$ is
+a matrix of size $|\Sigma|\times|\Sigma|$ called \firstUseOf{substitution
+matrix}.  A gap of length $x$ has a score $g+dx$, where $g$ is the gap opening
+penalty and $d$ is the gap extension penalty. Both are usually negative since we
+want alignments that contains many columns with same or similar symbols. With
+positive gap penalty there will be tendency towards alignments with many gaps
+which reduce the number of aligned residues.  We call this gap scoring scheme an
+affine gap model. In general, gaps can be penalized by arbitrary function $f(x)$
+(non-affine gap penalties will be discussed in the end of this chapter).
 
-Intuition behind this scoring system are probabilistic. Assume that we have
+Intuition behind this scoring system is probabilistic. Assume that we have
 alignment of $X$ and $Y$ without gaps and that each base in DNA evolves
 independently. Therefore for every pair of residues $a,b$ there is probability
-that $a$ will evolve into $b$. Therefore the probability that $X$ will evolve
-into $Y$ is product of probabilities that $X_i$ will evolve into $Y_i$. By
-taking logarithm we will get sum of logarithm of substitution probabilities.
-Therefore values $S[a,b]$ are proportional to the logarithm of probability that
-$a$ evolves into $b$. Values of $S$ are usually probabilities multiplied by some
+that $a$ will evolve into $b$. We denote this probability as $p(a,b)$. Therefore the probability that $X$ will evolve
+into $Y$ is product of probabilities that $X_i$ will evolve into $Y_i$
+\[
+\prob{X\text{ evolved into }Y} = \prod_{i=0}^{|X|-1}p(X_i,Y_i)
+\]
+If $X$ and $Y$ were generated independently be some random model $R$, then probability that we see $X_i$
+and $Y_i$ is $\prob{X_i\mid R}\prob{Y_i\mid R}$ ($R$ usually samples symbols
+of sequence independently from some distribution). The probability that we $X$
+and $Y$ under model $R$ is
+\[
+\prob{X,Y\mid R} = \prod_{i=0}^{|X|-1}\prob{X_i\mid R}\prob{Y_i\mid R}
+\]
+As a measure of  $X$ and $Y$ being homologous we can the ration of the
+probability that $X$ evolved into $Y$ and the probability that $X$ and $Y$ are
+independent.
+By taking logarithm of this ratio we have
+\[
+\log\left(
+\frac{\prob{X\text{ evolved into }Y}}{\prob{X,Y\mid R} }\right)
+= \sum_{i=0}^{|X|-1}\log\left(\frac{p(X_i,Y_i)}{\prob{X_i\mid R}\prob{Y_i\mid
+R}}
+\right)
+\]
+By taking $S[a,b]=\frac{p(a,b)}{\prob{a\mid R}\prob{b\mid R}}$ we have one
+possible scoring model. $S[a,b]$ is positive if is more likely that $a$ evolved
+into $b$ and negative if it is more likely that $a$ and $b$ were generated
+independently.  Values of $S$ are usually probabilities multiplied by some
 constant and rounded to integers to avoid use of floating point numbers. 
 
-Basically, there are two ways of deriving substitution matrices. One way is
-to derive them from alignments that were constructed manually by biologists. Such
-matrices are for example PAM or BLOSUM matrices. Other possible solution is to
-use theoretical model of evolution, for example Jukes-Cantor model. More details
-can be found in \cite{Durbin1998}.
+There are two ways of deriving substitution matrices. One way is to derive them
+from alignments that were constructed manually by biologists. Such matrices are
+for example PAM or BLOSUM matrices. Other possible solution is to use a
+theoretical model of evolution, for example Jukes-Cantor model. More details can
+be found in \cite{Durbin1998}.
+
+\bigskip
+{\Large\bf Podtialto su zapracovane pripomienky }
+\bigskip
+
 
 \section{Needleman-Wunsch algorithm}
 
