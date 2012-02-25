@@ -156,37 +156,21 @@ site, branch point and donor have fixed length
 In this section we summarize the notations that we will use in the following
 chapters.
 
-\paragraph{Indexing, intervals:} All sequences, members of sets, vectors of
-matrices will be indexed from $0$ (the first element of a sequence is $0$-th
-elements). We will use mostly right-open intervals: $I=[a,b)$ -- the $a\in I$
-but $b\notin I$. 
+All sequences, members of sets, vectors of matrices will be indexed from $0$
+(the first element of a sequence is $0$-th elements). We will use mostly
+the right-open intervals: $I=[a,b)$ means the $a\in I$ but $b\notin I$. 
 
-\paragraph{Strings:} Element on the $k$-th position (zero based) of the string $s$
+Element on the $k$-th position (zero based) of the string $s$
 will be written as $s[k]$. Substring beginning at position $i$ (including) and
-ending at position $j$ (excluding symbol on position $j$) is $s[i:j]$.
-If we omit the beginning or the end of the interval, then the string is meant to
-be 
-We will use the terms sequence and string interchangeably since they have
-same meanings. While term string is often used in the Computer Science, the term
-sequence is used in the computational biology.
+ending at position $j$ (excluding symbol on position $j$) is $s[i:j]$.  If $n$
+is the length of the sequence then $s[:i]$ is equivalent to $s[0:i]$ and $s[i:]$
+is equivalent to $s[i:n]$.  We will use the terms sequence and string
+interchangeably since they have same meanings. The term sequence is often used
+in the computational biology so also we will use it.
 
-\paragraph{Vectors, matrices:}
 Let $M$ be the matrix. Then $M[i,j]$ is the element from the $i$-th row and
 $j$-th column of $M$ (indices are zero based). Similarly as to strings,
 submatrix $M[i:j,k:l]$ is matrix consisting from the intersection of rows
-$i,i+1,\dots, j-1$ with columns $k,k+1,\dots,l-1$. Additionally, if 
-$M$ is of size $n\times m$ then $M[:i,j:]$ is equivalent to $M[0:i,j:m]$.
-
-Whenever is something vector or matrix, we will use brackets "[,]" to select
-items from it. We will try to always enumerate and index from zero 0, for
-example sequence $X$ of length $n$ is $X_0X_1\dots X_{n-1}$. Usually sets and
-other collection of objects will be denoted by uppercase letter and their
-members will be denoted by lowercase equivalent  with index starting at 0.
-Sequences and strings will by denoted either by uppercase or lowercase letters
-and symbols will be denoted by same letter with index starting at 0.
-
-Substrings: if $X=X_0X_1\dots X_n$ is sequence, then
-$X\left[a:b\right]=X_aX_{a+1}\dots X_{b-1}$. Therefore $X[0:|X|]=X$. Prefix of
-sequence $X$ of length $k$ is $X[:k]$. Suffix of $X$ starting at position $k$ is
-$X[k:]$.
-
+$i,i+1,\dots, j-1$ with columns $k,k+1,\dots,l-1$. Additionally, if $M$ is of
+size $n\times m$ then $M[:i,j:]$ is equivalent to $M[0:i,j:m]$.  The term
+$M[i,:]$ is equivalent to $M[i,0:m]$ which is the $i$-th row of $M$.
