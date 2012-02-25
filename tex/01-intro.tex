@@ -1,6 +1,142 @@
 \chapter{Introduction}
 
-\section{Notation}
+
+In this work we will focus on the methods that are used for automatic
+comparative analysis of biological sequences and annotation of the biological
+sequences. We will study the methods, their complexity, possible improvements
+and propose new methods to \correction{improve
+aplication}{preformulovat}{preformulovat}. + preco je treba robit automatizovane
+veci
+
+By biological sequences we mean either DNA/RNA sequences, which are finite
+sequences over the alphabet $\{A,C,G,T/U\}$ ($T$ is in DNA, $U$ in RNA) or the
+protein sequences which are sequences over the alphabet of $20$ amino acids.
+Later in this chapter we will discuss the relationship between those sequences.
+We focus on two problems. The first is the annotation of the biological
+sequences and the second is the comparative analysis of such sequences. For both 
+problems we will use the variants of the \abbreviation{hidden Markov
+models}{HMMs}.
+
+Hidden Markov models are generative probabilistic models which define the
+probability distribution of the sequences with their annotation (formally HMMs
+generate pair of sequence with annotation) \cite{Durbin1998,??}. Annotation is
+the assignments of the labels to the sequence according it's meaning (function,
+the origin of the part of the sequence or any other information). HMMs are used
+for the probabilistic analysis of the sequences of various fields. In our work
+we focus on  the biological sequences. 
+
+Decoding algorithm is algorithm that from the input sequence $X$ and HMM $H$
+computes the annotation that could generate $X$. Goal is to recover the true
+annotation that generated $X$, but finding such annotation is impossible due to
+the randomness in the generating process. Therefore the decoding algorithm finds
+some approximation of the true annotation.  In recent years it has beed nown
+that the different decoding methods can used to improve the ``quality'' of the
+annotations of sequences
+\cite{Gross2007,Nanasi2010,Nanasi2010mgr,Truszkowski2011}.  Additionally there
+are many techniques that are used to lower the computations complexity of the
+decoding and training algorithms (training algorithm are algorithm that computes
+the parameters of the model from the training data set).
+
+In the field of the comparative analysis of a biological sequence we focus on the
+sequence alignment problem. Sequence alignment is simple data format (or data
+structure) that represent the similarities in the sequences. Alignment is
+created by inserting dashes ('-') into the in a way that both sequences has same
+lengths and similar symbols are on the same positions in both sequences. In
+computational biology the alignments are constructed in a way that the
+homologous parts of the sequences are aligned together (they are on the same
+positions) and parts that are not homologous to the other sequence are aligned
+to a gap symbols ('-'). Homologous sequences are sequences that have evolved
+from the same part of the sequence of the ancestral sequence (we assume that
+current organisms evolve from single ancestral organism through series of 
+mutations, insertions, deletion and other transformations).
+Non-homologous parts corresponds to the parts that were either inserted into 
+the sequence during evolution or that their's homologous part in the second
+organism was deleted during it's evolution.
+
+The reason for searching and studying homologous sequences is that homologous
+sequences are expected to have same or similar functions in both organisms.
+Therefore by studying homologous sequences we can transfer knowledge about
+functions from one organisms to other organisms. We focus on the methods for
+constructing alignments of the biological sequences, not on the actual
+biological research.
+
+Variant of the hidden Markov models called \abbreviation{pair hidden Markov
+models}{pHMMs} can be used to create sequence alignments. Unlike HMM, pHMM is
+probabilistic generative model that generate three objects: the sequences $X,Y$
+and their alignment (or annotation) $A$. Similarly as with the HMMs, the
+sequences $X$ and $Y$ are observed but the alignment $A$ is hidden. By proper
+decoding method we can obtain the good approximation of $A$. Our goal is to
+study decoding methods and models that are used for sequence alignment in order
+to create software that will produce alignments with high quality.
+
+\section{Thesis structure}
+
+The structure of this document is following. In this chapter we define few  TODO
+
+In the second chapter we will discuss the sequence alignments and the methods
+that are used to create sequences alignment without using pair hidden Markov
+models. We describe basic scoring schemes, algorithms that search for alignments
+with high score and the several approaches how to improve the computational
+complexity of such algorithms.
+
+The third chapter discuss hidden Markov models. We define HMMs, review basic
+algorithm that are used with HMMs. We discuss the highest expected gain
+framework which is generalization of the decoding algorithms. Later we define
+several variants of HMMs: generalized hidden Markov models, high-order HMMs,
+pair hidden Markov models and their combinations. In the end of chapter we
+discuss several algorithmic improvements of algorithms that are used with HMMs
+that reduces the computational complexity.
+
+Fourth chapter is dedicated to the methods for pairwise alignment (alignment of
+two sequences) using pair hidden Markov models and their variants and also to
+other applications of pHMMs. We review several pairwise aligners and comparative
+gene finders and also results concerning the quality and biases in the
+alignments.
+
+The fifth chapter contain our PhD project with the proposed directions for our
+research. We want to focus on the improvements and the analysis of the decoding
+algorithms and their application to the sequence alignments. 
+
+\section{Biological motivation}
+
+
+In case of biological
+sequences, such annotations are used for further research by biologist.
+The most used decoding method fir HMMs is the Viterbi algorithm. The Viterbi
+algorithm finds the most probable explanation (later we will refer to is as to
+the most probable state path) of the way how input sequence $X$ was generated by
+the model $H$. However, 
+
+The second chapter discuss sequence alignments. It contains the most probable
+stat
+
+\section{Biological Introduction}
+
+\section{Notations}
+
+In this section we summarize the notations that we will use in the following
+chapters.
+
+\paragraph{Indexing, intervals:} All sequences, members of sets, vectors of
+matrices will be indexed from $0$ (the first element of a sequence is $0$-th
+elements). We will use mostly right-open intervals: $I=[a,b)$ -- the $a\in I$
+but $b\notin I$. 
+
+\paragraph{Strings:} Element on the $k$-th position (zero based) of the string $s$
+will be written as $s[k]$. Substring beginning at position $i$ (including) and
+ending at position $j$ (excluding symbol on position $j$) is $s[i:j]$.
+If we omit the beginning or the end of the interval, then the string is meant to
+be 
+We will use the terms sequence and string interchangeably since they have
+same meanings. While term string is often used in the Computer Science, the term
+sequence is used in the computational biology.
+
+\paragraph{Vectors, matrices:}
+Let $M$ be the matrix. Then $M[i,j]$ is the element from the $i$-th row and
+$j$-th column of $M$ (indices are zero based). Similarly as to strings,
+submatrix $M[i:j,k:l]$ is matrix consisting from the intersection of rows
+$i,i+1,\dots, j-1$ with columns $k,k+1,\dots,l-1$. Additionally, if 
+$M$ is of size $n\times m$ then $M[:i,j:]$ is equivalent to $M[0:i,j:m]$.
 
 Whenever is something vector or matrix, we will use brackets "[,]" to select
 items from it. We will try to always enumerate and index from zero 0, for
@@ -14,5 +150,4 @@ Substrings: if $X=X_0X_1\dots X_n$ is sequence, then
 $X\left[a:b\right]=X_aX_{a+1}\dots X_{b-1}$. Therefore $X[0:|X|]=X$. Prefix of
 sequence $X$ of length $k$ is $X[:k]$. Suffix of $X$ starting at position $k$ is
 $X[k:]$.
-
 
