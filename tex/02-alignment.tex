@@ -583,40 +583,44 @@ sum of the sizes of all blocks, which is $O(n^2/\log n)$ where $n$ is the length
 of the longer sequence.
 
 
-\bigskip
-{\Large\bf Podtialto su zapracovane pripomienky }
-\bigskip
-
 
 
 
 \section{Non-Affine Gap Models} 
 
-\todo{Mozno by sa dalo dodat aj viac citacii} Reason why affine gap models are
-used in sequence alignment is because they are simple, easy to compute and gave
-reasonable results. While affine gap score works fine for short gaps, penalty
+
+%\todo{Mozno by sa dalo dodat aj viac citacii} 
+The reasons why affine gap models are
+used in sequence alignment are that they are simple, easy to compute and give
+reasonable results. While affine gap scoring works fine for short gaps, penalty
 for long gaps is too high. Use of different gap models can improve quality of
 reconstructed alignments \cite{Gill2004,Cartwright2009}.
 
-Let $f(x)$ be the gap penalty where $x$ is the length of the gap. In case of
-affine gap models, $f(x)=g+dx$. In case of general gap function, we have to
-reformulate equation \ref{ALIGN:ALGO:AFFINE} in following way:
+Let $f(x)$ be the gap penalty for a gaps of length $X$
+In 
+affine gap models, this function has the form $f(x)=g+dx$. For general gap function, we have to
+reformulate equation \ref{ALIGN:ALGO:AFFINE} for computing the highest scoring
+alignment in following way:
 \begin{align}
 M[i,j] &= \max
 \begin{cases}
  M[i-1,j-1]+S(X_i,X_j)\\
- M[i,j-y]+f(y)\\
- M[i-x,j]+f(x)
-\end{cases}, 0<x\leq i<n,0<y\leq j<m\label{ALIGN:ARBITRARYGAPEQUATION}
+ \max_{x\leq j}M[i,j-x]+f(x)\\
+ \max_{x\leq i}M[i-x,j]+f(x)
+\end{cases}, 0<x\leq i<n\label{ALIGN:ARBITRARYGAPEQUATION}
 \end{align}
-This algorithm has time complexity of $O(n^3)$ where $n$ is the length of the
-longest sequence. Note that this was the original Needleman-Wunsch 
-algorithm \cite{Needleman1970} and later it was improved to $O(n^2)$ algorithm
-\cite{Sankoff1972} for alignment without gap penalties.
-Unlike previous recursive equations, int this algorithm $M[i,j]$ depends not
-only on neighbouring cells, but also on all previous in same row and column.
-Therefore some techniques like Hirschberg algorithm or Checkpointing cannot be
+This algorithm has time complexity of $O(n^3)$, where $n$ is the length of the
+longer sequence. Note that this was the original Needleman-Wunsch 
+algorithm \cite{Needleman1970}, and later it was improved to $O(n^2)$ algorithm
+\cite{Sankoff1972} for alignment with linear gap penalties.
+Unlike previous recursive equations, in this algorithm $M[i,j]$ depends not
+only on neighbouring cells, but also on all previous cells in the same row and column.
+Therefore some memory-saving techniques like Hirschberg algorithm or checkpointing cannot be
 used with general gap penalties.
+
+\bigskip
+{\Large\bf Podtialto su zapracovane pripomienky }
+\bigskip
 
 \subsection{Convex/Concave Gap Functions}\label{SECTION:CONVEX}
 
