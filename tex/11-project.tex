@@ -102,10 +102,10 @@ specific for HMM. However in practice $T$ can be too high.
 
 
 $\tmix$ is the mixing time. We can define it in following way:
-
+\todo{Toto nehovori uplne co chcem}
 \[\tmix = \min_{i}\left\{ 
-\left(\max_{\mu,\nu} || \prob{\pi[i] = \cdot\mid X,H_\nu} - \prob{\pi[i] = \cdot\mid
-X,H_\mu}||_{TV}\right)\leq \epsilon
+\left(\max_{\mu,\nu} || \prob{\pi[i] = \cdot\mid X[:i+1],H_\nu} - \prob{\pi[i] = \cdot\mid
+X[:i+1],H_\mu}||_{TV}\right)\leq \epsilon
 \right\}
 \] 
 \todo{koniec tohoto odstavca sa mi nepaci}
