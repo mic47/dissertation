@@ -1089,8 +1089,7 @@ the chapter \ref{CHAPTER:PAIRHMM}.
 
 
 \section{Other Decoding Methods}
-\todo{MPA moze mat podobne problemy ako Viterbi. Ake?}
-In the previous sections we have described two decoding algorithm: Viterbi algorithm
+In the previous sections we have described two decoding algorithms: the Viterbi algorithm
 that finds the most probable state path  and the Posterior decoding that for
 every symbol of the sequence assigns the state that generated such symbol with
 maximum probability. 
@@ -1099,7 +1098,8 @@ maximum probability.
 %state path.  
 We have shown that in some cases these algorithm recover bad
 annotation. However, maximizing the most probable annotation is NP-hard and
-therefore it is not tractable.
+therefore it is not tractable. Additionally, the most probable annotation does
+not necessary have to be the best approximation of the true annotation.
 
 In this section we will describe highest expected gain decoding framework,
 describe already discussed algorithm within this framework and show several
@@ -1114,21 +1114,20 @@ a more systematic way. This framework was introduced introduced originally for
 conditional random fields \cite{Gross2007}.  To use this framework, we need to
 define a gain function, which will express similarity (gain) between two
 annotations or state paths. The higher the gain, the more similar those two
-sequences are. Gain function is domain specific and can penalize differences
-between state paths that are most important in a particular application.  Gain
-function is not a similarity in the mathematical sense; it does not even have to
-be symmetric.
+sequences are. Gain function is domain specific and can penalize the differences
+of the domain specific features in the state paths.  Gain function is not a
+similarity in the mathematical sense; it does not even have to be symmetric.
 
 Our goal is to find an annotation that is as similar as possible to the correct
 annotation. Problem is that we do not know the correct annotation. Our only
-assumption is that data came from the model and therefore we will treat the
-correct annotation as a random variable, with probability distribution defined
-by the HMM and the observed sequence. We will seek for annotation that maximizes
-the highest expected gain.
+assumption is that the input sequence came from the model and therefore we will
+treat the correct annotation as a random variable, with probability distribution
+defined by the HMM and the observed sequence. We will seek for annotation that
+maximizes the highest expected gain \cite{Nanasi2010,Nanasi2010mgr}.
 
 \begin{definition}
 Let $H$ be an HMM and $L$ be the set of all annotations. Any function
-$f:L\times L\to \mathbb{R}$ is a \firstUseOf{annotation gain function}.
+$f:L\times L\to \mathbb{R}$ is an \firstUseOf{annotation gain function}.
 
 Let $\Pi$ be the set of all state paths. Any function $f:\Pi\times
 \Pi\to\mathbb{R}$ is a \firstUseOf{path gain functions}.
@@ -1141,7 +1140,7 @@ clear from the context.
 
 Machine learning literature often uses a related term of loss function
 \cite{}. Lower loss mean more similar annotations, that is higher gain. Instead
-of maximizing expected gain we can therefore equivalently minimize expected
+of maximizing the expected gain we can therefore equivalently minimize the expected
 loss.
 \end{note}
 
@@ -1162,7 +1161,7 @@ E_{\pi_X\mid X,H}[f(\pi_X,\pi)] =
 \end{definition}
 
 
-Once we have HMM $H$, gain function $f$ and observed sequence $X$,
+Once we have HMM $H$, gain function $f$ and the observed sequence $X$,
 we are trying to find the annotation/state path maximizing the expected gain. 
 \begin{equation}
 \Lambda = \arg\max_{\Lambda}E_{\Lambda_X\mid
@@ -1174,7 +1173,7 @@ its universality. We will define two gain functions: $f_A$ which corresponds to
 the  
 Viterbi algorithm and the most probable annotation problem and $f_p$ which
 corresponds to 
-posterior decoding.
+the Posterior decoding.
 
 The gain function $f_A$ is simply identity function (definition for state paths
 is analogous).
@@ -1209,24 +1208,24 @@ f_P(\Lambda,\Lambda') =
 \end{equation}
 
 Similarly, we can define gain function $f_P$ for state paths. In such case
-maximizing expected gain is equivalent to posterior decoding. Highest expected
-gain framework give us another interpretation of posterior decoding. Let
-$\Lambda_X$  have same length as $\Lambda$. From linearity of the expectation we
-have
-\[E_{\Lambda_X}[f_P(\Lambda_X,\Lambda)] =
-\sum_{i=0}^{|\Lambda|-1}E_{\Lambda_X[i]}[f_P(\Lambda_X[i],\Lambda[i])]\]
-We say that $i$th label of $\Lambda$ is correctly predicted if $f_P(\Lambda_X[i],\Lambda[i])=1$. Therefore  
-by maximizing $f_P$ we search for an annotation/state path that maximizes the
-expected number of correctly predicted labels/states.
+maximizing expected gain is equivalent to the Posterior decoding. Highest
+expected gain framework give us another interpretation of scoring function of
+the Posterior decoding. Let $\Lambda_X$  have same length as $\Lambda$. From
+linearity of the expectation we have \[E_{\Lambda_X}[f_P(\Lambda_X,\Lambda)] =
+\sum_{i=0}^{|\Lambda|-1}E_{\Lambda_X[i]}[f_P(\Lambda_X[i],\Lambda[i])]\] We say
+that the $i$-th label of $\Lambda$ is correctly predicted if
+$f_P(\Lambda_X[i],\Lambda[i])=1$ (which is true if $\Lambda_X[i]=\Lambda[i]$). Therefore  by maximizing $f_P$ we search for
+an annotation/state path that maximizes the expected number of correctly
+predicted labels/states.
 
 \subsection{Maximum Boundary Accuracy Decoding}
 
-\abbreviation{Maximum boundary accuracy decoding}{MBAD} is used in gene-finder
+\abbreviation{Maximum boundary accuracy decoding}{MBAD} is used in the gene-finder
 CONTRAST \cite{Gross2007}. It
 was proposed for \abbreviation{conditional random fields}{CRF}, but since CRF
-are similar to HMM, we will define them in terms of HMMs.
+are similar to HMM, we define it in the terms of HMMs.
 
-This decoding method tries to maximize weighted difference between the expected
+This decoding method  maximize the weighted difference between the expected
 number of true-positive and false-positive coding region boundaries.
 
 \begin{definition}
@@ -1235,7 +1234,7 @@ annotation $\Lambda$ is every position $i$ where $\Lambda_{i-1}\not=\Lambda_i$.
 \end{definition}
 
 Maximum boundary accuracy decoding has one parameter $\gamma$. Let $B_{\Lambda'}$ be the
-set of all boundaries in $\Lambda'$. Then MBAD maximizes following function:
+set of all boundaries in $\Lambda'$. Then MBAD maximizes the following function:
 \begin{equation}
 f(\Lambda,\Lambda')=\sum_{i\in B_{\Lambda'}}g(\Lambda,\Lambda',i)
 \end{equation}
@@ -1248,22 +1247,22 @@ g(\Lambda,\Lambda',i)=
 \end{cases}
 \end{equation}
 
-From linearity of the expectation we know that
+From the linearity of the expectation we know that
 \[E_{\Lambda}[f(\Lambda,\Lambda)']=\sum_{i\in
 B_{\Lambda'}}E_{\Lambda}[g(\Lambda,\Lambda',i)]\] We call
 $E_{\Lambda}[g(\Lambda,\Lambda',i)]$ the expected gain of boundary $i$.
 
 
-Algorithm for finding annotation that maximized expected gain with function $f$
+Algorithm for finding annotation that maximizes expected gain with function $f$
 is following. At first we compute the $P^i_{c_1,c_2}$, the probability that correct annotation
-has boundary between colors $c_1$ and $c_2$ is at position $i$. This can be computed by variant posterior decoding
+has boundary between colors $c_1$ and $c_2$ is at position $i$. This can be
+computed by a variant of the Posterior decoding
 since 
 \[P_{c_1,c_2}^i=\prob{\Lambda_i=c_1,\Lambda_{i+1}=c_2\mid X,H}\]  
-This
-can be computed by variant of Forward-backward algorithm.  The expected gain of
+  The expected gain of
 boundary at position $i$ between colors $c_1,c_2$  is 
 \[P^i_{c_1,c_2}-\gamma (1-P^i_{c_1,c_2})\]
-We denote this value as  $B^i_{c_1,c_2}$.
+We denote this value by  $B^i_{c_1,c_2}$.
 
 After computing values $B^i_{c_1,c_2}$ we construct graph $G=(V,E)$ where
 \begin{align*}
@@ -1272,27 +1271,33 @@ E&=\{(v^i_{c_1,c_2},v^j_{c_2,c_3})\mid 0\leq i<j< |X|, c_1,c_2,c_3\in C
 \}\cup\{(s,v^i_{c_1,c_2}\mid 0\leq i< |X|, c_1,c_2\in C\} 
 \end{align*}
 where $C$ is the set
-of labels. Weight of edge $(u,v^i_{c_1,c_2})$ is $B^i_{c_1,c_2}$ for all $u\in
-V$. There is one to one correspondence between annotations of $X$ and paths in
-$G$ starting in $s$. Moreover weight of every path is expected gain of
-corresponding annotation. $G$ is acyclic and therefore we can find such path in
+of labels. Weight of the edge $(u,v^i_{c_1,c_2})$ is $B^i_{c_1,c_2}$ for all $u\in
+V$. Each vertex corresponds to the boundary in the annotation and edges
+corresponds to the boundaries of the same block of consecutive labels with the same
+color.
+There is one to one correspondence between annotations of $X$ and paths in
+$G$ starting in $s$ (sequence of vertices corresponds to the sequence of
+boundaries which uniquely defines an annotation). Moreover weight of every path
+is the expected gain of
+the corresponding annotation. $G$ is acyclic and therefore we can find such path in
 polynomial time. This can be implemented in $O(|X||C|^2+|X|m^2)$ time and memory
-where $m$ is the number of states of HMM $H$. More detail can be found in
+where $m$ is the number of states of HMM $H$. More details of implementation
+for HMMs can be found in
 \cite{Nanasi2010mgr}.
 
 Intuition behind gain function $f$ is following. Like with the Posterior
 decoding, we want to maximize the number of correctly predicted boundaries (the
-Posterior decoding maximizes the number of correctly predicted state). The
+Posterior decoding maximizes the number of correctly predicted states). The
 difference is in the $\gamma$. If $\gamma=0$ then almost every possible boundary
 have positive gain and therefore the reconstructed annotation will contain many
 false-positive boundaries with very small expected gain. Positive $\gamma$ cause
 that boundaries with small posterior probability will have negative expected
-gain and therefore it is less likely that they appear in optimal annotation.
+gain and therefore it is less likely that they appear in the optimal annotation.
 
 
 \subsection{Highest Expected Reward Decoding}
 
-\abbreviation{Highest Expected Reward Decoding}{HERD} is extension of maximum
+\abbreviation{Highest Expected Reward Decoding}{HERD} is the extension of maximum
 boundary accuracy decoding. We have developed this decoding for prediction of
 recombination of HIV virus.  Further details can be found in \cite{Nanasi2010}
 and in my Master thesis \cite{Nanasi2010mgr}.
@@ -1308,8 +1313,8 @@ by jumping HMMs \cite{Schultz2006} which are HMM with topology specific to this 
 In this application is 
 %In the problem of recombination detection in virus genome In the problem of
 %recombination detection in virus RNA is usually jumping HMM \cite{}. 
-hard to find exact recombination point and annotations with slightly shifted
-boundaries are very similar. Therefore we have defined the following gain
+hard to find exact recombination point since annotations with slightly shifted
+boundaries has similar probabilities. Therefore we have defined the following gain
 function.
 
 \begin{figure}
@@ -1317,9 +1322,9 @@ function.
 \includegraphics[width=10cm]{../figures/HERDbuddy.pdf}
 \end{center}
 \caption[Highest Expected Reward Decoding explanation]{
-Triangles corresponds to boundaries. Vertical lines corresponds to the windows
-of size $2W$ or smaller to avoid overlaping. Windows around boundaries
-represents regions where we search for corresponding boundaries in the correct
+Triangles corresponds to the boundaries. Vertical lines corresponds to the windows
+of size $2W$, or smaller to avoid overlaps. Windows around boundaries
+represents regions where we search for the corresponding boundaries in the correct
 annotation.
 The first and the fourth boundary are correctly predicted because in the correct
 annotation is boundary between same colors within distance $W=2$.
@@ -1345,13 +1350,15 @@ Boundaries are illustrated in figure \ref{FIGURE:HERDBUDDY}.
 Let $x$ be the number of correctly
 predicted boundaries and $y$ be the number of other boundaries in the proposed
 annotation. Then $f(\Lambda,\Lambda')=x-\gamma y$ where $\gamma$ is defined
-constant. If $W=1$ then this is equivalent to Maximum Boundary Accuracy
-Decoding. 
+constant. If $W=1$ then this is equivalent to the Maximum Boundary Accuracy
+Decoding. Intuition behind this gain function is that we want to amplify the   
+expected gain for the boundary if there are many annotations with similar
+boundary.
 
 Optimizing this criteria can be done in $O(|X|W|C||T| + n|C|^2W^2)$ time  and
 $O(\sqrt{|X|}|C||V|+W|C||V|+n|C|^2)$ memory. Experimental evaluation,
 optimization algorithm and implementation details can be found in
-\cite{Nanasi2010mgr}.
+\cite{Nanasi2010,Nanasi2010mgr}.
 
 \subsection{Distance Measures on Annotations}
 
@@ -1361,6 +1368,7 @@ prediction of boundaries in transmebrane proteins \cite{Brown2010}, but later
 they successfully adapted their algorithm to jumping HMMs \cite{Truszkowski2011}.
 Their approach is trying to solve same problem as HERD: the exact boundaries of
 an annotations are hard to find and grouping similar annotation is useful.
+At first we give few definitions.
 
 \begin{definition}
 Let $d$ be any distance measure defined on annotations. Ball of radius $r$
@@ -1397,7 +1405,8 @@ d_{s}(\Lambda,\Lambda') = \begin{cases}
 
 \end{definition}
 
-{\it Brown,
+To predict the recombinations of sequences or the annotations of the
+transmembrane proteins {\it Brown,
 Truszkowski} maximize following function
 \begin{equation*}
 f_d(\Lambda,\Lambda') = 
@@ -1411,30 +1420,17 @@ As distance $d$, they have considered Hamming distance, Border shift distance
 and Border shift sum distance \cite{Brown2010}.  If we set $r=0$ then $f_d$ is
 same as $f_A$ and therefore finding annotation that maximize $f_d$ is NP-hard.
 
-Maximizing $f_d$ is NP-hard but finding annotation with footprint $F$ and
+Maximizing $f_d$ is NP-hard but finding the  annotation with footprint $F$ and
 maximal expected gain can be done in polynomial time \cite{Brown2010}. Therefore
 {\it Brown and Truszkowski} used following heuristic algorithm: At first they
-sample the state path to get footprint with hight probability
+sample the state path to get footprint with hight probability then they used the
+polynomial algorithm for finding the annotation with the highest expected gain.
 
 Gain function $f_d$ is similar to $f_A$: the annotation is considered correct if
 it is same/very similar to th correct one. However, MBAD and HERD and the
 Posterior decoding do not care about overall structure of annotation, they
-construct annotation from highly probable ``features''.
-
-
-
-
-%\subsection{Hybridizing Viterbi and Posterior Decoding}
-
-%Toto tu asi nebude. Rad by som to tu mal, ale nie je cas a vobec to nie je
-%dolezite. Mozno do dizertacky to napisem.
-
-%There are approaches to combine Viterbi and Posterior decoding. It is
-%interesting that 
-
-\bigskip
-{\large\bf Podtialto su zapracovane pripomienky}
-\bigskip
+construct annotation from highly probable ``features''. In contrast, decoding
+function $f_d$ take in to account overall structure of the sequence.
 
 
 \section{Algorithmic Improvements}
