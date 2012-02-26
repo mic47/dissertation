@@ -1429,8 +1429,9 @@ polynomial algorithm for finding the annotation with the highest expected gain.
 Gain function $f_d$ is similar to $f_A$: the annotation is considered correct if
 it is same/very similar to th correct one. However, MBAD and HERD and the
 Posterior decoding do not care about overall structure of annotation, they
-construct annotation from highly probable ``features''. In contrast, decoding
-function $f_d$ take in to account overall structure of the sequence.
+construct annotation from highly probable ``features''. In contrast to the
+decoding function of the HERD, decoding function $f_d$ take in to account
+overall structure of the sequence.
 
 
 \section{Algorithmic Improvements}
@@ -1438,15 +1439,15 @@ function $f_d$ take in to account overall structure of the sequence.
 
 In this section we review implementation details and several algorithmic
 improvements of the Viterbi algorithm and the Posterior decoding for HMMs and
-pHMMs. Mostly we will assume that HMMs does not have silent states most of these
+pHMMs. Mostly we will assume that HMMs does not have silent states.  Most of these
 techniques are easily adjustable to HMMs with silent states. 
 
 \subsection{Basic Implementations}
 
-Implementation of the Viterbi algorithm and Forward-Backward algorithm can be
-done by two-dimensional dynamic programming, similarly as with the sequence
-alignment. Let $H$ be an HMM, $V[i,v]$ be matrix $n\times m$ where $n$ is the
-length of the sequence and $m$ is the number of states of HMM. $V$ will be the
+Implementation of the Viterbi algorithm and the Forward-Backward algorithm can be
+done by a two-dimensional dynamic programming, similarly as with the sequence
+alignment. Let $H$ be an HMM, $V[i,v]$ be  $n\times m$ matrix where $n$ is the
+length of the sequence and $m$ is the number of states of the HMM. $V$ will be the
 dynamic programming matrix for the Viterbi algorithm or the Forward algorithm.
 
 Code for the Viterbi algorithm is following:
@@ -1461,13 +1462,14 @@ for i=n-1...1:
     statePath[i-1] = B[i,statePath[i]]
 \end{lstlisting}
 
-This algorithm runs in $O(nm^2)$ and $O(nm)$ memory. Note that values of row
-$V[i,\cdot]$ and $B[i,\cdot]$ are computed from rows $V[i-1,\cdot]$ so if we
-want just the probability of the most probable state path, we need to remember
-only last two rows of $V$ (and we do not need $B$) so the memory requirements
-will be $O(n+m)$. If we replace on line $4$ maximum with summation and remove
-lines $5-8$, we will
-obtain the Forward algorithm. Lines $6-8$ implements back-tracing procedure.
+This algorithm runs in $O(nm^2)$ and requires $O(nm)$ memory. Note that values
+of row $V[i,\cdot]$ and $B[i,\cdot]$ are computed from rows $V[i-1,\cdot]$ so if
+we want just the probability of the most probable state path, we need to
+remember only last two rows of $V$ (and we do not need $B$) so the memory
+requirements will be $O(n+m)$. If we replace on line $4$ maximum with summation
+and remove lines $5-8$, we will obtain the Forward algorithm. Lines $6-8$
+implements back-tracing procedure, which will be omitted in the Forward
+algorithm. The Backward algorithm is analogous to the Forward algorithm.
 
 Note that if $a[u,v]$ is zero, then value on the right side of lines $4$ nd $5$
 is zero. Therefore we have to iterate only for such $u$, that $u\to v$ is
@@ -1479,62 +1481,40 @@ also for the Forward algorithm and the Posterior decoding.
 \subsection{Chceckpointing}
 \label{SECTION:HMMCHECKPOINTING}
 Chceckpointing can be used to decrease memory complexity of the Viterbi
-algorithm with backtracing procedure and the Posterior decoding to $O(\sqrt n
-m)$.  Similarly, this trick can be used to reduce memory complexity of algorithm
-for pHMMs to $O(nm\sqrt n )$ where $n$ is the length of the longer sequences and
-$m$ is the number of states of HMM.
+algorithm with back-tracing procedure and the Posterior decoding to $O(\sqrt n
+m)$.  Similarly, this technique can be used to reduce memory complexity of the
+algorithms for pHMMs to $O(nm\sqrt n )$ where $n$ is the length of the longer
+sequences and $m$ is the number of states of HMM.
 
 \subsubsection{The Viterbi Algotrithm}
 While back-tracing, we need access to values of matrix $B$ in decreasing order.
-We need only matrix $B$ and last row of $F$. If we have $i$-th row of $F$ we can
-recompute submatrix $B[i+1:,\cdot]$. Therefore we will remember every $k$-th row
+We need only matrix $B$ and last row of $F$. From $i$-th row of $F$ we can
+recompute $i+1$-th row of $B$. Therefore we will remember every $k$-th row
 of $V$ from which we will recompute blocks of matrix $B$. $B$ will be split into
 blocks
-$B_0=B[1:k+1,\cdot],B_1=[k+1:2k+2,\cdot],\dots,B_i=B[ik+1:{i+1}k+1,\cdot],\dots$
-We will keep in memory exactly one block of $B$. If we need row that is in block
+$B_0=B[1:k+1,:],B_1=[k+1:2k+2,:],\dots,B_i=B[ik+1:{i+1}k+1,:],\dots$
+We will keep in the memory exactly one block of $B$. If we need row that is in block
 $B_i$ but $B_i$ is not in memory, we discard current block and compute block
 $B_i$ from $V[ik,\cdot]$. Since we need rows of $B$ in decreasing order, we
-recompute every block exactly once. If $k=\theta(\sqrt n)$ then we need
-$O(n+m\sqrt n)$ memory to find most probable state path.
+recompute every block exactly once. If $k=\theta(\sqrt n)$ then the memory
+complexity is  $O(n+m\sqrt n)$.
 
-For two dimensional version we keep every $k$-th matrix $V[ik,\cdot,\cdot]$ and
-algorithm is analogous to two-dimensional version.
+For two dimensional version we keep every $k$-th matrix $V[ik,\cdot,\cdot]$.
+Algorithm is analogous to one-dimensional version or to the checkpointing
+technique for the Needleman-Wunsch algorithm
 
 \subsubsection{The Posterior Decoding}
 
 In the Posterior decoding need to interlace computations of $F[i,v]$ and
 $B[i,v]$ to compute $F[i,v]\cdot B[i,v]$ for all $0\leq i<n,v\in V$. We will
-compute $F$ with the chceckpointing algorithm (we compute every $k$-th row of
+compute $F$ using the chceckpointing technique (we compute every $k$-th row of
 $F$ and keep in memory only one block).  $B[i,v]$ will be computed row by row
-with the $O(m)$ version of Backward algorithm. When we compute $B[i,v]$ we
-compute $F[i,v]$ by checkpointing algorithm (if $i$ is in current block then
-return $F[i,v]$ from current block. Otherwise discard current block and
-recompute block in which $i$ belongs). With this approach we can compute
-posterior values in $O(m\sqrt n)$ memory. We recompute every row at most once
-and therefore time complexity will not change.
-
-
-%Checkpointing approach for posterior decoding is more similar to the
-%sequence-alignment approach. We want to compute $F[i,v]\times B[i,v]$ for all
-%$0\leq i< n$ and $v\in V$. We compute every $k$-th row of $F$ by forward
-%algorithm that remembers only last two rows. After that we interlace computation
-%of $B[i,v]$ for $i$ from $n-1$ to $0$ with $F[i,v]$ which we compute with
-%remembered block and checkpoints. For computation of $B$ we need only $O(m)$
-%memory since we have to remember only two rows. For computation of $F$ we need
-%$O(\sqrt{n}m)$ memory of $k=\theta(\sqrt n)$. We will recompute every block at
-%most once and therefore time complexity is still $O(n(m+t))$ and memory
-%complexity is $O(n+m\sqrt n)$.
-%
-%\subsection{The Hirschberg Algorithm}
-
-%It is possible to use Hirschberg algorithm to r
-
-%We can use the Hirschberg trick to reduce memory complexity of the Viterbi
-%algorithm for pair hidden Markov models. We hav 
-
-
-%Similarly as with the sequence alignment we can decrease the memory requirement
-%of the Viterbi algorithm for pHMM to $O(nm)$ where $n$ is the length of the  
+with the version of the  Backward algorithm that need only $O(m)$ memory. When
+we compute $B[i,v]$ we compute $F[i,v]$ by checkpointing technique (if $i$ is in
+current block then return $F[i,v]$ from current block. Otherwise discard current
+block and recompute the block for row $i$). With this approach we can
+compute the posterior values with the $O(m\sqrt n)$ memory. We recompute every row at most
+once and therefore time complexity will not change.
 
 
 \subsection{Using Sequence Repetition}
@@ -1546,55 +1526,53 @@ about how to use this technique to other algorithms can be found in
 
 
 Idea of this speedup is that we reformulate Forward algorithm into sequence of
-matrix multiplication.
+matrix multiplications.
 Let $H=(\Sigma,V,I,e,a)$ be a HMM, $|V|=m$.  Let $M_x[u,v]=a_{u,v}e_{v,x},
-u,v\in V,x\in \Sigma$ be $m\times m$ matrix and $I^x_u=I_ue_{u,x}$ be
-$1\times m$ vector. Matrix multiplication
+u,v\in V,x\in \Sigma$ be the $m\times m$ matrix and $I_x[u]=I_ue_{u,x}$ be
+$1\times m$ vector. Matrix $M_x[u,v]$ corresponds to the transition from the
+state $u$ to the state $v$ with emission of $x$ from the state $v$.
 
 \begin{lemma}\label{LEMA:MATRIXMULTI}
-Let $X=X_1\dots X_n$ be a sequence, $H$ a HMM and $M_x$ and $I^x$ defined as above and
+Let $X=X_1\dots X_n$ be a sequence, $H$ a HMM and $M_x$ and $I_x$ defined as above and
 $F[i,\cdot]$ be row vector from forward
 Then
 \begin{align}
-F[0,\cdot] &= I^{X_0}\\
-F[i,\cdot] &= I^{X_0}\prod_{j=1}^i M_{X_j}
+F[0,\cdot] &= I_{X_0}\\
+F[i,\cdot] &= I_{X_0}\prod_{j=1}^i M_{X_j}
 \end{align}
 for all $i< n$.
 \end{lemma}
 
 \begin{proof}
 We prove this lemma by induction.  If $|X|=1$ then
-$F[0,v]=I^[X_0]=I_{v}e_{v,X[0]}$ for all $v\in V$.  Assume that for
-$F[k,\cdot] = I^{X_0}\prod_{j=1}^k M_{X_j}$ (we assume that product of zero matrices
-is identity matrix). We have 
+$F[0,v]=I_{X_0}[v]=I_{v}e_{v,X[0]}$ for all $v\in V$.  Assume that for
+$F[k,:] = I_{X_0}\prod_{j=1}^k M_{X_j}$ (note that the  product of zero matrices
+is the identity matrix). We have 
 \begin{align*}
-\left(I^{X_0}\prod_{j=1}^{k+1} M_{X_j}\right)[v] &= 
-\left(F[k,\cdot] M_{X_{k+1}}\right)[v]\\ &= \sum_{u\in V} F[k,u]
+\left(I_{X_0}\prod_{j=1}^{k+1} M_{X_j}\right)[v] &= 
+\left(F[k,:] M_{X_{k+1}}\right)[v]\\ &= \sum_{u\in V} F[k,u]
 M_{X_{k+1}}[u,v]\\ &= \sum_{u\in V} F[k,u] a_{u,v}e_{v,X_{k+1} } \\&= F[k+1,v] 
 \end{align*}
 for all $v$. 
 \end{proof}
 
-\begin{note}
-In original paper \cite{Lifshits2009} they use little different definition of
-HMM so they do not have problem with first $I$
-
-\end{note}
-
-Consequence is that we can write forward algorithm as the sequence of
-multiplications of $|\Sigma|+1$ different matrices. Since matrix multiplication
+Consequence is that we can write the Forward algorithm as the sequence of
+multiplications of $|\Sigma|$ different matrices. Since matrix multiplication
 is associative, we can use repetitive patters to speedup calculation. 
 Let $x$ be subsequence of $X$ that has $k>1$ non-overlaping occurrences in $X$.
-We can compute $M_{x_0}M_{x_1}\dots M_{x_{|x|-1}}$ once and use it several
+We can compute $M_{x[0]}M_{x[1]}\dots M_{x[{|x|-1}]}$ once and use it several
 times. Let $M_{x}=\prod_{i=0}^{|x|-1}M_{x[i]}$ for any string $x$.
 
-By proper choosing of substrings $x$ we can speedup computation of Viterbi or
-Forward-Backward algorithm. Algorithm has following structure:
+By proper choosing of substrings $x$ we can speedup computation of the Viterbi
+algorithm\footnote{For the Viterbi algorithm we need different matrix
+multiplication}, the Forward algorithm  or the
+Forward-Backward algorithm. Algorithms has following structure:
 \begin{enumerate}
-\item We choose the \firstUseOf{dictionary} $D$. $D$ is set of string over alphabet $\Sigma$. String is
+\item We choose the \firstUseOf{dictionary} $D$. $D$ is set of string over
+alpha bet $\Sigma$. String is a
 \firstUseOf{good} if it belongs to $D$.
 \item We compute $M_x$ for all $x\in D$.
-\item We split input sequence $X[1:]$ into sequence of good words
+\item We split input sequence $X[1:]$ into the sequences of good words
 $x_0,x_1,\dots,x_{k-1}$ such that $x_0x_1\dots x_{k-1}=X[1:]$.
 %and $x_i\in D$ for
 %all $0\leq i<k$
@@ -1603,15 +1581,17 @@ $f(m)$ is time needed to compute multiplication of two matrices of size $m\times
 \end{enumerate}
 
 Lifshits {\it et al.} \cite{Lifshits2009} showed several ways how to choose set
-$D$ and split $X$ into sequence of good words. One is to use LZ78 factorization
+$D$ and split $X$ into sequence of good words. One of them is to use LZ78 factorization
 to split $X$ into $O(n/\log n)$ good words. Computation of $M_x$ for all $x\in
-D$ can be done in $O(|D|m^3)$ since $M_x,x\in D$ can be computed in $O(m^3)$
-time with following algorithm: if $|x|=1$ then $M_x$ is already computed.
+D$ can be done in $O(|D|m^3)$. For all $x\in D$, the matrix $M_x$ can be computed in $O(m^3)$
+time with following algorithm: if $|x|=1$ then $M_x$ we compute $M_x$ trivially.
 If $|x|>1$ then there is $x'\in D$ such that $x=x'a,a\in \Sigma$ and therefore $M_x =
-M_{x'}M_{a}$. Since $|D|=O(n/log n)$, computing $M_x$ takes $\Omega(nm^3/log m)$ if
+M_{x'}M_{a}$. Since $|D|=O(n/log n)$, computing $M_x$ takes $\Omega(nm^3/log m)$
+time if
 we use $O(m^3)$ algorithm for computing matrix multiplication. Computing fourth
-step of algorithm takes also $\Omega(nm^3/\log n)$ time and therefore overall time complexity
-is $\Omega(nm^3/\log n)$, which is $\Omega(\log n/m)$ speedup.
+step of the algorithm takes also $\Omega(nm^3/\log n)$ time and therefore overall time complexity
+is $\Omega(nm^3/\log n)$ and that means $\Omega(\log n/m)$ speedup over the
+classical implementation of the Forward algorithm for the dense matrices.
 
 It is possible to use different encoding methods. Speedup for the run length encoding 
 is $\Omega(r/\log r)$, for the straight-line programs $\Omega(r/m)$ and for the
@@ -1620,17 +1600,17 @@ compression scheme. We will not discuss details of this implementations, they
 can be found in \cite{Lifshits2009}.
 
 To adapt this approach to the Viterbi algorithm we have to make two adjustments. 
-We have to use max-time matrix multiplication instead of matrix multiplication
-\cite{Lifshits2009}. Max-time matrix multiplication is matrix multiplication
-where summation is replaced with maximization:
+We have to use the max-time matrix multiplication instead of matrix multiplication
+\cite{Lifshits2009}. The max-time matrix multiplication is the  matrix multiplication
+where summation is replaced with the maximization:
 \[M_1\odot M_2 [u,v] = \max_{0\leq i\leq m-1}M_1[u,i]M_2[i,v] \]
 where $M_1$ and $M_2$ are matrices of size $m\times m$. This matrix
-multiplication is also associative.
+multiplication is also associative \cite{Lifshits2009}.
 
 The second adaptation is that we have to had ability to reconstruct 
-the most probable state path.i
-After computing $I^{X_0}\prod_{i=0}^{k-1}M_{x_i}$ we do back-trace to obtain 
-partial state path $\pi'_0,\pi'_1,\dots \pi'_{k}$ which is subsequence of the
+the most probable state path.
+After computing $I^{X_0}\prod_{i=0}^{k-1}M_{x_i}$ we do the back-trace to obtain 
+the partial state path $\pi'_0,\pi'_1,\dots \pi'_{k}$ which is subsequence of the
 most probable state path. Each $\pi'_i$ is state corresponding to the last
 sequence of $x_i$. We have to reconstruct state path between $\pi'_i$s; for
 every $x_i$ we have to reconstruct state path between $\pi'_{i-1}$ and $\pi'_i$.
@@ -1645,8 +1625,8 @@ position of the last symbol of $x^1$. By recursive applying this rule to $x^1$
 and $x^2$ we can reconstruct the most probable state path on $x$. By doing this
 we can reconstruct it the most probable state path in $O(n)$ time.
 
-Lifshits {\it et al.} applied this  speedup to the Posterior decoding and the
-Baum-Welsch training.
+Lifshits {\it et al.} applied this  speedup also to the Posterior decoding and
+the Baum-Welsch training. 
 
 %Let $X$ be the most probable state path that uses 
 %To adapt
@@ -1657,10 +1637,11 @@ Baum-Welsch training.
 \subsection{On-line Viterbi Algotithm}
 \label{SECTION:ONLINEVITERBI}
 
-On-line Viterbi algorithm is different approach to reduce memory complexity of
-Viterbi algorithm. In this approach we will discard parts of matrix $B$ that 
-are not necessary for reconstruction of the most probable state path.
-We can represent $B$ as a forest $G=(V',E)$ where
+The On-line Viterbi algorithm is different approach to reduce memory complexity of
+the Viterbi algorithm. In this approach we represent matrix $B$ in sparse way
+and we keep only those parts of $B$ that can be necessary for reconstruction of
+the most probable state path.
+We can represent $B$ as the forest $G=(V',E)$ where
 \begin{align*}
 V' &= \left\{ (i,v)\mid 0\leq i< n, v\in V  \right\}\\
 E &= \left\{ (i,v)\to (i-1,B[i,v])\mid 0<i<n,v\in V\right\}
@@ -1668,30 +1649,31 @@ E &= \left\{ (i,v)\to (i-1,B[i,v])\mid 0<i<n,v\in V\right\}
 Edges in this forest are oriented from the children to parents. Roots of the
 trees are vertices $(0,v),v\in V$.  Most probable state path that generated
 $X[:i]$ and ending in vertex $v$ corresponds to the path from vertex $(i-1,v)$
-to root of it's tree. Let $S_{i,v}$ be the set of vertices path from vertex
-$(i,v)$ to the root of it's tree and $S_i=\Cup_{v\in V}S_{i,v}$.
-After computation of $B[i,v]$ only vertices in $S_i$ can lie on the most
+to root of its tree. Let $S_{i,v}$ be the set of all vertices on the path from
+the vertex
+$(i,v)$ to the root of its tree. Let $S_i=\cup_{v\in V}S_{i,v}$.
+After computation of $B[i,v]$, only the vertices in $S_i$ can be in the most
 probable state path so other can be removed. State paths corresponding to
 $S_{i,v}$ may be overlap, so by removing others we can reduce memory
-footprint.
+requirements.
 
 {\v S}r{\'a}mek {\it et al.} developed data structure that maintains $S_i$
-without introducing significant overhead.  Let $G_i$ be induced subgraph of $G$
-consisting from vertex set $S_i$. Leaf $(j,v)$ is \firstUseOf{unreachable} if
+without introducing significant overhead.  Let $G_i$ be the induced subgraph of $G$
+consisting from the vertex set $S_i$. Leaf $(j,v)$ is \firstUseOf{unreachable} if
 $j<i$.  $G_i$ does not contain unreachable leaf and therefore $G_i$ contains $m$
 leaves $(i,v),v\in V$. Construction of $G_{i+1}$ is following.
 After computing $B[i+1,\cdot]$ we add vertices $(i+1,v),v\in V$ and edges 
-$(i+1,v)\to (i,B[i+1,v]),v\in V$. Vertices $(i+1,v),v\in V$ are new leaves.
+$(i+1,v)\to (i,B[i+1,v]),v\in V$. Vertices $(i+1,v),v\in V$ are the new leaves.
 While in $G_{i+1}$ are some internal leaves, we remove them.
 After removing all internal leaves, $G_{i+1}$ contains only vertices from $S_i$.
-To make $G_i$ smaller, we use compress representation of trees. We compress
+To make $G_i$ smaller, we use the compressed representation of the trees. We compress
 chains of vertices with one children into one edge (but we keep
 corresponding state path of compressed chain). If we do so, every vertex will
 have at most two children and therefore there will be at most $m-1$ internal
 nodes. $G_i$ has therefore always $O(m)$ leaves and updating can be done in
-$O(m)$ time so this technique does not alter asymptotic running time of the
-Viterbi algorithm. In practice this technique increase running time by $5$\%
-\cite{Sramek2007}.
+$O(m)$ time. Therefore this technique does not alter the asymptotic running time
+of the Viterbi algorithm. In practice this technique increased running time by
+$5$\% \cite{Sramek2007}.
 
 Improvement in memory requirements can be significant. Even when there exists
 HMMs on which this technique will not improve memory requirements
@@ -1702,4 +1684,7 @@ state HMMs (with one exception), expected memory complexity of this algorithm is
 $O(H\log n)$ where $H$ is constant specific for HMM. Estimation of expected time
 complexity for given HMM is still open problem.
 
-TODO spomienka o treeterbi
+Keibler {\it et al. (2007)} developed similar algorithm called the Treeterbi. Both
+algorithms are similar, but the Treeterbi does not use the compressed version of the
+graph. Both algorithms can be extended to the GHMM and pHMM, the extensions of
+the Treeterbi algorithm can found in \cite{Keibler2007}.
