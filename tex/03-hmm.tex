@@ -684,20 +684,6 @@ usually  the change in the likelihood being small enough or the maximal number o
 iterations.
  The expectations of the number of events can be
 computed by a variant of the Forward-Backward algorithm.
-%At first we set the initial parameters $\theta_0$. We treat the missing data as a
-%random variables. We compute the expected number of occurrences of all events
-%($A_{u,v}, E_{u,x}, u,v\in V,x\in\Sigma$)
-%using the model $\theta_0$. We use those expectations to compute the new
-%parameter set $\theta_1$ using method described above. We repeat this  
-%step until the parameter set $\theta_i$  converge to local maxima (more
-%precisely, algorithm stops when certain criteria is meet -- the number of
-%iterations or the changes in the parameters are small enough).
-
-%In can be proved that the likelihood of the model $\theta_i$ is higher then the
-%likelihood of the model $\theta_{i+1}$ and also the $\theta_i$ converges to local
-%minima \cite{Durbin1998}. This algorithm is call the Baum-Welsch algorithm,
-%which uses the variant of the Forward-Backward algorithm to compute the 
-%expectations of the number of occurrences of the events.
 
 In step $2$ we can replace the Forward-Backward algorithm with the Viterbi
 algorithm. In such case the Viterbi algorithm computes the most probable values
@@ -708,25 +694,6 @@ not have to converge to local maxima, it is faster in practice
 estimation of good starting parameters for the Baum-Welsch training. The
 approach was used in \cite{FEAST2011}.
 
-
-%\paragraph{The Baum-Welsch training:} Baum-Welsch training is instance of more
-%general expectation maximization algorithm. It is iterative algorithm that
-%computes expectations of missing data and use such expectations to compute 
-%new model. This algorithm has guarantee that it will converge to local maxima.
-%Expectations are computed with variant of Forward-Backward algorithm.
-%\paragraph{The Viterbi training: }
-%
-%Viterbi training is similar to Baum-Welsch training, but instead of computing
-%expectations for missing data by Forward-Backward algorithm, we compute the most
-%probable state path with the Viterbi training and estimate new model with by
-%from frequencies of events. Advantage of this approach is that in practice this
-%training is faster than Baum-Welsch training. However, the Viterbi training and
-%Baum-Welsch training does not have to converge to same parameters
-%\cite{Durbin1998}.
-
-
-%\subsection{Other Training Methods}
-%There are several other approaches how to similar
 \section{Variants of Hidden Markov Models}
 
 In this section we describe several variants of hidden Markov Models.
