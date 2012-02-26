@@ -703,75 +703,81 @@ decrease size of candidate lists. This lemma and proof is  slightly modified
 from 
 \cite{GusfieldBook}.
 
-\bigskip
-{\Large\bf Podtialto su zapracovane pripomienky }
-\bigskip
 
 \begin{lemma}\label{OneStrikeAndOut}
-If $G(k,j)\leq G(k',j)$ for some $k<k'<j$ then
+If $G(k,j)\leq G(k',j)$ for some $k<k'<j$, then
 $G(k,j')\leq G(k',j')$ for all $j'\geq j$. 
 \end{lemma}
 
-Use of this lemma is following. Once we found out that $G(k,j)\leq
-G(k',j),k<k'$, we can remove $k$ from $L_j', j'\geq j$ without affecting result
-of algorithm (because rank of $k$ will be always smaller than rank of $k'$).
-Before we continue, we have to prove this lemma.
 
 \begin{proof}
 
-Since $M[i,k]+f(j-k)\leq M[i,k']+f(j-k')$ then 
-$M[i,k]-M[i,k']\leq f(j-k')-f(j-k)$. From convexity and that $j'>j$ we have
-$f(j-k')-f(j-k)\leq f(j'-k')-f(j'-k)$ and therefore
+Inequality $M[i,k]+f(j-k)\leq M[i,k']+f(j-k')$ implies that
+$M[i,k]-M[i,k']\leq f(j-k')-f(j-k)$. From convexity of $f$ we have
+$f(j-k')-f(j-k)\leq f(j'-k')-f(j'-k)$, and therefore
 $M[i,k]-M[i,k']\geq f(j'-k')-f(j'-k)$ which 
 is equivalent to
 $M[i,k]+f(j'-k)\leq M[i,k']+f[(j'-k')$ or $G(k,j')\leq G(k',j')$.
 
 \end{proof}
 
-Using this lemma, we can improve our algorithm: 
-when we move from $j$ to $j+1$, we set $L_{j+1}=L_{j}\cup\{j\}$ and after that
-we remove from $L_{j+1}$ candidates that have lower or equal rank than following
-candidate (we will remove such candidates while they exists in $L_{j+1}$).
+Using this lemma, we can improve our algorithm.
+Once we find out that $G(k,j)\leq
+G(k',j)$, for $k<k'$, we can remove $k$ from $L_{j'}, j'\geq j$ without
+affecting the result
+of the algorithm, because rank of $k$ will remain smaller than rank of $k'$ for
+all $j'\geq j$.
+When we move from $j$ to $j+1$, we therefore set $L_{j+1}=L_{j}\cup\{j\}$ and
+then
+we remove from $L_{j+1}$ that candidates that have lower or equal rank than the 
+candidate following them in the list.
 %when we move from
 %$j-1$ to $j$ we add set $L_j=L_{j-1}\cup\{j-1\}$ and we compute $G(k,j)$ for
 %all $k\in L_j$ and remove all such $k$ where there exists $k'\in L_j$ such that
 %$G(k',j)\geq G(k,j)$. i
-This can be done on $O(|L_{j}|)$ time. After removing such candidates,
-candidates in $L_{j+1}$ will have decreasing rank. Therefore first item in
-$L_{j+1}$ is the maximal one, so we can find it $O(1)$ time.  This improvement
-still does not improve worst-case behaviour of our algorithm, but it might
-significantly reduce size of $L_j$. 
+This can be done in $O(|L_{j}|)$ time. Candidates in the resulting list,
+$L_{j+1}$ will have decreasing rank. Therefore the first item in
+$L_{j+1}$ is the maximal one, so we can find it $O(1)$ time.  This change
+does not improve the worst-case behaviour of our algorithm, but it might
+significantly reduce the  size of $L_j$ in practice. 
+
 
 Using this algorithm, $L_j$ will be always ordered by rank. However when we move
-to next column ($j+1$) the ranks will change and we have to remove some elements 
-to have this property again. This can be improved if we can compute column in
-which  candidates will broke order.
+finr $j$ to $j+1$, the ranks will change, and we have to remove some elements 
+to restore this property. The algorithm can be improved if we can compute the column in
+which two adjecent  candidates will brake the ordering.
 
 %Nice property of $L_j$ is that it's members are ordered by rank. However, 
 %when we move to column $j+1$, ranks of candidates will change and order might be
 %broken and therefore we have to traverse through whole $L$ to fix that.
 \begin{definition}
-Let $H(k,k')=l, k<k'$ be minimal $l$, such that $G(k,l)\leq G(k',l)$. If such $l$ does
-not exists then $l$ is $\infty$ 
+For $k<k'$, let $H(k,k')=l$ be the minimal $l$ such that $G(k,l)\leq G(k',l)$. If such $l$ does
+not exists,  $H(k,k')=\infty$ 
 \end{definition}
 
-If rank of $k$ is greater than rank of $k'$ then $H(k,k')$ is the first column
-(of first candidate list $L_{H(k,k')}$) where rank of $k$ is less or equal to
-rank of $k'$. In this column candidate $k$ will be removed for sure.  Note that
-such $l$ can be find using binary search (lemma \ref{OneStrikeAndOut} allows us
-to do it) in $O(\log n)$ time for any convex function. For some convex
-function we can find it in constant time.
+If the rank of $k$ is greater than then rank of $k'$ then $H(k,k')$ is the first
+column $j'$
+ where the rank of $k$ is less than or equal to the
+rank of $k'$. Candidate $k$ will be removed in column $j'$, or possibly earlier.  Note that
+such $l$ can be found using binary search (based on lemma \ref{OneStrikeAndOut})
+in $O(\log n)$ time for any convex function. For some convex functions we can
+find it analyticaly in constant time.
+
+
+We can further decrease the size of the candidate list using the following
+lemma.
 
 \begin{lemma}\label{TimeLemma}
-Let $k,k',k''\in L_j$ and $k<k'<k''$. If $H(k,k')\geq H(k',k'')$ then $k'$ can be
+Let $k,k',k''\in L_j$ and $k<k'<k''$. If $H(k,k')\geq H(k',k'')$, element $k'$ can be
 removed from $L_j$.
 \end{lemma}
 
 \begin{proof}
-Since candidates in $L_j$ are ordered by rank then $G(k,j)>G(k',j)>G(k'',j)$.
+Since candidates in $L_j$ are ordered by rank, $G(k,j)>G(k',j)>G(k'',j)$.
 From definition of $H$ we know that 
-$G(k',j')\leq G(k'',k')$ for  all $j'>=H(k',k'')$. Since
-$H(k,k')\geq H(k',k'')$ then $G(k,j')\geq G(k',j')$ for all $j'<j$. Therefore rank
+$G(k',j')\leq G(k'',k')$ for  all $j'\geq H(k',k'')$. Since
+$H(k,k')\geq H(k',k'')$, then $G(k,j')\geq G(k',j')$ for all $j'<H(k,k'')$.
+Therefore the rank
 of $k'$ will never be maximum and $k'$ can be removed.
 
 %and both are in $L_j$ then $k$ has higher rank that $k'$. Therefore
@@ -780,54 +786,58 @@ of $k'$ will never be maximum and $k'$ can be removed.
 %H(k',k'')$ rank of $k'$ will never be maximum.
 \end{proof}
 
-Now we can formulate final algorithm. After updating $L_j$ from $L_{j-1}$,
-$L_j$ will satisfy following invariant.
+Now we can formulate the final algorithm. After updating $L_j$ from $L_{j-1}$,
+$L_j$ will satisfy the following invariant.
 \begin{invariant}\label{LogGapInvariant}
-All consecutive elements $k,k'$ in $L_j$ satisfy following properties:
+All consecutive elements $k,k'$ in $L_j$ satisfy the following properties:
 \begin{enumerate}
 \item $k<k'$
 \item $G(k,j)>G(k',j)$ (decreasing rank)
-\item if $k'$ is not last element of $L_j$ and $k''$ is element right after $k'$
-in $L$ then $H(k,k')> H(k',k'')$ (increasing ``time'' when consecutive
-candidates will broke order of ranks)
+\item if $k'$ is not the last element of $L_j$ and $k''$ is the element
+following $k'$
+in $L$, then $H(k,k')> H(k',k'')$ (increasing ``time'' when consecutive
+candidates will brake the ordering of ranks)
 \end{enumerate}
 \end{invariant}
 
-Since rank is decreasing, we can find maximum in $O(1)$ time. Now we show how
-to compute $L_{j+1}$ from $L_j$. $L$ will be our working list.
-Let $L^k$ be $k$-th element of $L$ and $l$ be index of last element of $L$. 
-$L_{j+1}$ can be computed by following algorithm.
+Since the rank is decreasing, we can find the maximum in $O(1)$ time. Now we show how
+to compute $L_{j+1}$ from $L_j$. Let $L$ be our working list,
+$L[k]$ be its $k$-th element, and $l$ be the index of the last element of $L$. 
+List $L_{j+1}$ can be computed by the following algorithm. 
 \begin{enumerate}
 \item $L=L_j$
-\item If $G(L^0,j+1)< G(L^1,j+1)$ then remove $L^0$ from
-list (lemma \ref{OneStrikeAndOut}).
-\item While $H(L^{l-1},L^{l})<H(L^l,j-1)$ or $G(L^l,j+1)<G(j,j+1)$ do following: remove $L^l$ from list (lemma
-\ref{TimeLemma} and lemma \ref{OneStrikeAndOut}).
 \item $L_{j+1}=L\cup\{j\}$.
+\item If $G(L[0],j+1)\leq G(L[1],j+1)$ then remove $L[0]$ from
+list (lemma \ref{OneStrikeAndOut}).
+\item While $H(L[{l-1}],L[{l}])\leq H(L[l-1],L[l-2])$ or $G(L[l],j+1)\geq
+G([l-1],j+1)$, remove $L[l-1]$ from the list (lemma
+\ref{TimeLemma} and lemma \ref{OneStrikeAndOut}).
 \end{enumerate}
-First element is also first element that can broke order so we have to only it
-(step 2). Since we will add candidate $j$, we have to remove from the end of the
-list all candidates with smaller rank than $j$. Same arguments hold for ``time''
-when consecutive candidates will broke order of ranks. Since both (ranks and
-times) are ordered, we need to remove candidates only from the end of the list.
 
-It is easy to see that if $L_j$ satisfy invariant then $L_{j+1}$ will satisfy
-invariant. It is also clear that this algorithm will never remove candidate that
-will be maximum later, which conclude correctness of algorithm.
+The first element is also the first element that can break order, so we have to
+test it (step 3). Since we will candidate $j$, we have to remove from the end of
+the list all candidates with smaller rank than $j$ and thise that can be removed
+based on lemma \ref{TimeLemma} and lemma \ref{OneStrikeAndOut}.  Since both
+ranks and times are ordered, we need to remove candidates only from the end of
+the list.
 
-Algorithm described above has running time $O(l\log(n))$, however amortized time
-complexity for computing all columns is $O(n\log n)$ since every candidate will
+It is easy to see that if $L_j$ satisfies the invariant, $L_{j+1}$  satisfy it.
+It is also clear that this algorithm will never remove any candidate that will
+be the maximum later, which implies the correctness of the algorithm.
+
+The algorithm described above has running time $O(l\log(n))$, but the amortized time
+complexity for computing all columns of one row of matrix $M$ is $O(n\log n)$ since every candidate will
 be added/removed to/from list at most once. If we can compute function $H$ in
-constant time, time complexity is $O(n)$.
+constant time, the time complexity is $O(n)$.
 
-Using this algorithm, we can compute alignment with convex gap functions in
-$O(nm\log n)$ time and $O(nm)$ for convex gap functions if $H$ can be computed
+Using this algorithm, we can compute the optimal alignment with convex gap functions in
+$O(nm\log n)$ time and in $O(nm)$ time  if $H$ can be computed
 in constant time.
 
-There is also more complicated $O(nm\alpha(n)$ algorithm for this problem
-\cite{Klawe1990} where $\alpha(n)$ is inverse Ackerman function. However this algorithm
-is very complex and we doubt that it will be useful in practice. However, we are
-not aware that somebody do experimental comparison of these two algorithms.
+There is also a more complicated $O(nm\alpha(n))$ algorithm for this problem
+\cite{Klawe1990}, where $\alpha(n)$ is inverse Ackerman function. This algorithm
+is very complex, and we doubt that it is useful in practice. However, we are
+not aware of any experimental comparison of these two algorithms.
 
 
 
