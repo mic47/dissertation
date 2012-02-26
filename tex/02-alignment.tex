@@ -618,58 +618,68 @@ only on neighbouring cells, but also on all previous cells in the same row and c
 Therefore some memory-saving techniques like Hirschberg algorithm or checkpointing cannot be
 used with general gap penalties.
 
-\bigskip
-{\Large\bf Podtialto su zapracovane pripomienky }
-\bigskip
 
 \subsection{Convex/Concave Gap Functions}\label{SECTION:CONVEX}
 
-Arbitrary gap penalties leads to slow running time, however if we place some
-restrictions on gap penalty, we can use faster algorithms. In this section we
-show algorithm that computes optimal alignment on $O(nm\log n)$ time if gap
+Arbitrary gap penalties increased running time of the Needleman-Wunsch algorithm
+by factor of $O(n)$. However if we place some
+restrictions on the  gap penalty function, we can use faster algorithms. In this
+section, we
+show an algorithm that computes the optimal alignment in $O(nm\log n)$ time if
+the gap
 penalty is convex or concave. In some cases this algorithm can be improved to
-$O(nm)$ time. Originally this algorithm was discovered independently by Miller
+$O(nm)$ time. This algorithm was discovered independently by Miller
 {\it et al. (1988)} and Galil {\it et al. (1989)} \nocite{Miller1988,Galil1989}.
 
-We will present a variant of $O(nm\log n)$ algorithm for concave gap functions which
-we believe is easiest to explain . Algorithm for convex gap function is similar.
-We consider only concave functions defined on natural numbers (gap length can be only
-natural number). Our definition of concave function is similar to one used in
+We will present a variant of $O(nm\log n)$ algorithm for convex gap functions which
+we believe is easiest to explain . Algorithm for concave gap function is similar.
+We consider only convex functions defined on natural numbers (gap length can be only
+natural number). Our definition of convex function is similar to one used in
 \cite{GusfieldBook}.
 
+
 \begin{definition}
-We assume that $f(x)$ function defined on natural numbers. $f$
-is concave if and only if 
+We assume that $f(x)$ is a  function defined on natural numbers. Function $f$
+is convex if and only if 
 \[f(x+1)-f(x)\geq f(x)-f(x-1)\]
 for all $x\in\mathbb{N}$.
 \end{definition}
 \begin{note}
-It is easy to show that if $f$ is concave then $f(x+d)-f(x) \leq f(x+e+d) -
+It is easy to show that if $f$ is convex then $f(x+d)-f(x) \leq f(x+e+d) -
 f(x+e)$ for nonnegative $d$ and $e$.
 \end{note}
 
-We will improve dynamic programming that computes matrix $M$ according equation
-\ref{ALIGN:ARBITRARYGAPEQUATION}. In this equation there are two
-problematic\footnote{In terms of time complexity} terms: $M[i,j-y]+f(y)$ and
+We will improve dynamic programming that computes matrix $M$ using equation
+\ref{ALIGN:ARBITRARYGAPEQUATION}. The increase in running time is caused by two
+terms: $M[i,j-y]+f(y)$ and
 $M[i-x,j]+f(x)$. In dynamic programming from section \ref{DYNPROG} we  have
-to add additional nested cycles that goes through all $x$ and $y$. We show data
-structure that can compute $\max_{0\leq y < j}M[i,j-y]+f(y)$ in $O(\log n)$ time
-(amortized). This data structure can handle also second problematic term so we
-will focus only on the first one.
+to add additional nested cycles that go through all values $x$ and $y$. We show
+a data
+structure that can compute $\max_{0\leq y < j}M[i,j-y]+f(y)$ in $O(\log n)$
+amortized time.
+This data structure can also handle the second problematic term, but we
+will describe only the first one. First we change the variable in the
+maximization so that we maximize
 
-$\max_{0\leq y < j}M[i,j-y]+f(y)$ is equivalent to
+%$\max_{0\leq y < j}M[i,j-y]+f(y)$ is equivalent to
 \begin{equation}
 \max_{0\leq k < j}M[i,k]+f(j-k)\label{CONVEX:MAXFUNCTION}
 \end{equation}
-From now on we will use this second equation since it is more suitable for this
-approach.  Our data structure is list ($L_j$) of such $k$'s that can be in
-future maximum. We will try to keep this list as small as possible. $L_j$ will
-called \firstUseOf{candidate list} and members of $L_j$ will be called
-\firstUseOf{candidates}. $L_j$ is candidate list for computing $M[i,j]$.
-$L_{j+1}$ will be always computed from $L_j$ by adding $j$ and removing some
-elements of $L_j$. For simplicity, let $G(k,j) = M[i,k]+f(j-k)$. If $k\in L_j$,
-than \firstUseOf{rank} of $k$ is $G(k,j)$. Note that rank of candidates will
-change when we move from $L_j$ to $L_{j+1}$.
+which is equivalent to the original expression from the equation
+\ref{ALIGN:ARBITRARYGAPEQUATION}.  Our data structure is a list $L_j$ containing
+values of 
+$k$ that can become maximum for future values of $j$. We will try to keep this list as small as
+possible. List $L_j$ will be a called \firstUseOf{candidate list} and members of $L_j$
+will be called \firstUseOf{candidates}. Rank of cadidate $k$ is the value
+$G(k,j)=M[i,k]+f(j-k)$. To compute $M[i,j]$ we iterate over values of $k$ in
+$L_j$ and find the one with the highest rank.
+%$L_j$ is candidate list for computing $M[i,j]$. 
+List $L_{j+1}$ will be computed from $L_j$ by adding $j$ and
+removing some elements of $L_j$. 
+%For simplicity, let $G(k,j) = M[i,k]+f(j-k)$.
+%If $k\in L_j$, than \firstUseOf{rank} of $k$ is $G(k,j)$. 
+Note that rank of
+candidates will change when we move from $L_j$ to $L_{j+1}$.
 
 We will explain this algorithm in iterative way: we will be adding to algorithm
 new features until it will have desired time complexity. 
@@ -677,16 +687,25 @@ new features until it will have desired time complexity.
 %Let $L_j$ be the list of such $k$'s. We will call $L_j$ a \firstUseOf{candidate
 %list} and members of $L_j$ \firstUseOf{candidates}. $L_j$ will be created from
 %$L_{j-1}\cup\{j-1\}$ by removing some elements. Let $G(k,j) =
-%M[i,k]+f(j-k)$.  \firstUseOf{Rank} of candidate $k$ is $G(k,j)$.  
-We start with $L_j$ containing all $k$ that are smaller then $j$.  We can find
-element with maximal rank by computing rank for all candidates from candidate
-list $L_j$. This leads to $O(j)$ algorithm to find maximum and $O(1)$ algorithm
-to update candidate list (we have to add element $j$ to list $L_{j}$ to create
-list $L_{j+1}$). This is equivalent to original Needleman-Wunsch algorithm
-\cite{Needleman1970}. At first, we will use following lemma that we will use to
-decrease size of candidate lists. This lemma and proof is almost same as in
-\cite{GusfieldBook} (with difference that we use concave function instead of
-convex function).
+%M[i,k]+f(j-k)$.  \firstUseOf{Rank} of candidate $k$ is $G(k,j)$.  i
+The trivial algorithm includes all values smaller than $j$ in $L_j$.
+%We start with $L_j$ containing all $k$ that are smaller then $j$.  We can find
+%element with maximal rank by computing rank for all candidates from candidate
+%list $L_j$. 
+This leads to $O(j)$ time for finding maximum and $O(1)$ for update
+from $L_i$ to $L_{i+1}$
+%candidate list (we have to add element $j$ to list $L_{j}$ to create
+%list $L_{j+1}$). 
+This is equivalent to the original Needleman-Wunsch algorithm
+\cite{Needleman1970}. 
+We will use the following lemma to
+decrease size of candidate lists. This lemma and proof is  slightly modified
+from 
+\cite{GusfieldBook}.
+
+\bigskip
+{\Large\bf Podtialto su zapracovane pripomienky }
+\bigskip
 
 \begin{lemma}\label{OneStrikeAndOut}
 If $G(k,j)\leq G(k',j)$ for some $k<k'<j$ then
@@ -740,7 +759,7 @@ If rank of $k$ is greater than rank of $k'$ then $H(k,k')$ is the first column
 (of first candidate list $L_{H(k,k')}$) where rank of $k$ is less or equal to
 rank of $k'$. In this column candidate $k$ will be removed for sure.  Note that
 such $l$ can be find using binary search (lemma \ref{OneStrikeAndOut} allows us
-to do it) in $O(\log n)$ time for any concave function. For some concave
+to do it) in $O(\log n)$ time for any convex function. For some convex
 function we can find it in constant time.
 
 \begin{lemma}\label{TimeLemma}
@@ -801,8 +820,8 @@ complexity for computing all columns is $O(n\log n)$ since every candidate will
 be added/removed to/from list at most once. If we can compute function $H$ in
 constant time, time complexity is $O(n)$.
 
-Using this algorithm, we can compute alignment with concave gap functions in
-$O(nm\log n)$ time and $O(nm)$ for concave gap functions if $H$ can be computed
+Using this algorithm, we can compute alignment with convex gap functions in
+$O(nm\log n)$ time and $O(nm)$ for convex gap functions if $H$ can be computed
 in constant time.
 
 There is also more complicated $O(nm\alpha(n)$ algorithm for this problem
