@@ -454,25 +454,24 @@ corresponds to more than one state path.
 \end{example}
 
 
-%\section{Backward Algorithm}
-%Backward algorithm is backward version of the Froward algorithm. ???
-\section{Forward-Backward Algorithm and Posterior Decoding}
-\firstUseOf{Posterior Decoding} is another commonly used decoding method. In
-contrast to the Viterbi algorithm, posterior decoding assign a label individually to
-every symbol of input sequence and does not care about the overall structure of
-reconstructed state path. 
+\section{The Forward-Backward Algorithm and  the Posterior Decoding}
+
+The \firstUseOf{Posterior decoding} is another commonly used decoding method. In
+contrast to the Viterbi algorithm, the Posterior decoding assigns a label individually to
+every symbol of an input sequence and does not care about the overall structure of
+the reconstructed state path. 
 
 Given sequence $X$, posterior decoding finds state path $\pi$ with the following
 property:
 \[\forall 0\leq i< n, \pi_i=\arg\max_{v\in V}\Pr\left(\pi_i=v\mid X,H\right) \]
 where \[\Pr\left(\pi_i=v\mid X,H\right) = \sum_{\pi\in V^n,\pi_i=v}\Pr\left(\pi\mid X,H\right)\]
 
-Values $\Pr\left(\pi_i=v\mid X,H\right)$ can be computed using Forward-Backward
+Values $\Pr\left(\pi_i=v\mid X,H\right)$ can be computed using the Forward-Backward
 algorithm. This algorithm computes $\Pr\left(\pi_i=v\mid X,H\right)$ for every
-combination of position $i$ and state $v$. Then for every position chooses the
-state that maximizes posterior probability.
+combination of position $i$ and state $v$. The Posterior decoding choose for
+every position the state that maximizes posterior probability.
 
-Now we derive formula for efficient computation of  $\Pr\left(\pi_i=v\mid
+We derive the formula for efficient computation of the  $\Pr\left(\pi_i=v\mid
 X,H\right)$.
 \begin{align}
 \Pr\left(\pi_i=v,X\mid H\right) &=  
@@ -519,12 +518,6 @@ X,H\right)$.
 				\right)
 					\label{PosteriorDer6}
 \end{align}
-%Equations \ref{PosteriorDer2} and \ref{PosteriorDer3} is from definition of
-%posterior probability. In \ref{PosteriorDer4} we just replace $\pi_i$ with $v$.
-%Next equality we have from the fact that the left part of the formula
-%\ref{PosteriorDer4} uses only left part of the state path and right part of the
-%formula uses only right part of the state path. Last equation follows from
-%definition of $F[i,v]$.
 The right part of the formula \ref{PosteriorDer6} has
 similar structure as $F[i,v]$, but it uses last part of the state path and
 sequence and also it lack initial distribution. We can compute 
@@ -535,12 +528,6 @@ B[i,v]&=
 \sum_{\pi\in V^{n-i},\pi_0=v}
 	\prod_{j=1}^{n-i-1}
 		e_{\pi_j,X_{i+j}}a_{\pi_{j-1},\pi_j}\\
-% &= 
-% \sum_{u\in V}
-% 	e_{u,X{n+j-1}}a_{v,u}
-%	\sum_{\pi\in V^{n-i},pi_0=v,\pi_1=u}
-%		\prod_{j=2}^{n-i-1}
-%			e_{\pi_j,X_{n+j-1}}a_{\pi_{j-1},\pi_j}\\
  &= 
  \sum_{u\in V}
  	e_{u,X_{I+1}}A_{V,u}
@@ -552,10 +539,10 @@ B[i,v]&=
  	e_{\pi_j,X_{i+1}}a_{v,u}B[i+1,u]
 \end{align}
 If we set $B[n-1,v]$ to $1$, we have a recurrence to compute values
-$B[i,v]$. This recurrence is very similar to recurrence $F[i,b]$ Recall that
+$B[i,v]$. This recurrence is very similar to recurrence $F[i,b]$. Recall that
 \[F[i,v] = \sum_{u\in V}F[i-1,u] a_{u,v} e_{v,X_i}\]
-$B[i,v]$ depends on next positions in sequence $X$,
-while $F[i,v]$ depends on previous positions in sequence $X$. Another
+The cell $B[i,v]$ depends on the next positions in sequence $X$,
+while $F[i,v]$ depends on the previous positions in sequence $X$. Another
 difference is that $B[i,v]$ does include emission of $X[i]$ while $F[i,v]$ does.
 
 In addition, it is possible to compute probability
@@ -578,10 +565,10 @@ Posterior probabilities can be computed by
  \right)}\]
 
 
-We can compute these values in $O(nm^2)$ time and $O(nm)$ memory. Again, in case
-of sparse transition matrix, this algorithm can be altered to run in $O(n(m+t))$
-time where $t$ is the number of transitions. We will
-discuss possible algorithmic improvements of this algorithm later.
+We can compute values of $F[i,v]$ and $B[i,v]$ in $O(nm^2)$ time and $O(nm)$
+memory. Again, in case of sparse transition matrix, this algorithm can be
+altered to run in $O(n(m+t))$ time where $t$ is the number of transitions. We
+will discuss possible algorithmic improvements of this algorithm later.
 
 One drawback of an  posterior decoding is that it can reconstruct inadmissible
 state path. One example is given below.
@@ -592,26 +579,26 @@ state path. One example is given below.
 \end{center}
 \caption[Hidden Markov Model on which posterior decoding reconstructs
 inadmissible state path]{
-Example of HMM on which posterior decoding reconstructs inadmissible state path. 
-All unlabeled transitions are even ($0.5$). States $w_1,w_2$ and $v$ emits $0$
+Example of an HMM on which the Posterior decoding reconstructs inadmissible state path. 
+All unlabeled transitions are even ($0.5$). States $w_1,w_2,$ and $v$ emits $0$
 with probability $1$ and state $e$ emits $1$ with probability $1$.
 Initial distribution is set to $I_{w_1}=I_{w_2}=0.3, I_{v}=0.4, I_{e}=0$.
 }\label{FIGURE:INADMISSIBLESTATEPATH}
 \end{figure}
 
-\todo{Je mozne, ze by sa TU mohlo spomenut a maximalizacii ocakavaneho poctu
-spravne predikovanych stavov}
+%\todo{Je mozne, ze by sa TU mohlo spomenut a maximalizacii ocakavaneho poctu
+%spravne predikovanych stavov}
 
 \begin{example}
-Consider HMM from figure \ref{FIGURE:INADMISSIBLESTATEPATH}. Let $X=001$. There
+Consider an HMM from figure \ref{FIGURE:INADMISSIBLESTATEPATH}. Let $X=001$. There
 are three state paths that have non-zero probability:
 $\pi_1=w_1w_2e,\pi_2=w_2w_1e$ and $\pi_3=vve$. Their probabilities are
 $\prob{\pi_1\mid X,H}=\prob{\pi_2\mid X,H}=0.3, \prob{\pi_3\mid X,H}=0.4$.
 Posterior probabilities are in table \ref{TABLE:INADMISSIBLESTATEPATH}.
 As we can see, maximal posterior probability for the first position have state
 $v$. For the second position it is state $w_2$ and for the third it is state
-$e$. Therefore PD will reconstruct state path $vw_2e$. However, this probability
-is inadmissible.
+$e$. Therefore PD will reconstruct state path $vw_2e$. However, this state path 
+is inadmissible since  $v\to w_2$ is not a transition (it has zero probability).
 
 \begin{table}
 \begin{center}
@@ -625,7 +612,7 @@ $e$  & $0$ & $0$ & $1$ \\\hline
 \end{tabular}
 \end{center}
 \caption[Example of posterior probabilities.]{Posterior probabilities for
-sequence $X$ and HMM $H$ from figure \ref{FIGURE:INADMISSIBLESTATEPATH}.
+the sequence $X$ and the HMM $H$ from the figure \ref{FIGURE:INADMISSIBLESTATEPATH}.
 }\label{TABLE:INADMISSIBLESTATEPATH}
 \end{table}
 
@@ -634,41 +621,33 @@ sequence $X$ and HMM $H$ from figure \ref{FIGURE:INADMISSIBLESTATEPATH}.
 
 \section{Training} 
 
-\bigskip
-{\large\bf Tato cast este nie je napisana. Lepsie je skocit na dalsiu sekciu --
-chcem najskor zapracovat pripomienky}
-\bigskip
+Training is the process of estimating parameters of the probabilistic models. In this
+section we briefly describe several approaches how to estimate transition and
+emission distributions of the hidden Markov models.
 
-Training is process of estimating parameters of probabilistic models. In this
-section we will describe several approaches how to estimate transition and
-emission distributions. We will describe several approaches to estimate
-parameters of HMM. We will consider only estimating emission and transition
-probabilities, not topology of a model.
-
-We will use \firstUseOf{maximal likelihood approach}. Let $H_{\theta}$ be an HMM
+We use the \firstUseOf{maximal likelihood approach}. Let $H_{\theta}$ be an HMM
 where $\theta$ is vector containing emission and transition probabilities and
-$D$ be training data (sequences, possibly with state paths).  We
-will try to find $\theta$ that maximizes likelihood of the data.
+$D$ be the training data (sequences with state paths).  We
+want to find $\theta$ that maximizes the likelihood of the data:
 
 \[L(H_\theta\mid D)=\prob{D\mid H_\theta}\]
 
-\todo{definovat $\sim$}
-
-Where date $D$ is set of pairs $(X,\pi)$ where $X$ is sequence and $\pi\in
-V\cup\{*\}$. $*$ means missing information in state path. Probability that data
+where $D$ is the set of pairs $(X,\pi)$ where $X$ is sequence and $\pi\in
+V$. Probability that data
 were generated is
 \[
-\prob{D\mid H_\theta} = \prod_{(X,\pi')\in D}\prob{X,\pi'\mid H_\theta}
+\prob{D\mid H_\theta} = \prod_{(X,\pi)\in D}\prob{X,\pi\mid H_\theta}
 \]
-where
-\[\prob{X,\pi'\mid H_\theta} = \sum_{\pi\sim\pi'}\prob{X,\pi\mid H_\theta}\]
+%In case of 
+%where
+%\[\prob{X,\pi'\mid H_\theta} = \sum_{\pi\sim\pi'}\prob{X,\pi\mid H_\theta}\]
 
-In following paragraph we briefly discuss several methods of estimation of
-parameters.
+%In following paragraph we briefly discuss several methods of estimation of
+%parameters.
 
-\paragraph{Fully labeled data:} Consider situation when $D$ consists of pairs
-$(X,\pi)$ where $\pi$ is full state path (without symbol $*$). In such situation
-we use frequencies of occurred events as the parameters of the model.
+%\paragraph{Fully labeled data:} Consider situation when $D$ consists of pairs
+%$(X,\pi)$ where $\pi$ is full state path (without symbol $*$). i
+We can use the frequencies of occurred events as the parameters of the model.
 Let $A_{u,v}$ be the number of transitions from $u$ to $v$ in $D$.
 Let $E_{u,x}$ be the number times when state $u$ emitted $x$ in training data
 $D$.
@@ -677,31 +656,74 @@ Then
 &a_{u,v}=\frac{A_{u,v}}{\sum_{w\in V}A_{u,w}}
 &e_{u,x}=\frac{E_{u,x}}{\sum_{y\in\Sigma}E_{y,x}}
 \end{align*}
-for all $u,v\in V, x\in\Sigma$. $e$ and $a$ maximizes the likelihood
-\cite{Durbin1998}. If case of insufficient data some events that in reality have
-nonzero probability may not occur and therefore it's probability will be
+for all $u,v\in V, x\in\Sigma$. Parameters $\theta=(e,a)$ maximizes the likelihood
+\cite{Durbin1998}. If case of insufficient data, some events that have
+nonzero probability may not occur in the data and therefore its probability will be
 estimated to zero. To avoid this behavior we can use pseudo-counts
-\cite{Durbin1998}. We artificially add constant $k_x$ to all events $x$ that we expect
-to have non-zero probability.
+\cite{Durbin1998}: we artificially add a constant $k_x$ to the counts of all
+events $x$ that we expect to have non-zero probability.
 
-\paragraph{The Baum-Welsch training:} Baum-Welsch training is instance of more
-general expectation maximization algorithm. It is iterative algorithm that
-computes expectations of missing data and use such expectations to compute 
-new model. This algorithm has guarantee that it will converge to local maxima.
-Expectations are computed with variant of Forward-Backward algorithm.
-\paragraph{The Viterbi training: }
+\subsection{Training with Missing Data} 
+In case that some data are missing (for example parts
+of the state paths or even the sequences) we treat the missing data as a random
+variables. We use following algorithm. 
+\begin{enumerate}
+\item  Set the initial parameters $\theta_0$. Let $i=0$
+\item  Using model $H_{\theta_i}$, compute expected number of occurrences of
+all events (the values $A_{u,v}, E_{u,x}, u,v\in V,x\in\Sigma$). Compute the new
+parameter set $\theta_{i+1}$ from the expected counts (using the method
+described above). Set $i=i+1$.
+\item If stopping criterion was not reached, go to step two. Otherwise 
+set the $H_{\theta_{i}}$ as the final model.
+\end{enumerate}
+This algorithm is called the Baum-Welsch algorithm and it is the instance of the
+more general Expectation maximization algorithm \cite{Durbin1998}. Is has been
+proved that the sequence $\{L(H_{\theta_i}\mid D)\}_{i\geq 0}$ is non-decreasing and
+that it converges to a local minima \cite{Durbin1998}. Stopping criterion is
+usually  the change in the likelihood being small enough or the maximal number of
+iterations.
+ The expectations of the number of events can be
+computed by a variant of the Forward-Backward algorithm.
+%At first we set the initial parameters $\theta_0$. We treat the missing data as a
+%random variables. We compute the expected number of occurrences of all events
+%($A_{u,v}, E_{u,x}, u,v\in V,x\in\Sigma$)
+%using the model $\theta_0$. We use those expectations to compute the new
+%parameter set $\theta_1$ using method described above. We repeat this  
+%step until the parameter set $\theta_i$  converge to local maxima (more
+%precisely, algorithm stops when certain criteria is meet -- the number of
+%iterations or the changes in the parameters are small enough).
 
-Viterbi training is similar to Baum-Welsch training, but instead of computing
-expectations for missing data by Forward-Backward algorithm, we compute the most
-probable state path with the Viterbi training and estimate new model with by
-from frequencies of events. Advantage of this approach is that in practice this
-training is faster than Baum-Welsch training. However, the Viterbi training and
-Baum-Welsch training does not have to converge to same parameters
-\cite{Durbin1998}.
+%In can be proved that the likelihood of the model $\theta_i$ is higher then the
+%likelihood of the model $\theta_{i+1}$ and also the $\theta_i$ converges to local
+%minima \cite{Durbin1998}. This algorithm is call the Baum-Welsch algorithm,
+%which uses the variant of the Forward-Backward algorithm to compute the 
+%expectations of the number of occurrences of the events.
 
-In practice we can use the Viterbi training for the estimation of the reasonably
-good starting estimation for Baum-Welsch training. One such application can be
-found in \cite{FEAST2011}.
+In step $2$ we can replace the Forward-Backward algorithm with the Viterbi
+algorithm. In such case the Viterbi algorithm computes the most probable values
+for the missing data and the counts of the events are estimated from this data.
+This approach is called the Viterbi training.  While the Viterbi training does
+not have to converge to local maxima, it is faster in practice
+\cite{Durbin1998}.  In practice we can use the Viterbi training for the
+estimation of good starting parameters for the Baum-Welsch training. The
+approach was used in \cite{FEAST2011}.
+
+
+%\paragraph{The Baum-Welsch training:} Baum-Welsch training is instance of more
+%general expectation maximization algorithm. It is iterative algorithm that
+%computes expectations of missing data and use such expectations to compute 
+%new model. This algorithm has guarantee that it will converge to local maxima.
+%Expectations are computed with variant of Forward-Backward algorithm.
+%\paragraph{The Viterbi training: }
+%
+%Viterbi training is similar to Baum-Welsch training, but instead of computing
+%expectations for missing data by Forward-Backward algorithm, we compute the most
+%probable state path with the Viterbi training and estimate new model with by
+%from frequencies of events. Advantage of this approach is that in practice this
+%training is faster than Baum-Welsch training. However, the Viterbi training and
+%Baum-Welsch training does not have to converge to same parameters
+%\cite{Durbin1998}.
+
 
 %\subsection{Other Training Methods}
 %There are several other approaches how to similar
