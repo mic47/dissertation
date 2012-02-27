@@ -93,27 +93,28 @@ distance between two synchronizing strings in the sequence of length $n$.
 \subsection{Mixing Times}
 
 \def\tmix{t_{mix}(\epsilon)}
-We propose following technique to improve memory complexity of the
-Posterior decoding.  From HMM $H$ we compute mixing time
-$t_{mix}(\epsilon)$ (mixing times will be defined bellow).  We divide the input
-sequence $X$ into set of $l$ overlapping subsequences
-$x_i=X[it_{mix}(\epsilon):(i+3)t_{mix}(\epsilon)]$.
-After division we run posterior decodings in all sequences independently,
-obtaining state paths $\pi_i$ ($\pi_i$ was decoded from $x_i$). If $m$ is the
-number of states of $H$ then this will take $O(nm^2)$ time since the total
-length of sequences $x_i$ is less than $3n$.  We construct the optimal state
-path $\pi$ by concatenation of the subsequences of $\pi$ that are not in
-overlaps: \[\pi = \pi_0[:2T] \pi_1[T:2T] \pi_2[T:2T] \dots
-\pi_{l-2}[T:2T] \pi_{l-1}[T:]\] where $T=t_{mix}[\epsilon]$. We claim that
-if $T$ is sufficiently high and input sequence $X$ was sampled from $H$, then
-with hight probability the reconstructed state path $\pi$ is the state path that
-maximized objective criteria of the Posterior decoding.  Time complexity of this
-algorithm is $O(nm^2)$ and memory complexity is $O(n+Tm)$ which can be
-considerable improvement over $O(\sqrt n m)$ algorithm since $T$ is constant
-specific for HMM. However in practice $T$ can be too high.
+We propose technique to improve memory complexity of the
+Posterior decoding using approximations based on the theory of mixing times.
+From HMM $H$ we compute a threshold  $T$ (more details
+bellow).  We divide the input sequence $X$ of length $n$ into $l$ overlapping
+subsequences $x_i=X[2iT:(2i+3)T]$ (for simplicity we assume that $n=(2l+1)T$).  
+We run the Posterior decoding for each subsequence $x_i$ independently, obtaining state path
+$\pi_i$. If $m$ is the number of states of $H$
+then this will take $O(nm^2)$ time since the total length of sequences $x_i$ is
+less than $3n$.  We construct the optimal state path $\pi$ by middle points of
+the partial paths $\pi_i$
+\[\pi = \pi_0[:2T]
+\pi_1[T:2T] \pi_2[T:2T] \dots \pi_{l-2}[T:2T] \pi_{l-1}[T:]\] where
+$T=t_{mix}[\epsilon]$.
+We conjecture that if $T$ is sufficiently high and the input
+sequence $X$ was sampled from $H$, then with hight probability the reconstructed
+state path $\pi$ is the state path that maximizes objective function of the
+Posterior decoding.  Time complexity of this algorithm is $O(nm^2)$ and memory
+complexity is $O(n+Tm)$ which can be considerable improvement over $O(\sqrt n
+m)$ algorithm since $T$ is a constant specific for HMM but independent of $n$. However in practice $T$
+can be too high.
 
-\todo{Chcem tam aj nejake variabilne X? Tena nie worstcase?}
-$\tmix$ is the mixing time. We can define it in following way:
+As a threshold $T$, we can use is the mixing time $t_{\mix}$ defined it in the following way:
 \[\tmix = \min_{i}\left\{ 
 \left(\max_{\mu,\nu,X} || \prob{\pi[i] = \cdot\mid X[:i+1],H_\nu} - \prob{\pi[i] = \cdot\mid
 X[:i+1],H_\mu}||_{TV}\right)\leq \epsilon
@@ -121,28 +122,27 @@ X[:i+1],H_\mu}||_{TV}\right)\leq \epsilon
 \] 
 \todo{koniec tohoto odstavca sa mi nepaci}
 where $H_\mu$ and $H_\nu$ are HMMs created from $H$ by replacing initial
-distribution with $H_\mu$ and $H_\nu$ respectively.
+distribution with $H_\mu$ and $H_\nu$ respectively,
 $X$ is a sequence
 sampled from $H$ and $||\cdot||_{TV}$ is the total variation distance:
 $||\mu-\nu||_{TV}=\frac12\sum_{x\in S}|\mu(x)-\mu(x)|$ where $\mu$ and $\nu$
-are probability distribution over finite set $S$.
+are probability distribution over a finite set $S$.
 Intuitively, after $\tmix$ steps the initial distribution does not matter, since
 the total variation of the normalized forward variables $F[\tmix+i,\cdot]$
 and the corresponding normalized forward variables of the original computation
 of the Forward algorithm is less than $\epsilon$. Normalized forward variables
 are forward variables multiplied by a constant so they sum up to one. 
-Same holds for the backward
-variables $B$ and therefore the posterior probabilities decoded in the middle of
-subsequence $x_i$ will be almost same if we were computing the Forward-Backward
-on the whole sequence $X$.
+Same holds for the backward variables $B$ and therefore the posterior
+probabilities decoded in the middle of subsequence $x_i$ will be almost the same
+if we were computing the posterior probabilities on the whole sequence $X$.
 
-Mixing times are originally defined for Markov chains \cite{Levin2006}. Markov
+Mixing times were originally defined for Markov chains \cite{Levin2006}. Markov
 chains are HMMs without emissions: the state path is observed, not hidden. We
-want to extend the Mixing times for HMMs and find way of estimation $\tmix$ for
-given HMM.
+want to extend the mixing times for HMMs and find way of estimation $\tmix$ for
+a given HMM.
 
-This techniques can be also used to reduce memory complexity of HMM training and
-to parallelization of the Posterior decoding, the Forward algorithm and the
+This technique can be also used to reduce memory complexity of HMM training and
+to parallelize the Posterior decoding, the Forward algorithm and the
 Training algorithms.
 
 \section{Measures for decoding algorithms}
