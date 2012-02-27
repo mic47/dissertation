@@ -115,24 +115,23 @@ molecules. There are $20$ amino acids that can be encoded in DNA. Parts of DNA
 that encode proteins are called \firstUseOf{genes} (gene is ``substring'' of DNA
 that will be translated into one protein).
 
-Every gene consists of two types of
-sequences: exons which encode amino-acids, and introns are removed
-before translation (some genes do no have any introns). At first,
-double stranded DNA is copied or transcribed into single stranded RNA called
-mRNA. Then, the introns are spliced out of mRNA and exons are merged into one
-sequence: spliced mRNA. This sequence is then translated into a sequence of
+Every gene consists of two types of sequences: exons which encode amino-acids,
+and introns are removed before translation (some genes do no have any introns).
+At first, double stranded DNA is copied or transcribed into single stranded RNA
+called mRNA. Then, the introns are spliced out of mRNA and exons are merged into
+one sequence: spliced mRNA. This sequence is then translated into a sequence of
 amino-acids (protein). Each amino acid is encoded by a triplet of nucleotides
 called \firstUseOf{codon}. Amino acids have multiple representations: different
-codons can encode the same amino acid. Since codons are always triplets, the length
-of coding region in the  spliced mRNA is multiple of three. However, the length
-of individual exons does not
-have to be multiple of three since introns can be located inside codons.  The
-coding sequence of a gene begins with a start codon (sequence $ATG$) and the
-last codon of a gene is called stop codon (sequences $TAG,TAA$ or $TGA$).
+codons can encode the same amino acid. Since codons are always triplets, the
+length of coding region in the  spliced mRNA is multiple of three. However, the
+length of individual exons does not have to be multiple of three since introns
+can be located inside codons.  The coding sequence of a gene begins with a start
+codon (sequence $ATG$) and the last codon of a gene is called stop codon
+(sequences $TAG,TAA$ or $TGA$).
 
-An intron begins with 5' splice site (also called donor site),  and ends with
-3' splice site (or acceptor site).  Acceptor and donor sites are sequence motifs
-of fixed length \cite{Pairagon2009,UnderstandingBioinformatics}.
+An intron begins with 5' splice site (also called donor site),  and ends with 3'
+splice site (or acceptor site).  Acceptor and donor sites are sequence motifs of
+fixed length \cite{Pairagon2009,UnderstandingBioinformatics}.
 
 
 \section{Notations}
@@ -140,19 +139,19 @@ of fixed length \cite{Pairagon2009,UnderstandingBioinformatics}.
 In this section we summarize notation used in the following
 chapters.
 
-All sequences, members of sets, vectors, and rows and columns of matrices will be indexed from $0$. We will use mostly
-right-open intervals: $I=[a,b)$ means that $a\in I$, but $b\notin I$. 
+All sequences, members of sets, vectors, and rows and columns of matrices will
+be indexed from $0$. We will use mostly right-open intervals: $I=[a,b)$ means
+that $a\in I$, but $b\notin I$. 
 
-The element at the $k$-th position (zero based) of string (or sequence) $s$
-will be written as $s[k]$. The substring $s[i]s[i+1]\dots s[j-1]$ 
-is denoted $s[i:j]$.  If $n$
-is the length of the string $s$ then $s[:i]$ is equivalent to $s[0:i]$ and $s[i:]$
-is equivalent to $s[i:n]$.  We will use the terms sequence and string
-interchangeably.
+The element at the $k$-th position (zero based) of string (or sequence) $s$ will
+be written as $s[k]$. The substring $s[i]s[i+1]\dots s[j-1]$ is denoted
+$s[i:j]$.  If $n$ is the length of the string $s$ then $s[:i]$ is equivalent to
+$s[0:i]$ and $s[i:]$ is equivalent to $s[i:n]$.  We will use the terms sequence
+and string interchangeably.
 
-Let $M$ be a matrix. Then $M[i,j]$ is the element from the $i$-th row and
-$j$-th column of $M$ (indices are zero based). Similarly as for strings,
-submatrix $M[i:j,k:l]$ is a matrix consisting from the intersection of rows
-$i,i+1,\dots, j-1$ with columns $k,k+1,\dots,l-1$. If $M$ is of
-size $n\times m$ then $M[:i,j:]$ is equivalent to $M[0:i,j:m]$.  The term
-$M[i,:]$ is equivalent to $M[i,0:m]$ which is the $i$-th row of $M$.
+Let $M$ be a matrix. Then $M[i,j]$ is the element from the $i$-th row and $j$-th
+column of $M$ (indices are zero based). Similarly as for strings, submatrix
+$M[i:j,k:l]$ is a matrix consisting from the intersection of rows $i,i+1,\dots,
+j-1$ with columns $k,k+1,\dots,l-1$. If $M$ is of size $n\times m$ then
+$M[:i,j:]$ is equivalent to $M[0:i,j:m]$.  The term $M[i,:]$ is equivalent to
+$M[i,0:m]$ which is the $i$-th row of $M$.
