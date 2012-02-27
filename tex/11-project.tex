@@ -3,53 +3,57 @@
 %o mohlo mat tak par stran
 
 We want to study decoding algorithms for hidden Markov models and pair hidden
-Markov models (and their variants) and their application in comparative analysis
-of biological sequences. We divide this into three parts.
+Markov models (and their variants) and to apply them in comparative analysis
+of biological sequences. We divide our goals into three areas.
 \begin{itemize}
-\item Study of effective implementations of existing algorithm for HMMs and
-pHMMs, analysis of their expected computational complexity and developing new
+\item Study of efficient implementations of existing algorithm for HMMs and
+pHMMs, analysis of their expected computational complexity and design of  new
 improvements.
 
 \item Study of different decoding algorithms (expressed using the highest
-expected gain framework) for HMMs and pHMMs. Study their computational
-complexity, and their performance in their application domain.    
+expected gain framework) for HMMs and pHMMs. Analysis of their computational
+complexity, and their performance in particular application domains.    
 
-\item Study application of the pHMM to improve existing pairwise alignment
-tools. This includes developing new decoding algorithms and pHMMs that take into
-account additional informations about structure biological of sequences.
+\item Application of pHMMs to improve existing pairwise alignment
+tools. Design of new decoding algorithms and pHMMs that take into
+account additional informations about structure of biological of sequences.
 \end{itemize}
-In following sections we describe problems we want to solve and propose several
-approach how to solve those problems.
+In the following sections we describe problems we want to solve, and propose several
+approaches for solving those problems.
 
 
-\section{Improvments and Analysis of Existing Algorithms}
+\section{Improvements and Analysis of Existing Algorithms}
 
-It has been shown that traditional algorithms for working with HMMs can be
+It has been shown that eunning time and space of traditional algorithms for working with HMMs can be
 improved by various techniques. In section \ref{SECTION:ALGORITHMICIMPROVEMENTS}
-we discussed several approaches how to improve this algorithms by checkpointing
-\cite{Grice1997}, compression \cite{Lifshits2009} or by discarding computed values that are found
-unnecessary \cite{Sramek2007}.  There is space improvements and analysis of improvements
-of basic algorithm for HMMs.
+we discussed several such techniques, including checkpointing
+\cite{Grice1997}, compression \cite{Lifshits2009} or by release of memory which
+is no longer necessary \cite{Sramek2007}. We plan to address open quations in
+the analysis of such improvements and to propose new techniques.
+
+%There is space improvements and analysis of improvements
+%of basic algorithm for HMMs.
+
+\subsection{On-line Viterbi algorithm}
 
 In section \ref{SECTION:ONLINEVITERBI} we discussed the  On-line Viterbi
-algorithm. The On-line Viterbi algorithm store instead of matrix of back-links
-$B$ the  compressed forest
-composed only from such parts of the state paths that could be in the most
-probable state path. As soon as the algorithm detect that some parts cannot be
-in the most probable state path, it discards them. Original paper
-contains analysis of this algorithm for the two-state symmetric HMM. With such
+algorithm. The On-line Viterbi algorithm does not store the full matrix of back-links
+$B$, instead it keeps a compressed forest
+composed of those parts of the state paths that can be in the most
+probable state path. As soon as the algorithm detects that some parts cannot be
+in the most probable state path, it discards them. The original paper
+contains analysis of this algorithm for two-state HMMs. With such
 HMM, the expected memory requirements is $O(h\log n)$ where $h$ is a constant
-specific for HMMs \cite{Sramek2007}. Šrámek {\it et al.} conducted experimental
-evaluation of the expected memory complexity and conjectured that expected
-memory complexity of such algorithm is polylogarithmic in the length of the
-sequence. However, analytical result for general HMMs is still an open problem.
+specific for a particular HMM \cite{Sramek2007}. Šrámek {\it et al.} conducted experimental
+evaluation of the expected memory complexity and conjectured that the expected
+memory complexity of this algorithm is polylogarithmic in the length of the
+sequence. However, analytical results for general HMMs are not known.
 
 Our goal is to characterize classes of HMMs for which  the expected memory
-complexity of the On-line algorithm will be logarithmic or polylogarithmic in
-the length of the input sequence and linear in the size of the state space
-under the assumptions that input sequence is sampled from the model or that
-symbols of the sequence were sampled independently from certain (for example
-uniform) distribution.
+complexity of the on-line algorithm will be logarithmic or polylogarithmic in
+the length of the input sequence under the assumptions that the input sequence is
+sampled from the model or that symbols of the sequence were sampled
+independently from certain (for example uniform) distribution.
 
 %Da sa studovat aj worstcase, ale to nepisem
 %We want to characterize classes of HMMs, on which average memory complexity
@@ -60,30 +64,30 @@ uniform) distribution.
 
 One possible approach to solve this problem is to search for the ``synchronizing
 sequences''. \todo{este sa zamysli nad touto formulaciou} 
-Sequence $s\in\Sigma^*$ is synchronizing sequence if there exists
+Sequence $s\in\Sigma^*$ is a synchronizing sequence if there exists
 state $v$ and position $p$ in the sequence $s$, such that for all sequences
-$x\in \Sigma^*$ and states $u$, $\pi_u[{p+|x|}]=v$ where $\pi_u$ is the
+$x\in \Sigma^*$ and states $u$ satisfies $\pi_u[{p+|x|}]=v$ where $\pi_u$ is the
 most probable state path of the sequence $xs$ ending
 in the state $u$. Intuitively, synchronizing sequence force the Viterbi algorithm
-to pass through certain state and therefore for any sequence $y\in \Sigma^*$,
-the most probable state paths $\pi_{xsy}$ of sequence $xsy$ has same prefix
+to pass through a certain state and therefore for any sequence $y\in \Sigma^*$,
+the most probable state path $\pi_{xsy}$ of sequence $xsy$ has the same prefix
 $\pi_{xsy}[:|x|]$. Therefore the On-line Viterbi algorithm after passing
 sequence $s$ will print (and discard) the most probable state path for prefix
 $x$ of $xs$. 
 
-If HMM has synchronizing sequences (HMM has synchronizing sequence if there is
-non-zero probability that HMM will generate sequence that contains synchronizing
-sequence starting in any state) and $f(n)$ is the expected maximal distance
-between two synchronizing strings in sequence of length $n$ (sampled from
-distribution $D$) then the On-line Viterbi algorithm will have expected memory
-complexity $O(f(n)m)$ where $m$ is the number of states under the assumption
-that input sequence was sampled from distribution $D$. 
+If an HMM has a synchronizing sequence and $f(n)$ is the expected maximal distance
+between two synchronizing strings in a sequence of length $n$ (sampled from
+some distribution $D$) then the On-line Viterbi algorithm will have the expected memory
+complexity $O(f(n)m)$ where $m$ is the number of states.
 
-To finish analysis of this algorithm, we need to find the criterion for the
-\todo{preformulovat}
-existence of the synchronizing string for given HMM and develop method of
-computing the upper bound for the $f(n)$, the expected maximal distance between
-two synchronizing strings in the sequence of length $n$.
+Our goal is to develop criterion of the existence of the synchronizing string
+for given HMM and to compute an upper bound of the $f(n)$, the expected maximal
+distance between two synchronizing strings in the sequence of length $n$.
+%To finish analysis of this algorithm, we need to find the criterion for the
+%\todo{preformulovat} existence of the synchronizing string for given HMM and
+%develop method of computing the upper bound for the $f(n)$, the expected
+%maximal distance between two synchronizing strings in the sequence of length
+%$n$.
 
 
 \subsection{Mixing Times}
