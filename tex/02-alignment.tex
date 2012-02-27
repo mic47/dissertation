@@ -198,7 +198,6 @@ with a gap in sequence $X$. $M_Y$ is analogous. Now we show how to compute
 $M,M_X,$
 and $M_Y$. 
 
-\todo{Je vlastne vobec treba taketo vypisovat?}
 \begin{align}
 M[-1,-1] &= 0\\
 M[-1,i] &= M_X[-1,i] = i\cdot d+g, 0 < i < m\\
@@ -255,6 +254,7 @@ matrices $(M,M_X,M_Y)$.
 
 
 \lstset{showstringspaces=false}
+\vbox{
 \begin{lstlisting}
 Initialize M[i,-1] and M[-1,i]
 for i in 0...n-1
@@ -269,7 +269,7 @@ while i > 0 or j > 0
   print column of alignment (a,b)
   (i,j) = (i',j')
 \end{lstlisting}
-
+}
 Lines 2-5 fills matrix $M$ and lines 6-12 implement the back-tracing procedure.
 Time complexity of this algorithm is $O(mn)$ and memory requirements are $O(mn)$
 since we keep matrix $M$ in memory (same complexity for the algorithm for
@@ -351,10 +351,10 @@ is lower than the best score that was seen so far minus some user-defined
 constant \cite{Altschul1997}.
 
 %space seeds, daughter seeds
-\subsubsection{Stepping Stone Algorithm}
+\subsubsection{Stepping-Stone Algorithm}
 \label{SECTION:SSA}
 
-\abbreviation{Stepping stone algorithm}{SSA} 
+\abbreviation{Stepping-stone algorithm}{SSA} 
 \cite{Meyer2002,Pairagon2009} is suitable for global alignment. It uses
 a local alignment algorithm as a subprogram. The idea is to use good local
 alignments as anchors. An anchor is similar to a seed: it is a short alignment which we
@@ -382,7 +382,7 @@ global alignment\footnote{Or aligned to a gap in that region.} for user defined
 constant $\tau$. Similarly, $Y_j$ can be aligned to positions from $i-\tau$ to
 $i+\tau$.
 
-Time complexity and memory requirements of the stepping stone algorithm are of
+Time complexity and memory requirements of the stepping-stone algorithm are of
 order of $O(\sqrt{|X|^2+|Y|^2})$ under the assumption that the maximum area between
 two anchors is independent of the sequence length \cite{Meyer2002}.
 
