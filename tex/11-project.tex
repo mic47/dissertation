@@ -58,11 +58,13 @@ uniform) distribution.
 %random sequence or if the sequence comes from the model. Interesting will be
 %also to study worst case complexity for certain classes of HMMs.
 
-One possible approach to solve this problem is to search for ``synchronizing
-sequences''. Sequence $s\in\Sigma^*$ is synchronizing sequence if there exists
+One possible approach to solve this problem is to search for the ``synchronizing
+sequences''. \todo{este sa zamysli nad touto formulaciou} 
+Sequence $s\in\Sigma^*$ is synchronizing sequence if there exists
 state $v$ and position $p$ in the sequence $s$, such that for all sequences
-$x\in \Sigma^*$ the most probable state path $\pi$ of the sequence $xs$
-$\pi_{p+|x|}=v$. Intuitively, synchronizing sequence force the Viterbi algorithm
+$x\in \Sigma^*$ and states $u$, $\pi_u[{p+|x|}]=v$ where $\pi_u$ is the
+most probable state path of the sequence $xs$ ending
+in the state $u$. Intuitively, synchronizing sequence force the Viterbi algorithm
 to pass through certain state and therefore for any sequence $y\in \Sigma^*$,
 the most probable state paths $\pi_{xsy}$ of sequence $xsy$ has same prefix
 $\pi_{xsy}[:|x|]$. Therefore the On-line Viterbi algorithm after passing
@@ -77,6 +79,12 @@ distribution $D$) then the On-line Viterbi algorithm will have expected memory
 complexity $O(f(n)m)$ where $m$ is the number of states under the assumption
 that input sequence was sampled from distribution $D$. 
 
+To finish analysis of this algorithm, we need to find the criterion for the
+\todo{preformulovat}
+existence of the synchronizing string for given HMM and develop method of
+computing the upper bound for the $f(n)$, the expected maximal distance between
+two synchronizing strings in the sequence of length $n$.
+
 
 \subsection{Mixing Times}
 
@@ -85,22 +93,22 @@ We propose following technique to improve memory complexity of the
 Posterior decoding.  From HMM $H$ we compute mixing time
 $t_{mix}(\epsilon)$ (mixing times will be defined bellow).  We divide the input
 sequence $X$ into set of $l$ overlapping subsequences
-$x_i=X[it_{mix}(\epsilon):(i+2+k)t_{mix}(\epsilon)]$ where $k$ is at least $1$
+$x_i=X[it_{mix}(\epsilon):(i+3)t_{mix}(\epsilon)]$.
 After division we run posterior decodings in all sequences independently,
 obtaining state paths $\pi_i$ ($\pi_i$ was decoded from $x_i$). If $m$ is the
 number of states of $H$ then this will take $O(nm^2)$ time since the total
 length of sequences $x_i$ is less than $3n$.  We construct the optimal state
 path $\pi$ by concatenation of the subsequences of $\pi$ that are not in
-overlaps: \[\pi = \pi_0[:(1+k)T] \pi_1[T:(k+1)T] \pi_2[T:(k+1)T] \dots
-\pi_{l-2}[T:(k+1)T] \pi_{l-1}[T:]\] where $T=t_{mix}[\epsilon]$. We claim that
+overlaps: \[\pi = \pi_0[:2T] \pi_1[T:2T] \pi_2[T:2T] \dots
+\pi_{l-2}[T:2T] \pi_{l-1}[T:]\] where $T=t_{mix}[\epsilon]$. We claim that
 if $T$ is sufficiently high and input sequence $X$ was sampled from $H$, then
 with hight probability the reconstructed state path $\pi$ is the state path that
 maximized objective criteria of the Posterior decoding.  Time complexity of this
-algorithm is $O(nm^2)$ and memory complexity is $O(n+T(k+2)m)$ which can be
+algorithm is $O(nm^2)$ and memory complexity is $O(n+Tm)$ which can be
 considerable improvement over $O(\sqrt n m)$ algorithm since $T$ is constant
 specific for HMM. However in practice $T$ can be too high.
 
-
+\todo{Chcem tam aj nejake variabilne X? Tena nie worstcase?}
 $\tmix$ is the mixing time. We can define it in following way:
 \[\tmix = \min_{i}\left\{ 
 \left(\max_{\mu,\nu,X} || \prob{\pi[i] = \cdot\mid X[:i+1],H_\nu} - \prob{\pi[i] = \cdot\mid
@@ -111,7 +119,9 @@ X[:i+1],H_\mu}||_{TV}\right)\leq \epsilon
 where $H_\mu$ and $H_\nu$ are HMMs created from $H$ by replacing initial
 distribution with $H_\mu$ and $H_\nu$ respectively.
 $X$ is a sequence
-sampled from $H$ and $||\cdot||_{TV}$ is the total variation distance.
+sampled from $H$ and $||\cdot||_{TV}$ is the total variation distance:
+$||\mu-\nu||_{TV}=\frac12\sum_{x\in S}|\mu(x)-\mu(x)|$ where $\mu$ and $\nu$
+are probability distribution over finite set $S$.
 Intuitively, after $\tmix$ steps the initial distribution does not matter, since
 the total variation of the normalized forward variables $F[\tmix+i,\cdot]$
 and the corresponding normalized forward variables of the original computation
@@ -140,53 +150,62 @@ Training algorithms.
 In section \ref{SECTION:HEG} we have discussed the highest expected gain
 framework. This framework generalizes decoding methods for HMMs. Recall that
 decoding method is the method of obtaining an annotation of a sequence from the
-sequence and the model. At first we briefly review the highest expected reward
-framework.
+sequence and the model. 
 
-Hidden Markov models define probability distribution over state paths $\pi$
-given sequence $X$ and model $H$: $\prob{\pi\mid X,H}$. Given annotation
-function $\lambda$, HMMs also defines probability distribution of annotations
-$\Lambda=\lambda(\pi)$ given sequence $X$: $\prob{\Lambda\mid X,H}$.  The state
-path (or an annotation) that generated a sequence $X$ is hidden.
-We will denote by
-the \firstUseOf{correct state path} of sequence $X$ the state path that
-generated $X$ and the \firstUseOf{correct annotation} is annotation of the
-correct state path. Our goal is to find the correct annotation/state path of
-given sequence $X$ or at least the good approximation of it.
-
-This is usually done by finding the most probable state path and taking it's
-annotation. However, in case of HMMs that have multiple path problem, 
-the most probable state path does not have to correspond to the most probable
-annotation. Additionally, even the most probable annotation does not have to
-give us useful approximation of the correct annotation. Therefore there is need
-for developing new decoding algorithms tailored for specific application
-domains.
-
-%We have shown earlier that the most probable annotation can be different from 
-%the most probable state path, but searching for the most probable annotation is
-%NP-hard \cite{Lyngso2002,Brejova2007mpa}. In some cases the most probable
-%annotation does not have to be the thing we should look for.
-
-\todo{Nesedi poradie argumentov, skontroluj to v celej minimovke!}
-Since the correct annotation/state path is unknown, we treat correct annotation
-as a random variable with distribution $\prob{\Lambda\mid X,H}$. We define gain
-function $f:\bar{\Lambda}\times\bar{\Lambda}\to \mathbb{R}$.
-$f(\Lambda_1,\Lambda_2)$ is the ``measure'' of an approximation of $\Lambda_2$
-by $\Lambda_1$. This function is not mathematical measure, it can be arbitrary
-function. Function $f$ is application specific, it should reflect the features
-that are we interested in.
-
-After defining function $f$, we seek the for the annotation $\Lambda$ with the highest expected gain:
+In the highest expected gain framework we characterize decoding algorithm by
+gain function $f(\Lambda_1,\Lambda_2)$ defined on annotations. Given the sequence
+$X$, we seek 
+for an annotation $\Lambda$ of the sequence $X$ with the highest expected gain
 \[\Lambda = \arg\max_{\Lambda} 
 E_{\Lambda_X\mid X,H}[f(\Lambda_X,\Lambda)] =
 \sum_{\Lambda_X}f(\Lambda_X,\Lambda)\Pr\left(\Lambda_X\mid X,H\right)
 \]
-We have shown that problem of finding the annotation with the highest expected
-gain given sequence $X$ and annotation function $f$ is NP-hard. However, some
-gain functions can be decoded in polynomial time (for example gain functions for
-the Viterbi algorithm or gain function for  the Posterior decoding). Alternative
+
+%At first we briefly review the highest expected reward
+%framework.
+%
+%Hidden Markov models define probability distribution over state paths $\pi$
+%given sequence $X$ and model $H$: $\prob{\pi\mid X,H}$. Given annotation
+%function $\lambda$, HMMs also defines probability distribution of annotations
+%$\Lambda=\lambda(\pi)$ given sequence $X$: $\prob{\Lambda\mid X,H}$.  The state
+%path (or an annotation) that generated a sequence $X$ is hidden.
+%We will denote by
+%the \firstUseOf{correct state path} of sequence $X$ the state path that
+%generated $X$ and the \firstUseOf{correct annotation} is annotation of the
+%correct state path. Our goal is to find the correct annotation/state path of
+%given sequence $X$ or at least the good approximation of it.
+%
+%This is usually done by finding the most probable state path and taking it's
+%annotation. However, in case of HMMs that have multiple path problem, 
+%the most probable state path does not have to correspond to the most probable
+%annotation. Additionally, even the most probable annotation does not have to
+%give us useful approximation of the correct annotation. Therefore there is need
+%for developing new decoding algorithms tailored for specific application
+%domains.
+%
+%\todo{Nesedi poradie argumentov, skontroluj to v celej minimovke!}
+%Since the correct annotation/state path is unknown, we treat correct annotation
+%as a random variable with distribution $\prob{\Lambda\mid X,H}$. We define gain
+%function $f:\bar{\Lambda}\times\bar{\Lambda}\to \mathbb{R}$.
+%$f(\Lambda_1,\Lambda_2)$ is the ``measure'' of an approximation of $\Lambda_2$
+%by $\Lambda_1$. This function is not mathematical measure, it can be arbitrary
+%function. Function $f$ is application specific, it should reflect the features
+%that are we interested in.
+%
+%After defining function $f$, we seek the for the annotation $\Lambda$ with the highest expected gain:
+%\[\Lambda = \arg\max_{\Lambda} 
+%E_{\Lambda_X\mid X,H}[f(\Lambda_X,\Lambda)] =
+%\sum_{\Lambda_X}f(\Lambda_X,\Lambda)\Pr\left(\Lambda_X\mid X,H\right)
+%\]
+%We have shown that problem of finding the annotation with the highest expected
+%gain given sequence $X$ and annotation function $f$ is NP-hard. However, some
+%gain functions can be decoded in polynomial time (for example gain functions for
+%the Viterbi algorithm or gain function for  the Posterior decoding). 
+Alternative
 decoding functions can improve the annotation algorithm as has been shown in
 \cite{Nanasi2010,Truszkowski2011} for the HIV virus recombination detection.
+We want to continue study these function for the virus recombination domain. We
+want to explore the  possible extensions by restricting of searc
 
 %There is a big gap between the time complexity of the Viterbi algorithm and the
 %NP-hard problems. While decoding some functions gan be 
@@ -285,6 +304,12 @@ models described in section bellow) should have better quality: less biases,
 higher sensitivity and lower false positive ratio of the aligned residues.
 Additionally we have to design gain functions in a way that optimizing them will
 be computationally tractable.
+
+One possible way how to improve gain function for decoding hidden Markov models
+is to allow  . In the study of Lunter {\it et al. (2008)} why found out that the
+average sequence identity near gap was higher due to gap wander and gap
+attraction bias. The gap attraction bias could be 
+Other option is to consider 
 
 \section{Models for Pairwise Sequence Alignment}
 
