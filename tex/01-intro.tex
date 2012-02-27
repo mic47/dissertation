@@ -1,74 +1,62 @@
 \chapter{Introduction}
 
 
-In this work we will focus on the methods that are used for automatic
-comparative analysis of biological sequences and annotation of the biological
-sequences. We will study the methods, their complexity, possible improvements
-and propose new methods that will produce alignments and annotations with higher
-quality. Since the new technologies are giving ability to produce more and more
-data, the automatic analysis of such data is necessary and therefore it is
-important to develop such tools.
+In this work we will focus on computational methods for comparative analysis
+and annotation of biological sequences. We will review known models and
+algorithm and propose new methods that will produce
+alignments and annotations with higher quality. Since new technologies are
+giving us the ability to produce more and more data, the automated analysis of such
+data is necessary and therefore it is important to develop such tools.
 
 By biological sequences we mean either DNA/RNA sequences, which are finite
-sequences over the alphabet $\{A,C,G,T/U\}$ ($T$ is in DNA, $U$ in RNA) or the
+sequences over the alphabet $\{A,C,G,T/U\}$ ($T$ is in DNA, $U$ in RNA) or 
 protein sequences which are sequences over the alphabet of $20$ amino acids.
-Later in this chapter we will discuss the relationship between those sequences.
-We focus on two problems. The first is the annotation of the biological
-sequences and the second is the comparative analysis of such sequences. For both 
-problems we will use the variants of the \abbreviation{hidden Markov
+Later in this chapter we will discuss the relationship between these sequences.
+Both 
+problems studied in this proposal, annotation and alignment of biological
+sequences, can be addressed by variants of \abbreviation{hidden Markov
 models}{HMMs}.
+Hidden Markov models are generative probabilistic models which define a
+probability distribution of sequences with their annotations 
+\cite{Durbin1998}. An annotation is
+the assignments of labels to parts of the sequence according their meaning, The
+labels can represent biological function,
+the origin of a part of the sequence or any other information. HMMs are used
+for probabilistic analysis of sequences in various fields. In our work
+we focus on  biological sequences. 
 
-Hidden Markov models are generative probabilistic models which define the
-probability distribution of the sequences with their annotation (formally HMMs
-generate pair of sequence with annotation) \cite{Durbin1998}. Annotation is
-the assignments of the labels to the sequence according it's meaning (function,
-the origin of the part of the sequence or any other information). HMMs are used
-for the probabilistic analysis of the sequences of various fields. In our work
-we focus on  the biological sequences. 
-
-Decoding algorithm is algorithm that from the input sequence $X$ and HMM $H$
-computes the annotation that could generate $X$. Goal is to recover the true
-annotation that generated $X$, but finding such annotation is impossible due to
-the randomness in the generating process. Therefore the decoding algorithm finds
-some approximation of the true annotation.  In recent years it has beed nown
-that the different decoding methods can used to improve the ``quality'' of the
-annotations of sequences
+A decoding algorithm is an algorithm that from the input sequence $X$ and HMM
+$H$ computes the annotation of sequence $X$. The goal is to recover the true
+annotation of $X$, but finding such an annotation is impossible due to the
+randomness in the generating process. Therefore the decoding algorithm finds
+some approximation of the true annotation.  In recent years different decoding
+methods were developed to improve the quality of annotations
 \cite{Gross2007,Nanasi2010,Nanasi2010mgr,Truszkowski2011}.  Additionally there
-are many techniques that are used to lower the computations complexity of the
-decoding and training algorithms (training algorithm are algorithm that computes
-the parameters of the model from the training data set).
+are many techniques that are used to lower the computational complexity of the
+decoding and training algorithms (training algorithms are algorithms that
+compute the parameters of the model from a training data set).
 
-In the field of the comparative analysis of a biological sequence we focus on the
-sequence alignment problem. Sequence alignment is simple data format (or data
-structure) that represent the similarities in the sequences. Alignment is
-created by inserting dashes ('-') into the in a way that both sequences has same
-lengths and similar symbols are on the same positions in both sequences. In
+In the field of comparative analysis of biological sequences we focus on the
+sequence alignment problem. A sequence alignment is a simple data format (or data
+structure) that represents the similarities in the sequences. An alignment is
+created by inserting dashes ('-') into both sequences in a way that the
+sequences have the same
+length and similar symbols are on the same positions in both sequences. In
 computational biology the alignments are constructed in a way that the
-homologous parts of the sequences are aligned together (they are on the same
-positions) and parts that are not homologous to the other sequence are aligned
-to a gap symbols ('-'). Homologous sequences are sequences that have evolved
-from the same part of the sequence of the ancestral sequence (we assume that
-current organisms evolve from single ancestral organism through series of 
-mutations, insertions, deletion and other transformations).
-Non-homologous parts corresponds to the parts that were either inserted into 
-the sequence during evolution or that their's homologous part in the second
-organism was deleted during it's evolution.
-
+homologous parts of the sequences are aligned together. Homologous sequences are sequences that have evolved
+from the same part of the sequence of the ancestral organism.
 The reason for searching and studying homologous sequences is that homologous
-sequences are expected to have same or similar functions in both organisms.
+sequences are expected to have the same or similar functions in both organisms.
 Therefore by studying homologous sequences we can transfer knowledge about
-functions from one organisms to other organisms. We focus on the methods for
-constructing alignments of the biological sequences, not on the actual
-biological research.
+functions from one species to others.
 
-Variant of the hidden Markov models called \abbreviation{pair hidden Markov
-models}{pHMMs} can be used to create sequence alignments. Unlike HMM, pHMM is
-probabilistic generative model that generate three objects: the sequences $X,Y$
-and their alignment (or annotation) $A$. Similarly as with the HMMs, the
-sequences $X$ and $Y$ are observed but the alignment $A$ is hidden. By proper
-decoding method we can obtain the good approximation of $A$. Our goal is to
-study decoding methods and models that are used for sequence alignment in order
-to create software that will produce alignments with high quality.
+Alignments can be created using a variant of hidden Markov model called
+\abbreviation{pair hidden Markov model}{pHMM}. A pHMM  that generates three
+objects: two sequences $X,Y$ and their alignment $A$.  By proper decoding method
+we can obtain a good approximation of $A$ for given sequences $X$ and $Y$. Our
+goal is to study decoding methods and models that are used for sequence
+alignment in order to create software that will produce alignments with high
+quality.
 
 \section{Structure}
 
