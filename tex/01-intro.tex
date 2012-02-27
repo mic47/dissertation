@@ -137,24 +137,22 @@ of fixed length \cite{Pairagon2009,UnderstandingBioinformatics}.
 
 \section{Notations}
 
-In this section we summarize the notations that we will use in the following
+In this section we summarize notation used in the following
 chapters.
 
-All sequences, members of sets, vectors of matrices will be indexed from $0$
-(the first element of a sequence is $0$-th elements). We will use mostly
-the right-open intervals: $I=[a,b)$ means the $a\in I$ but $b\notin I$. 
+All sequences, members of sets, vectors, and rows and columns of matrices will be indexed from $0$. We will use mostly
+right-open intervals: $I=[a,b)$ means that $a\in I$, but $b\notin I$. 
 
-Element on the $k$-th position (zero based) of the string $s$
-will be written as $s[k]$. Substring beginning at position $i$ (including) and
-ending at position $j$ (excluding symbol on position $j$) is $s[i:j]$.  If $n$
-is the length of the sequence then $s[:i]$ is equivalent to $s[0:i]$ and $s[i:]$
+The element at the $k$-th position (zero based) of string (or sequence) $s$
+will be written as $s[k]$. The substring $s[i]s[i+1]\dots s[j-1]$ 
+is denoted $s[i:j]$.  If $n$
+is the length of the string $s$ then $s[:i]$ is equivalent to $s[0:i]$ and $s[i:]$
 is equivalent to $s[i:n]$.  We will use the terms sequence and string
-interchangeably since they have same meanings. The term sequence is often used
-in the computational biology so also we will use it.
+interchangeably.
 
-Let $M$ be the matrix. Then $M[i,j]$ is the element from the $i$-th row and
-$j$-th column of $M$ (indices are zero based). Similarly as to strings,
-submatrix $M[i:j,k:l]$ is matrix consisting from the intersection of rows
-$i,i+1,\dots, j-1$ with columns $k,k+1,\dots,l-1$. Additionally, if $M$ is of
+Let $M$ be a matrix. Then $M[i,j]$ is the element from the $i$-th row and
+$j$-th column of $M$ (indices are zero based). Similarly as for strings,
+submatrix $M[i:j,k:l]$ is a matrix consisting from the intersection of rows
+$i,i+1,\dots, j-1$ with columns $k,k+1,\dots,l-1$. If $M$ is of
 size $n\times m$ then $M[:i,j:]$ is equivalent to $M[0:i,j:m]$.  The term
 $M[i,:]$ is equivalent to $M[i,0:m]$ which is the $i$-th row of $M$.
