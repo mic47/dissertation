@@ -150,20 +150,18 @@ Training algorithms.
 %Predpoklady co som uz vysvetlil:
 % HMM, Viterbi, Posterior, most probable annotation, balls, herd, -- gain
 % functions
-
-In section \ref{SECTION:HEG} we have discussed the highest expected gain
-framework. This framework generalizes decoding methods for HMMs. Recall that
-decoding method is the method of obtaining an annotation of a sequence from the
-sequence and the model. 
+The second area of our interest are different optimization criteria for decoding
+HMMs expressed in the form of the highest expected gain framework (section
+\ref{SECTION:HEG}) This framework generalizes decoding methods for HMMs. Recall
+that decoding method is the method of obtaining an annotation of a sequence from
+the sequence and the model. 
 
 In the highest expected gain framework we characterize decoding algorithm by
-gain function $f(\Lambda_1,\Lambda_2)$ defined on annotations. Given the sequence
-$X$, we seek 
-for an annotation $\Lambda$ of the sequence $X$ with the highest expected gain
-\[\Lambda = \arg\max_{\Lambda} 
-E_{\Lambda_X\mid X,H}[f(\Lambda_X,\Lambda)] =
-\sum_{\Lambda_X}f(\Lambda_X,\Lambda)\Pr\left(\Lambda_X\mid X,H\right)
-\]
+gain function $f(\Lambda_1,\Lambda_2)$ defined on annotations. Given the
+sequence $X$, we seek for an annotation $\Lambda$ of the sequence $X$ with the
+highest expected gain \[\Lambda = \arg\max_{\Lambda} E_{\Lambda_X\mid
+X,H}[f(\Lambda_X,\Lambda)] =
+\sum_{\Lambda_X}f(\Lambda_X,\Lambda)\Pr\left(\Lambda_X\mid X,H\right) \]
 
 %At first we briefly review the highest expected reward
 %framework.
@@ -205,39 +203,39 @@ E_{\Lambda_X\mid X,H}[f(\Lambda_X,\Lambda)] =
 %gain given sequence $X$ and annotation function $f$ is NP-hard. However, some
 %gain functions can be decoded in polynomial time (for example gain functions for
 %the Viterbi algorithm or gain function for  the Posterior decoding). 
+
+\todo{este raz si toto po sebe precitaj}
 Alternative
 decoding functions can improve the annotation algorithm as has been shown in
 \cite{Nanasi2010,Truszkowski2011} for the HIV virus recombination detection.
 We want to continue study these function for the virus recombination domain. We
-want to explore the  possible extensions by restricting of searc
+want to explore the  possible extensions by restricting of the structure of the
+possible annotation (restriction on the labels that can be in the annotation, or
+in general restrict it by a regular expression).
 
-%There is a big gap between the time complexity of the Viterbi algorithm and the
-%NP-hard problems. While decoding some functions gan be 
-While want to continue studying gain functions for the virus recombination
-domain, we want focus on extensions of the highest expected gain framework to
+Whilei we plan to further study gain functions for the virus recombination
+problem, we want to focus on extensions of the highest expected gain framework to
 pair hidden Markov models and develop gain functions (and decoding algorithms
 that maximize such functions) tailored to the pairwise alignment problem. 
 
-On possible approach how to extend the highest expected gain framework to pHMMs
-is following.  We need to properly define annotations for the pHMM. In general,
-pHMM are used to annotation and comparison of two sequences at once. In case of
-comparative gene finding, pHMM finds genes in both sequences and actual
-alignment was not main issue. In case of actual alignments, we were not so much
-interested in the annotation of the sequences, but only in relation between the
-symbols of the sequences. State path of pHMM uniquely assigns annotations to the
-input sequences and also defines unique alignment.  Therefore we could define
-annotations in same way as for HMMs. If we do so, it will create following
-problem.
+To extend the highest expected gain framework to pHMMs, we need to extend
+definition of an annotation. In general, pHMMs are used for annotation and
+comparison of two sequences at once. In comparative gene finding, a pHMM is used
+to find genes in both sequences, and actual alignment is not main issue. In
+other applications, we are not so much interested in the annotation of the
+sequences, but rather in relation between the symbols of the two sequences. A
+state path of a pHMM uniquely assigns annotations to the the input sequences and
+also defines a unique alignment.  Therefore we could define annotations in same
+way as for HMMs as a simple mapping from the set of states to the set of labels.
+If we do so, it will create the following problem.
 
-Let $H$ be simple pHMM from figure \ref{FIGURE:SIMPLEPHMM} (simple three state
-pHMM for sequence alignment). Let $C=\{M,I\}$ be the set of labels and 
-$\lambda$ be annotation function, such that $\lambda(M)=M, \lambda(I_X)=I$ and
-$\lambda(I_Y)=I$.   For example let $X=Y=ACGT$ and $\Lambda = IIMMII$.
-In this case it is not possible to assign annotation symbols
-to input sequences $X$ and $Y$ and even it is not possible to assign unique
-annotation.
-Then
-following $6$ alignments are possible:
+Let $H$ be the simple  three state pHMM for sequence alignment from figure
+\ref{FIGURE:SIMPLEPHMM}. Let $C=\{M,I\}$ be the set of labels and $\lambda$ be
+annotation function, such that $\lambda(M)=M, \lambda(I_X)=I$ and
+$\lambda(I_Y)=I$.   For example let $X=Y=ACGT$ and $\Lambda = IIMMII$.  In this
+case it is not possible to assign annotation symbols to input sequences $X$ and
+$Y$ and it is not even possible to assign unique alignment.  Then following $6$
+alignments are possible:
 \begin{verbatim}
 Annotation:    IIMMII    IIMMII    IIMMII    IIMMII    IIMMII    IIMMII
 X:             --ACGT    ACGT--    A-CGT-    A-CG-T    -ACGT-    -ACG-T
@@ -245,18 +243,17 @@ Y:             ACGT--    --ACGT    -ACG-T    -ACGT-    A-CG-T    A-CGT-
 \end{verbatim}
 And following three annotations of $X$ and $Y$ are possible: $MMII,IMMI,IIMM$.
 
-Note that last four  alignments are equivalent -- they only differ in the order
-of indels in sequences. All symbols from both $X$ and $Y$ can be aligned to gap
+Note that the last four  alignments are equivalent -- they only differ in the order
+of indels in sequences. All symbols from both $X$ and $Y$ can be aligned to a gap
 or to some symbol in other sequence. All symbols from both sequences can be
-annotated by $I$ or $M$. Therefore such annotation does not give us much
-information (but still we can choose the most probable explanation from all
-candidate alignments/annotations but it miss the sense).
-For this reason the definition of annotation function for the pHMM
-should be following:
+annotated by $I$ or $M$. Therefore such an annotation does not give us much
+information.
+For this reason we propose the following the definition of the annotation
+function for  pHMMs.
 
 \todo{ujednotit annotation function, labeling function a coloring function}
 \begin{definition}
-Let $H=(\Sigma,V,I,d,e,a)$ be an HMM and $C=\{c_0,c_1,\dots,c_{l-1}\}$ be the
+Let $H=(\Sigma,V,I,d,e,a)$ be a pHMM and $C=\{c_0,c_1,\dots,c_{l-1}\}$ be the
 finite set of labels (or colors). The \firstUseOf{coloring function}
 $\lambda:V^*\to C^*$ is function that satisfies following properties: 
 \begin{enumerate}
@@ -265,55 +262,65 @@ $\lambda:V^*\to C^*$ is function that satisfies following properties:
 \item If $\lambda(u)=\lambda(v)$ then $d^x_u=d^x_v$ and $d^y_u=d^y_v$ for all
 $u,v\in V$.
 \end{enumerate}
-Let $X$ and $Y$ be sequences that were generated by state path $\pi$. Then
-\firstUseOf{pairwise annotation} $\Lambda$ of sequences $X$ and $Y$ is 
+Let $X$ and $Y$ be sequences generated by a state path $\pi$. Then the
+\firstUseOf{pairwise annotation} of sequences $X$ and $Y$ is 
 $\Lambda=\lambda(\pi)$.
 \end{definition}
 
-Note that this definition is almost same as the definition
-\ref{DEFINITION:ANNOTATION} (definition of an annotation for HMMs) with exception of using pHMMs and with added 
-third condition on coloring function. This condition ensures that 
-annotation keep information about state duration $d$ and we will
-be able to derive unique alignment from annotation and uniquely assign
-colors to symbols of input sequences.
+Note that this definition is almost the same as the definition of an annotation
+for HMMs (definition \ref{DEFINITION:ANNOTATION}),  
+with addition of the  third condition, which ensures that
+the annotation keeps information about state duration $d$. Therefore we are able to
+derive a unique alignment from an annotation and uniquely assign colors to symbols of
+input sequences.
 
 Similarly as with the HMMs, sequences $X$ and $Y$ and pHMM $H$ define
-probability distribution of pairwise annotations $\Lambda$
+a probability distribution of pairwise annotations $\Lambda$
 \[\prob{\Lambda\mid X,Y,H} = \sum_{\pi,\lambda(\pi)=\Lambda}\prob{\pi\mid
 X,Y,H}\]
 
-Similarly we can define gain function as any function $f:C^*\times C^*\to
-\mathbb{R}$. In highest expected gain problem for pHMM we search for
+We can also define a gain function as any function $f:C^*\times C^*\to
+\mathbb{R}$. In the  highest expected gain problem for pHMM, we search for
 the pairwise annotation $\Lambda$ of input sequences $X$ and $Y$ that maximizes
-expected gain:
+the expected gain:
 \[\Lambda = \arg\max_{\Lambda} E_{\Lambda'\mid X,Y,H}[f(\Lambda',\Lambda)]
-=  \sum_{\Lambda'}f(\Lambda',\Lambda)\prob{\Lambda'\mid X,Y,H}\]
+=  \arg\max_{\Lambda} \sum_{\Lambda'}f(\Lambda',\Lambda)\prob{\Lambda'\mid X,Y,H}\]
 
-Similarly as with HMM, finding the most probable pairwise annotation, which is equivalent
-to finding the most probable state path if $\lambda$ is identity function,
-is equivalent to fining pairwise annotation with highest expected gain with
-function
+Similarly as with HMMs, finding the most probable pairwise annotation (which is equivalent
+to finding the most probable state path if $\lambda$ is identity function),
+is equivalent to finding the  pairwise annotation with the highest expected gain with
+gain function
 \[f_{ID}(\Lambda',\Lambda) = \begin{cases}
 1 & \text{if $\Lambda'=\Lambda$}\\
 0 & \text{otherwise}
 \end{cases}\]
-In this case, the expected gain of an pairwise annotation $\Lambda$ is
-equivalent to the probability of $\Lambda$ and therefore by maximizing the
-expected gain we also maximize the probability $\prob{\Lambda\mid X,Y,H}$.
-
+To our knowledge, with the pairwise alignment only the Viterbi algorithm (the
+most probable state space) or the Posterior decoding was used
+\cite{Lunter2008}.
+%In this case, the expected gain of an pairwise annotation $\Lambda$ is
+%equivalent to the probability of $\Lambda$ and therefore by maximizing the
+%expected gain we also maximize the probability $\prob{\Lambda\mid X,Y,H}$.
 
 Our goal is to develop and study gain function that can be used for pairwise
 alignments. Alignments constructed with such gain function (combined with new
-models described in section bellow) should have better quality: less biases,
+models described in section bellow) should have better quality: fewer biases,
 higher sensitivity and lower false positive ratio of the aligned residues.
-Additionally we have to design gain functions in a way that optimizing them will
+Of course we have to design gain functions in a way that optimizing them will
 be computationally tractable.
 
-One possible way how to improve gain function for decoding hidden Markov models
-is to allow  . In the study of Lunter {\it et al. (2008)} why found out that the
-average sequence identity near gap was higher due to gap wander and gap
-attraction bias. The gap attraction bias could be 
-Other option is to consider 
+One possible extension is to extend the Posterior decoding to mode columns: 
+the gain function is the number of correctly predicted $k$-tuples from the
+alignment. Other possibility is to address the gap wander and gap attraction
+biases. Lunter {\it et al.} reported that the average sequence identity near
+gaps was higher then the expected value and with the distance from the gap
+the expected sequence similarity lower almost to the correct value. To address
+this issue, the gain function should penalize the gaps, that are near other
+gaps, by lower ``gap penalty'' then the standalone gaps.
+
+%One possible way how to improve gain function for decoding hidden Markov models
+%is to allow  . In the study of Lunter {\it et al. (2008)} why found out that the
+%average sequence identity near gap was higher due to gap wander and gap
+%attraction bias. The gap attraction bias could be Other option is to consider 
 
 \section{Models for Pairwise Sequence Alignment}
 
