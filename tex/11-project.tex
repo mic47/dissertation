@@ -173,9 +173,9 @@ If we do so, it will create the following problem.
 
 Let $H$ be the simple  three state pHMM for sequence alignment from figure
 \ref{FIGURE:SIMPLEPHMM}. Let $C=\{M,I\}$ be the set of labels and $\lambda$ be
-annotation function, such that $\lambda(M)=M, \lambda(I_X)=I$ and
+coloring function, such that $\lambda(M)=M, \lambda(I_X)=I$ and
 $\lambda(I_Y)=I$.   For example let $X=Y=ACGT$ and $\Lambda = IIMMII$.  In this
-case it is not possible to assign annotation symbols to input sequences $X$ and
+case it is not possible to assign labels to input sequences $X$ and
 $Y$ and it is not even possible to assign unique alignment.  Then following $6$
 alignments are possible:
 \begin{verbatim}
@@ -193,7 +193,6 @@ information.
 For this reason we propose the following the definition of the annotation
 function for  pHMMs.
 
-\todo{ujednotit annotation function, labeling function a coloring function}
 \begin{definition}
 Let $H=(\Sigma,V,I,d,e,a)$ be a pHMM and $C=\{c_0,c_1,\dots,c_{l-1}\}$ be the
 finite set of labels (or colors). The \firstUseOf{coloring function}

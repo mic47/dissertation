@@ -167,6 +167,7 @@ be found in \cite{Durbin1998}.
 \section{Needleman-Wunsch algorithm}
 \label{SECTION:NEEDLE}
 
+
 Recall that the higher score mean better alignment so we want to search for an
 alignment with the highest score.  Alignment with scoring scheme with previous
 section can be found by the Needleman-Wunsch algorithm \cite{Durbin1998}.
@@ -438,7 +439,7 @@ $X_i$ is aligned to gap right after $Y_j$) HA uses following algorithm: Let
 $B(X,Y)$ be the algorithm, that computes for $X$ and $Y$ vector $LL(k)$, where
 $LL(k)=M[n-1,k]$ ($LL$ is the last row of $M$). This can be computed in
 $O(nm)$ time and $O(n+m)$ memory using algorithm from section
-\ref{DYNPROG}.  
+\ref{SECTION:NEEDLE}.  
 
 We compute a vector $LL_1=B(X[0:i],Y)$. $LL_1[k]$ contains score of the optimal
 alignment of $X[0:i]$ and $Y[0,k]$. Let $LL_2[k]$ contains score of the optimal
@@ -652,7 +653,7 @@ f(x+e)$ for nonnegative $d$ and $e$.
 We will improve dynamic programming that computes matrix $M$ using equation
 \ref{ALIGN:ARBITRARYGAPEQUATION}. The increase in running time is caused by two
 terms: $M[i,j-y]+f(y)$ and
-$M[i-x,j]+f(x)$. In dynamic programming from section \ref{DYNPROG} we  have
+$M[i-x,j]+f(x)$. In dynamic programming from section \ref{SECTION:NEEDLE} we  have
 to add additional nested cycles that go through all values $x$ and $y$. We show
 a data
 structure that can compute $\max_{0\leq y < j}M[i,j-y]+f(y)$ in $O(\log n)$
