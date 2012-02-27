@@ -2,7 +2,7 @@
 \label{CHAPTER:ALIGNMENT}
 In this chapter we define alignments, define basic scoring scheme for alignments
 and describe basic algorithms that compute biologically relevant alignments of
-two sequences. Ten we describe several algorithmic improvements and heuristics
+two sequences. Then we describe several algorithmic improvements and heuristics
 that reduce the computational complexity of the sequence alignment algorithms.
 In the end we will discuss the possibilities of the extension of the algorithm
 to different gap models.
@@ -66,7 +66,7 @@ replacing gaps with dashes (gap symbols).
 X:      C C - - G C G A C C T T G C - - - A C C A
 Y:      T C T A G - - - - - C C - - G A T A G C A
 \end{verbatim}
-In this alignment symbols that are in same column are truly homologous (they
+In this alignment, symbols that are in same column are truly homologous (they
 evolved from same symbol in $P$).
 %If two residues are in same column in alignment then they are homologous.
 As you can see, homologous symbols do not have to be equal.
@@ -76,7 +76,7 @@ There is only one alignment that reflects the true evolution history. Our goal
 is to find this alignment, or at least some alignment, that is as close as
 possible. The alignment shown above is a \firstUseOf{global alignment} because it
 is alignment of whole sequences $X$ and $Y$. A local alignment is alignment of
-parts of sequences: local alignment of sequences $X$ and $Y$ is a global alignment
+parts of sequences: a local alignment of sequences $X$ and $Y$ is a global alignment
 of strings $\bar{X}$ and $\bar{Y}$ where $\bar{X}$ is a substring of $X$ and
 $\bar{Y}$ is a substring of $Y$.  Since global alignments do not consider
 rearrangement events\footnote{Duplication, reversal or
@@ -99,8 +99,9 @@ such scheme.
 Since we want to construct alignments that have biological meaning, we have to
 develop a method for assessing the quality of an alignment. One way of doing so
 is to define a scoring scheme. Scoring scheme is a method that assigns to every
-alignment a real number (called score). The better alignments should have higher
-score than the worse. Once we have scoring scheme we will search for an
+alignment a real number (called score). The alignments similar to the true
+alignment should have higher
+score than the alignments that differ from the true alignment. Once we have scoring scheme we will search for an
 alignments of the input sequences with the highest score.  There are many ways
 how to develop good scoring scheme. 
 
@@ -139,7 +140,7 @@ and $Y$ under model $R$ is
 \[
 \prob{X,Y\mid R} = \prod_{i=0}^{|X|-1}\prob{X_i\mid R}\prob{Y_i\mid R}
 \]
-As a measure of  $X$ and $Y$ being homologous we can the ration of the
+As a measure of  $X$ and $Y$ being homologous we take the ratio of the
 probability that $X$ evolved into $Y$ and the probability that $X$ and $Y$ are
 independent.
 By taking logarithm of this ratio we have
@@ -150,7 +151,7 @@ By taking logarithm of this ratio we have
 R}}
 \right)
 \]
-By taking $S[a,b]=\frac{p(a,b)}{\prob{a\mid R}\prob{b\mid R}}$ we have one
+Therefore by setting $S[a,b]=\frac{p(a,b)}{\prob{a\mid R}\prob{b\mid R}}$ we have one
 possible scoring model. $S[a,b]$ is positive if is more likely that $a$ evolved
 into $b$ and negative if it is more likely that $a$ and $b$ were generated
 independently.  Values of $S$ are usually probabilities multiplied by some
@@ -228,7 +229,7 @@ M_Y[i,j-1]+d
 
 
 
-Not we show how to compute  values of $M$ (and optionally $M_X$ and $M_Y$)
+Now we show how to compute  values of $M$ (and optionally $M_X$ and $M_Y$)
 effectively.
 Both algorithms from previous sections contain recurrent equations for computing
 values of matrix $M$ (or three matrices $M,M_X$ and $M_Y$). To compute the
@@ -277,7 +278,7 @@ since we keep matrix $M$ in memory (same complexity for the algorithm for
 affine gap model with $g\not=0$).
 
 
-Note that for computing the  $i$-th row of matrix $M$ we need only values from row
+Note that for computing  $i$-th row of matrix $M$ we need only values from row
 $i$ and $i-1$. Therefore if we want to know just the score of the optimal
 alignment,
 we can compute it in $O(m+n)$ memory: after computing of row $i$, we can discard
@@ -322,7 +323,7 @@ restricting search space of dynamic programming.
 \subsubsection{Seeds}
 
 Seeds are a technique frequently  used to reduce time complexity of local alignment.  They were
-introduced in BLAST algorithm \cite{Altschul1990}.  Seed a short alignment which
+introduced in BLAST algorithm \cite{Altschul1990}.  Seed is a short alignment which
 is likely to be a part of an alignment with high score. After a seed is
 found, it is extended with an extension algorithm to a local alignment.
 
@@ -332,11 +333,11 @@ Alignments that were not found by our heuristics
 are called false-negatives.
 It is important that heuristics used to find seeds has a small number of
 false-negatives and large number of true-positives,
-otherwise many true high-scoring local alignment will not be found. On the other
+otherwise many true high-scoring local alignments will not be found. On the other
 hand, high number of false positives implies longer running time. 
 
 
-The most traditional approach is to as seeds all positions $i$ and $j$ in
+The most traditional approach is to take as seeds all positions $i$ and $j$ in
 sequences $X$ and $Y$, such that $X[i:i+\tau]=Y[j:j+\tau]$ for some constant
 $\tau$. This approach is used in BLAST \cite{Altschul1990}.  Various
 generalization of BLAST heuristic were developed to improve trade off between
@@ -345,7 +346,7 @@ speed and accuracy, such as seeds with mismatches \cite{Kent2002}, space seeds
 \cite{Csuros2005}. All of those methods vary in speed and accuracy.
 
 Extension of a seed to a full alignment is done in both directions, usually
-using equation \ref{ALIGN:ALGO:AFFINE} (equation is altered in reverse
+using equation \ref{ALIGN:ALGO:AFFINE} (equation is altered to reverse
 direction). Extension is stopped, when some criterion is reached. For example,
 BLAST introduced X-drop heuristics: extension stops if the score of an alignment
 is lower than the best score that was seen so far minus some user-defined
@@ -456,9 +457,9 @@ LL_1[j-1]+LL_2[j] \}$.
 Since total size of the two subproblems is always at most half of the size of the
 original problem, the running time of the algorithm will be roughly double of
 the standard dynamic programming.
-. Therefore
+. Therefore the
 running time of HA is still $O(mn)$. HA keeps in memory only a constant number
-of rows of $M$ and the reconstructed alignment and therefore memory requirements are
+of rows of $M$ and the reconstructed alignment and therefore the memory requirements are
 $O(n+m)$.
 
 The Hirschberg Algorithm (HA) reduce memory more than checkpointing, 
@@ -512,7 +513,7 @@ border, and $O_{M'}=\{o_0,o_1,\dots,o_{l-1}\}$ be its output border. Then
 matrices
 $DIST$ and $OUT$ of size $k\times l$ are defined in following way:
 $DIST[a,b]$ is the cost of optimal alignment from cell $i_a$ to cell $o_b$.
-$OUT[a,b]=I_a+DIST[a,b]$.
+$OUT[a,b]=i_a+DIST[a,b]$.
 \end{definition}
 
 Clearly, $o_b=\max_{0\leq a < k}OUT[a,b]$. Therefore by computing row maxima in
@@ -597,7 +598,7 @@ reasonable results. While affine gap scoring works fine for short gaps, penalty
 for long gaps is too high. Use of different gap models can improve quality of
 reconstructed alignments \cite{Gill2004,Cartwright2009}.
 
-Let $f(x)$ be the gap penalty for a gaps of length $X$
+Let $f(x)$ be the gap penalty for a gaps of length $X$.
 In 
 affine gap models, this function has the form $f(x)=g+dx$. For general gap function, we have to
 reformulate equation \ref{ALIGN:ALGO:AFFINE} for computing the highest scoring
@@ -679,7 +680,7 @@ List $L_{j+1}$ will be computed from $L_j$ by adding $j$ and
 removing some elements of $L_j$. 
 %For simplicity, let $G(k,j) = M[i,k]+f(j-k)$.
 %If $k\in L_j$, than \firstUseOf{rank} of $k$ is $G(k,j)$. 
-Note that rank of
+Note that the rank of
 candidates will change when we move from $L_j$ to $L_{j+1}$.
 
 We will explain this algorithm in iterative way: we will be adding to algorithm
@@ -756,7 +757,7 @@ For $k<k'$, let $H(k,k')=l$ be the minimal $l$ such that $G(k,l)\leq G(k',l)$. I
 not exists,  $H(k,k')=\infty$ 
 \end{definition}
 
-If the rank of $k$ is greater than then rank of $k'$ then $H(k,k')$ is the first
+If the rank of $k$ is greater than the rank of $k'$ then $H(k,k')$ is the first
 column $j'$
  where the rank of $k$ is less than or equal to the
 rank of $k'$. Candidate $k$ will be removed in column $j'$, or possibly earlier.  Note that
@@ -816,8 +817,8 @@ G([l-1],j+1)$, remove $L[l-1]$ from the list (lemma
 \end{enumerate}
 
 The first element is also the first element that can break order, so we have to
-test it (step 3). Since we will candidate $j$, we have to remove from the end of
-the list all candidates with smaller rank than $j$ and thise that can be removed
+test it (step 3). Since we add candidate $j$, we have to remove from the end of
+the list all candidates with smaller rank than $j$ and those that can be removed
 based on lemma \ref{TimeLemma} and lemma \ref{OneStrikeAndOut}.  Since both
 ranks and times are ordered, we need to remove candidates only from the end of
 the list.
@@ -836,7 +837,7 @@ $O(nm\log n)$ time and in $O(nm)$ time  if $H$ can be computed
 in constant time.
 
 There is also a more complicated $O(nm\alpha(n))$ algorithm for this problem
-\cite{Klawe1990}, where $\alpha(n)$ is inverse Ackerman function. This algorithm
+\cite{Klawe1990}, where $\alpha(n)$ is the inverse Ackermann function. This algorithm
 is very complex, and we doubt that it is useful in practice. However, we are
 not aware of any experimental comparison of these two algorithms.
 
