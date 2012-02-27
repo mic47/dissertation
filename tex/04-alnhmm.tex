@@ -404,11 +404,13 @@ $d(0) = 1-a_1 - a_2$ where $n$ is the length of the gap ($n=0$ means that there
 is no gap), $a_1$ and $a_2$ are probabilities of entering state $I_1$ and $I_2$
 respectively and $p_1$ and $p_2$ are probabilities of remaining in state $I_1$
 and $I_2$ respectively.  This is equivalent to the generalized pair hidden
-Markov model $H'$ with one indel state for every sequence which has $d(n)$ as
-its duration distribution. Both models define the same distribution of
-alignments  and running the Forward-Backward algorithm or the Forward algorithm
-will give the same results. However, alignments constructed by the Viterbi
-algorithm can be different for $H$ and $H'$.
+Markov model $H'$ with one indel state for every sequence which has
+$d'(n)=d(n)/(1-d(0))$ as its duration distribution (in generalized states we
+want to have at least one state. The $d(0)$ should by modeled by the
+probabilities of incoming and outgoing transitions). Both models define the same
+distribution of alignments  and running the Forward-Backward algorithm or the
+Forward algorithm will give the same results. However, alignments constructed by
+the Viterbi algorithm can be different for $H$ and $H'$.
 
 Problem is that in the generalized model the Viterbi algorithm gaps of length
 $n$ have ``score'' $d(n)$ but in the non-generalized pair hidden Markov model it
@@ -455,114 +457,103 @@ evolution rate and two component geometric mixture model for indels and one with
 the lower evolution rate and geometric distribution of indel lengths. GRAPe uses
 the Posterior decoding as a decoding method.
 
-%Dalsie modely: TWINSCAN, MCALIGN2, WABA, Catwright (zeta function)
 
 \section{Biases In Alignments}
 \label{SECTION:BIASES}
-Lunter {\it et al. (2008)} conducted extensive survey concerning biases in
-alignment. They considered three types of biases (associated with gaps). These
-gap biases are also discussed in \cite{Durbin1998} \todo{Naozaj?}. By
-\firstUseOf{true alignment} we mean alignment that corresponds to actual 
-evolution history.
+Lunter {\it et al. (2008)} conducted an extensive survey concerning biases in
+alignment. They considered three types of biases associated with gaps. These gap
+biases are also discussed in \cite{Durbin1998}. By \firstUseOf{true alignment}
+we mean an alignment that corresponds to the actual evolution history.  Since
+true alignments are unknown for real data we can simulate evolution on randomly
+generated sequences, this obtaining a dataset of ``true'' alignments.
+
 \begin{itemize}
 
-\item \firstUseOf{Gap wander} means that gap is in different location that in
-true alignment. Is is due to random short similarities around the borders of
-a gaps that are indistinquishable from true homologies.
-%Lunter {\it et al.} gave
-%explicit formula for computing the expected proportion of incorrectly aligned
-%regions due to gap wander. \todo{Nie je tento vzorec zbytocny?}
-%\[F_w =
-%\frac{\sigma}{\gamma}\frac{(4e^{4\sigma/3}-3)(4e^{\sigma/3}-1)}{8e^{4\sigma/3}-3}\]
-%where $\gamma$ is the ratio of the substitution rate, $\sigma$, to the indel
-%rate, $\sigma$.
+\item \firstUseOf{Gap wander} means that a gap is in a different location that in
+the true alignment. Is is due to random short similarities around the borders of
+gaps that are indistinquishable from true homologies.
 
-\item \firstUseOf{Gap attraction} is caused when two gaps are near each other.
-In such case merging those caps and introducing few mismatches might have higher
-score. 
+\item \firstUseOf{Gap attraction} is occurs when two gaps are near each other.
+In such case merging those gaps and introducing a few mismatches might lead to
+higher score. 
 
-\item \firstUseOf{Gap anihilation} occurs when there are two gaps with
-same length in both sequences. Since indels are not so common, removing both
-gaps while introducing new mismatches might increase score of an alignment.
+\item \firstUseOf{Gap anihilation} occurs when there are two gaps of the same
+length, one in each both sequence. Since indels are not so common, removing both
+gaps while introducing new mismatches might increase the score of an alignment.
 
 \end{itemize}
 
+
 Biases are ordered by their frequency from the most occurring to the least
-occurring \cite{Lunter2008}. Now we will discuss their simulation study. We will
-not go into all details, we will review only the basic setup of their
-experiments and main outcomes of the study.
+occurring \cite{Lunter2008}. Lunter {\it et al.} explore there problems with a
+series of simulations.
 
-At first we define one measure of the quality of the alignment:
-\firstUseOf{sensitivity} is the ``ratio of the correct alignment columns to all
-homologous columns'' \cite{Lunter2008}. 
+They measure the alignment quality by \firstUseOf{sensitivity}, which is the
+ratio of the correctly predicted alignment columns to all homologous columns in
+the true alignment \cite{Lunter2008}. 
 
-In the first experiment, Lunter {\it et al.} they
-simulate evolution using Jukes-Cantor model with $0.375$ expected substitution
-per position (the expected sequence identity is $0.705$) with geometric gap
-model. From simulation they obtained sequences with true alignments which they
-realigned using the Viterbi algorithm with the same model as was used for the
-simulation. Alignment accuracy was lowest for the  columns near gaps ($56$\%)
-and the sequence identity for columns near gaps was $85$\% which does not agree
-with the expectation  $0.705$\% of the sequence identity. Moving away from gaps
-the average sequence identity dropped to the $0.68$\%. The increased sequence
+In the first experiment, authors use a simple model of evolution obtaining
+alignments with the expected sequence identity $0.705$ with geometric gap model.
+The sequences were then realigned using the Viterbi algorithm with the same
+model as was used for simulation. Sensitivity was lowest for the  columns near
+gaps ($56$\%) and the sequence identity for columns near gaps was $85$\% which
+does not agree with the expected sequence identity $0.705$\%.  Moving away from
+gaps the average sequence identity dropped to  $0.68$\%. The increased sequence
 identity near gaps is due to gap wander bias. The gap attraction effect caused
-that the number of gaps that are in near each other positions was lower then
-expected value (obtained from the used gap model).
+that the number of gaps that are  near each other was lower than the expected
+value obtained from the used gap model.
 
-They run Viterbi algorithm parametrized by range of the substitution and indel
-rates. The maximal sensitivity was obtain for the parameters that were identical
-to the parameters of the simulated evolution. However, the sensitivity for the
-correct model was only $84$\% indicating that even if we have right evolution
+They also run the Viterbi algorithm parametrized by a range of substitution and
+indel rates. The highest sensitivity was obtained for the parameters that were
+identical to the parameters used for simulation. However, even then the
+sensitivity was only $84$\% indicating that even if we have the right evolution
 models, some biases in the alignments are inevitable.  
 
-The second experiment study the effect of the use of different decoding methods
-and different models on the quality of the alignment (however, we will omit some
-models from this review).  The overview of the experiment is following.  Lunter
-{\it et al.\nocite{Lunter2008}} simulated evolution with parameters that are
-close to parameters of human-mouse evolution. They simulated for example the
-large-scale variation of GC content, GC-content dependent indel and substitution
-rates and GC-indepependent local substitution rave variation \cite{Lunter2008}.
-From simulation they obtained $20,000$ homologous sequence pairs with average
-length of $700$ nucleotides. They add the flanking sequences to the generated
-sequences of length $100$ nucleotides to simulate local alignments.
+Lunter {\it et al.} also studied the effect of different decoding methods and
+different models on the alignment quality. They simulated evolution with
+parameters that are close to the parameters of human-mouse evolution. They
+simulated for example the large-scale variation of GC content, GC-content
+dependent indel and substitution rates and GC-independent local substitution
+rate variation \cite{Lunter2008}.  From simulation they obtained $20,000$
+homologous sequence pairs with average length of $700$ nucleotides. They add
+flanking sequences of length $100$ nucleotides to the generated sequences  to
+simulate local alignments.
 
-\todo{Tento odstavec je skaredo formulovany, treba ho upravit}
 After simulation they realigned homologous sequences using the Viterbi algorithm
 (VA), the Posterior decoding (PD) and the Marginalized posterior decoding (MPD)
-with different models: three state pHMM ($H_S$); $H_S$ with two indel states for
-every sequence to get two component geometric mixture gap model ($H_M$) and the
-full model with all parameters that were used for simulation ($H_F$) like the
-variable indel and substitution rate. 
-%After realignment phase they compare new alignments with true alignments
-%obtained from simulation.
+with different models: the three state pHMM ($H_S$); $H_S$ with two indel states
+for
+every sequence  representing the two component geometric mixture gap model ($H_M$) and the
+full model with all parameters that were used for simulation ($H_F$).
 
-Now we define two additional measures of the quality of the alignment. The
-\firstUseOf{false positive fraction (FPF)} is ``the proportion of the wrongly
-aligned columns among all nongapped columns'' \cite{Lunter2008}. ``The
-proportion of columns containing padding sequence among all aligned columns'' is
-the \firstUseOf{the nonhomologous fraction (NHF)}.
+They also introduce two additional measures of the alignment quality. The
+\firstUseOf{false positive fraction (FPF)} is the proportion of the columns that
+are ungapped in the true alignment but wrongly aligned by an algorithm
+\cite{Lunter2008}. The \firstUseOf{the nonhomologous fraction (NHF)} is the
+proportion of columns containing padding sequence among all columns aligned by
+an algorithm.
 
 
 The use of the different models has little impact on the sensitivity of the
-constructed alignments. Interesting is that for the full $H_3$ model and the
-Viterbi algorithm the sensitivity was lower than with the use of the simple
-model $H_1$. With other decoding algorithm the models $H_2$ and $H_3$ has
-slightly higher sensitivity then the $H_1$ model. However the FPF  was higher
-for the model $H_1$ was lower for $H_2$ and higher for $H_3$.
+constructed alignments. It is interesting that for the Viterbi algorithm the
+sensitivity was lower for the full $H_3$ model than for the simple model $H_1$.
+This might be explained by the multiple path problem.  With other decoding
+algorithms the models $H_2$ and $H_3$ has slightly higher sensitivity then the
+$H_1$ model. 
 
-While the using the ``better'' model does not significantly improve the quality
-of an alignments, using the Posterior decoding and Marginalized Posterior
-decoding improved the sensitivity by approximately $2.5$\% regardless of the
-model. On the other hand the FPF and the NHF was increased with use of the PD
-and MPD. The sensitivity of the PD and the MPD were similar but the FPF was
-lower for the MPD. 
+While the use of the ``better'' model does not significantly improve the quality
+of alignments, using the Posterior decoding and Marginalized Posterior decoding
+improved the sensitivity by approximately $2.5$\% regardless of the model. On
+the other hand the FPF and the NHF was increased with use of the PD and MPD. The
+sensitivity of the PD and the MPD were similar but the FPF was lower for the MPD
+than for PD. 
 
-The main outcome of this experiment that proper decoding method can improve
-quality of the alignment while the use of the simpler model doest not
-significantly reduce the quality of the alignments. However, Lunter {\it et al.}
-in their simulations models only relatively simple model of the evolution. By
-incorporating structural information into the alignment models combined with the
-use of the right decoding algorithm we can improve alignments.  This will be
-discussed in the next chapter. 
+The main outcome of this experiment is that proper decoding method can improve
+the alignment quality while the use of a simpler model doest not significantly
+reduce the alignment quality. However, Lunter {\it et al.} use in their
+simulations models only relatively simple models of the evolution. By
+incorporating information about gene stricture into alignment models combined
+with the use of the right decoding algorithm we can improve alignments further.
+This will be discussed in the next chapter. 
 
 
