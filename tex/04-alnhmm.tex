@@ -266,67 +266,40 @@ connected through generalized states).  The Viterbi algorithm is computed only
 on cells corresponding to graph $G$ which significantly reduces running time
 \cite{Majoros2005}.
 
-%At first twain annotated input
-%sequence with the gene-finder TIGRscan to construct parse graph. Vertices of the
-%parse graph are specific signals (splice sites, start codon, stop codon,
-%promoters, \dots) with their positions in the genome.  Edges in the parse graph
-%are between signals that can be adjacent in the gene.  For example there are
-%edges from the start codons to the following stop codons, 3' splice sites, and
-%so on. Not all such edges are permitted in the parse graph, for example for
-%non-coding predecessors edges only the top $r$ scoring edges are preserved.
-%
-%When the parse graph of both sequences is computed
-%
-%It uses interesting technique to improve
-%running time of the algorithm. It search in the both sequences for the signals
-%(like ...,..,..,). After that it creates graph: two signals in one sequence are
-%connected by an oriented edge if one signal can follow other signal. They do
-%Cartesian product of such graph of both sequences. Resulting graph is used to
-%restrict search space of the sequence alignment.
-%TODO
 
 \subsection{GeneWise}
 
-GeneWise predict genes by aligning protein (\correction{or profile HMM}{nikde to
-nie je spomenute, ze co to je}) to similar gene structures in DNA
+GeneWise predict genes by aligning a protein  to similar gene structures in DNA
 \cite{GeneWise2004}. Instead of pHMM defined as in section \ref{SECTION:PAIRHMM}
-it used probabilistic transducers. Probabilistic transducer are very similar to
-pHMM. They are both probabilistic finite state machines but unlike pHMM which
-are generating two sequences, probabilistic transducers transform one sequence
-into other sequence.  Second difference is that transducers have ``emissions''
-associated with transitions, not with states.  Therefore the ``emission'' of
-transducer $e_{u\to v,(x,y)}=p$ means that during transition $u\to v$ symbol $x$
-is read from the input sequence ($x$ has to be on the input) and symbol $y$ is
-written to the output probability $p$ ($x$ and $y$ might be also gap symbol and
-in such case it represents insertion or deletion).  While pHMM defines
-distribution $\prob{X,Y\mid H}$, the probabilistic transducers defines
-distribution $\prob{X\mid Y,H}$, the probability that sequence $Y$ will be
-transformed into sequence $X$.
+it uses probabilistic transducers. Probabilistic transducers are very similar to
+pHMM. They are both probabilistic finite state machines, but unlike pHMMs which
+generate two sequences, probabilistic transducers transform one sequence into
+the other sequence.  The second difference is that transducers have emissions
+associated with transitions, not with states.  Therefore transducer emission of
+the form $e_{u\to v,(x,y)}=p$ means that during transition $u\to v$ symbol $x$
+is read from the input sequence and symbol $y$ is written to the output with
+probability $p$ ($x$ or $y$ might also be the gap symbol).  While pHMMs defines
+distribution $\prob{X,Y\mid H}$, probabilistic transducers define distribution
+$\prob{X\mid Y,H}$, the probability that sequence $Y$ will be transformed to
+sequence $X$.
 
-Advantage of transducers over the pHMM is that they easily allow compositions of
-such models together with probabilistic interpretation of the compositions.
-Composition of two transducers $A$ and $B$ is transducer $C$ that transform
-sequence $X$ into sequence $Y$ using transducer $A$ and then it transform $Y$
-into sequence $Z$ using transducer $B$. %The probability that $X$ is transformed
-%into $Z$ using $C$ is $\sum_{Y}\prob{Y\mid X,A}\prob{Z\mid Y,A}$.
+Advantage of transducers over the pHMM is that we can easily compose multiple
+transducers together, while maintaining probabilistic interpretation of the
+resulting model.  Composition of two transducers $A$ and $B$ is transducer $C$
+that transforms sequence $X$ to some sequence $Y$ using transducer $A$ and then
+transforms $Y$ to sequence $Z$ using transducer $B$. 
 
-%Main difference in their model was that emissions were defined for transitions
-%and not for states.  
-Model was created by composition of the gene prediction model $S$ which
-translates genomic sequence into protein sequence and protein homology model $T$
-which maps protein sequence into homologous protein sequence.
-%While model $S$ translates DNA into protein sequence, $T$ was simple pHMM
+GeneWise model was created by composition of a gene prediction model $S$ which
+translates genomic sequence to protein sequence and a protein homology model $T$
+which maps protein sequence to a homologous protein sequence.
 
-Gene prediction model $S$ consists from the single exon state which translates
-series of codons into amino-acids. Advantage of It has three submodels for
-modeling introns, each from $3$ states. In introns they model splice sites, 
-poly-pyrimidine tract and central intron section.
-%Each consists from $5$ sections : 5J splice site, central intron section,
-%poly-pyrimidine tract, a spacer following the poly-pyrimidine tract and the 3J
-%splice site. These $5$ sections are modeled by $4$ states and transitions
-%between them
+Gene prediction model $S$ consists of a single exon state which translates
+series of codons into amino-acids. It has three submodels for modeling introns,
+each consisting of $3$ states representing  splice sites, poly-pyrimidine tract
+and central intron section (those $3$ states are associated with $4$
+transitions, each transition emit one feature). 
 
-Protein homology model $T$ was simple pHMM from section \ref{SECTION:SIMPLEPHMM}
+Protein homology model $T$ is a simple pHMM from section \ref{SECTION:SIMPLEPHMM}
 defined over protein alphabet.  The composition of the models $T$ and $S$ has
 $30$ states. Authors removed unnecessary states and they also removed
 poly-pyrimidine states to reduce the number of states and transitions
