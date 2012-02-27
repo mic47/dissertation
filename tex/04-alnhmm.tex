@@ -145,33 +145,30 @@ function in $O(|X||Y|)$ time \cite{Lunter2008}.
 
 In this section we describe several pair hidden Markov models (or generalized
 pair hidden Markov models) with gene structures incorporated into their
-topology. These models were used either to alignment of coding DNA or proteins
-to genome or to the comparative gene finding.
+topology. These models were used either to align coding DNA or proteins
+to a genome or to find genes.
 
-%\subsection{Genes}
 
-%Gene, codon, exon, intron, triplets,..., evolution rate, splice site
-
-At first we introduce several comparative gene finders. Comparative gene finders
-use evidence from two organism to find genes. They use pHMM to simultaneously  
-align and annotate sequences. 
+First we introduce several comparative gene finders. Comparative gene finders
+use evidence from two organisms to find genes. They use pHMM to simultaneously
+align and annotate the two sequences. The advantage finding genes in two
+organisms simultaneously is that we can use the evidence from two related
+organisms to detect genes that are in both organisms.
 
 \subsection{DoubleScan}
-Meyer {\it et al. (2002)} developed comparative gene DoubleScan.
-Generally, DoubleScan has three types of
-states: {\it match} states, which generated same number of symbols in both
-sequences;   {\it emit} states, which generate sequences only in one sequence
-and silent states. DoubleScan's HMM contains structures for exons, introns and
-intron-like structures that are outside genes. 
+Meyer {\it et al. (2002)} developed comparative gene finder DoubleScan.
+Generally, DoubleScan has three types of states: {\it match} states, which
+generate same number of symbols in both sequences;   {\it emit} states, which
+generate sequences only in one sequence and silent states.  
 
-Basic structure of GpHMM consists from three types of substructures:
-substructures that emits exons, substructure that emits introns and substructure
-that generates intergenic regions. Each structure was in the alignment three
-times: once from match states and twice as emit states. Exon substructure was
-single state emitting codons (triplets that will be translated into proteins).
-There was one additional intron substructure that was connected to states that
-generated intergenic regions. This additional intron substructure was in the
-model to avoid detecting of pseudogenes. This GpHMM has $54$ states.
+The basic structure of DoubleScan's GpHMM consists of three types of
+substructures: substructures that emits exons, substructure that emits introns
+and substructure that generate intergenic regions. Each structure has three
+copies in the model: one for match states and two for emit states. Exon
+substructure is a single state emitting codons (triplets that will be translated
+into amino acids).  There is one additional intron substructure connected to
+states that generate intergenic regions. This additional intron substructure is
+in the model to avoid detecting of pseudogenes. The GpHMM has $54$ states.
 
 %Every such
 %structure has three version: one matching version, which emit aligned residues
@@ -179,19 +176,20 @@ model to avoid detecting of pseudogenes. This GpHMM has $54$ states.
 %structure is in figure \ref{}. 
 \nocite{Meyer2002}
 
-Emission probabilities if the {\it match exon} state were estimated from
+Emission probabilities of the {\it match exon} state were estimated from
 relative frequencies in the training set with Dirichlet priors
 \cite{Meyer2002,Durbin1998}.  Emission probabilities of other states were
 generated  by marginalizing emissions of the match exon state. Transition
-probabilities from initial state were even, transition probabilities for splice
-sites were estimated by splice site predictor. Other transitions were observed
-from train data and tuned by hand.
+probabilities from the initial state were uniform, transition probabilities for
+splice sites were estimated by splice site predictor. Other transitions were
+observed from training data and tuned by hand.
 
-DoubleScan uses Viterbi algorithm as decoding method.  To reduce running time of
-Viterbi algorithm they use stepping stone algorithm: at first they run BLASTN to
-find local alignments. Then DoubleScan choose consistent subset of matching by
-greedy method described in section \ref{SECTION:SSA}. They restrict Viterbi
-algorithm to such subset allowing tolerance 15 bases.
+DoubleScan uses the Viterbi algorithm as a decoding method.  To reduce the
+running time of the Viterbi algorithm they use stepping stone algorithm: first
+they run BLASTN to find local alignments. Then DoubleScan chooses a consistent
+subset of alignments by the greedy method described in section
+\ref{SECTION:SSA}. They restrict the Viterbi algorithm to follow the alignments
+in the subset allowing tolerance 15 bases.
 
 \subsection{SLAM} 
 
