@@ -99,7 +99,7 @@ complexity is $O(n+Tm)$ which can be considerable improvement over $O(\sqrt n
 m)$ algorithm since $T$ is a constant specific for HMM but independent of $n$. However in practice $T$
 can be too high.
 
-As a threshold $T$, we can use is the mixing time $t_{\mix}$ defined it in the following way:
+As a threshold $T$, we can use is the mixing time $t_{mix}$ defined it in the following way:
 \[\tmix = \min_{i}\left\{ 
 \left(\max_{\mu,\nu,X} || \prob{\pi[i] = \cdot\mid X[:i+1],H_\nu} - \prob{\pi[i] = \cdot\mid
 X[:i+1],H_\mu}||_{TV}\right)\leq \epsilon
