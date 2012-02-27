@@ -213,27 +213,23 @@ and the end of a gene.  $Intron_i$ models intron that interrupted codon at the
 $i$-th position ($0$ means that intron is not interrupting any codon).
 }\label{FIGURE:SLAM} \end{figure}
 
-SLAM \cite{SLAM2003}  is comparative gene finder based on generalized pair
-hidden Markov model \cite{Alexanderson2004} with some states being also a
+SLAM \cite{SLAM2003}  is a comparative gene finder based on a generalized pair
+hidden Markov model \cite{Alexanderson2004} with some states being also
 high-order states (with dependence on previous emissions).  It predicts gene
-structures for pair of related eukaryotic organisms. SLAM's decoding method is
-Viterbi algorithm. 
+structures for a pair of related eukaryotic organisms. SLAM's decoding method is
+the Viterbi algorithm. 
 
-Unlike DoubleScan, SLAM defines true GpHMM because state durations are not
+Unlike DoubleScan, SLAM defines a true GpHMM because state durations are not
 constant, but are sampled from some distribution (however, distribution they
-used in not specified). Topology of the model can be found in figure
-\ref{FIGURE:SLAM}.
-Emission of pairs of codons were assigned from codon-based PAM matrix.
+used is not specified). Topology of the model can be found in figure
+\ref{FIGURE:SLAM}.  Emission probabilities of pairs of codons were assigned from
+a codon-based PAM matrix.
 
 
-To reduce running time of the algorithm, they restrict the computation of
-alignment in following way: At first they  align input sequences using AVID
-alignment tool\cite{Bray2003} to get anchor alignment. They restrict the Viterbi
-algorithm in such way, that it could align  in a way, that every base from
-bases were extended to intervals of size $3$ bases of bases surrounding each
-matching base.
-
-
+To reduce the running time of the algorithm first they  align the input
+sequences using AVID global alignment tool \cite{Bray2003}. They restrict the
+Viterbi algorithm so, that each base matched in the anchor alignment can be
+realigned in an interval of size $3$.
 
 \subsection{Twain}
 
