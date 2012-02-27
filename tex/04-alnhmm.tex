@@ -305,16 +305,6 @@ $30$ states. Authors removed unnecessary states and they also removed
 poly-pyrimidine states to reduce the number of states and transitions
 \cite{GeneWise2004}.
 
-%Combined model was created by composition of models $T$ and $S$, from which were
-%removed unnecessary states. To decrease state space even more, they remove more
-%states, for example poly-pyrimidine states. More details are in
-%\cite{GeneWise2004}.
-
-%Parameters for match and insert transitions were derived from amino acid
-%distribution from the model $T$, from the codon bias in the organism and there
-%was allowed one substitution error while translating codons to amino acids (due
-%sequencing errors).
-
 
 \subsection{Pairagon}
 
@@ -323,36 +313,37 @@ poly-pyrimidine states to reduce the number of states and transitions
 \includegraphics{../figures/pairagon.pdf}
 \end{center}
 \caption[Topology of Pairagon generalized pair hidden Markov model.]{
-Topology of Pairagon GpHMM. All states with excetion to states
-$D,B$ and $A$ have self transition.
-Shaded states corresponds to the exons: $M$ emits
-aligned pairs of symbols, $I_c$ is insertion in coding DNA and $I_g$ is
-insertion in genome. States $I^1_c,I^1_g,I^2_c$ and $I^2_g$ corresponds to
+Topology of Pairagon GpHMM. All states except states
+$D,B$ and $A$ have a self-transition.
+Shaded states corresponds to exons: $M$ emits
+aligned pairs of symbols, $I_c$ is insertion in the cDNA and $I_g$ is
+insertion in the genome. States $I^1_c,I^1_g,I^2_c$ and $I^2_g$ corresponds to
 unaligned parts of the DNA and cDNA in the beginning and the end of the
 sequences. States $D,In,B,BA,A$ corresponds to intron structure and stand for 
 Donor, Intron, Branch, Branch Acceptor and Acceptor respectively.
-Donor site emitted $8$ symbols and acceptor site emitted $6$ symbols.
+Donor site emits $8$ symbols and acceptor site emits $6$ symbols.
 }\label{FIGURE:PAIRAGON}
 \end{figure}
 
 
-Aim of Pairagon is to do local alignments of \abbreviation{coding DNA}{cDNA} and
-genome \cite{Pairagon2009}. By aligning cDNA to genome we are able to study
-intron and exon structures.  To do this task, Pairagon's HMM models consists
-from simple pair HMM submodel, which aligns cDNA to DNA and $5$ state submodel
-for intron structures.  Whole topology is in figure \ref{FIGURE:PAIRAGON}. 
+The aim of Pairagon is to find local alignments of \abbreviation{complementary
+DNA}{cDNA} and genome \cite{Pairagon2009}. By aligning experimentally obtained
+cDNA sequences to the genome we are able to confirm intron and exon structures
+of genes.  Pairagon's HMM model consists of a simple pair HMM submodel, which
+aligns cDNA to DNA and a $5$-state submodel for intron structures. The whole
+topology is in figure \ref{FIGURE:PAIRAGON}. 
 
-Model was trained using iterative maximum likelihood approach. At first
-parameters was trained on the alignments from the \abbreviation{Mammalian Gene
-Collection}{MGC}. In this phase the parameters for intron submodel were set by
-hand. Then they align more MGC sequences using this model. Final parameters were
+Model was trained using iterative maximum likelihood approach.  Initial
+parameters were trained on the alignments from the \abbreviation{Mammalian Gene
+Collection}{MGC}. In this phase, the parameters for intron submodel were set by
+hand. The model was then used to align more MGC sequences. Final parameters were
 estimated from the new alignments.
 
-Decoding was done by Viterbi algorithm. Runtime of the algorithm was improved by
-stepping stone algorithm described in section \ref{SECTION:SSA} and memory
-requirements were improved using the Treeterbi algorithm \cite{Keibler2007},
-which is similar to the On-line Viterbi algorithm discussed in section
-\ref{SECTION:ONLINEVITERBI}.
+Decoding was done by the Viterbi algorithm. Runtime of the algorithm was
+improved by the stepping-stone algorithm described in section \ref{SECTION:SSA}
+and memory requirements were improved using the Treeterbi algorithm
+\cite{Keibler2007}, which is similar to the On-line Viterbi algorithm discussed
+in section \ref{SECTION:ONLINEVITERBI}.
 
 
 \section{Non-Geometric Indel Models}
