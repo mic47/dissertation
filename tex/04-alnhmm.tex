@@ -175,13 +175,13 @@ Topology of GpHMM used by SLAM (states for genes on reverse strand are omitted).
 Gray states have geometric distribution (modeled with self-loops which are
 omitted in the figure). Emissions of shaded states are modeled by the basic
 three state pHMM. White states represent exons. Each has associated a duration
-distribution and emmisions are also modeled by three-state pHMM using $5$-th
+distribution and emissions are also modeled by three-state pHMM using $5$-th
 order states that emit whole codons at once.  Since introns can be inside a
 codon, the model contains an exon state for every possible interruption:
-$E_{i,j},0\leq i,j<3$ is an exon that begins with end of the interupted codon of
+$E_{i,j},0\leq i,j<3$ is an exon that begins with end of the interrupted codon of
 length $((3-i)\mod 3)$ and ends with the start of a codon of length $j$. $I$
 stands for start codon and $F$ stand for stop codon: states
-$E_{I,\cdot},E_{\cdot,F}$ and $E_{I,F}$ model exons adjacent to the begininning
+$E_{I,\cdot},E_{\cdot,F}$ and $E_{I,F}$ model exons adjacent to the beginning
 and the end of a gene.  $Intron_i$ models intron that interrupted codon at the
 $i$-th position ($0$ means that intron is not interrupting any codon).
 }\label{FIGURE:SLAM} \end{figure}
@@ -361,7 +361,7 @@ model.
 \begin{center}
 \includegraphics{../figures/twoComponentMixtureModel.pdf}
 \end{center}
-\caption[The example of an HMM modelin two component geometric distribution]{
+\caption[The example of an HMM modeling two component geometric distribution]{
 Shaded state $M$ represents the match states and states $I_1$ and $I_2$
 represents indel states in the same sequence. Indel states for the other
 sequence are omitted.
@@ -421,7 +421,7 @@ version of the Forward algorithm, in contrast with the Viterbi algorithm usually
 used for this purpose. 
 
 Estimation of parameters was done by expectation maximization approach (with
-Baum-Welch or Viterbi training). They forced gap parameters to be the same in all
+Baum-Welsch or Viterbi training). They forced gap parameters to be the same in all
 submodels.
 
 Different rates of evolution were also used  in the whole genome aligner GRAPe
@@ -444,7 +444,7 @@ generated sequences, this obtaining a dataset of ``true'' alignments.
 
 \item \firstUseOf{Gap wander} means that a gap is in a different location that in
 the true alignment. Is is due to random short similarities around the borders of
-gaps that are indistinquishable from true homologies.
+gaps that are indistinguishable from true homologies.
 
 \item \firstUseOf{Gap attraction} is occurs when two gaps are near each other.
 In such case merging those gaps and introducing a few mismatches might lead to

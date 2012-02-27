@@ -249,7 +249,7 @@ and $M_Y$ and compute computed $M[i,j],M_X[i,j],$ and $M_Y[i,j]$ according
 %will allow us to express complexity in simple way.  At first we show how
 %to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$
 
-The Needleman-Wunch algorithm can be computed by the following code. Note that
+The Needleman-Wunsch algorithm can be computed by the following code. Note that
 if gap opening penalty is not zero, matrix $M$ should be replaced with triple of
 matrices $(M,M_X,M_Y)$. 
 
@@ -462,7 +462,7 @@ of rows of $M$ and the reconstructed alignment and therefore memory requirements
 $O(n+m)$.
 
 The Hirschberg Algorithm (HA) reduce memory more than checkpointing, 
-Howrever, checkpointing can be applied to a wider class of algorithm, as we will
+However, checkpointing can be applied to a wider class of algorithm, as we will
 see in section \ref{SECTION:HMMCHECKPOINTING}.
 %but HA can be
 %only applied to algorithms that use back-tracing. For example Forward-Backward
@@ -671,7 +671,7 @@ which is equivalent to the original expression from the equation
 values of 
 $k$ that can become maximum for future values of $j$. We will try to keep this list as small as
 possible. List $L_j$ will be a called \firstUseOf{candidate list} and members of $L_j$
-will be called \firstUseOf{candidates}. Rank of cadidate $k$ is the value
+will be called \firstUseOf{candidates}. Rank of candidate $k$ is the value
 $G(k,j)=M[i,k]+f(j-k)$. To compute $M[i,j]$ we iterate over values of $k$ in
 $L_j$ and find the one with the highest rank.
 %$L_j$ is candidate list for computing $M[i,j]$. 
@@ -744,9 +744,9 @@ significantly reduce the  size of $L_j$ in practice.
 
 
 Using this algorithm, $L_j$ will be always ordered by rank. However when we move
-finr $j$ to $j+1$, the ranks will change, and we have to remove some elements 
+from $j$ to $j+1$, the ranks will change, and we have to remove some elements 
 to restore this property. The algorithm can be improved if we can compute the column in
-which two adjecent  candidates will brake the ordering.
+which two adjacent  candidates will brake the ordering.
 
 %Nice property of $L_j$ is that it's members are ordered by rank. However, 
 %when we move to column $j+1$, ranks of candidates will change and order might be
@@ -762,7 +762,7 @@ column $j'$
 rank of $k'$. Candidate $k$ will be removed in column $j'$, or possibly earlier.  Note that
 such $l$ can be found using binary search (based on lemma \ref{OneStrikeAndOut})
 in $O(\log n)$ time for any convex function. For some convex functions we can
-find it analyticaly in constant time.
+find it analytically in constant time.
 
 
 We can further decrease the size of the candidate list using the following
