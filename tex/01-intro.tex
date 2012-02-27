@@ -1,29 +1,26 @@
 \chapter{Introduction}
 
 
-In this work we will focus on computational methods for comparative analysis
-and annotation of biological sequences. We will review known models and
-algorithm and propose new methods that will produce
-alignments and annotations with higher quality. Since new technologies are
-giving us the ability to produce more and more data, the automated analysis of such
-data is necessary and therefore it is important to develop such tools.
+In this work we will focus on computational methods for comparative analysis and
+annotation of biological sequences. We will review known models and algorithm
+and propose new methods that will produce alignments and annotations with higher
+quality. Since new technologies are giving us the ability to produce more and
+more data, the automated analysis of such data is necessary and therefore it is
+important to develop such tools.
 
 By biological sequences we mean either DNA/RNA sequences, which are finite
-sequences over the alphabet $\{A,C,G,T/U\}$ ($T$ is in DNA, $U$ in RNA) or 
+sequences over the alphabet $\{A,C,G,T/U\}$ ($T$ is in DNA, $U$ in RNA) or
 protein sequences which are sequences over the alphabet of $20$ amino acids.
 Later in this chapter we will discuss the relationship between these sequences.
-Both 
-problems studied in this proposal, annotation and alignment of biological
+Both problems studied in this proposal, annotation and alignment of biological
 sequences, can be addressed by variants of \abbreviation{hidden Markov
-models}{HMMs}.
-Hidden Markov models are generative probabilistic models which define a
-probability distribution of sequences with their annotations 
-\cite{Durbin1998}. An annotation is
-the assignments of labels to parts of the sequence according their meaning, The
-labels can represent biological function,
-the origin of a part of the sequence or any other information. HMMs are used
-for probabilistic analysis of sequences in various fields. In our work
-we focus on  biological sequences. 
+models}{HMMs}.  Hidden Markov models are generative probabilistic models which
+define a probability distribution of sequences with their annotations
+\cite{Durbin1998}. An annotation is the assignments of labels to parts of the
+sequence according their meaning, The labels can represent biological function,
+the origin of a part of the sequence or any other information. HMMs are used for
+probabilistic analysis of sequences in various fields. In our work we focus on
+biological sequences. 
 
 A decoding algorithm is an algorithm that from the input sequence $X$ and HMM
 $H$ computes the annotation of sequence $X$. The goal is to recover the true
@@ -37,18 +34,17 @@ decoding and training algorithms (training algorithms are algorithms that
 compute the parameters of the model from a training data set).
 
 In the field of comparative analysis of biological sequences we focus on the
-sequence alignment problem. A sequence alignment is a simple data format (or data
-structure) that represents the similarities in the sequences. An alignment is
-created by inserting dashes ('-') into both sequences in a way that the
-sequences have the same
-length and similar symbols are on the same positions in both sequences. In
-computational biology the alignments are constructed in a way that the
-homologous parts of the sequences are aligned together. Homologous sequences are sequences that have evolved
-from the same part of the sequence of the ancestral organism.
-The reason for searching and studying homologous sequences is that homologous
-sequences are expected to have the same or similar functions in both organisms.
-Therefore by studying homologous sequences we can transfer knowledge about
-functions from one species to others.
+sequence alignment problem. A sequence alignment is a simple data format (or
+data structure) that represents the similarities in the sequences. An alignment
+is created by inserting dashes ('-') into both sequences in a way that the
+sequences have the same length and similar symbols are on the same positions in
+both sequences. In computational biology the alignments are constructed in a way
+that the homologous parts of the sequences are aligned together. Homologous
+sequences are sequences that have evolved from the same part of the sequence of
+the ancestral organism.  The reason for searching and studying homologous
+sequences is that homologous sequences are expected to have the same or similar
+functions in both organisms.  Therefore by studying homologous sequences we can
+transfer knowledge about functions from one species to others.
 
 Alignments can be created using a variant of hidden Markov model called
 \abbreviation{pair hidden Markov model}{pHMM}. A pHMM  that generates three
@@ -60,22 +56,23 @@ quality.
 
 \section{Structure}
 
-The structure of this document is following. In the rest of this chapter we describe
-necessary biological terms and define several
-notation used throughout the test.
+The structure of this document is following. In the rest of this chapter we
+describe necessary biological terms and define several notation used throughout
+the test.
 
 In the second chapter we will discuss the sequence alignment problem and methods
-that create sequence alignments without using pair hidden Markov
-models. We describe basic scoring schemes, algorithms that search for alignments
-with high scores and several approaches for improving the computational
-complexity of such algorithms.
+that create sequence alignments without using pair hidden Markov models. We
+describe basic scoring schemes, algorithms that search for alignments with high
+scores and several approaches for improving the computational complexity of such
+algorithms.
 
-The third chapter describes hidden Markov models. We define HMMs and review basic
-algorithms for decoding. We then discuss the highest expected gain
-framework which is a generalization of the well-known decoding algorithms. 
-We also define several variants of HMMs: generalized hidden Markov models, high-order
-HMMs, pair hidden Markov models and their combinations. In the last part of the chapter we
-discuss several algorithmic improvements of standard decoding algorithms.
+The third chapter describes hidden Markov models. We define HMMs and review
+basic algorithms for decoding. We then discuss the highest expected gain
+framework which is a generalization of the well-known decoding algorithms.  We
+also define several variants of HMMs: generalized hidden Markov models,
+high-order HMMs, pair hidden Markov models and their combinations. In the last
+part of the chapter we discuss several algorithmic improvements of standard
+decoding algorithms.
 
 The fourth chapter is dedicated to alignment methods  using pair hidden Markov
 models and their variants and also to other applications of pHMMs. We review
