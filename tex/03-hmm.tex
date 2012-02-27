@@ -412,7 +412,7 @@ the most probable annotation as shown in the following example.
 \includegraphics{../figures/multiplePathProblemHMM.pdf}
 \end{center}
 \caption[Hidden Markov Model with multiple path problem.]{Example of HMM with
-multiple path problem. States $w_1,w_2,b$ emits symbol $0$ with probability $1$
+multiple path problem. States $w_1,w_2,b$ emit symbol $0$ with probability $1$
 and state $e$ emits symbol $1$ with probability $1$. Initial distribution is set
 to $I_{w_1}=I_{w_2}=\frac14, I_{b}=0.5$
 and $I_e=0$. Annotations of the states are represented by the colors of the states
@@ -422,10 +422,10 @@ and $I_e=0$. Annotations of the states are represented by the colors of the stat
 \begin{example}
 Consider the HMM from the figure \ref{FIGURE:BADVITERBIEXAMPLE}. Take sequence $X=0^n1$.
 Since state $e$ is the only state that can emit $1$, every state path with non-zero
-probability ends in state $e$. If state path starts in state $b$ then state
+probability ends in state $e$. If a state path starts in state $b$ then state
 path has form $b^ne$. Annotation of such state path is $\Lambda_1=\lambda(b)^{n+1}$
 and probability of the annotation $\Lambda_1$ (and also the state path $b^ne$) is $p^n(1-p)$.
-If state path starts in the one of the white states, then the state path
+If a state path starts in the one of the white states, then a state path
 has form $w'_0w'_1\dots w'_{n-1}e$ where $w'_i$ is either $w_1$ or $w_2$.
 There are $2^n$ such state paths and each of them have the probability $0.5\cdot
 0.25^n$ and annotation $\Lambda_2=\lambda(w_1)\lambda(e)$. Probability of
@@ -579,10 +579,11 @@ Initial distribution is set to $I_{w_1}=I_{w_2}=0.3, I_{v}=0.4, I_{e}=0$.
 \begin{example}
 Consider an HMM from figure \ref{FIGURE:INADMISSIBLESTATEPATH}. Let $X=001$. There
 are three state paths that have non-zero probability:
-$\pi_1=w_1w_2e,\pi_2=w_2w_1e$ and $\pi_3=vve$. Their probabilities are
-$\prob{\pi_1\mid X,H}=\prob{\pi_2\mid X,H}=0.3, \prob{\pi_3\mid X,H}=0.4$.
+$\pi_1=w_1w_2e,\pi_2=w_2w_1e,$ and $\pi_3=vve$. Their probabilities are
+$\prob{\pi_1\mid X,H}=\prob{\pi_2\mid X,H}=0.3,$ and $\prob{\pi_3\mid X,H}=0.4$
+respectively.
 Posterior probabilities are in table \ref{TABLE:INADMISSIBLESTATEPATH}.
-As we can see, maximal posterior probability for the first position have state
+As we can see, the maximal posterior probability for the first position has state
 $v$. For the second position it is state $w_2$ and for the third it is state
 $e$. Therefore PD will reconstruct state path $vw_2e$. However, this state path 
 is inadmissible since  $v\to w_2$ is not a transition (it has zero probability).
@@ -613,8 +614,8 @@ section we briefly describe several approaches how to estimate transition and
 emission distributions of the hidden Markov models.
 
 We use the \firstUseOf{maximal likelihood approach}. Let $H_{\theta}$ be an HMM
-where $\theta$ is vector containing emission and transition probabilities and
-$D$ be the training data (sequences with state paths).  We
+where $\theta$ contains emission and transition probabilities and
+let $D$ be the training data (sequences with state paths).  We
 want to find $\theta$ that maximizes the likelihood of the data:
 
 \[L(H_\theta\mid D)=\prob{D\mid H_\theta}\]
@@ -651,34 +652,33 @@ estimated to zero. To avoid this behavior we can use pseudo-counts
 events $x$ that we expect to have non-zero probability.
 
 \subsection{Training with Missing Data} 
-In case that some data are missing (for example parts
-of the state paths or even the sequences) we treat the missing data as a random
+In case that some data are missing (for example a part
+of the state path or part of the sequence) we treat the missing data as a random
 variables. We use following algorithm. 
 \begin{enumerate}
 \item  Set the initial parameters $\theta_0$. Let $i=0$
-\item  Using model $H_{\theta_i}$, compute expected number of occurrences of
+\item  Using model $H_{\theta_i}$, compute the expected number of occurrences of
 all events (the values $A_{u,v}, E_{u,x}, u,v\in V,x\in\Sigma$). Compute the new
 parameter set $\theta_{i+1}$ from the expected counts (using the method
 described above). Set $i=i+1$.
 \item If stopping criterion was not reached, go to step two. Otherwise 
 set the $H_{\theta_{i}}$ as the final model.
 \end{enumerate}
-This algorithm is called the Baum-Welsch algorithm and it is the instance of the
+This algorithm is called the Baum-Welsch algorithm and it is an instance of the
 more general Expectation maximization algorithm \cite{Durbin1998}. Is has been
 proved that the sequence $\{L(H_{\theta_i}\mid D)\}_{i\geq 0}$ is non-decreasing and
-that it converges to a local minima \cite{Durbin1998}. Stopping criterion is
-usually  the change in the likelihood being small enough or the maximal number of
-iterations.
+that it converges to a local minima \cite{Durbin1998}. As a stopping criterion
+we can use the number of iterations of the change in the likelihood.
  The expectations of the number of events can be
 computed by a variant of the Forward-Backward algorithm.
 
 In step $2$ we can replace the Forward-Backward algorithm with the Viterbi
 algorithm. In such case the Viterbi algorithm computes the most probable values
-for the missing data and the counts of the events are estimated from this data.
+for the missing data and new model is estimated from this data.
 This approach is called the Viterbi training.  While the Viterbi training does
 not have to converge to local maxima, it is faster in practice
 \cite{Durbin1998}.  In practice we can use the Viterbi training for the
-estimation of good starting parameters for the Baum-Welsch training. The
+estimation of a good starting parameters for the Baum-Welsch training. The
 approach was used in \cite{FEAST2011}.
 
 \section{Variants of Hidden Markov Models}
@@ -698,7 +698,7 @@ number of transitions by a factor $m$. This can be used to decrease number of
 parameters and speed up algorithms. 
 
 \begin{definition}
-Hidden Markov Model with silent states is a:w
+Hidden Markov Model with silent states is a
 tuple $H=(\Sigma,V,Q,I,e,a)$
 where $\Sigma,V,I,a$ are defined as in definition \ref{DEF:HMM}. $Q\subseteq V$ is set of
 silent states. $e$ must satisfy the following conditions:
@@ -740,7 +740,7 @@ Example of an HMM with silent states that reduces the number of transitions by f
 of $\Theta(m)$.
 
 Consider following HMM $H=(\Sigma,V,I,e,a)$ with $m$ states such that every row
-of $a$ is uniform distribution over $V$. In other words, there is transition
+of $a$ is the uniform distribution over $V$. In other words, there is transition
 between any two pairs of states from $V$, that is exactly $n^2$
 transitions\footnote{$u\to u$ is also a transition}.
 
@@ -758,10 +758,10 @@ complexity $O(nm^2)$ for $H$.
 
 There should not be the cycle from transitions between silent states, because it
 causes problems with the order of computations of the Viterbi algorithm, the
-Forward algorithm and other. Such cycles can be removed from an HMM without
-affecting of the distribution of the sequence. Also for every HMM with silent
+Forward algorithm and others. Such cycles can be removed from an HMM without
+affecting of the distribution of the sequence. Additionally, for every HMM with silent
 states there is an HMM without silent states that defines same distribution of
-sequences. \cite{Nanasi2010mgr}.
+sequences \cite{Nanasi2010mgr}.
 
 
 \subsection{Start and Final state}
@@ -787,7 +787,7 @@ final state can be only in the end of a state path.
 
 With final states, HMM stops generating a sequence once it reaches some final
 state. Therefore the sum of the probabilities of all sequences is $1$. Recall
-that sum of probabilities of all sequences with length $n$ is $1$ for HMM
+that the sum of probabilities of all sequences with length $n$ is $1$ for HMM
 without final states.
 
 Final states slightly affects algorithms. For example in the Forward algorithm we do
@@ -798,7 +798,7 @@ The Backward algorithm is changed by setting $B[n-1,q]$ to zero for all $q\notin
 
 \subsection{High Order HMMs}
 
-Sequence $X$ and a state path $\pi$ generated by the HMM can by considered 
+Sequence $X$ and a state path $\pi$ generated by an HMM can by considered 
 as sequences of random variables
 $X_0,X_1,\dots, X_{n-1}$ and $\pi_0,\pi_1,\dots,\pi_{n-1}$.
 Random variables associated with the state path have the Markov
@@ -821,7 +821,7 @@ of previous states/emissions \cite{Brejova2005,Alexanderson2004}.
 
 We will briefly discuss $k$-th order HMM where emissions are dependent on
 previous $k$ emissions. Specifically, $X_i$ depends only on $\pi_i$ and
-$X_{i-k},\dots,X_{i-1}$. Emission distribution is therefore parametrized be
+$X_{i-k},\dots,X_{i-1}$. Emission distribution is therefore parametrized by
 state and previous emissions, which is string of length at most $k$ (it can be
 shorter in the beginning of the sequence). $e_{u,x,a}$ is probability that
 state $u$ emits $a$ under the condition that $x$ is the suffix of the already emitted
@@ -909,12 +909,13 @@ use pHMM to define probabilistic scoring schemes for alignments.
 A \abbreviation{pair hidden Markov model}{pHMM} is a tuple $H=(\Sigma,V,I,d,e,a)$, where $\Sigma$ is finite
 alphabet, $V$ is a finite set of states, $I$ is an initial distribution and $a$ is
 a transition matrix, all defined as
-in definition \ref{DEF:HMM}. $d^x_v$ and $d^y_v$ is state duration of state $v$
+in definition \ref{DEF:HMM}. $d^x_v$ and $d^y_v$ are state durations of state $v$
 in sequence $x$ and $y$ respectively. For all $v\in V$,
 $d^x_v\in \{0,1\}$ and $d^y_v\in \{0,1\}$.
 Emission probability matrix $e$ is
 a $|V|\times\left(|\Sigma\cup\{\varepsilon\}|\right)^2$ matrix with following
 properties:
+\def\lala#1{\{#1\}}
 \begin{enumerate}
 \item
 $\forall v\in V\forall \sigma_1,\sigma_2\in\Sigma\cup\{\varepsilon\}:
@@ -922,23 +923,25 @@ $\forall v\in V\forall \sigma_1,\sigma_2\in\Sigma\cup\{\varepsilon\}:
 
 \item 
 $\forall v\in V:
-\sum {\sigma_1,\sigma_2\in\Sigma\cup\{\varepsilon\}}e_{v,(\sigma_1,\sigma_2)} = 1$
+\sum_{\sigma_1,\sigma_2\in\Sigma\cup \lala{\varepsilon }}e_{v,(\sigma_1,\sigma_2)} = 1$
 
 \item For all states $v$ if $e_{(v,\sigma_1,\sigma_2)}>0$ then
 $d^x_v=|\sigma_1|$ and $d^y_v=|\sigma_2|$
-%$e_{v,(\sigma'_1,\sigma'_2)}>0$ then $|\sigma_1|=|\sigma'_1|$ and  
-%$|\sigma_2|=|\sigma'_2|$.
 \end{enumerate}
 
 \end{definition}
 
-A state path is defined same for HMMs with silent states. Restriction for the
+A state path is defined same as for HMMs with silent states. Restriction on the
 state durations (condition $3$ in the definition) ensures
-that from the state path $\pi$ we can tell which symbols of the sequence $X$
-were generated by which state from $\pi$.
+that for every symbol from $X$ and $Y$ we can assign state from $\pi$ that
+generated that symbol.
+%we can from the state path $\pi$ tell which symbols of the sequences $X$
+%and $Y$
+%were generated by which state.
 
-However, given only two sequences $X$ and $Y$ and no state path we are not able
-to tell which symbols of the two sequences were generated together. Before we
+However, given only two sequences $X$ and $Y$ and no state path, it is not
+possible 
+to determine which symbols of the two sequences were generated together. Before we
 continue, we will define cumulative duration times which will make further
 expressions simpler.
 
@@ -967,7 +970,7 @@ alignment algorithm. Insert states $I_X$ and $I_Y$ represents gaps,
 generates residues in only one sequence and corresponds to matrices $M_X$ and
 $M_Y$ from the sequence alignment algorithm from section \ref{SECTION:NEEDLE}.
 
-Note that state path uniquely define an annotation (match state correspond to
+Note that a state path uniquely define an annotation (match state corresponds to
 match columns, insert states represent gap).  Finding the most probable state
 path for this HMM is equivalent to the Needleman-Wunsch algorithm with affine gap
 model \cite{Durbin1998}.
@@ -1054,11 +1057,11 @@ model $H$ is
 
 \subsection{Viterbi algorithm for pair HMM}
 \label{SECTION:PAIRHMMVITERBI}
-Algorithms operating over pHMMs are similar to those for the regular HMMs, but in
-general they have higher computational complexity because over model states with
-sequence alignment.
-In this section, we describe two-dimensional version of the Viterbi algorithm,
-other algorithms are analogous.
+Algorithms operating over pHMMs are similar to those for the regular HMMs, but
+in general they have higher computational complexity because they combine
+computation  over model states with sequence alignment.  In this section, we
+describe two-dimensional version of the Viterbi algorithm, other algorithms are
+analogous.
 
 The Viterbi algorithm for HMMs computes variables $V[i,v]$ and $B[i,v]$. Every
 variable is parametrized by a position in the sequence and a state. For
@@ -1069,7 +1072,7 @@ $X[:i+1]$ and $Y[:j+1]$ and ended in state $v$. Clearly, $\max_{v\in
 V}V[|X|-1,|Y|-1,v]$ is the probability of the most probable state path that
 generated $X$ and $Y$. Let $B[i,j,v]$ be the last but one state of the most
 probable state path that generated $X[:i+1]$ and $Y[:j+1]$ and ended in state
-$v$. To make it easier we expect that all states but one are not silent -- they emit
+$v$. To make it easier, we expect that all states but one are not silent -- they emit
 symbol in at least one sequence. The one silent state $s$ (start state) will have $I_s=1$.
  Let $n=|X|$ and $m=|Y|$.
 
@@ -1086,7 +1089,7 @@ V}V[i-d^x_{v},j-d^y_v,u]a_{u,v}e_{v,(X[i:i+d^x_v],Y[j:j+d^y_v])}\label{EQUATION:
 \end{align}
 
 In equations \ref{EQUATION:2DVITERBIF} and \ref{EQUATION:2DVITERBIB} boundaries for $i$ and $j$ are $
--1\leq i< n,-1\leq j< m$ and $i$ or $j$ is greater than $-1$.
+-1\leq i< n,-1\leq j< m$ and $i>-1$ or $j>-1$.
 
 
 By finding the last state $v$ of the most probable state path and back-tracing
@@ -1110,8 +1113,8 @@ sufficient to determine which parts of the sequences were generated by which
 state, we also need two sequences of durations.
 
 Drawback of GpHMM is increased computational complexity. For example time
-complexity of the Viterbi algorithm is $O(nmk^2d^4)$\cite{Meyer2002} where $k$
-is the number of states of a pHMM and $d$ is the maximum duration length.
+complexity of the Viterbi algorithm is $O(nmk^2d^4)$ where $k$
+is the number of states of a pHMM and $d$ is the maximum duration length \cite{Meyer2002}.
 GpHMMs were successfully used for gene-finding
 \cite{SLAM2003,Alexanderson2004,Majoros2005,Meyer2002}. More details are given in
 the chapter \ref{CHAPTER:PAIRHMM}.
@@ -1140,7 +1143,7 @@ other decoding methods developed in recent years.
 \label{SECTION:HEG}
 
 In this section we will describe a framework for studying decoding algorithm in
-a more systematic way. This framework was introduced introduced originally for
+a more systematic way. This framework was introduced  originally for
 conditional random fields \cite{Gross2007}.  To use this framework, we need to
 define a gain function, which will express similarity (gain) between two
 annotations or state paths. The higher the gain, the more similar those two
