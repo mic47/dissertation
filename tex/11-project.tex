@@ -53,17 +53,16 @@ sampled from the model or that symbols of the sequence were sampled
 independently from certain (for example uniform) distribution.
 
 One possible approach to solve this problem is to search for the ``synchronizing
-sequences''. \todo{este sa zamysli nad touto formulaciou} 
-Sequence $s\in\Sigma^*$ is a synchronizing sequence if there exists
-state $v$ and position $p$ in the sequence $s$, such that for all sequences
-$x\in \Sigma^*$ and states $u$ satisfies $\pi_u[{p+|x|}]=v$ where $\pi_u$ is the
-most probable state path of the sequence $xs$ ending
-in the state $u$. Intuitively, synchronizing sequence force the Viterbi algorithm
-to pass through a certain state and therefore for any sequence $y\in \Sigma^*$,
-the most probable state path $\pi_{xsy}$ of sequence $xsy$ has the same prefix
-$\pi_{xsy}[:|x|]$. Therefore the On-line Viterbi algorithm after passing
-sequence $s$ will print (and discard) the most probable state path for prefix
-$x$ of $xs$. 
+sequences''.  Sequence $s\in\Sigma^*$ is a synchronizing sequence if there
+exists state $v$ and position $p$ in the sequence $s$, such that for all
+sequences $x\in \Sigma^*$ and states $u$ the state path $\pi_u$ satisfies
+$\pi_u[{p+|x|}]=v$ where $\pi_u$ is the most probable state path of the sequence
+$xs$ ending in the state $u$. Intuitively, synchronizing sequence force the
+Viterbi algorithm to pass through a certain state and therefore for any sequence
+$y\in \Sigma^*$, the most probable state path $\pi_{xsy}$ of sequence $xsy$ has
+the same prefix $\pi_{xsy}[:|x|]$. Therefore the On-line Viterbi algorithm after
+passing sequence $s$ will print (and discard) the most probable state path for
+prefix $x$ of $xs$. 
 
 If an HMM has a synchronizing sequence and $f(n)$ is the expected maximal distance
 between two synchronizing strings in a sequence of length $n$ (sampled from
@@ -72,7 +71,7 @@ complexity $O(f(n)m)$ where $m$ is the number of states.
 
 Our goal is to develop criterion of the existence of the synchronizing string
 for given HMM and to compute an upper bound of the $f(n)$, the expected maximal
-distance between two synchronizing strings in the sequence of length $n$.
+distance between two synchronizing strings in the sequence of length $n$. 
 
 
 \subsection{Mixing Times}
@@ -105,7 +104,6 @@ As a threshold $T$, we can use is the mixing time $t_{mix}$ defined it in the fo
 X[:i+1],H_\mu}||_{TV}\right)\leq \epsilon
 \right\}
 \] 
-\todo{koniec tohoto odstavca sa mi nepaci}
 where $H_\mu$ and $H_\nu$ are HMMs created from $H$ by replacing initial
 distribution with $H_\mu$ and $H_\nu$ respectively,
 $X$ is a sequence
@@ -146,11 +144,10 @@ X,H}[f(\Lambda_X,\Lambda)] =
 \sum_{\Lambda_X}f(\Lambda_X,\Lambda)\Pr\left(\Lambda_X\mid X,H\right) \]
 
 
-\todo{este raz si toto po sebe precitaj}
 Alternative
 decoding functions can improve the annotation algorithm as has been shown in
 \cite{Nanasi2010,Truszkowski2011} for the HIV virus recombination detection.
-We want to continue study these function for the virus recombination domain. We
+We want to study these functions for the virus recombination domain. We
 want to explore the  possible extensions by restricting of the structure of the
 possible annotation (restriction on the labels that can be in the annotation, or
 in general restrict it by a regular expression).
@@ -288,11 +285,11 @@ gap model. We want to explore the possibility of inclusion of non-geometric gap
 models, that closely approximate the real distribution of gaps. 
 
 
-Our plan is to combine new decoding algorithm for pHMMs withi the new model to
+Our plan is to combine new decoding algorithm for pHMMs with the new model to
 create global alignment tool that will produce alignment with fewer biases and
 higher sensitivity than existing tools. After implementation we plan
 experimental evaluation on the real data and comparison with with existing
-tools.  
+tools. 
 
 \todo{Ako by to zlepsilo svet}
 %By improving existing alignments we can  improve the 
