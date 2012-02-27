@@ -199,16 +199,17 @@ in the subset allowing tolerance 15 bases.
 \end{center}
 \caption[HMM topology of SLAM's GpHMM]{
 Topology of GpHMM used by SLAM (states for genes on reverse strand are omitted).
-Gray states has geometric distribution (modeled with self-loop which are omitted
-in the figure). Emissions of shaded states are done with three state pHMM. White
-states econdes exons. Each has associated duration distribution and emmisions
-are done also with three-state pHMM ($5$-th order that emitted codons at once).
-Since introns can be inside codon model contain exon state for every possible
-interruption: $E_{i,j},0\leq i,j<3$ is exon that begin with end of the prevous
-exon of length $((3-i)\mod 3)$ and end with the beginning of the exon with
-length $j$. $I$ stands for start codon and $F$ stand for stop codon: states
-$E_{I,\cdot},E_{\cdot,F}$ and $E_{I,F}$ models exons adjecent to the begininning
-and the end of a gene.  $Intron_i$ models intron that interrupted codon on
+Gray states have geometric distribution (modeled with self-loops which are
+omitted in the figure). Emissions of shaded states are modeled by the basic
+three state pHMM. White states represent exons. Each has associated a duration
+distribution and emmisions are also modeled by three-state pHMM using $5$-th
+order states that emit whole codons at once.  Since introns can be inside a
+codon, the model contains an exon state for every possible interruption:
+$E_{i,j},0\leq i,j<3$ is an exon that begins with end of the interupted codon of
+length $((3-i)\mod 3)$ and ends with the start of a codon of length $j$. $I$
+stands for start codon and $F$ stand for stop codon: states
+$E_{I,\cdot},E_{\cdot,F}$ and $E_{I,F}$ model exons adjacent to the begininning
+and the end of a gene.  $Intron_i$ models intron that interrupted codon at the
 $i$-th position ($0$ means that intron is not interrupting any codon).
 }\label{FIGURE:SLAM} \end{figure}
 
