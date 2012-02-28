@@ -243,14 +243,14 @@ higher sensitivity and lower false positive ratio of the aligned residues.
 Of course we have to design gain functions in a way that optimizing them will
 be computationally tractable.
 
-One possible extension is to extend the Posterior decoding to mode columns: 
-the gain function is the number of correctly predicted $k$-tuples from the
-alignment. Other possibility is to address the gap wander and gap attraction
+One possible extension is to extend the Posterior decoding to more columns: 
+the gain function is the number of correctly predicted $k$-tuples of the
+alignemnt columns. Other possibility is to address the gap wander and gap attraction
 biases. Lunter {\it et al.} reported that the average sequence identity near
 gaps was higher then the expected value and with the distance from the gap
 the expected sequence similarity lower almost to the correct value. To address
 this issue, the gain function should penalize the gaps, that are near other
-gaps, by lower ``gap penalty'' then the standalone gaps.
+gaps, by lower gap penalty then the standalone gaps.
 
 
 \section{Models for Pairwise Sequence Alignment}
@@ -288,9 +288,9 @@ Our plan is to combine new decoding algorithm for pHMMs with the new model to
 create global alignment tool that will produce alignment with fewer biases and
 higher sensitivity than existing tools. After implementation we plan
 experimental evaluation on the real data and comparison with with existing
-tools. In case that we successfully develop better pairwise alignment tool, it
-can be incorporated into larger pipelines for the multiple alignment or other
-bioinformatic research. 
+tools. In the case that we will successfully develop better pairwise alignment
+tool, it will be possible to incorporate it into the larger pipelines for the
+multiple alignment or other bioinformatic research. 
 
 %By improving existing alignments we can  improve the 
 

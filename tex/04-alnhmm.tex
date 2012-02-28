@@ -1,7 +1,7 @@
 \chapter{Alignments with Pair HMMs}\label{CHAPTER:PAIRHMM}
 
 In this chapter we will describe scoring schemes for pairwise sequence alignment
-using pHMMs or GpHMM. Scoring schemes used in various programs can differ the
+using pHMMs or GpHMM. Scoring schemes used in various programs can differ in the
 model they use but also in the decoding algorithm. 
 We have discussed the use of pHMMs for sequence alignment in section
 \ref{SECTION:PAIRHMM}, where we demonstrated  simple three-state pHMM (figure
@@ -67,7 +67,7 @@ is the sum of the probabilities that symbol is aligned to a gap at position $i$
 for all possible positions $i$).
 
 Let alignment $A$ of sequences $X$ and $Y$ have length $n$ and
-consists of columns $a_0,a_1,\dots a_{n-1}$. Each column is a pair
+consists of columns $a_0,a_1,\dots,$ $a_{n-1}$. Each column is a pair
 $a_i=(x_i,y_i)$ where $x_i$ and $y_i$ are symbols from $\Sigma\cup\{-\}$ \footnote{Note that $x$ and $y$ cannot be both gap symbols.}.
 Let $d_A^x(i)$ be the number of non-gap symbols in $x_0,x_1,\dots x_{i}$,
 let $d_A^y(i)$ be the number of non-gap symbols in $y_0,y_1,\dots, y_{i}$ and
@@ -100,10 +100,12 @@ marginalized posterior probability:
 
 The Posterior decoding and the Marginalized posterior decoding were used by
 Lunter {\it et al.} and both produced better alignments than alignments found
-by the Viterbi algorithm (more details in section \ref{SECTION:BIASES}). Once posterior probabilities of all possible columns of an
+by the Viterbi algorithm (more details in section \ref{SECTION:BIASES}). Once
+the posterior probabilities of all possible columns of an
 alignments are computed (in $O(|X||Y|k^2)$ time where $k$ is the number of
 states of pHMM), we can find the alignment that maximizes the desired
-function in $O(|X||Y|)$ time \cite{Lunter2008}. 
+function in $O(|X||Y|)$ time. Therefore the time complexity of the PD and MPD is 
+$O(|X||Y|k^2)$ \cite{Lunter2008}. 
 
 %Other decoding method can be done by the poster
 %Other option is to
@@ -124,7 +126,7 @@ to a genome or to find genes.
 
 First we introduce several comparative gene finders. Comparative gene finders
 use evidence from two organisms to find genes. They use pHMM to simultaneously
-align and annotate the two sequences. The advantage finding genes in two
+align and annotate  two sequences. The advantage finding genes in two
 organisms simultaneously is that we can use the evidence from two related
 organisms to detect genes that are in both organisms.
 
@@ -274,9 +276,8 @@ transitions, each transition emit one feature).
 
 Protein homology model $T$ is a simple pHMM from figure \ref{FIGURE:SIMPLEPHMM}
 defined over protein alphabet.  The composition of the models $T$ and $S$ has
-$30$ states. Authors removed unnecessary states and they also removed
-poly-pyrimidine states to reduce the number of states and transitions
-\cite{GeneWise2004}.
+$30$ states. Authors removed unnecessary states to reduce the number of states
+and transitions \cite{GeneWise2004}.
 
 
 \subsection{Pairagon}
@@ -292,7 +293,7 @@ Shaded states corresponds to exons: $M$ emits
 aligned pairs of symbols, $I_c$ is insertion in the cDNA and $I_g$ is
 insertion in the genome. States $I^1_c,I^1_g,I^2_c$ and $I^2_g$ corresponds to
 unaligned parts of the DNA and cDNA in the beginning and the end of the
-sequences. States $D,In,B,BA,A$ corresponds to intron structure and stand for 
+sequences. States $D,In,B,BA,A$ correspond to intron structure and stand for 
 Donor, Intron, Branch, Branch Acceptor and Acceptor respectively.
 Donor site emits $8$ symbols and acceptor site emits $6$ symbols.
 }\label{FIGURE:PAIRAGON}
@@ -362,7 +363,7 @@ model.
 \includegraphics{../figures/twoComponentMixtureModel.pdf}
 \end{center}
 \caption[The example of an HMM modeling two component geometric distribution]{
-Shaded state $M$ represents the match states and states $I_1$ and $I_2$
+Shaded state $M$ represents the match state and states $I_1$ and $I_2$
 represents indel states in the same sequence. Indel states for the other
 sequence are omitted.
 }\label{FIGURE:TWOCOMPONENT}
@@ -379,8 +380,8 @@ respectively and $p_1$ and $p_2$ are probabilities of remaining in state $I_1$
 and $I_2$ respectively.  This is equivalent to the generalized pair hidden
 Markov model $H'$ with one indel state for every sequence which has
 $d'(n)=d(n)/(1-d(0))$ as its duration distribution (in generalized states we
-want to have at least one state. The $d(0)$ should by modeled by the
-probabilities of incoming and outgoing transitions). Both models define the same
+want to generate at least one gap. The $d(0)$ should by modeled by the
+probabilities of incoming and outgoing transitions to the generalized state). Both models define the same
 distribution of alignments  and running the Forward-Backward algorithm or the
 Forward algorithm will give the same results. However, alignments constructed by
 the Viterbi algorithm can be different for $H$ and $H'$.
