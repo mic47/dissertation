@@ -1142,13 +1142,13 @@ other decoding methods developed in recent years.
 
 \label{SECTION:HEG}
 
-In this section we will describe a framework for studying decoding algorithm in
+In this section we will describe a framework for studying decoding algorithms in
 a more systematic way. This framework was introduced  originally for
 conditional random fields \cite{Gross2007}.  To use this framework, we need to
 define a gain function, which will express similarity (gain) between two
 annotations or state paths. The higher the gain, the more similar those two
-sequences are. Gain function is domain specific and can penalize the differences
-of the domain specific features in the state paths.  Gain function is not a
+annotations are. Gain function is domain specific and can penalize the differences
+in the domain specific features of the state paths.  Gain function is not a
 similarity in the mathematical sense; it does not even have to be symmetric.
 
 Our goal is to find an annotation that is as similar as possible to the correct
@@ -1241,8 +1241,8 @@ f_P(\Lambda,\Lambda') =
 \end{equation}
 
 Similarly, we can define gain function $f_P$ for state paths. In such case
-maximizing expected gain is equivalent to the Posterior decoding. Highest
-expected gain framework give us another interpretation of scoring function of
+maximizing the expected gain is equivalent to the Posterior decoding. Highest
+expected gain framework give us another interpretation of the scoring function of
 the Posterior decoding. Let $\Lambda_X$  have same length as $\Lambda$. From
 linearity of the expectation we have \[E_{\Lambda_X}[f_P(\Lambda_X,\Lambda)] =
 \sum_{i=0}^{|\Lambda|-1}E_{\Lambda_X[i]}[f_P(\Lambda_X[i],\Lambda[i])]\] We say
@@ -1286,7 +1286,7 @@ B_{\Lambda'}}E_{\Lambda}[g(\Lambda,\Lambda',i)]\] We call
 $E_{\Lambda}[g(\Lambda,\Lambda',i)]$ the expected gain of boundary $i$.
 
 
-Algorithm for finding annotation that maximizes expected gain with function $f$
+Algorithm for finding annotation that maximizes the expected gain with function $f$
 is following. At first we compute the $P^i_{c_1,c_2}$, the probability that correct annotation
 has boundary between colors $c_1$ and $c_2$ is at position $i$. This can be
 computed by a variant of the Posterior decoding
@@ -1304,9 +1304,9 @@ E&=\{(v^i_{c_1,c_2},v^j_{c_2,c_3})\mid 0\leq i<j< |X|, c_1,c_2,c_3\in C
 \}\cup\{(s,v^i_{c_1,c_2}\mid 0\leq i< |X|, c_1,c_2\in C\} 
 \end{align*}
 where $C$ is the set
-of labels. Weight of the edge $(u,v^i_{c_1,c_2})$ is $B^i_{c_1,c_2}$ for all $u\in
+of labels. Weight of a edge $(u,v^i_{c_1,c_2})$ is $B^i_{c_1,c_2}$ for all $u\in
 V$. Each vertex corresponds to the boundary in the annotation and edges
-corresponds to the boundaries of the same block of consecutive labels with the same
+corresponds to the  block of consecutive labels with the same
 color.
 There is one to one correspondence between annotations of $X$ and paths in
 $G$ starting in $s$ (sequence of vertices corresponds to the sequence of
@@ -1330,7 +1330,7 @@ gain and therefore it is less likely that they appear in the optimal annotation.
 
 \subsection{Highest Expected Reward Decoding}
 
-\abbreviation{Highest Expected Reward Decoding}{HERD} is the extension of maximum
+The \abbreviation{Highest Expected Reward Decoding}{HERD} is the extension of maximum
 boundary accuracy decoding. We have developed this decoding for prediction of
 recombination of HIV virus.  Further details can be found in \cite{Nanasi2010}
 and in my Master thesis \cite{Nanasi2010mgr}.
@@ -1455,15 +1455,16 @@ same as $f_A$ and therefore finding annotation that maximize $f_d$ is NP-hard.
 
 Maximizing $f_d$ is NP-hard but finding the  annotation with footprint $F$ and
 maximal expected gain can be done in polynomial time \cite{Brown2010}. Therefore
-{\it Brown and Truszkowski} used following heuristic algorithm: At first they
-sample the state path to get footprint with high probability then they used the
-polynomial algorithm for finding the annotation with the highest expected gain.
+{\it Brown and Truszkowski} used following heuristic algorithm: At first 
+sample the state paths to get the most probable footprint $F$ with high probability,
+then use the
+polynomial algorithm for finding the annotation with footprint $F$ and the highest expected gain.
 
 Gain function $f_d$ is similar to $f_A$: the annotation is considered correct if
-it is same/very similar to th correct one. However, MBAD and HERD and the
+it is same/very similar to the correct one. MBAD, HERD and the
 Posterior decoding do not care about overall structure of annotation, they
-construct annotation from highly probable ``features''. In contrast to the
-decoding function of the HERD, decoding function $f_d$ take in to account
+construct annotation from highly probable features. However,
+decoding function $f_d$ take in to account
 overall structure of the sequence.
 
 
@@ -1513,7 +1514,7 @@ also for the Forward algorithm and the Posterior decoding.
 
 \subsection{Checkpointing}
 \label{SECTION:HMMCHECKPOINTING}
-Checkpointing can be used to decrease memory complexity of the Viterbi
+Checkpointing can be used to decrease the memory complexity of the Viterbi
 algorithm with back-tracing procedure and the Posterior decoding to $O(\sqrt n
 m)$.  Similarly, this technique can be used to reduce memory complexity of the
 algorithms for pHMMs to $O(nm\sqrt n )$ where $n$ is the length of the longer
@@ -1543,11 +1544,11 @@ $B[i,v]$ to compute $F[i,v]\cdot B[i,v]$ for all $0\leq i<n,v\in V$. We will
 compute $F$ using the checkpointing technique (we compute every $k$-th row of
 $F$ and keep in memory only one block).  $B[i,v]$ will be computed row by row
 with the version of the  Backward algorithm that need only $O(m)$ memory. When
-we compute $B[i,v]$ we compute $F[i,v]$ by checkpointing technique (if $i$ is in
+we compute $B[i,v]$, we also compute $F[i,v]$ by checkpointing technique (if $i$ is in
 current block then return $F[i,v]$ from current block. Otherwise discard current
 block and recompute the block for row $i$). With this approach we can
 compute the posterior values with the $O(m\sqrt n)$ memory. We recompute every row at most
-once and therefore time complexity will not change.
+once and therefore the time complexity is $O(n(m+t))$.
 
 
 \subsection{Using Sequence Repetition}
@@ -1566,8 +1567,8 @@ $1\times m$ vector. Matrix $M_x[u,v]$ corresponds to the transition from the
 state $u$ to the state $v$ with emission of $x$ from the state $v$.
 
 \begin{lemma}\label{LEMA:MATRIXMULTI}
-Let $X=X_1\dots X_n$ be a sequence, $H$ a HMM and $M_x$ and $I_x$ defined as above and
-$F[i,\cdot]$ be row vector from forward
+Let $X=X_1\dots X_n$ be a sequence, $H$ be a HMM and $M_x$ and $I_x$ defined as above and
+$F[i,\cdot]$ be row vector from the Forward algorithm.
 Then
 \begin{align}
 F[0,\cdot] &= I_{X_0}\\
@@ -1578,7 +1579,7 @@ for all $i< n$.
 
 \begin{proof}
 We prove this lemma by induction.  If $|X|=1$ then
-$F[0,v]=I_{X_0}[v]=I_{v}e_{v,X[0]}$ for all $v\in V$.  Assume that for
+$F[0,v]=I_{X_0}[v]=I_{v}e_{v,X_0}$ for all $v\in V$.  Assume that for
 $F[k,:] = I_{X_0}\prod_{j=1}^k M_{X_j}$ (note that the  product of zero matrices
 is the identity matrix). We have 
 \begin{align*}
@@ -1591,21 +1592,21 @@ for all $v$.
 
 Consequence is that we can write the Forward algorithm as the sequence of
 multiplications of $|\Sigma|$ different matrices. Since matrix multiplication
-is associative, we can use repetitive patters to speedup calculation. 
-Let $x$ be subsequence of $X$ that has $k>1$ non-overlapping occurrences in $X$.
+is associative, we can use repetitive patters to speedup the calculation. 
+Let $x$ be a subsequence of $X$ that has $k>1$ non-overlapping occurrences in $X$.
 We can compute $M_{x[0]}M_{x[1]}\dots M_{x[{|x|-1}]}$ once and use it several
 times. Let $M_{x}=\prod_{i=0}^{|x|-1}M_{x[i]}$ for any string $x$.
 
 By proper choosing of substrings $x$ we can speedup computation of the Viterbi
 algorithm\footnote{For the Viterbi algorithm we need different matrix
 multiplication}, the Forward algorithm  or the
-Forward-Backward algorithm. Algorithms has following structure:
+Forward-Backward algorithm. Algorithms have following structure:
 \begin{enumerate}
-\item We choose the \firstUseOf{dictionary} $D$. $D$ is set of string over
-alpha bet $\Sigma$. String is a
+\item We choose the \firstUseOf{dictionary} $D$. $D$ is set of strings over
+alphabet $\Sigma$. String is a
 \firstUseOf{good} if it belongs to $D$.
 \item We compute $M_x$ for all $x\in D$.
-\item We split input sequence $X[1:]$ into the sequences of good words
+\item We split input sequence $X[1:]$ into the sequences of a good strings
 $x_0,x_1,\dots,x_{k-1}$ such that $x_0x_1\dots x_{k-1}=X[1:]$.
 %and $x_i\in D$ for
 %all $0\leq i<k$
@@ -1616,19 +1617,23 @@ $f(m)$ is time needed to compute multiplication of two matrices of size $m\times
 Lifshits {\it et al.} \cite{Lifshits2009} showed several ways how to choose set
 $D$ and split $X$ into sequence of good words. One of them is to use LZ78 factorization
 to split $X$ into $O(n/\log n)$ good words. Computation of $M_x$ for all $x\in
-D$ can be done in $O(|D|m^3)$. For all $x\in D$, the matrix $M_x$ can be computed in $O(m^3)$
-time with following algorithm: if $|x|=1$ then $M_x$ we compute $M_x$ trivially.
+D$ can be done in $O(|D|m^3)$. For all $x\in D$, the matrix $M_x$ can be
+computed from $M_{x[:|x|-1]}$ in $O(m^3)$
+time with the following algorithm:
+if $|x|=1$ then we compute $M_x$ trivially.
 If $|x|>1$ then there is $x'\in D$ such that $x=x'a,a\in \Sigma$ and therefore $M_x =
-M_{x'}M_{a}$. Since $|D|=O(n/log n)$, computing $M_x$ takes $\Omega(nm^3/log m)$
+M_{x'}M_{a}$. 
+
+Since $|D|=O(n/log n)$, computing $M_x$ takes $\Omega(nm^3/log m)$
 time if
-we use $O(m^3)$ algorithm for computing matrix multiplication. Computing fourth
-step of the algorithm takes also $\Omega(nm^3/\log n)$ time and therefore overall time complexity
-is $\Omega(nm^3/\log n)$ and that means $\Omega(\log n/m)$ speedup over the
+we use $O(m^3)$ algorithm for computing the matrix multiplication. Computing the fourth
+step of the algorithm takes also $\Omega(nm^3/\log n)$ time and therefore the overall time complexity
+is $\Omega(nm^3/\log n)$ which is $\Omega(\log n/m)$ speedup over the
 classical implementation of the Forward algorithm for the dense matrices.
 
 It is possible to use different encoding methods. Speedup for the run length encoding 
-is $\Omega(r/\log r)$, for the straight-line programs $\Omega(r/m)$ and for the
-byte pair encoding $\Omega(r)$ where $r$ is the compression ratio under each
+is $\Omega(r/\log r)$, for the straight-line programs is $\Omega(r/m)$ and for the
+byte pair encoding is $\Omega(r)$ where $r$ is the compression ratio under each
 compression scheme. We will not discuss details of this implementations, they
 can be found in \cite{Lifshits2009}.
 
@@ -1640,25 +1645,25 @@ where summation is replaced with the maximization:
 where $M_1$ and $M_2$ are matrices of size $m\times m$. This matrix
 multiplication is also associative \cite{Lifshits2009}.
 
-The second adaptation is that we have to had ability to reconstruct 
+The second adaptation is that we have to had the ability to reconstruct 
 the most probable state path.
 After computing $I^{X_0}\prod_{i=0}^{k-1}M_{x_i}$ we do the back-trace to obtain 
-the partial state path $\pi'_0,\pi'_1,\dots \pi'_{k}$ which is subsequence of the
-most probable state path. Each $\pi'_i$ is state corresponding to the last
-sequence of $x_i$. We have to reconstruct state path between $\pi'_i$s; for
+the partial state path $\pi'_0,\pi'_1,\dots \pi'_{k}$ which is the subsequence of the
+most probable state path. Each $\pi'_i$ is a state corresponding to the last
+symbol of $x_i$. We have to reconstruct state path between $\pi'_i$'s; for
 every $x_i$ we have to reconstruct state path between $\pi'_{i-1}$ and $\pi'_i$.
 
-All mentioned compression schemes has property,
+All mentioned compression schemes has the property,
 that for every good string $x$ there are also two good strings $x^1,x^2$ such
-that $x=x^1x^2$. To recover state path for every good string $x$ and $u,v\in V$
+that $x=x^1x^2$. To recover state path, for every good string $x$ and $u,v\in V$
 we have to pre-compute \[R_x[u,v] = \arg\max_{i\in V}M_{x^1}[u,i]M_{x^2}[i,v]\]
 
 Let $x=x_i$. Then $R_{x}[\pi'_{i-1},\pi'_{i}]$ corresponds to the state in the
 position of the last symbol of $x^1$. By recursive applying this rule to $x^1$
 and $x^2$ we can reconstruct the most probable state path on $x$. By doing this
-we can reconstruct it the most probable state path in $O(n)$ time.
+we can reconstruct the most probable state path with the time complexity $O(n)$.
 
-Lifshits {\it et al.} applied this  speedup also to the Posterior decoding and
+Lifshits {\it et al.} also applied this  speedup  to the Posterior decoding and
 the Baum-Welsch training. 
 
 %Let $X$ be the most probable state path that uses 
@@ -1670,24 +1675,24 @@ the Baum-Welsch training.
 \subsection{On-line Viterbi Algorithm}
 \label{SECTION:ONLINEVITERBI}
 
-The On-line Viterbi algorithm is different approach to reduce memory complexity of
+The On-line Viterbi algorithm is different approach to reduce the memory complexity of
 the Viterbi algorithm. In this approach we represent matrix $B$ in sparse way
-and we keep only those parts of $B$ that can be necessary for reconstruction of
-the most probable state path.
-We can represent $B$ as the forest $G=(V',E)$ where
+and we keep only those parts of $B$ that can be necessary for the reconstruction of
+the most probable state path \cite{Sramek2007}.
+We  represent $B$ as the forest $G=(V',E)$ where
 \begin{align*}
 V' &= \left\{ (i,v)\mid 0\leq i< n, v\in V  \right\}\\
 E &= \left\{ (i,v)\to (i-1,B[i,v])\mid 0<i<n,v\in V\right\}
 \end{align*}
 Edges in this forest are oriented from the children to parents. Roots of the
-trees are vertices $(0,v),v\in V$.  Most probable state path that generated
+trees are vertices $(0,v),v\in V$.  The most probable state path that generated
 $X[:i]$ and ending in vertex $v$ corresponds to the path from vertex $(i-1,v)$
 to root of its tree. Let $S_{i,v}$ be the set of all vertices on the path from
 the vertex
 $(i,v)$ to the root of its tree. Let $S_i=\cup_{v\in V}S_{i,v}$.
 After computation of $B[i,v]$, only the vertices in $S_i$ can be in the most
-probable state path so other can be removed. State paths corresponding to
-$S_{i,v}$ may be overlap, so by removing others we can reduce memory
+probable state path so others can be removed. State paths corresponding to
+$S_{i,v}$ may overlap, so by removing not necessary vertices we can reduce the memory
 requirements.
 
 {\v S}r{\'a}mek {\it et al.} developed data structure that maintains $S_i$
@@ -1698,26 +1703,27 @@ leaves $(i,v),v\in V$. Construction of $G_{i+1}$ is following.
 After computing $B[i+1,\cdot]$ we add vertices $(i+1,v),v\in V$ and edges 
 $(i+1,v)\to (i,B[i+1,v]),v\in V$. Vertices $(i+1,v),v\in V$ are the new leaves.
 While in $G_{i+1}$ are some internal leaves, we remove them.
-After removing all internal leaves, $G_{i+1}$ contains only vertices from $S_i$.
+After removing all internal leaves, $G_{i+1}$ contains only vertices from
+$S_{i+1}$.
 To make $G_i$ smaller, we use the compressed representation of the trees. We compress
 chains of vertices with one children into one edge (but we keep
 corresponding state path of compressed chain). If we do so, every vertex will
 have at most two children and therefore there will be at most $m-1$ internal
 nodes. $G_i$ has therefore always $O(m)$ leaves and updating can be done in
 $O(m)$ time. Therefore this technique does not alter the asymptotic running time
-of the Viterbi algorithm. In practice this technique increased running time by
+of the Viterbi algorithm. In practice this technique increase running time by
 $5$\% \cite{Sramek2007}.
 
-Improvement in memory requirements can be significant. Even when there exists
-HMMs on which this technique will not improve memory requirements
-\cite{Sramek2007}, {\v S}r{\'a}mek {\it et al.} reports polylogarithmic 
+Improvement in the memory requirements can be significant. However, there exists
+an HMM on which this technique will not improve memory requirements
+\cite{Sramek2007}. In practice, {\v S}r{\'a}mek {\it et al.} reports polylogarithmic 
 memory requirements for HMM used for gene finding.
 They also proved that for two
 state HMMs (with one exception), expected memory complexity of this algorithm is
-$O(H\log n)$ where $H$ is constant specific for HMM. Estimation of expected time
+$O(H\log n)$ where $H$ is a constant specific for an HMM. Estimation of the expected time
 complexity for given HMM is still open problem.
 
-Keibler {\it et al. (2007)} developed similar algorithm called the Treeterbi. Both
-algorithms are similar, but the Treeterbi does not use the compressed version of the
-graph. Both algorithms can be extended to the GHMM and pHMM, the extensions of
-the Treeterbi algorithm can found in \cite{Keibler2007}.
+Keibler {\it et al. (2007)} developed similar algorithm called the Treeterbi
+algorithm. Both algorithms are similar, but the Treeterbi does not use the
+compressed version of the graph. Both algorithms can be extended to the GHMM and
+pHMM, the extensions of the Treeterbi algorithm can found in \cite{Keibler2007}.
