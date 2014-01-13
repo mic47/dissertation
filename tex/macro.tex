@@ -60,4 +60,27 @@
 
 \newcommand\prob[1]{\Pr\left(#1\right)}
 
+\definecolor{shadecolor}{RGB}{180,180,180}
+\definecolor{bluecolor}{RGB}{180, 180, 255}
+\definecolor{redcolor}{RGB}{255, 180, 180}
+\definecolor{redcolor}{RGB}{255, 180, 180}
+\definecolor{greencolor}{RGB}{180, 255, 180}
+\definecolor{yellowcolor}{RGB}{255, 255, 180}
+\newcommand\notmytext[1]{\colorbox{redcolor}{#1}}
+\newcommand\reformulate[1]{\colorbox{bluecolor}{#1}}
+\newcommand\shadedtext[1]{\colorbox{shadecolor}{#1}}
+
+\newcommand\qed[0]{$\square$}
+
+\newenvironment{reformulate*}{%
+  \def\FrameCommand{\fboxsep=\FrameSep \colorbox{bluecolor}}%
+  \MakeFramed {\advance\hsize-\width \FrameRestore}}%
+ {\endMakeFramed}
+
+\newenvironment{notmytext*}{%
+  \def\FrameCommand{\fboxsep=\FrameSep \colorbox{redcolor}}%
+  \MakeFramed {\advance\hsize-\width \FrameRestore}}%
+ {\endMakeFramed}
 %\def\draft{}
+
+
