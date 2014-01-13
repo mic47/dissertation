@@ -1,0 +1,12 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Start all things
+\def\startfile{
+\usepackage{pstricks,pst-node,pst-eps}
+\begin{document}%
+\begin{TeXtoEPS}\noindent%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% End things started in \startfile
+\def\endfile{%
+\end{TeXtoEPS}\end{document}%
+}
+

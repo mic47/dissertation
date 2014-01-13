@@ -1,0 +1,43 @@
+\documentclass[11pt]{article}
+\input shared.texm
+
+%overall
+\def\XX{1}\def\XXX{2}\def\YY{0.5}
+
+%square
+\def\SNODE(#1,#2)#3#4#5#6{%
+\rput(#1,#2){\fnode[fillstyle=solid,fillcolor=#4,framesize=0.6]{#3}}
+\rput(#1,#2){\color{#5}{#6}}
+}%
+
+% x,name
+\def\COL#1#2{
+\rput(#1,0){
+\SNODE(0,\YY){A#2}{black}{white}{$A_{#2}$}
+\SNODE(0,-\YY){B#2}{white}{black}{$B_{#2}$}
+}}
+
+\def\EDGES#1#2{
+\ncline{A#1}{A#2}
+\ncline[linewidth=1.3pt,linecolor=darkgray]{A#1}{B#2}
+\ncline[linewidth=1.3pt,linecolor=darkgray]{B#1}{A#2}
+\ncline{B#1}{B#2}
+}
+
+\startfile
+\begin{pspicture}(-2.5,-1)(3,1)
+\psset{arrows=->,linewidth=0.7pt}
+\COL{-\XXX}{1}
+\COL{-\XX}{2}
+\COL{0}{3}
+\COL{\XX}{4}
+\COL{\XXX}{5}
+\EDGES{1}{2}
+\EDGES{2}{3}
+\EDGES{3}{4}
+\EDGES{4}{5}
+\rput(\XXX,\YY){\hskip 1.7cm \dots}
+\rput(\XXX,-\YY){\hskip 1.7cm \dots}
+
+\end{pspicture}
+\endfile
