@@ -2,6 +2,73 @@
 
 \section{Problems definitions}
 
+We focus on computational complexity of several decoding problems: computing the
+most probable footprint, the most probable set, and the most probable
+restriction for HMMs. At first, we have to define problems at first. The
+footprint is as in definition \ref{DEFINITION::FOOTPRINT}: the maximal
+subsequence of an annotation that does not contain wto identical consecutive
+labels.
+
+\begin{definition}[The most probable set problem]
+The \abbreviation{set}{S} of state path $\pi$ (or labeling $\Lambda$) is the set of
+states (or labels) visited on the path. Let $R=r_1r_2\dots r_n$ be sequence of
+states or labels. Then 
+\begin{equation*}
+S(R) = \left\{r_1,r_2,\dots, r_n\right\}
+\end{equation*}
+The probability of set $\prob{S(R), X\mid H}$ given sequence $X$ and model H is the sum of
+probabilities of all state paths that has given set. Formally
+\begin{equation*}
+S(R) = \sum_{\pi, S(\pi) = R}\prob{\pi, X\mid H}
+\end{equation*}
+\end{definition}
+
+\begin{definition}
+\firstUseOf{The most probable set problem:} Given an HMM $H$, sequence $X$ of
+length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
+such that $\prob{S(\pi) = S, X\mid H} \geq p$.
+\end{definition}
+
+\begin{definition}[The most probable footprint]
+\firstUseOf{The most probable footprint problem:} Given an HMM $H$, sequence $X$
+of length $n$ and a number $p\in [0,1]$, decide if there exists a footprint $F$
+such that $\prob{f(\pi) = S, X\mid H}\geq p$
+\end{definition}
+
+\begin{definition}[Existence of a path]
+\firstUseOf{The existence of path problem:} Given an HMM $H$, sequence
+$X$ of length $n$, a subset of states $S$ and a number $p\in [0,1]$, decide if
+exists $\pi$ such that $\prob{S(\pi)=S,X\mid H} > 0$
+\end{definition}
+
+\begin{definition}[The most probable restriction problem]
+Given an HMM $H$, sequence $X$, integer $k$ and number $p\in[0,1]$, decide if
+there exists a subset of states $S$ of size $k$, such that
+$\prob{S(\pi)\subseteq S, X\mid H} \geq p$.
+\end{definition}
+
+\begin{theorem}
+The most probable set problem is NP-hard. \label{THEOREM::NPSET}
+\end{theorem}
+
+\begin{theorem}
+The most probable footprint problem is NP-hard even for fixed HMM.
+\label{THEOREM::NPFOOT}
+\end{theorem}
+
+\begin{theorem}
+Existence of a path problem is NP-hard. \label{THEOREM::NPEXIST}
+\end{theorem}
+
+\begin{theorem}
+The most probable restriction problem is NP-hard. \label{THEOREM::NPREST}
+\end{theorem}
+
+At first we show combinatorial? proof of theorem \ref{THEOREM::NPSET}. Then we
+show proof of theorem \ref{THEOREM::NPFOOT} by showing $8$-state HMM for 
+which is NP hard to find most probable footprint. Then we 
+Finally, we show short proof ot theorem \ref{THEOREM::NPREST}.
+
 \begin{notmytext*}
 Hidden Markov models (HMMs) are used for probabilistic modeling of
 sequential data in many areas, including bioinformatics, natural
