@@ -69,6 +69,7 @@ show proof of theorem \ref{THEOREM::NPFOOT} by showing $8$-state HMM for
 which is NP hard to find most probable footprint. Then we 
 Finally, we show short proof ot theorem \ref{THEOREM::NPREST}.
 
+\begin{comment}
 \begin{notmytext*}
 Hidden Markov models (HMMs) are used for probabilistic modeling of
 sequential data in many areas, including bioinformatics, natural
@@ -101,7 +102,6 @@ application domains, it may be appropriate to group state paths together in
 different ways. In this paper, we explore 
 the following three optimization problems of this
 kind. 
-
 \paragraph{The most probable footprint:}
 The \emph{footprint} of a state path (or labeling) is the list of
 states (or labels) visited on the path, discarding the information
@@ -146,15 +146,15 @@ sequence annotation can be found for example in \citet{Durbin1998}.
 A \emph{hidden Markov model} is a generative probabilistic model
 with a finite set of states $V$ and transitions $E$. The generative
 process starts by choosing a starting state $v_1$ according to the
-initial state probabilities $I(v_1)$.  In each successive round, the model
+initial state probabilities $I_{v_1}$.  In each successive round, the model
 emits a single symbol $x_i$ from the \emph{emission probability}
 distribution $e(v_i,x_i)$ of the current state $v_i$, and then changes
 the state to $v_{i+1}$ according to the \emph{transition probability}
-distribution $a(v_i,v_{i+1})$. The process continues for
+distribution $a_{v_i,v_{i+1}}$. The process continues for
 some fixed number of steps $n$.  Thus, the joint probability of
 generating a sequence $X=x_1,\dots,x_n$ by a state path $\pi =
-v_1,\dots,v_n$ in an HMM $H$ is $\Pr(\pi,X\mid H, n) = I(v_1) \cdot
-e(v_1,x_1)\cdot \prod_{i=2}^n a(v_{i-1},v_{i}) \cdot e(v_i,x_i)$. 
+v_1,\dots,v_n$ in an HMM $H$ is $\Pr(\pi,X\mid H, n) = I_{v_1} \cdot
+e(v_1,x_1)\cdot \prod_{i=2}^n a_{v_{i-1},v_{i}} \cdot e(v_i,x_i)$. 
 
 Let $Y$ be a sequence over some alphabet such that
 $Y=x_1^{k_1}x_2^{k_2}\dots x_n^{k_n}$ where $x_{i}$ and $x_{i+1}$ are
@@ -186,19 +186,22 @@ $\Pr(f(\pi) = F,X\mid H,n)>0$ and a set of states $S$ can generate $X$
 if $\Pr(s(\pi) = S,X\mid H,n)>0$.
 
 \end{notmytext*}
+\end{comment}
 
 \section{The Most Probable Set of States}
 \label{sec:set}
-\begin{reformulate*}
 In this section, we prove NP-hardness of finding the most probable set
-of states. Again, as with footprint, this is a special case of the
-problem of finding the most probable set of labels. 
+of states. This is a special case of the
+problem of finding the most probable set of labels. Now we prove theorem
+\ref{THEOREM::NPSET}.
 
+\begin{comment}
 \begin{theorem}The following problem is NP-hard:
 Given an HMM $H$, sequence $X$ of length $n$, and a number $p\in [0,1]$,
 decide if there exists a set of states $S$ such that 
 $\Pr\left(s(\pi)=S, X\mid H, n \right)\geq p$.
 \end{theorem}\label{thm:sets}
+\end{comment}
 
 To prove this theorem, we will use a reduction from the maximum clique
 problem.  Given a graph $G=(V,E)$ and a clique
@@ -210,8 +213,10 @@ connecting each of the new vertices to all other vertices in $V'$.
 As long as $k'-k$ is not too large, this transformation can be done in
 polynomial time.
 
-In the next step, we use $G'$ and $k'$ to construct an HMM, an input
-sequence and a probability threshold. We will use the following
+In the next step, we use $G'$ and $k'$ to construct an HMM $H_{G'}$, an input
+sequence and a probability threshold. $H_{G'}$ have property the set with
+probability above threshold on given sequence corresponds to the clique of size
+$k'$ in graph $G'$. We will use the following
 straightforward way of converting a graph to an HMM.
 
 \begin{definition}\label{GraphHMM}
@@ -221,36 +226,48 @@ Then the \emph{graph HMM} $H_G$ is defined as follows:
 \item Its set of states is $V\cup \{\psi\}$, where $\psi\notin V$ is a
   new state called the error state.
 \item Its emission alphabet is $\{0,1\}$.
-\item Each state $v\in V$ has initial probability $I(v) = 1/|V|$, the
-error state has initial probability $I(\psi)=0$.
+\item Each state $v\in V$ has initial probability $I_{v} = 1/|V|$, the
+error state has initial probability $I_{\psi}=0$.
 \item Each state $v\in V$ emits 0 with probability 1, the error state emits 1 
 with probability 1.
 \item Transitions with non-zero probability between states $u,v\in V$
   correspond to edges in $E$:
-$$a(u,v)=\begin{cases}
+$$a_{u,v}=\begin{cases}
 \frac1{|V|} & \{u,v\}\in E\\
 0 & \text{otherwise}
 \end{cases}$$
-\item For $u\in V$, we also have $a(u,\psi)=1-\sum_{v\in V}a(u,v)$
-and $a(\psi,u)=0$. The error state has a self-transition with 
-probability 1: $a(\psi,\psi)=1$.
+\item $a_{u,\psi}=1-\sum_{v\in V}a_{u,v}$
+and $a_{\psi,u}=0$ for all $u\in V$. The error state has a self-transition with
+probability 1: $a_{\psi,\psi}=1$.
 \end{itemize}
 \end{definition}
+\todo{Ako je to s tym n-kom pri podmienkach?}
 
-The error state $\psi$ is added to the HMM so that all non-zero
-transitions between states in $V$ have the same probability. Any state
-path $\pi$ containing only states from $V$ connected by transitions
-with non-zero probability has the same probability of generating
-sequence $X=0^n$: $\Pr(\pi, X=0^n|H_G,n) = |V|^{-n}$.
-Such paths correspond to walks in graph $G$. 
+The purpose of error state $\psi$ is to level the probabilities of admissible
+state paths without $\psi$ to the same probability. Since $\psi$ is the only
+states that generates $1$, only sequences of form $X=0^n$ can be generated by
+admissible state path. Emission probabilities on such strings are $1$, initial
+probablity and all transitions are equal to $|V|^{-1}$, and therefore
+$\prob{\pi, X=0^n\mid H_G,n} = |V|^{-n}$.  Each such path corresponds to walk in
+graph $G$. Each set of states in $H_G$ naturaly correspond to subset of states.
+The probability of the set is proportional to the number of corresponding walks
+in the graph $G$. Therefore we will count the number of special walks in induced subgraphs of $G$.
 
-Therefore, we will be interested in counting the number of walks in
-different graphs. Let $Y(n,G)$ be the number of walks of length $n-1$
-in a graph $G=(V,E)$ that visit every vertex from $G$ at least once.
-Note that a walk of length $n-1$ contains $n-1$ edges and $n$ vertices, and
-therefore $Y(n,G)=0$ for $n<|V|$. As a special case we consider
-$D(n,k)=Y(n,K_k)$, where $K_k$ is the complete graph with $k$
-vertices. The following claim clearly holds:
+\begin{definition}
+Let $G=(V, E)$ be a graph and $S\subseteq V$ be arbitrary set of its vertices.
+Then walk $w=v_1v_2\dots v_n, v_i\in V$ of length $n-1$ \firstUseOf{cover} set
+$S$, if and only if $\left\{v_1, v_2, \dots, v_n\mid 1\leq i\leq n\right\}=S$. 
+We say that walk $w$ cover graph $G$ if $w$ cover graphs set of vertices $V$.
+
+In other words, walk cover set $S$ if it uses only vertices from $S$ and each
+vertex from $S$ is used at least once.
+\end{definition}
+
+Let $Y(n, G)$ be the number of graph covering walks of length $n-1$. Since walk
+of length $n - 1$ contain $n$ vertices, $Y(n, G)=0$ if $n<|V|$. We consider a
+special case of this formula for complete graphs: Let $K_k$ be
+complete graph with $k$ vertices, then $D(n, k) = Y(n, K_k)$. Following claim
+clearly holds:
 
 \begin{lemma}\label{NotCliqueIsSmaller}
 If $G$ is a graph with $k$ vertices and $n\ge k$, then
@@ -261,11 +278,11 @@ In our reduction, we use HMM $H=H_{G'}$ and $X=0^n$ for a suitable
 choice of $n$ discussed below. We will set threshold $p$ to
 $D(n,k')/|V|^{n}$. Clearly, if the input graph $G$ has a clique $S$ of
 size $k$, graph $G'$ has a clique $S'$ of size $k'$. There
-are $D(n,k')$ walks of length $n-1$ that use only vertices in
-$S'$ and visit each of them at least once. Each such walk
+are $D(n,k')$ walks of length $n-1$ that cover $S'$. Each such walk
 corresponds to one state path, and therefore the probability of
 the set of states $S'$ is exactly $p$. 
 
+\begin{reformulate*}
 In order to prove the opposite implication, we need suitable choices
 of $n$ and $k'$. Table \ref{DNKTable} shows values of $D(n,k)$ for
 small values of $n$ and $k$. For a fixed length of walk $n$, the
@@ -460,15 +477,15 @@ state $v$ and generates the first $i$ characters of sequence $X$.
 To compute $F[n,S,v]$, we use the following equation:
 \ifx\settwocolumn\undefined
 $$F[i,S,v] = \begin{cases}
-I(v)e(v,X[1])& i=1,S=\{v\}\\ 
-\displaystyle \sum_{u\to v}a(u,v)e(v,X[i])\left(F[i-1,S\backslash\{v\},u]
+I_{v}e(v,X[1])& i=1,S=\{v\}\\ 
+\displaystyle \sum_{u\to v}a_{u,v}e(v,X[i])\left(F[i-1,S\backslash\{v\},u]
 + F[i-1,S,u]\right) & i>1, v\in S\\
 0 & \mbox{otherwise}
 \end{cases}$$
 \else
 $$F[i,S,v] = \begin{cases}
-I(v)e(v,X[1])& i=1,S=\{v\}\\ 
-\displaystyle \sum_{u\to v}a(u,v)e(v,X[i])\\\hspace{5mm}\left(F[i-1,S\backslash\{v\},u]\right.
+I_{v}e(v,X[1])& i=1,S=\{v\}\\ 
+\displaystyle \sum_{u\to v}a_{u,v}e(v,X[i])\\\hspace{5mm}\left(F[i-1,S\backslash\{v\},u]\right.
 \\\hspace{5mm}\left.
 + F[i-1,S,u]\right) & i>1, v\in S\\
 0 & \mbox{otherwise}
@@ -699,19 +716,19 @@ Then the \emph{graph HMM} $H_G$ is defined as follows:
 \item Its set of states is $V\cup \{\psi\}$, where $\psi\notin V$ is a
    new state called the error state.
 \item Its emission alphabet is $\{0,1\}$.
-\ item Each state $v\in V$ has initial probability $I(v) = 1/|V|$, the
-error state has initial probability $I(\psi)=0$.
+\ item Each state $v\in V$ has initial probability $I_{v} = 1/|V|$, the
+error state has initial probability $I_{\psi}=0$.
 \item Each state $v\in V$ emits 0 with probability 1, the error state emits 1 
 with probability 1.
 \item Transitions with non-zero probability between states $u,v\in V$
   correspond to edges in $E$:
-$$a(u,v)=\begin{cases}
+$$a_{u,v}=\begin{cases}
 \frac1{|V|} & \{u,v\}\in E\\
 0 & \text{otherwise}
 \end{cases}$$
-\item For $u\in V$, we also have $a(u,\psi)=1-\sum_{v\in V}a(u,v)$
-and $a(\psi,u)=0$. The error state has a self-transition with 
-probability 1: $a(\psi,\psi)=1$.
+\item For $u\in V$, we also have $a_{u,\psi}=1-\sum_{v\in V}a_{u,v}$
+and $a_{\psi,u}=0$. The error state has a self-transition with 
+probability 1: $a_{\psi,\psi}=1$.
 \end{itemize}
 \end{definition}
 
@@ -744,15 +761,15 @@ state $v$ and generates the first $i$ characters of sequence $X$.
 To compute $F[n,S,v]$, we use the following equation:
 \ifx\settwocolumn\undefined
 $$F[i,S,v] = \begin{cases}
-I(v)e(v,X[1])& i=1,S=\{v\}\\ 
-\displaystyle \sum_{u\to v}a(u,v)e(v,X[i])\left(F[i-1,S\backslash\{v\},u]
+I_{v}e(v,X[1])& i=1,S=\{v\}\\ 
+\displaystyle \sum_{u\to v}a_{u,v}e(v,X[i])\left(F[i-1,S\backslash\{v\},u]
 + F[i-1,S,u]\right) & i>1, v\in S\\
 0 & \mbox{otherwise}
 \end{cases}$$
 \else
 $$F[i,S,v] = \begin{cases}
-I(v)e(v,X[1])& i=1,S=\{v\}\\ 
-\displaystyle \sum_{u\to v}a(u,v)e(v,X[i])\\\hspace{5mm}\left(F[i-1,S\backslash\{v\},u]\right.
+I_{v}e(v,X[1])& i=1,S=\{v\}\\ 
+\displaystyle \sum_{u\to v}a_{u,v}e(v,X[i])\\\hspace{5mm}\left(F[i-1,S\backslash\{v\},u]\right.
 \\\hspace{5mm}\left.
 + F[i-1,S,u]\right) & i>1, v\in S\\
 0 & \mbox{otherwise}
