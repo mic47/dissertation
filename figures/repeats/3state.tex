@@ -1,0 +1,25 @@
+\documentclass[11pt]{article}
+\usepackage{epsfig}
+\input shared.texm
+\startfile
+\begin{pspicture}(-1.2,-1.5)(1.2,1.5)
+\def\MNODE(#1,#2)#3#4{%
+\cnode(#1,#2){0.31}{#3}\rput(#1,#2){#4}}%
+\def\XA{-0.7}\def\XB{0.7}
+\def\YA{0.8}
+
+\MNODE(\XA,0){M}{$M$}
+\MNODE(\XB,-\YA){IY}{$I_Y$}
+\MNODE(\XB,\YA){IX}{$I_X$}
+\MNODE(\XB,\YA){IX}{$I_X$}
+
+\psset{arrows=->,linecolor=darkgray}
+\ncline[arrows=<->]{M}{IY}
+\ncline[arrows=<->]{M}{IX}
+\ncline[arrows=<->]{IX}{IY}
+\nccircle[angle=90,nodesep=-1pt]{M}{0.3}
+\nccircle[angle=0,nodesep=-1pt]{IX}{0.3}
+\nccircle[angle=-135,nodesep=-1pt]{IY}{0.3}
+
+\end{pspicture}
+\endfile
