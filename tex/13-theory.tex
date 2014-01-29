@@ -282,8 +282,8 @@ are $D(n,k')$ walks of length $n-1$ that cover $S'$. Each such walk
 corresponds to one state path, and therefore the probability of
 the set of states $S'$ is exactly $p$. 
 
-\begin{reformulate*}
-In order to prove the opposite implication, we need suitable choices
+In order to prove the opposite implication "if there exists a state path with
+probability $p$ then there is clique of size $k$ in graph", we need suitable choices
 of $n$ and $k'$. Table \ref{DNKTable} shows values of $D(n,k)$ for
 small values of $n$ and $k$. For a fixed length of walk $n$, the
 number of walks in $K_k$ initially grows with increasing $k$, as we
@@ -293,7 +293,9 @@ the requirement to cover every vertex. We are particularly interested in
 the value of $k$ where $D(n,k)$ achieves the maximum value for a fixed $n$. 
 In particular we use the following notation:
 $$M_{n} = \min\left\{k ; D(n,k) = \max_{0\leq k'\leq
-  n}D(n,k')\right\}$$ Note that if there are multiple values
+  n}D(n,k')\right\}$$
+  
+Note that if there are multiple values
 of $k$ achieving maximum, we take the smallest one as $M_n$.  In our
 reduction, we would like to set $n$ to be the smallest value such that
 $M_n=k$, but we were not able to prove that such $n$ exists for each $k$.
@@ -301,7 +303,6 @@ Therefore we choose as $n$ the smallest value such that $M_n\ge k$, and
 we denote this value $n_k$. As $k'$ we then use $M_{n_k}$. The following 
 lemma states important properties of $n_k$ and $M_{n_k}$. 
 
-\end{reformulate*}
 \begin{table*}[t]
 \begin{center}
 \begin{tabular}{|c||c|c|c|c|c|c|c|c|c||c|}\hline
@@ -326,12 +327,12 @@ $\mathbf{M_{n_k}}$&0&1&2&3&4&5&6&7&8&\\\hline
 \caption{Values of $D(n,k)$, $n_k$, $M_n$, and $M_{n_k}$ for small values of $n$ and $k$. Empty cells contain zeros.}\label{DNKTable}
 \end{table*}
 
-\begin{reformulate*}
 \begin{lemma}\label{DNKlemma}
 The value of $n_k$ is at most $\lceil k\ln k\rceil$, and $n_k$ and
-$M_{n_k}$ can be computed in $O(k^{O(1)})$ time.
+$M_{n_k}$ can be computed in polynomial time.
 \end{lemma}
 
+\begin{reformulate*}
 Before proving this lemma, we finish the proof of the reduction. Let
 us assume that there is a set of states $S$ such that
 $\Pr(s(\pi)=S,X|H,n)\ge p$. This means that if we consider walks in the
