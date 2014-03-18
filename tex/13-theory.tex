@@ -1,4 +1,295 @@
-\chapter{Decoding of HMMs}
+\chapter{Two Stage Decoding of HMMs}
+
+In this chapter we will study computational complexity of some decoding
+techniques that are aimed to reduce systematic errors sequence annotation. In
+this chapter we will focus only on HMMs, not their pairwise counterpart. We can
+find one example in the HIV recombination prediction domain. As we summarized in 
+section \ref{SECTION:HERD}, in \reformulate{this problem} we are trying to label
+the recombinant virus sequence by the original virus subtypes. For doing this,
+we have developed HERD decoding method \cite{Nanasi2010, Nanasi2010mgr} that
+performed better than the Viterbi algorithm. However, in some cases HERD
+switched between different subtypes too often and even into wrong cases. See
+figure \ref{FIGURE:HERD_BAD}. To mitigate these effect one can use two-stage
+strategy: At first search for the most probable footprint, then fix footprint
+and maximize original criteria with restriction to this footprint. By fixing
+footprint, original method is forced to change labels only few times and
+therefore erratic change of labels as in figure \ref{FIGURE:HERD_BAD} is not
+possible.
+
+Footprint is not the only way what to use as an restriction for the second stage
+of the algorithm. Alternatively, we also explore fixing the set of states or
+labels that can be used in the final alignment. In such case, the first state
+would be about finding the set of states/labels with has maximal probability.
+In general, in the first stage we search for the optimal guide (footprint, set,
+\dots) and in the second stage we find optimal annotation using this guide.
+
+At first, need to define our problems formally.
+\section{Formal definition}
+
+\begin{note}
+In following set we will work mostly with annotations. By setting $\lambda$ to
+identity function, we have all definitions working on state paths.
+\end{note}
+\todo{mozno by nebolo odveci restriction premenovat na guide}
+
+\begin{definition}[Annotation set]
+The \abbreviation{\firstUseOf{Annotation set}}{S} of labeling
+$\Lambda$ of state path $\pi$ the set of labels visited on the state path.
+Let $\pi = \pi_1\pi_2\dots \pi_n$ and $\lambda$ be coloring function as in definition
+\ref{DEFINITION:ANNOTATION}. Then 
+\[S(\pi) = \left\{\lambda(\pi_1), \lambda(\pi_2)\dots\lambda(\pi_n)\right\}\]
+
+Similarly, since $\Lambda = \Lambda_1\Lambda_2\dots \Lambda_n$ where $\Lambda_i
+= \lambda(\pi_i)$, 
+\[S(\Lambda) =
+\left\{\Lambda_1,\Lambda_2,\dots\Lambda_n\right\}\]
+
+The \firstUseOf{State set} is annotation set where labeling function is identity
+function.\label{DEFINITION:ANNOTATION_SET}
+\end{definition}
+
+The footprint is what is left from labeling after removing consecutive identical
+labels. Formally it was defined in section \ref{SECTION:DISTANTMEASURES} by
+definition \ref{DEFINITION::FOOTPRINT}.  We denote the footprint of annotation
+$\Lambda$ as $F(\Lambda)$.
+
+Two-stage decoding system can be described in Highest Expected Gain framework
+introduced in section \ref{SECTION:HEG}. At first, we define restriction and
+restriction function.
+
+\begin{definition}
+Let $H$ be an HMM, $f$ be a annotation gain function as in definition
+\ref{DEFINITION:GAINFUNCTION} in section \ref{SECTION:HEG}, $L$ be the set of
+all annotations, $W$ be an arbitrary set. We will call any function
+$R:L\to W$ a \firstUseOf{restriction function} and $R(\Lambda)$ will be
+\firstUseOf{restriction} $r$ of annotation $\Lambda$.
+
+Similarly to definition of annotation (definition \ref{DEFINITION:ANNOTATION}),
+given sequence $X$ we can define the probability of restriction:
+
+\begin{equation}
+\prob{r\mid X, H} = \sum_{\Lambda \in L, R(\Lambda) = r} \prob{\Lambda\mid X, H}
+\end{equation}
+\end{definition}
+
+Finally, we can formally define two-stage decoding.
+
+\begin{definition}
+Let $H$ be an HMM, $f$ be an annotation gain function, $R$ be an restriction
+function and $W$ set of all possible restrictions. Let $X$ be an sequence of
+interest and $L$ be the set of all annotations of $X$. In \firstUseOf{two-stage
+decoding} we search for annotation $\Lambda$, such that following equation
+holds:
+
+\begin{equation}
+\Lambda = \arg\max_{\Lambda'\in L, R(\Lambda') = r}E_{\Lambda_X\mid
+X,H}[f(\Lambda_X,\Lambda')]\label{EQUATION:HIGHEST_EXPECTED_RESTRICTED_REWARD}
+\end{equation}
+where restriction $r$ is defined as
+\begin{equation}
+r = \arg\max_{r'\in W}\prob{r'\mid H, X}
+\label{EQUATION:MOST_PROBABLE_RESTRICTION}
+\end{equation}
+\end{definition}
+Equation \ref{EQUATION:MOST_PROBABLE_RESTRICTION} means that we search for the
+most probable restriction $r$ and the equation
+\ref{EQUATION:HIGHEST_EXPECTED_RESTRICTED_REWARD} search for the annotation 
+with highest expected gain such that $r$ is it's restriction.
+
+Finding the most probable restriction can be decoupled from finding the
+annotation with highest expected reward. In this chapter we will focus
+\reformulate{mostly} on the complexity of the first step: finding the most
+probable restriction. Complexity of the second step, namely finding the most
+probable annotation we studied in \cite{TODO}, while not with restrictions, but 
+implementing search with restrictions that we use is usually trivial, as we will
+mention later.
+
+At first we show experiments illustrating effects of the restrictions of the
+search space. Further in this chapter we prove that finding restrictions that
+maximizes it's probability is NP-complete/hard.
+
+\section{Experiments}
+
+\begin{reformulate*}
+To illustrate usefulness of the two-stage decoding, we have \reformulate{done}
+several experiments. In section \ref{SECTION:HERD} we have described HERD
+decoding. In past we have used this criteria on jumping HMMs \cite{} for HIV
+virus to detect recombinant forms of such viruses. However, using this criteria
+we stumped upon two artefact: HERD decoding sometimes choose to "jump" between
+subtypes rapidly (one of them could be even wrong subtype). One such example is
+illustrated in figure \ref{FIGURE:HERD_BAD} at page \pageref{FIGURE:HERD_BAD}.
+\end{reformulate*}
+
+\subsection{Application Domain}
+% Az na citacie, toto sa da povazovat za viac menej hotove
+\todo{pridaj citacie}
+We apply this on the problem of detection of recombination in HIV virus. This
+section contains some background information about data we are applying our
+algorithms to. 
+
+RNA of HIV virus is sequence roughly $9000$ bases long. Mutation rate of an HIV
+virus is high, so therefore HIV virus is categorized into several
+\firstUseOf{subtypes} based on sequence similarity.  Phylogenetic tree of
+subtypes is show in figure \ref{app:figure:phil}.  Subtypes A and F are further
+divided into \firstUseOf{sub-subtypes} A1, A2 and F1, F2.  Due to high sequence
+similarity, subtypes B and D are sometimes recognized as sub-subtypes of subtype
+BD.
+
+\begin{figure}
+\begin{center}
+\includegraphics{../figures/hiv_M1strom}
+\end{center}
+\caption[Phylogenetic tree of the HIV-M1 group]{Phylogenetic tree of the HIV-M1
+group of genomes with branch of HIV-O group generated by phyml \cite{Guidon2003}
+from database distributed with jpHMM \cite{Schultz2006}. Figure was originally
+used in \cite{Nanasi2010mgr}. The lengths of the branches corresponds to the
+evolution distances.  }\label{app:figure:phil}
+\end{figure}
+
+Additionally to high mutation rate, \firstUseOf{recombination} occurs in
+evolution of HIV virus \cite{}. When recombination occurs, resulting virus is
+mosaic combination of two source viruses: recombination of source viruses $v_1$
+and $v_2$ is virus which parts contain sequences from both $v_1$ and $v_2$.  The
+position of parts of sequences are retained, so the parts from some region of
+recombinant virus is always from the same region in the source virus.
+There can be multiple recombination points within same virus and since
+recombination can occur between two recombinants, there can be multiple source
+subtypes or sub-subtypes in one recombinant.
+
+Given a recombinant sequence $X$, goal of recombination detection is to label
+each base $x$ of sequence $X$ with the subtype from which $x$ originates.
+
+\subsection{Methods}
+
+To detect detect recombinations, we have previously used Highest Expected Reward
+Decoding \cite{Nanasi2010mgr, Nanasi2010} which same HMM as {\it Schultz et al.
+(2006)}\nocite{Schultz2006} used with the Viterbi algorithm. This model is
+called \abbreviation{jumping HMM}{jpHMM} and it a set of \abbreviation{profile Hidden Markov
+Models}{profile HMMs}\cite{Durbin1998} connected with transitions allowing to
+switch between different profiles which models recombinations. 
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=10cm]{../figures/profile_hmm}
+\end{center}
+\caption[Profile HMM]{Example of profile HMM if length $6$. Shaded states are
+silent, the leftmost shaded state is init states and end state is the rightmost
+shaded state. Figure is from \cite{Nanasi2010mgr}.}\label{FIGURE:PROFILEHMM}
+\end{figure}
+
+Profile HMMs are HMMs with special topology that can be used for matching
+certain motifs. Profile HMM of length $n$ It consists of match states
+$M_1,M_2,\dots, M_n$, insert states $I_0, I_1, \dots, I_n$, silent delete states
+$D_1, D_2,\dots, D_n$ and silent init and states end state all connected by
+transitions as in the figure \ref{FIGURE:PROFILEHMM}. Motif is represented by
+chain of match states. Insert and delete state allows to insert sequences and
+skip some parts of the motif. Profile HMMs can be obtained from alignments of
+similar sequences and match states would represent the columns of the alignment.
+Although not all of the columns corresponds to match states: columns that
+contains many gaps are omitted.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=10cm]{../figures/jumping_hmm}
+\end{center}
+\caption[Jumping HMM]{The simplified structure of jpHMM. Insert and delete state
+are mitted from the figure for readibility. Picture is taken from our previous
+work \cite{Nanasi2010mgr}}\label{app:fig:jpHMM}
+\end{figure}
+
+Jumping HMMs are based on profile HMMs: We start with alignment of all HIV
+sequences. We construct profile HMM for each subtype or sub-subtype and add
+global init and end state to connect profiles in parallel. We also store column
+number with each match, insert and delete states, so we know the corresponding
+column for each states. Then, additional transitions between different profiles
+are added to model recombinations. These jump transitions are added so that they
+end in the states that corresponds to the nearest following column of original
+alignment. Jump from column $c_1$ in subtype $A$ to column $c_2>c_1$ in subtype
+$B$ if and only if there is not state in profile of $A$ or $B$ corresponding to
+column between $c_1$ and $c_2$.  Simplified topology of jpHMM is in figure
+\ref{app:fig:jpHMM}. More details can be found in \cite{Schultz2006,
+Nanasi2010mgr, Nanasi2010}.
+
+\begin{figure}
+\begin{center}
+\includegraphics{../figures/herd_graph}
+\end{center} 
+\caption[Annotation graph]{Part of a path in an annotation graph with
+corresponding annotation. A node with color $c$ and caption $(b,w)$ represents
+the vertex $(b,c,w)$ of the graph. The dashed lines connect each vertex to its
+corresponding feature. $(b, c, w)$ corresponds to the beginning of $c$-colored
+annotation segment starting at position $b$. End of such segment is determined
+by the following vertex in path, therefore each edge in the graph correspond to
+possible annotation segment. Length of an edge is the expected gain of
+corresponding annotation segment. If $w$ is less than maximal window width $W$,
+which is parameter of HERD algorithm, the edges from such vertex are allowed
+only to vertices of form $(b+w, *, *)$ where $*$ can be any valid value. If
+$w=W$, then following edges are of form $(b+W+k)$ where $k\leq0$.  Figure is
+from our previous work \cite{}}\label{HERD:figure:annotation_graph} 
+\end{figure}
+
+We used HERD gain function, we denote it as $f_{HERD}$, described in section
+\ref{SECTION:HERD}. Details of algorithm that optimizes this gain function can
+be found in \cite{Nanasi2010, Nanasi2010mgr}. In this text we describe
+modification to such algorithm so that it can cope with restrictions on the
+footprint of the set. Original algorithm consists from two phases. In the first
+phase, it
+constructs \firstUseOf{annotation graph}, where each path from start vertex to the
+end vertex represents annotation and the length of the graph equals to the
+expected gain of such annotation. The longest path in such graph corresponds to
+the annotation with the highest expected gain. Annotation graph is directed and
+acyclic and it's structure is described in figure
+\ref{HERD:figure:annotation_graph}.  The second phase consists from finding the
+longest path in this graph. Since graph is directed and acyclic, we can find
+such path in polynomial time \cite{Nanasi2010mgr}.
+
+To add restrictions, we need to change the second phase of the algorithm. We
+will not be searching for a path with the highest expected gain, but we would
+search for a path satisfying a restriction with the highest possible gain. To
+optimize with the restriction to particular set of labels,  we simply remove
+from graph vertices with colors that are not in such set and use original
+algorithm described in \cite{Nanasi2010mgr}. Since trimming the annotation graph
+can be done trivially in linear time, this does not change the computational
+complexity of the HERD algorithm. 
+
+Using the footprint as restriction requires more changes to the algorithm. To
+find the longest path, we order vertices of annotation graph topologically into
+sequence $v_1, v_2, \dots v_n$ where $n$ is the number of vertices in the
+annotation graph, $v_1$ is starting vertex and $v_n$ is end vertex. Let
+$f=f_1f_2\dots f_k$ be the desired footprint. We can find by following equation:
+\begin{equation}
+V[v, i] = \max_{v', (v',v) \in E, k\in \{i, i-1\}} V[V
+\end{equation}
+
+In this text we describe texts
+that As restrictions we then used the set of
+subtypes and footprint of annotation. 
+
+\subsection{Experiment setup}
+We have selected 
+\subsection{Results}
+\todo{describe problem more}
+To establish measures to quantify this systematic errors, we have decided to use
+two \reformulate{objects}: the \reformulate{label footprint} and the
+\reformulate{label set}. While the footprint catch the whole structure of
+recombinant (the sequence of subtypes that are used), the set contains only
+recombinants used. We measured edit distance of correct/predicted footprint
+and differences in the set (specificity, sensitivity) in the correct/predicted
+set and also effect of these to the original algorithm.
+
+\begin{figure}
+\begin{center}
+\includegraphics[width=14cm]{../figures/jcss/happyStory.pdf}
+\end{center}
+\caption[Example of annotation with systematic error.]{
+Each row corresponds to one annotation of the same HIV recombinant, colors
+represents original virus subtypes. By restricting the footprint or the sets
+that are used we have 
+}\label{FIGURE:HERD_BAD}
+\end{figure}
+
+The algorithms were following:
+
 
 \section{Problems definitions}
 
@@ -6,7 +297,7 @@ We focus on computational complexity of several decoding problems: computing the
 most probable footprint, the most probable set, and the most probable
 restriction for HMMs. At first, we have to define problems at first. The
 footprint is as in definition \ref{DEFINITION::FOOTPRINT}: the maximal
-subsequence of an annotation that does not contain wto identical consecutive
+subsequence of an annotation that does not contain two identical consecutive
 labels.
 
 \begin{definition}[The most probable set problem]
@@ -69,124 +360,6 @@ show proof of theorem \ref{THEOREM::NPFOOT} by showing $8$-state HMM for
 which is NP hard to find most probable footprint. Then we 
 Finally, we show short proof ot theorem \ref{THEOREM::NPREST}.
 
-\begin{comment}
-\begin{notmytext*}
-Hidden Markov models (HMMs) are used for probabilistic modeling of
-sequential data in many areas, including bioinformatics, natural
-language processing, speech recognition, computer vision, and coding
-theory. Here, we study computational problems arising in their use for
-annotation of biological sequences, where they form basis of
-successful tools for many tasks, such as gene finding,
-protein secondary structure prediction, protein family modeling, detection of
-conserved elements in multiple alignments and others
-\citep{Burge1997,Krogh2001,Siepel2005,Sonnhammer1997}. HMMs are 
-probabilistic finite state machines that generate symbols in states. In many
-areas, we assume that a particular biological sequence $X$ was generated by the
-HMM, and we wish to infer which states of the model were used to generate
-particular parts of the sequence in a process called HMM decoding. The
-traditional algorithm for this task is the Viterbi algorithm
-\citep{Viterbi1967}, which finds the state path (sequence of states) generating
-sequence $X$ with the highest probability.
-
-Many other decoding criteria were proposed \citep{Hamada2012}. 
-For example, we
-can assign labels to states of the HMM, and then search for the most
-probable sequence of labels instead of the most probable state
-path. If multiple states can share the same label, this problem is
-NP-hard \citep{Lyngsoe2002,Brejova2007} 
-and heuristics are used in practice \citep{Schwartz1990,Krogh1997}. 
-In effect, we use state labels to group together many state paths 
-with the same meaning and
-then search for the group with the highest probability.  In some
-application domains, it may be appropriate to group state paths together in
-different ways. In this paper, we explore 
-the following three optimization problems of this
-kind. 
-\paragraph{The most probable footprint:}
-The \emph{footprint} of a state path (or labeling) is the list of
-states (or labels) visited on the path, discarding the information
-about the number of successive characters emitted by the same state
-(or label). The \emph{probability of a footprint} is the sum of
-probabilities of all paths following the footprint. The task is to
-find the most probable footprint for a given HMM and sequence.
-
-\paragraph{The most probable set:}
-The \emph{set} of a state path (or labeling) is the set of states (or
-labels) visited on the path, regardless of their order or
-multiplicity.  The \emph{probability of a set} is the sum of
-probabilities of all paths sharing the same set. The task is to find
-the set with the highest probability for a given HMM and sequence.
-
-\paragraph{The most probable restriction:}
-A path obeys a \emph{restriction} (set of states or labels) if it uses
-only states or labels included in the restriction. The
-\emph{probability of a restriction} is the sum of probabilities of all
-paths that obey the restriction. The task is to find the restriction of
-size $k$ with the highest probability for a given HMM and sequence.
-
-\bigskip
-These problems were originally motivated by the HIV recombination detection
-problem, which we review in Section \ref{sec:exp}. However, their use
-is not limited to this application and is appropriate wherever
-exact location of individual
-regions in the sequence is not important. 
-The most probable footprint problem was briefly considered by
-\citet{Brown2010}, who observe that it is polynomially solvable in HMMs
-with two states or two labels. The other two problems were not studied
-previously.  We show (in Sections \ref{sec:footprint}, \ref{sec:set}
-and \ref{sec:restriction}) that all three problems are NP-hard.
-This opens an avenue for exploring a variety of heuristics that will
-be useful in practical applications of these schemes.
-
-\paragraph{Hidden Markov models and notation.} 
-
-In the rest of this section, we introduce the necessary notation. 
-A more detailed introduction to HMMs and their use for biological
-sequence annotation can be found for example in \citet{Durbin1998}.
-A \emph{hidden Markov model} is a generative probabilistic model
-with a finite set of states $V$ and transitions $E$. The generative
-process starts by choosing a starting state $v_1$ according to the
-initial state probabilities $I_{v_1}$.  In each successive round, the model
-emits a single symbol $x_i$ from the \emph{emission probability}
-distribution $e(v_i,x_i)$ of the current state $v_i$, and then changes
-the state to $v_{i+1}$ according to the \emph{transition probability}
-distribution $a_{v_i,v_{i+1}}$. The process continues for
-some fixed number of steps $n$.  Thus, the joint probability of
-generating a sequence $X=x_1,\dots,x_n$ by a state path $\pi =
-v_1,\dots,v_n$ in an HMM $H$ is $\Pr(\pi,X\mid H, n) = I_{v_1} \cdot
-e(v_1,x_1)\cdot \prod_{i=2}^n a_{v_{i-1},v_{i}} \cdot e(v_i,x_i)$. 
-
-Let $Y$ be a sequence over some alphabet such that
-$Y=x_1^{k_1}x_2^{k_2}\dots x_n^{k_n}$ where $x_{i}$ and $x_{i+1}$ are
-distinct characters and each $k_j$ is greater than zero. 
-Then the footprint $f(Y)$ of this sequence is $x_1x_2\dots x_n$ and
-its character set $s(Y)$ is $\{x_1,x_2,\dots, x_n\}$. 
-For example for $Y=aabaaacc$, we have $f(Y)=abac$
-and $s(Y)=\{a,b,c\}$. We will apply the footprint and set operators to
-state paths. Probability of a footprint $F$ for a given HMM $H$ and
-sequence $X$ of length $n$ is 
-$$\Pr(f(\pi) = F,X\mid H,n) = \sum_{\pi:f(\pi)=F} \Pr(\pi,X\mid H,
-n).$$ Analogously, we define the probability of a given set of
-states $S$ denoted as $\Pr(s(\pi) = S,X\mid H,n)$. Note that each path
-$\pi$ included in this probability must use every state in $S$ at
-least once. Finally, we will discuss the probability of a state
-restriction $S$ denoted as $\Pr(s(\pi) \subseteq S,X\mid
-H,n)$, where we consider all state paths that use only states from 
-$S$, but are not required to use all of them.
-
-We will also assign label $\ell(v)$ to each state $v$ of the HMM. 
-Labeling $\ell(\pi)$ of a state path $\pi$ is the concatenation of
-labels for individual states on the path. We will use similar
-notation for probability of footprints and sets defined on labelings,
-such as $\Pr(f(\ell(\pi))=F,X\mid H,n)$.
-
-We will say that a state path $\pi$ can generate $X$ if
-$\Pr(\pi,X|H,n)>0$. Similarly a footprint $F$ can generate $X$ if
-$\Pr(f(\pi) = F,X\mid H,n)>0$ and a set of states $S$ can generate $X$
-if $\Pr(s(\pi) = S,X\mid H,n)>0$.
-
-\end{notmytext*}
-\end{comment}
 
 \section{The Most Probable Set of States}
 \label{sec:set}
@@ -327,15 +500,14 @@ $\mathbf{M_{n_k}}$&0&1&2&3&4&5&6&7&8&\\\hline
 \caption{Values of $D(n,k)$, $n_k$, $M_n$, and $M_{n_k}$ for small values of $n$ and $k$. Empty cells contain zeros.}\label{DNKTable}
 \end{table*}
 
-\begin{lemma}\label{DNKlemma}
+\begin{lemma}\label{LEMMA:DNKlemma}
 The value of $n_k$ is at most $\lceil k\ln k\rceil$, and $n_k$ and
 $M_{n_k}$ can be computed in polynomial time.
 \end{lemma}
 
-\begin{reformulate*}
 Before proving this lemma, we finish the proof of the reduction. Let
 us assume that there is a set of states $S$ such that
-$\Pr(s(\pi)=S,X|H,n)\ge p$. This means that if we consider walks in the
+$\prob{s(\pi)=S,X \mid H,n}\ge p$. This means that if we consider walks in the
 subgraph $G'(S)$ induced by the set $S$, we get $Y(n,G'(S))\ge
 D(n,k')$. We will consider three cases:
 \begin{itemize}
@@ -353,7 +525,7 @@ Therefore, we have proved that $G$ contains a clique of size $k$ if and
 only if the most probable set of states in $H_{G'}$ that can generate $X$ has
 probability at least $p$. Moreover, we can construct $n_k$, $M_{n_k}$,
 $H_{G'}$, $X$, and $p$ in polynomial time.
-To complete this proof we need to prove Lemma \ref{DNKlemma}.  We
+To complete this proof we need to prove Lemma \ref{LEMMA:DNKlemma}.  We
 start by proving another useful lemma.
 
 \begin{lemma}\label{RecurenceLemma}
@@ -390,7 +562,7 @@ $kD(n-1,k-1)$ walks with the property $v(w')=k-1$. Combining the two
 cases we get the desired recurrence.\qed
 \end{proof}
 
-\begin{proof}[Proof of Lemma \ref{DNKlemma}] 
+\begin{proof}[Proof of Lemma \ref{LEMMA:DNKlemma}] 
 Assume that $k\ge 3$. Clearly, $D(n,k)\leq k(k-1)^{n-1}$, since
 $k(k-1)^{n-1}$ is the number of all walks of length $n-1$ in
 $K_k$. However, this number includes also walks avoiding some
@@ -398,14 +570,14 @@ vertices. The number of such walks can be bounded from above by
 $k(k-1)(k-2)^{n-1}$ where we choose one of the $k$ vertices to avoid
 and then consider all possible walks on the remaining $k-1$
 vertices. In this way we count some walks multiple times; nonetheless
-by Bonferroni inequality we obtain bound $D(n,k)\geq
-k(k-1)^{n-1}-k(k-1)(k-2)^{n-1}$.
+by Bonferroni inequality we obtain bound $$D(n,k)\geq
+k(k-1)^{n-1}-k(k-1)(k-2)^{n-1}$$
 
 For $k\ge 4$ we therefore have that if
-$(k-1)(k-2)^{n-1}<k(k-1)^{n-1}-k(k-1)(k-2)^{n-1}$, then
+$$(k-1)(k-2)^{n-1}<k(k-1)^{n-1}-k(k-1)(k-2)^{n-1}$$, then
 $D(n,k-1)<D(n,k)$.  By taking logarithm of both sides of the inequality, we
-obtain $n>f(k)$ where $f(k) = 1+\frac{\ln(k^2-1)-\ln
-  k}{\ln(k-1)-\ln(k-2)}$.  Let $n = \lceil f(k)\rceil$ for some $k\ge
+obtain $n>f(k)$ where $$f(k) = 1+\frac{\ln(k^2-1)-\ln
+  k}{\ln(k-1)-\ln(k-2)}$$  Let $n = \lceil f(k)\rceil$ for some $k\ge
 4$ and consider row $n$ in Table \ref{DNKTable}.
 We have that $D(n,k-1)<D(n,k)$ and since function $f$ is
 increasing, we also we have that $D(n,k'-1)<D(n,k')$ for all $k'\le k$ 
@@ -466,8 +638,7 @@ It is easy to see that $\Pr\left(s(\pi)=V,X \mid H_G, |X|
 \right)>0$ if and only if $G$ contains a Hamiltonian path. \qed
 \end{proof}
 
-Unlike the most probable footprint problem, which was NP-hard even for
-a fixed HMM of a constant size, the most probable set problem is
+The most probable set problem is
 fixed-parameter tractable with respect to the size of the HMM. Given
 an HMM with $m$ states and a sequence of length $n$, we can find the
 most probable set of states in time $O(2^m m^2 n)$ by a dynamic
@@ -493,11 +664,10 @@ I_{v}e(v,X[1])& i=1,S=\{v\}\\
 \end{cases}$$
 \fi
 
-\end{reformulate*}
 \section{Most probable footprint}
-\begin{notmytext*}
 \label{sec:footprint}
 
+\begin{comment}
 Finding the most probable
 footprint is a reasonable decoding criterion,
 and it may also serve as a starting point in a multi-stage
@@ -507,15 +677,13 @@ $f(\pi)$. The problem of optimizing the footprint of a labeling
 $f(\ell(\pi))$ is also NP-hard, because optimizing $f(\pi)$ is its special case, 
 equivalent to optimizing $f(\ell(\pi))$ in an HMM in
 which each state has a unique label.
-
+\end{comment}
 \begin{theorem}
 There is a fixed HMM $H$ such that the following problem is NP-complete:
 Given a sequence $X$ of length $n$ and probability $p\in [0,1]$, determine
-if there is a footprint $F$ such that $\Pr(f(\pi)=F,X\mid H,n)\ge p$.
+if there is a footprint $F$ such that $\prob{f(\pi)=F,X\mid H,n}\ge p$.
 \label{thm:foot}
 \end{theorem}
-
-\end{notmytext*}
 
 \begin{figure*}[t]
 \centerline{\includegraphics[scale=0.68]{../figures/jcss/cliquehmm.pdf}}

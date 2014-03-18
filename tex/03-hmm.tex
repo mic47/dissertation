@@ -1164,7 +1164,7 @@ $f:L\times L\to \mathbb{R}$ is an \firstUseOf{annotation gain function}.
 
 Let $\Pi$ be the set of all state paths. Any function $f:\Pi\times
 \Pi\to\mathbb{R}$ is a \firstUseOf{path gain functions}.
-
+\label{DEFINITION:GAINFUNCTION}
 \end{definition}
 
 \begin{note}
@@ -1190,7 +1190,6 @@ Let $\pi$ be a state path. Then the expected gain of state path $\pi$ is
 E_{\pi_X\mid X,H}[f(\pi_X,\pi)] =
 \sum_{\pi_X}f(\pi_X,\pi)\Pr\left(\pi_X\mid X,H\right)
 \end{equation}
-
 \end{definition}
 
 
@@ -1328,7 +1327,7 @@ that boundaries with small posterior probability will have negative expected
 gain and therefore it is less likely that they appear in the optimal annotation.
 
 
-\subsection{Highest Expected Reward Decoding}
+\subsection{Highest Expected Reward Decoding}\label{SECTION:HERD}
 
 The \abbreviation{Highest Expected Reward Decoding}{HERD} is the extension of maximum
 boundary accuracy decoding. We have developed this decoding for prediction of
@@ -1393,7 +1392,7 @@ $O(\sqrt{|X|}|C||V|+W|C||V|+n|C|^2)$ memory. Experimental evaluation,
 optimization algorithm and implementation details can be found in
 \cite{Nanasi2010,Nanasi2010mgr}.
 
-\subsection{Distance Measures on Annotations}
+\subsection{Distance Measures on Annotations}\label{SECTION:DISTANTMEASURES}
 
 Another approach to solve similar problem was proposed by {\it Brown,
 Truszkowski} in \cite{Brown2010}. Originally their implementation was aimed at
