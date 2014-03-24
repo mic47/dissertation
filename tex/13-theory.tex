@@ -2,35 +2,50 @@
 
 In this chapter we will study computational complexity of some decoding
 techniques that are aimed to reduce systematic errors sequence annotation. In
-this chapter we will focus only on HMMs, not their pairwise counterpart. We can
-find one example in the HIV recombination prediction domain. As we summarized in 
-section \ref{SECTION:HERD}, in \reformulate{this problem} we are trying to label
-the recombinant virus sequence by the original virus subtypes. For doing this,
-we have developed HERD decoding method \cite{Nanasi2010, Nanasi2010mgr} that
-performed better than the Viterbi algorithm. However, in some cases HERD
-switched between different subtypes too often and even into wrong cases. See
-figure \ref{FIGURE:HERD_BAD}. To mitigate these effect one can use two-stage
-strategy: At first search for the most probable footprint, then fix footprint
-and maximize original criteria with restriction to this footprint. By fixing
-footprint, original method is forced to change labels only few times and
-therefore erratic change of labels as in figure \ref{FIGURE:HERD_BAD} is not
-possible.
+this chapter we will focus only on HMMs and not pair HMM. We can find one
+example in the HIV recombination prediction domain. As we summarized in section
+\ref{SECTION:HERD}, in recombination prediction we want to  find out which parts
+of recombinant virus sequence originates in which subtype.  To do so, we have
+previously developed HERD decoding method \cite{Nanasi2010, Nanasi2010mgr} that
+performed better than the Viterbi algorithm. However, in some cases resulting
+annotation contains some systematic errors, for example rapid switching between
+different subtypes. One such example can be found in figure
+\ref{FIGURE:HERD_BAD}.  To mitigate such effects, one can use two-stage decoding
+strategy: At first search for the most probable footprint $F$, then find the
+annotation with footprint $F$ that maximize the expected reward. By fixing
+footprint, original method is forced to keep the structure of footprint and
+therefore rapid change of types as if figure \ref{FIGURE:HERD_BAD} is not
+possible (of course, unless footprint contains large number of recombinations).
 
-Footprint is not the only way what to use as an restriction for the second stage
+Footprint is not the only way how to restrict search space for the second stage
 of the algorithm. Alternatively, we also explore fixing the set of states or
-labels that can be used in the final alignment. In such case, the first state
-would be about finding the set of states/labels with has maximal probability.
-In general, in the first stage we search for the optimal guide (footprint, set,
-\dots) and in the second stage we find optimal annotation using this guide.
+labels that can be used in the final alignment. In such case, in the first stage
+we search for a set of labels with maximal probability (in practice we could
+also choose different criteria to select such set). In informal and more general
+way, in the first stage we search for the best guide, which can be in the form
+of footprint or a set of labels. In the second stage we find optimal
+annotation using the selected guide.
 
-At first, need to define our problems formally.
+\begin{figure}
+\begin{center}
+\includegraphics[width=14cm]{../figures/jcss/happyStory.pdf}
+\end{center}
+\caption[Example of annotation with systematic error.]{ 
+Each row corresponds to one annotation of the same HIV recombinant, colors
+represents original virus subtypes. Unaltered HERD algorithm predicts wrong
+subtype and also contains too many segments. But restricting to the specified
+footprint (F-HERD) or to the specified set (S-HERD) provides almost correct
+annotation without these errors.  }\label{FIGURE:HERD_BAD} 
+\end{figure}
+
 \section{Formal definition}
 
 \begin{note}
-In following set we will work mostly with annotations. By setting $\lambda$ to
-identity function, we have all definitions working on state paths.
+In following text, all of the definitions could be done similarly for the
+annotations and state paths. Annotations are more general, because by setting
+$\lambda$ to identity function, all annotations became state paths.
 \end{note}
-\todo{mozno by nebolo odveci restriction premenovat na guide}
+\todo{Restriction->Guide}
 
 \begin{definition}[Annotation set]
 The \abbreviation{\firstUseOf{Annotation set}}{S} of labeling
@@ -54,86 +69,80 @@ definition \ref{DEFINITION::FOOTPRINT}.  We denote the footprint of annotation
 $\Lambda$ as $F(\Lambda)$.
 
 Two-stage decoding system can be described in Highest Expected Gain framework
-introduced in section \ref{SECTION:HEG}. At first, we define restriction and
-restriction function.
+introduced in section \ref{SECTION:HEG}. At first, we define guide and guide
+function.
 
-\begin{definition}
+\begin{definition}[Guide function, guide]
 Let $H$ be an HMM, $f$ be a annotation gain function as in definition
 \ref{DEFINITION:GAINFUNCTION} in section \ref{SECTION:HEG}, $L$ be the set of
-all annotations, $W$ be an arbitrary set. We will call any function
-$R:L\to W$ a \firstUseOf{restriction function} and $R(\Lambda)$ will be
-\firstUseOf{restriction} $r$ of annotation $\Lambda$.
+all annotations, $W$ be an arbitrary set. We call any function
+$R:L\to W$ a \firstUseOf{guide function} and $R(\Lambda)$ is
+\firstUseOf{guide} $r$ of annotation $\Lambda$.
 
 Similarly to definition of annotation (definition \ref{DEFINITION:ANNOTATION}),
-given sequence $X$ we can define the probability of restriction:
+we can define the probability of guide given sequence $X$:
 
 \begin{equation}
 \prob{r\mid X, H} = \sum_{\Lambda \in L, R(\Lambda) = r} \prob{\Lambda\mid X, H}
 \end{equation}
 \end{definition}
 
-Finally, we can formally define two-stage decoding.
+Note that we can see a guide as generalization of annotation. On the other hand,
+our use of guides is quite different from our use of annotations. While
+annotations are the final product, purpose of guides is to capture some
+important properties of the input, that can be subsequently used to find correct
+annotation. Finally, we can formally define two-stage decoding:
 
-\begin{definition}
-Let $H$ be an HMM, $f$ be an annotation gain function, $R$ be an restriction
-function and $W$ set of all possible restrictions. Let $X$ be an sequence of
+\begin{definition}[Two-stage decoding]
+Let $H$ be an HMM, $f$ be an annotation gain function, $R$ be an guide 
+function and $W$ set of all possible guides. Let $X$ be an sequence of
 interest and $L$ be the set of all annotations of $X$. In \firstUseOf{two-stage
-decoding} we search for annotation $\Lambda$, such that following equation
-holds:
+decoding} we search for annotation $\Lambda$, defined as:
 
 \begin{equation}
 \Lambda = \arg\max_{\Lambda'\in L, R(\Lambda') = r}E_{\Lambda_X\mid
 X,H}[f(\Lambda_X,\Lambda')]\label{EQUATION:HIGHEST_EXPECTED_RESTRICTED_REWARD}
 \end{equation}
-where restriction $r$ is defined as
+where guide $r$ is defined as
 \begin{equation}
 r = \arg\max_{r'\in W}\prob{r'\mid H, X}
 \label{EQUATION:MOST_PROBABLE_RESTRICTION}
 \end{equation}
 \end{definition}
-Equation \ref{EQUATION:MOST_PROBABLE_RESTRICTION} means that we search for the
-most probable restriction $r$ and the equation
-\ref{EQUATION:HIGHEST_EXPECTED_RESTRICTED_REWARD} search for the annotation 
-with highest expected gain such that $r$ is it's restriction.
 
-Finding the most probable restriction can be decoupled from finding the
+Finding the most probable guide can be decoupled from finding the
 annotation with highest expected reward. In this chapter we will focus
-\reformulate{mostly} on the complexity of the first step: finding the most
-probable restriction. Complexity of the second step, namely finding the most
-probable annotation we studied in \cite{TODO}, while not with restrictions, but 
-implementing search with restrictions that we use is usually trivial, as we will
-mention later.
+mainly on the complexity of the first step: finding the most
+probable guide. Complexity of the second step, namely finding the annotation
+with highest expected gain without guides we studied in \cite{Nanasi2010mgr,
+Nanasi2010}. Implementing search with guides is straightforward and we will
+discuss it later.
 
-At first we show experiments illustrating effects of the restrictions of the
-search space. Further in this chapter we prove that finding restrictions that
-maximizes it's probability is NP-complete/hard.
+Note that we could use different method to select guide $r$. While it is
+possible to use gain functions for defining optimization criteria to select
+guide (and altering the equation \ref{EQUATION:MOST_PROBABLE_RESTRICTION}), 
+we did not study such variations.
+
+At first we show experiment illustrating effects of the two-stage decoding on
+the HIV recombination detection problem.  Further in this chapter we prove that
+finding the most probable guide is for certain guide functions NP-hard.
 
 \section{Experiments}
 
-\begin{reformulate*}
-To illustrate usefulness of the two-stage decoding, we have \reformulate{done}
-several experiments. In section \ref{SECTION:HERD} we have described HERD
-decoding. In past we have used this criteria on jumping HMMs \cite{} for HIV
-virus to detect recombinant forms of such viruses. However, using this criteria
-we stumped upon two artefact: HERD decoding sometimes choose to "jump" between
-subtypes rapidly (one of them could be even wrong subtype). One such example is
-illustrated in figure \ref{FIGURE:HERD_BAD} at page \pageref{FIGURE:HERD_BAD}.
-\end{reformulate*}
+In section \ref{SECTION:HERD} we described HERD decoding. It was used with
+jumping HMMs \cite{Schultz2006} for detecting recombinations in HIV virus.
+However, using this criteria lead to two artefacts: \begin{itemize} \item
+Producing annotations with many short recombinations.  \item Producing
+recombinations of wrong virus subtype.  \end{itemize} Example of both type of
+errors are illustrated in figure \ref{FIGURE:HERD_BAD} at page
+\pageref{FIGURE:HERD_BAD}.
 
 \subsection{Application Domain}
 % Az na citacie, toto sa da povazovat za viac menej hotove
 \todo{pridaj citacie}
-We apply this on the problem of detection of recombination in HIV virus. This
-section contains some background information about data we are applying our
-algorithms to. 
-
-RNA of HIV virus is sequence roughly $9000$ bases long. Mutation rate of an HIV
-virus is high, so therefore HIV virus is categorized into several
-\firstUseOf{subtypes} based on sequence similarity.  Phylogenetic tree of
-subtypes is show in figure \ref{app:figure:phil}.  Subtypes A and F are further
-divided into \firstUseOf{sub-subtypes} A1, A2 and F1, F2.  Due to high sequence
-similarity, subtypes B and D are sometimes recognized as sub-subtypes of subtype
-BD.
+We use problem of recombination detection in HIV virus for the demonstration of
+usefulness of two-stage decoding.  This section contains background information
+about data used in the experiment.
 
 \begin{figure}
 \begin{center}
@@ -146,69 +155,107 @@ used in \cite{Nanasi2010mgr}. The lengths of the branches corresponds to the
 evolution distances.  }\label{app:figure:phil}
 \end{figure}
 
+RNA of HIV virus is sequence roughly $9000$ bases long. Mutation rate of an HIV
+virus is high\cite{}, and additionally HIV virus is categorized into several
+\firstUseOf{subtypes}\cite{} based on sequence similarity. Phylogenetic tree of
+subtypes is show in figure \ref{app:figure:phil}.  Subtypes A and F are further
+divided into \firstUseOf{sub-subtypes} A1, A2 and F1, F2.  Due to high sequence
+similarity, subtypes B and D are sometimes recognized as sub-subtypes of subtype
+BD \cite{}.
+
 Additionally to high mutation rate, \firstUseOf{recombination} occurs in
 evolution of HIV virus \cite{}. When recombination occurs, resulting virus is
 mosaic combination of two source viruses: recombination of source viruses $v_1$
-and $v_2$ is virus which parts contain sequences from both $v_1$ and $v_2$.  The
+and $v_2$ is a virus which parts contain sequences from both $v_1$ and $v_2$.  The
 position of parts of sequences are retained, so the parts from some region of
 recombinant virus is always from the same region in the source virus.
 There can be multiple recombination points within same virus and since
 recombination can occur between two recombinants, there can be multiple source
-subtypes or sub-subtypes in one recombinant.
+subtypes or sub-subtypes in one recombinant. 
 
 Given a recombinant sequence $X$, goal of recombination detection is to label
-each base $x$ of sequence $X$ with the subtype from which $x$ originates.
+each base $x$ of sequence $X$ with the subtype from which $x$ originates.  Set
+of annotation symbols therefore contain all subtypes/sub-subtypes of HIV virus.
+In following text we will use term \firstUseOf{segment}, which is maximal
+single-colored consecutive subsequence of annotation.
 
 \subsection{Methods}
 
 To detect detect recombinations, we have previously used Highest Expected Reward
-Decoding \cite{Nanasi2010mgr, Nanasi2010} which same HMM as {\it Schultz et al.
-(2006)}\nocite{Schultz2006} used with the Viterbi algorithm. This model is
-called \abbreviation{jumping HMM}{jpHMM} and it a set of \abbreviation{profile Hidden Markov
-Models}{profile HMMs}\cite{Durbin1998} connected with transitions allowing to
-switch between different profiles which models recombinations. 
+Decoding \cite{Nanasi2010mgr, Nanasi2010} with same HMM as {\it Schultz et al.
+(2006)}\nocite{Schultz2006} used with the Viterbi algorithm. This model and also
+their program is called \abbreviation{jumping HMM}{jpHMM} and it a set of
+\abbreviation{profile Hidden Markov Models}{profile HMMs}\cite{Durbin1998}
+connected with transitions allowing to "jump" between different profiles which
+is how the recombination are modeled.
 
 \begin{figure}
 \begin{center}
 \includegraphics[width=10cm]{../figures/profile_hmm}
 \end{center}
 \caption[Profile HMM]{Example of profile HMM if length $6$. Shaded states are
-silent, the leftmost shaded state is init states and end state is the rightmost
+silent, the leftmost shaded state is init state. End state is the rightmost
 shaded state. Figure is from \cite{Nanasi2010mgr}.}\label{FIGURE:PROFILEHMM}
 \end{figure}
 
-Profile HMMs are HMMs with special topology that can be used for matching
-certain motifs. Profile HMM of length $n$ It consists of match states
+Profile HMMs are HMMs with special topology used for matching certain
+motifs\cite{Durbin1998}. Profile HMM of length $n$ It consists of match states
 $M_1,M_2,\dots, M_n$, insert states $I_0, I_1, \dots, I_n$, silent delete states
-$D_1, D_2,\dots, D_n$ and silent init and states end state all connected by
-transitions as in the figure \ref{FIGURE:PROFILEHMM}. Motif is represented by
-chain of match states. Insert and delete state allows to insert sequences and
+$D_1, D_2,\dots, D_n$ and silent init state and silent end state. All states are
+connected by transitions as in the figure \ref{FIGURE:PROFILEHMM}. Motif is
+represented by chain of match states, each with it's own emission distribution.
+Insert states models (short) insertions into the motif. Delete state allows to
 skip some parts of the motif. Profile HMMs can be obtained from alignments of
 similar sequences and match states would represent the columns of the alignment.
-Although not all of the columns corresponds to match states: columns that
-contains many gaps are omitted.
+Not all of the columns correspond to match states, columns that
+contains gaps above some threshold are usually omitted \cite{Durbin1998}. 
+
+Jumping HMMs are built upon profile HMMs. We start with alignment of all HIV
+sequences and construct profile HMM for each subtype or sub-subtype (it depends
+whether we want to distinguish between sub-subtypes). We then add global init
+state and global end state to connect profiles in parallel.  Column numbers of
+each match, insert, and delete states are preserved, so we know the
+corresponding column for each states. Additional transitions between different
+profiles are added to model recombinations: These "jump" transitions are added
+so that they end in the states that corresponds to the nearest following column
+of original alignment. Jump from column $c_1$ in subtype $A$ to column $c_2>c_1$
+in subtype $B$ is allowed if and only if there is not state in profile of $A$ or
+$B$ corresponding to column between $c_1$ and $c_2$. Simplified topology of
+jpHMM is in figure \ref{app:fig:jpHMM}. More details can be found in
+\cite{Schultz2006, Nanasi2010mgr, Nanasi2010}.
 
 \begin{figure}
 \begin{center}
 \includegraphics[width=10cm]{../figures/jumping_hmm}
 \end{center}
 \caption[Jumping HMM]{The simplified structure of jpHMM. Insert and delete state
-are mitted from the figure for readibility. Picture is taken from our previous
+are omitted from the figure for readability. Picture is taken from our previous
 work \cite{Nanasi2010mgr}}\label{app:fig:jpHMM}
 \end{figure}
 
-Jumping HMMs are based on profile HMMs: We start with alignment of all HIV
-sequences. We construct profile HMM for each subtype or sub-subtype and add
-global init and end state to connect profiles in parallel. We also store column
-number with each match, insert and delete states, so we know the corresponding
-column for each states. Then, additional transitions between different profiles
-are added to model recombinations. These jump transitions are added so that they
-end in the states that corresponds to the nearest following column of original
-alignment. Jump from column $c_1$ in subtype $A$ to column $c_2>c_1$ in subtype
-$B$ if and only if there is not state in profile of $A$ or $B$ corresponding to
-column between $c_1$ and $c_2$.  Simplified topology of jpHMM is in figure
-\ref{app:fig:jpHMM}. More details can be found in \cite{Schultz2006,
-Nanasi2010mgr, Nanasi2010}.
+We denote HERD's gain function, described in section \ref{SECTION:HERD}, as
+$f_{HERD}$.  Details of algorithm that optimizes this gain function can be found
+in \cite{Nanasi2010, Nanasi2010mgr}. In this text we describe modification to
+this algorithm so that it can cope with guides. We use the footprint and the
+annotation set as a guides. Original HERD algorithm can be decomposed into two
+phases. In the first phase, it constructs \firstUseOf{annotation graph}.
+Annotation graph is graph in which each path from the start vertex to the end
+vertex represents annotation. Length of such path equals to the expected gain of
+corresponding annotation. The longest path in annotation graph therefore
+corresponds to the annotation with the highest expected gain. Annotation graph
+is directed and acyclic and it's structure is described in figure
+\ref{HERD:figure:annotation_graph}.  The second phase consists from finding the
+longest path in this graph and converting it to the annotation. Since annotation
+graph is directed and acyclic, it is possible to find such path in polynomial
+time \cite{Nanasi2010mgr}.
+
+To add guides, we need to change the second phase of the algorithm. We will be
+searching for an annotation restricted to the guide with the highest expected
+gain.  If guide function is annotation set,  we simply remove vertices with
+colors that are not in annotation set from the annotation graph and use original
+algorithm described in \cite{Nanasi2010mgr}. Since trimming the annotation graph
+can be done trivially in linear time, this does not change the computational
+complexity of the HERD algorithm. 
 
 \begin{figure}
 \begin{center}
@@ -224,74 +271,170 @@ possible annotation segment. Length of an edge is the expected gain of
 corresponding annotation segment. If $w$ is less than maximal window width $W$,
 which is parameter of HERD algorithm, the edges from such vertex are allowed
 only to vertices of form $(b+w, *, *)$ where $*$ can be any valid value. If
-$w=W$, then following edges are of form $(b+W+k)$ where $k\leq0$.  Figure is
-from our previous work \cite{}}\label{HERD:figure:annotation_graph} 
+$w=W$, then following edges are of form $(b+W+k, *, *)$ where $k\leq0$.  Figure is
+from our previous work \cite{Nanasi2010mgr}}\label{HERD:figure:annotation_graph} 
 \end{figure}
 
-We used HERD gain function, we denote it as $f_{HERD}$, described in section
-\ref{SECTION:HERD}. Details of algorithm that optimizes this gain function can
-be found in \cite{Nanasi2010, Nanasi2010mgr}. In this text we describe
-modification to such algorithm so that it can cope with restrictions on the
-footprint of the set. Original algorithm consists from two phases. In the first
-phase, it
-constructs \firstUseOf{annotation graph}, where each path from start vertex to the
-end vertex represents annotation and the length of the graph equals to the
-expected gain of such annotation. The longest path in such graph corresponds to
-the annotation with the highest expected gain. Annotation graph is directed and
-acyclic and it's structure is described in figure
-\ref{HERD:figure:annotation_graph}.  The second phase consists from finding the
-longest path in this graph. Since graph is directed and acyclic, we can find
-such path in polynomial time \cite{Nanasi2010mgr}.
+Using the footprint as guide requires more changes to the algorithm then just
+remove vertices with colors that are not in footprint. To find the longest path,
+we have to alter dynamic programming formula for computing the longest path.
+We order vertices of annotation graph topologically from start to end vertex
+into sequence $v_0, v_2, \dots v_{n-1}$ where $n$ is the number of vertices in
+the annotation graph, $v_0$ is the init vertex and $v_{n-1}$ is the end vertex.
+This will be the order in which the dynamic programming equations will be
+computed.
+Let $f=f_0f_2\dots f_{k-1}$ be the footprint we use as a guide and $V[i, j]$ be the length
+of the longest path ending in $v_i$ that have footprint $f[:j]$.  Therefore the
+length of the longest path with footprint $f$ is $V[n - 1, k]$. If $E$ is the set of
+all edges and $C(v_i, v_j)$ is the weight of an edge $(v_i, v_j)$, then $V[i,
+j]$ can be computed by following equations: 
+\begin{align} V[0, 0] &= 0 \\ V[0, j] &= -\infty, 0< j \leq k \\ V[i, j] &=
+\max_{i', (v_{i'}, v_i)\in E} \begin{cases} C(v_i', v_i) + V[i', j]& \text{if
+$\lambda(v_i) == \lambda(v_{i'})$}\\ C(v_i', v_i) + V[i', j-1]& \text{if
+$\lambda(v_i) \not= \lambda(v_{i'})$ and $\lambda(v_{i'})=f_{j-1}$}\\ 0 &
+\text{otherwise} \end{cases} \end{align}
 
-To add restrictions, we need to change the second phase of the algorithm. We
-will not be searching for a path with the highest expected gain, but we would
-search for a path satisfying a restriction with the highest possible gain. To
-optimize with the restriction to particular set of labels,  we simply remove
-from graph vertices with colors that are not in such set and use original
-algorithm described in \cite{Nanasi2010mgr}. Since trimming the annotation graph
-can be done trivially in linear time, this does not change the computational
-complexity of the HERD algorithm. 
+Note that since we have ordered vertices topologically, to compute $V[i, j]$ we
+use only values of $V[i', j']$ where $i'< i, j'\leq j$. Therefore we can compute
+$V$ with $i$ in increasing order. The longest path can be computed using
+back-tracing as in section \ref{SECTION:NEEDLE}. The time and memory complexity 
+of this part of the algorithm increased by the factor of $k$. Therefore the time
+complexity increases to $O(mWC|E|+mkC^2W^2)$ where $C$ is the number of colors
+(labels), $W$ is the window size, $m$ is the length of the sequence and $|E|$ is
+the number of transitions in HMM.  Space requirements increased to
+$O(\sqrt{m}Cn+WCnk+mkC^2)$. Implementation details of other parts of an
+algorithm can be found in \cite{Nanasi2010mgr}.
 
-Using the footprint as restriction requires more changes to the algorithm. To
-find the longest path, we order vertices of annotation graph topologically into
-sequence $v_1, v_2, \dots v_n$ where $n$ is the number of vertices in the
-annotation graph, $v_1$ is starting vertex and $v_n$ is end vertex. Let
-$f=f_1f_2\dots f_k$ be the desired footprint. We can find by following equation:
-\begin{equation}
-V[v, i] = \max_{v', (v',v) \in E, k\in \{i, i-1\}} V[V
-\end{equation}
+\subsection{Data \& results}
+We created artificial dataset of recombinant HIV sequences and run HERD with two
+guide functions: annotation set and footprint. HERD was run with default
+parameters, $\gamma=0.2, W=10$. Model was trained using jpHMM program and
+alignment of HIV sequences distributed with jpHMM \cite{Schultz2006}.  $10\%$ of
+sequences from this alignment were removed from training data and were used for
+evaluation. We refer to alignment distributed with jpHMM as \firstUseOf{source
+alignment}.
 
-In this text we describe texts
-that As restrictions we then used the set of
-subtypes and footprint of annotation. 
+These artificial sequences were generated by alternating segments of two real
+sequences from different subtypes. Data were generated from pairwise alignment
+of original sequences: if segment $x$ of sequence $X$ follows segment $y$ of
+sequence $Y$, then $y$ is immediately after $x$ in the pairwise alignment. We
+did experiments with two types of segment lengths: either $200-300$ (short) or
+$950-1050$ (long) with additional $0-750$ and $0-500$ bases for the first and
+for the last segment respectively. Length of each segment was drawn from uniform
+distribution.  Pairwise alignments were obtained from source alignment of HIV
+sequences.
 
-\subsection{Experiment setup}
-We have selected 
-\subsection{Results}
-\todo{describe problem more}
-To establish measures to quantify this systematic errors, we have decided to use
-two \reformulate{objects}: the \reformulate{label footprint} and the
-\reformulate{label set}. While the footprint catch the whole structure of
-recombinant (the sequence of subtypes that are used), the set contains only
-recombinants used. We measured edit distance of correct/predicted footprint
-and differences in the set (specificity, sensitivity) in the correct/predicted
-set and also effect of these to the original algorithm.
+\todo{Tieto experimenty by som pre ciste svedomie radsej zbehol este raz}
+Apart from two different recombination length, we also evaluated algorithm of
+recombinants of sequences from same subtypes but different sub-subtypes, which
+gave us $4$ different data sets. For all datasets we generated $150$
+recombinants of two sequences. For subtypes we use subtypes A, BD, C, F, G. For
+sub-subtypes we . For sub-subtypes we have used sub-subtype pairs A1-A2, B-D and
+F1-F2.
 
-\begin{figure}
+Since finding the most probable set or the most probable footprint is con
+tractable, we used approximations in this experiments. The approximations of the
+most probable set and the most probable footprint for given recombinant were
+taken from program balls by \cite{Brown2010}, which is also described in section
+\ref{SECTION:DISTANTMEASURES}. Note that balls algorithm estimate footprint by
+sampling of the state paths. For using set as guide, we have chosen to take the
+set of labels used in footprint as an approximation to the most probable set,
+since these sets were almost always correct. Note that the aim of these
+experiments is to demonstrate the usefulness of two-stage decoding approach, not
+to compare it with the other methods for recombination detection.
+
+To measure performance of the algorithm and amount of systematic errors, we use
+following metrics to compare different versions of algorithm.
+\begin{enumerate}
+\item {\bf \%id}: Percentage of the bases with correctly predicted label.
+
+\item {\bf Segment specificity}: Percentage of the number of correctly predicted
+segments out of the number of all predicted segments. Segment is correctly
+predicted if it's boundaries are within $10$ bases.
+
+\item {\bf Segment sensitivity}: Percentage of the number of correctly predicted
+segments out of the number of segments in the correct alignment.
+
+\item {\bf \%correct footprints}: Percentage of correctly predicted footprints.
+
+\item {\bf Footprint distance}: Normalized edit distance of predicted footprint
+and correct footprint (averaged over all samples).
+
+\item {\bf Set specificity}: Percentage of the number or correctly predicted label
+types out of the total number of predicted labels.
+
+\item {\bf Set sensitivity}: Percentage of the number of correctly predicted label
+types out of the total number of label types in correct labeling.
+
+\end{enumerate} 
+Aim of measures $1-3$ is to quantify the performance of the algorithm in terms
+of ability to correctly predict the correct annotation. Measures $4-7$ quantify
+the amount of previously mentioned systematic errors in predicted annotation.
+
+We use three versions of HERD in our experiments: original version of HERD,
+version with annotation set as a guide denoted by S-HERD and version using
+footprint as a guide denoted by F-HERD. The results of experiments are in the
+table \ref{HERD:EXPTABLE}. 
+
+\begin{table*}
 \begin{center}
-\includegraphics[width=14cm]{../figures/jcss/happyStory.pdf}
+\begin{tabular}{cccccccc}\hline
+&{\bf \%id}&\bf segment&\bf segment&\bf \%correct&\bf footprint&\bf set&\bf  set\\ 
+&&\bf sp.& \bf sn.& \bf footprints&\bf distance&\bf    sp.&\bf  sn.\\ 
+\hline
+\multicolumn{8}{l}{\bf subtypes, short recombination length}\\
+HERD   &88.09& 65.59& {\bf 67.71}& 30.67& {\bf 0.0376}& 56.7&{\bf 100}\\
+S-HERD &{\bf 88.55}& {\bf 68.17}& {\bf 67.71}& {\bf 37.33}& 0.0380& {\bf 99.3}&{\bf 100}\\
+F-HERD &84.71& 65.02& 58.19& 2.67& 0.0928& {\bf 99.3}&{\bf 100}\\\hline
+\multicolumn{8}{l}{\bf sub-subtypes, short recombination length}\\
+HERD   &{\bf 72.72}& 32.79& {\bf 27.56}& {\bf 0.0}&    {\bf 0.2083}& 19.3&{\bf 100}\\
+S-HERD &72.33&{\bf 35.77}& 26.59& {\bf 0.0}&    0.2656& {\bf 100}&{\bf 100}\\
+F-HERD &68.05&30.65& 16.97& {\bf 0.0}&    0.3228& {\bf 100}&{\bf 100}\\\hline
+\multicolumn{8}{l}{\bf subtypes, long recombination length}\\
+HERD   &93.86& 50.20& 61.82& 76.67& 0.0246& 77.3&{\bf 100}\\
+S-HERD &94.12& 53.46& 63.68& 98.67& 0.0015&   {\bf 100}&{\bf 100}\\
+F-HERD &{\bf 94.19}& {\bf 53.57}& {\bf 63.83}& {\bf 100}&    {\bf 0.0}&
+{\bf 100}&{\bf 100}\\\hline
+\multicolumn{8}{l}{\bf sub-subtypes, long recombination length}\\
+HERD   &84.10& 19.87& 25.63& 21.33& 0.1491& 29.3&{\bf 100}\\
+S-HERD &83.90& 24.87& 28.55& 47.97& 0.0524& {\bf 98.6}&{\bf 100}\\
+F-HERD &{\bf 85.03}& {\bf 26.65}& {\bf 30.24}& {\bf 98}&   {\bf 0.0018}& {\bf
+98.6}&{\bf 100}\\
+\end{tabular}
 \end{center}
-\caption[Example of annotation with systematic error.]{
-Each row corresponds to one annotation of the same HIV recombinant, colors
-represents original virus subtypes. By restricting the footprint or the sets
-that are used we have 
-}\label{FIGURE:HERD_BAD}
-\end{figure}
+\caption[Results of F/S-HERD on artificial recombinants.]{Results of experiments
+on four data sets. Larger values are better for all columns  except
+{\it footprint distance} column where lower value is better. Best value out of
+each column is bold.}\label{HERD:EXPTABLE}
+\end{table*}
 
-The algorithms were following:
+In general, we expect short recombination length to be harder than long
+recombination length and additionally distinguishing between sub-subtypes is
+harder than distinguishing between subtypes. Both of these expectations were
+observed in the results. In all experiments on recombinants with long
+recombination length, F-HERD outperformed HERD in all metrics, especially with
+the metrics $4-7$: percent of correct footprint was increased from $76.67\%$ to
+$100\%$ in case of subtypes and from $21.33\%$ to $98\%$ in case of
+sub-subtypes. However on recombinants with short recombination length,
+footprints used were wrong most of the time and in sub-subtypes dataset all of
+the algorithms predict zero correct footprints.  In fact, performance of F-HERD
+decreased in all metrics but annotation set specificity and sensitivity. This
+and increase in footprint distance suggests that improvement in finding the best
+footprint is needed.
 
 
-\section{Problems definitions}
+S-HERD performs slightly worse than F-HERD on the long recombination length, but
+the metrics were still significantly better than unguided HERD algorithm.
+Additionally, using S-HERD with short recombination length was not performing
+worse then HERD, but their performance was similar.
+
+\section{Computational complexity problems}
+
+In the previous experiments, the footprint and the set were estimated using
+sampling, which does not guarantee to return the most probable set or footprint.
+In following sections we show that these problems are NP-hard.  We will focus on
+three problems: \firstUseOf{the most probable set}, \firstUseOf{the most
+probable footprint}, and \firstUseOf{the most probable restriction}.
 
 We focus on computational complexity of several decoding problems: computing the
 most probable footprint, the most probable set, and the most probable
@@ -301,9 +444,10 @@ subsequence of an annotation that does not contain two identical consecutive
 labels.
 
 \begin{definition}[The most probable set problem]
-The \abbreviation{set}{S} of state path $\pi$ (or labeling $\Lambda$) is the set of
-states (or labels) visited on the path. Let $R=r_1r_2\dots r_n$ be sequence of
-states or labels. Then 
+Let $S$ be an annotation set or state set of path  \abbreviation{set}{S} of
+state path $\pi$ (or labeling $\Lambda$) is the set of states (or labels)
+visited on the path. Let $R=r_1r_2\dots r_n$ be sequence of states or labels.
+Then 
 \begin{equation*}
 S(R) = \left\{r_1,r_2,\dots, r_n\right\}
 \end{equation*}
@@ -1012,10 +1156,7 @@ in which we allow only states in $S$. Therefore the problem is in NP.
 \end{proof}
 \end{reformulate*}
 
-\section{Motivations}
-Nieco o tom, preco sme to robili? Nejake priklady s tych experimentov ktore si
-uz vobec nepamatam a pododobne...
-
+\begin{comment}
 \section{Decoding of Pair-HMM}
 
 \notmytext{
@@ -1031,5 +1172,5 @@ Pravdepodobne intuitivne budem vediet prekladat do znizenia poctu stavov -- v
 druhej sekvencii by som mohol nejako kodovat stavy HMM s tym, ze by bola mozno
 iba ciastocne vacsia
 \end{notmytext*}
-
+\end{comment}
 \label{LastPage}
