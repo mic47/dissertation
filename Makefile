@@ -11,6 +11,7 @@ buildtmp/main.pdf: */*tex templates/*
 	cp templates/* buildtmp
 	cp tex/references.bib buildtmp
 	ls tex/[0-9]*tex | sort |sed -e 's/^/\\input ..\//' > buildtmp/mainMatter.tex
+	echo '\\n'"ewcommand"'\\r'"evision[0]{`git rev-list --max-count=1 HEAD`(`git branch|grep '^\*'| sed -e 's/\** //'` + `git status -s | wc -l` changes)}" > buildtmp/revision.tex
 	cd figures; make; cd ..
 	cd buildtmp;$(MAKE) Makefile main.pdf;cd ..
 

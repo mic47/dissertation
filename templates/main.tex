@@ -22,6 +22,7 @@
 \lstset{language=python, numbers=left, frame=shadowbox, tabsize=2}
 \usepackage{xcolor}
 \usepackage{framed}
+\usepackage{fancyhdr}
 \renewcommand\baselinestretch{1.3} %riadkovanie jeden a pol -- takto sa to odovzdava
 %\renewcommand\baselinestretch{1.1} %riadkovanie jeden cela nieco
 
@@ -30,7 +31,6 @@
 \input ../tex/macro.tex
 
 \input ../tex/config.tex
-
 
 \ifx\pdfoutput\undefined\relax\else\pdfinfo{ /Title (\mftitle) /Author (\mfauthor) /Creator (PDFLaTeX) } \fi
 
@@ -41,9 +41,14 @@
 \input ../tex/frontMatter.tex
 
 \mainmatter
-
+\ifdefined\debug
+\input revision.tex
+\pagestyle{fancy}
+\fancyfoot{}
+\fancyfoot[RE,LO]{\revision}
+\fancyfoot[LE,RO]{page \thepage}      
+\fi
 \input mainMatter.tex
-
 \backmatter
 
 \input ../tex/backMatter.tex
