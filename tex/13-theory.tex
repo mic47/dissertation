@@ -72,20 +72,28 @@ Two-stage decoding system can be described in Highest Expected Gain framework
 introduced in section \ref{SECTION:HEG}. At first, we define guide and guide
 function.
 
-\begin{definition}[Guide function, guide]
+\begin{definition}[Guide function, guide relation, guide]
 Let $H$ be an HMM, $f$ be a annotation gain function as in definition
 \ref{DEFINITION:GAINFUNCTION} in section \ref{SECTION:HEG}, $L$ be the set of
 all annotations, $W$ be an arbitrary set. We call any function
 $R:L\to W$ a \firstUseOf{guide function} and $R(\Lambda)$ is
 \firstUseOf{guide} $r$ of annotation $\Lambda$.
 
+\firstUseOf{Guide relation} is relation $\hat{R}\subseteq L\times W$
+with property that for all $\Lambda\in L$, $(\Lambda, R(\Lambda))\in \hat{R}$.
+
 Similarly to definition of annotation (definition \ref{DEFINITION:ANNOTATION}),
 we can define the probability of guide given sequence $X$:
 
 \begin{equation}
-\prob{r\mid X, H} = \sum_{\Lambda \in L, R(\Lambda) = r} \prob{\Lambda\mid X, H}
+\prob{r\mid X, H} = \sum_{\Lambda \in L, R(\Lambda)=r} \prob{\Lambda\mid X, H}
 \end{equation}
+
 \end{definition}
+
+Natural way of defining guide relation is following: $(\Lambda, r)\in \hat{R}$
+if and only if $R(\Lambda)=R$. However, in some cases it might be useful
+to relax the restriction provided by the guide. 
 
 Note that we can see a guide as generalization of annotation. On the other hand,
 our use of guides is quite different from our use of annotations. While
@@ -100,7 +108,7 @@ interest and $L$ be the set of all annotations of $X$. In \firstUseOf{two-stage
 decoding} we search for annotation $\Lambda$, defined as:
 
 \begin{equation}
-\Lambda = \arg\max_{\Lambda'\in L, R(\Lambda') = r}E_{\Lambda_X\mid
+\Lambda = \arg\max_{\Lambda'\in L, (\Lambda', r)\in \hat{R}}E_{\Lambda_X\mid
 X,H}[f(\Lambda_X,\Lambda')]\label{EQUATION:HIGHEST_EXPECTED_RESTRICTED_REWARD}
 \end{equation}
 where guide $r$ is defined as
@@ -180,7 +188,7 @@ In following text we will use term \firstUseOf{segment}, which is maximal
 single-colored consecutive subsequence of annotation.
 
 \subsection{Methods}
-
+\label{HERD:METHODS}
 To detect detect recombinations, we have previously used Highest Expected Reward
 Decoding \cite{Nanasi2010mgr, Nanasi2010} with same HMM as {\it Schultz et al.
 (2006)}\nocite{Schultz2006} used with the Viterbi algorithm. This model and also
@@ -237,7 +245,12 @@ We denote HERD's gain function, described in section \ref{SECTION:HERD}, as
 $f_{HERD}$.  Details of algorithm that optimizes this gain function can be found
 in \cite{Nanasi2010, Nanasi2010mgr}. In this text we describe modification to
 this algorithm so that it can cope with guides. We use the footprint and the
-annotation set as a guides. Original HERD algorithm can be decomposed into two
+annotation set as a guide functions. In case of footprint we use the natural way
+to define guide relation, however in case of the annotation set we use guide
+relation $\hat{R}_S$ defined as follows: \[(\Lambda, r)\in
+\hat{R}_S\Leftrightarrow R(\Lambda)\subseteq r\]
+
+Original HERD algorithm can be decomposed into two
 phases. In the first phase, it constructs \firstUseOf{annotation graph}.
 Annotation graph is graph in which each path from the start vertex to the end
 vertex represents annotation. Length of such path equals to the expected gain of
@@ -251,11 +264,11 @@ time \cite{Nanasi2010mgr}.
 
 To add guides, we need to change the second phase of the algorithm. We will be
 searching for an annotation restricted to the guide with the highest expected
-gain.  If guide function is annotation set,  we simply remove vertices with
+gain. If guide function is annotation set,  we simply remove vertices with
 colors that are not in annotation set from the annotation graph and use original
 algorithm described in \cite{Nanasi2010mgr}. Since trimming the annotation graph
 can be done trivially in linear time, this does not change the computational
-complexity of the HERD algorithm. 
+complexity of the HERD algorithm.
 
 \begin{figure}
 \begin{center}
@@ -430,40 +443,30 @@ worse then HERD, but their performance was similar.
 
 \section{Computational complexity problems}
 
-In the previous experiments, the footprint and the set were estimated using
-sampling, which does not guarantee to return the most probable set or footprint.
-In following sections we show that these problems are NP-hard.  We focus on
-three problems: \firstUseOf{the most probable set}, \firstUseOf{the most probable
-footprint}, and \firstUseOf{the most probable
+In the previous experiments, we demonstrated that two-stage algorithm can be
+useful technique to improve decoding algorithm. In this and following sections
+we will discuss mostly theoretical aspects of defining guides and finding the
+most probable guides. In particular, we show that following problems are
+NP-hard: \firstUseOf{the most probable set},
+\firstUseOf{the most probable footprint}, and \firstUseOf{the most probable
 restriction}. The last problem is variant of the most probable set.
 
-\begin{comment}
-\begin{definition}[The most probable set problem]
-Let $S$ be an annotation set or state set of path  \abbreviation{set}{S} of
-state path $\pi$ (or labeling $\Lambda$) is the set of states (or labels)
-visited on the path. Let $R=r_1r_2\dots r_n$ be sequence of states or labels.
-Then 
-\begin{equation*}
-S(R) = \left\{r_1,r_2,\dots, r_n\right\}
-\end{equation*}
-The probability of set $\prob{S(R), X\mid H}$ given sequence $X$ and model H is the sum of
-probabilities of all state paths that has given set. Formally
-\begin{equation*}
-S(R) = \sum_{\pi, S(\pi) = R}\prob{\pi, X\mid H}
-\end{equation*}
-\end{definition}
-\end{comment}
 
 \begin{definition}[The most probable set problem] Given an HMM $H$, sequence $X$ of
 length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
 such that $\prob{S(\pi) = S, X\mid H} \geq p$.
 \end{definition}
 
-\begin{definition}[The most probable footprint problem]
- Given an HMM $H$, sequence $X$
-of length $n$ and a number $p\in [0,1]$, decide if there exists a footprint $F$
-such that $\prob{f(\pi) = S, X\mid H}\geq p$
-\end{definition}
+\begin{theorem}
+The most probable set problem is NP-hard. \label{THEOREM::NPSET}
+\end{theorem}
+
+In the most probable set problem, guide restricts us only to paths that use all
+of the states from annotation set. As in the experiments, it is more natural to 
+allow also to use only subsets of annotation set in the alignment. Therefore we
+might be interested in maximizing $\prob{S(\pi) \subseteq S, X\mid H}$. However, 
+in this case we would get the set of all labels. To get a meaningful and useful
+problem definition, we can restrict the size of an annotation set to be $k$:
 
 \begin{definition}[The most probable restriction problem]
 Given an HMM $H$, sequence $X$, integer $k$ and number $p\in[0,1]$, decide if
@@ -471,28 +474,37 @@ there exists a subset of states $S$ of size $k$, such that
 $\prob{S(\pi)\subseteq S, X\mid H} \geq p$.
 \end{definition}
 
-In the next sections we prove following theorems.
 \begin{theorem}
-The most probable set problem is NP-hard. \label{THEOREM::NPSET}
+The most probable restriction problem is NP-hard. \label{THEOREM::NPREST}
 \end{theorem}
+
+Finally, we also show that the most probable footprint problem is NP-complete.
+\begin{definition}[The most probable footprint problem]
+Given an HMM $H$, sequence $X$
+of length $n$ and a number $p\in [0,1]$, decide if there exists a footprint $F$
+such that $\prob{f(\pi) = S, X\mid H}\geq p$
+\end{definition}
 
 \begin{theorem}
 The most probable footprint problem is NP-complete.
 \label{THEOREM::NPFOOT}
 \end{theorem}
 
-\begin{theorem}
-The most probable restriction problem is NP-hard. \label{THEOREM::NPREST}
-\end{theorem}
 
 At first we show combinatorial proof of theorem \ref{THEOREM::NPSET}. Then we
-show proof of theorem \ref{THEOREM::NPFOOT} by showing $8$-state HMM for 
-which is NP hard to find the most probable footprint. Then we extend this prove
-theorem \ref{THEOREM::NPSET} again. Finally we show proof of theorem
-\ref{THEOREM::NPREST}.
+show proof of theorem \ref{THEOREM::NPREST}. Finally we show proof of theorem
+\ref{THEOREM::NPFOOT} by showing $8$-state HMM for which is NP hard to find the
+most probable footprint and then we extend this prove theorem
+\ref{THEOREM::NPSET} again. 
 
 \section{The Most Probable Set Problem}
 \label{sec:set}
+
+\begin{definition*}[The most probable set problem] Given an HMM $H$, sequence $X$ of
+length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
+such that $\prob{S(\pi) = S, X\mid H} \geq p$.
+\end{definition*}
+
 In this section, we prove NP-hardness of the most probable set problem, theorem \ref{THEOREM::NPSET}.
 
 \begin{comment}
@@ -603,7 +615,7 @@ Therefore we choose as $n$ the smallest value such that $M_n\ge k$, and
 we denote this value $n_k$. As $k'$ we then use $M_{n_k}$. The following 
 lemma states important properties of $n_k$ and $M_{n_k}$. 
 
-\begin{table*}[t]
+\begin{table*}
 \begin{center}
 \begin{tabular}{|c||c|c|c|c|c|c|c|c|c||c|}\hline
 \bf n/k&\bf 0&\bf 1&\bf 2&\bf 3&\bf 4&\bf 5&\bf 6&\bf 7&\bf 8&\bf
@@ -827,8 +839,63 @@ I_{v}e(v,X[1])& i=1,S=\{v\}\\
 0 & \mbox{otherwise}
 \end{cases}$$
 \fi
+\section{The Most Probable State Restriction}
 
-\section{Most probable footprint}
+\label{sec:restriction}
+
+
+\begin{definition*}[The most probable restriction problem]
+Given an HMM $H$, sequence $X$, integer $k$ and number $p\in[0,1]$, decide if
+there exists a subset of states $S$ of size $k$, such that
+$\prob{S(\pi)\subseteq S, X\mid H} \geq p$.  
+\end{definition*}
+
+In this section we prove that the most probable restriction problem is
+NP-complete.
+\begin{proof}
+We will prove NP-hardness by a reduction from 3-SAT. Consider an
+instance of 3-SAT with the set of variables $U=\{u_1,u_2,\dots,u_n\}$
+and the set of clauses $C=\{c_1,c_2,\dots,c_m\}$. 
+Based on sets $U$ and $C$, we construct an HMM $H$ as
+follows.  The set of states $V$ will contain all positive and negative
+literals. The emission alphabet $\Sigma$ contains all clauses, all
+variables and a special error symbol $\psi$. The initial probability
+of each state is $1/(2n)$, and the transition probability
+between any two states is also $1/(2n)$. State for a literal
+$u$ emits with probability $1/|\Sigma|$ every clause that contains $u$.
+State for literal $u$ also generates the positive form of the literal
+with probability $1/|\Sigma|$. For proper normalization, 
+it also generates the error symbol 
+with probability $1-\sum_{x\in C\cup U}e(v,x)$. 
+
+We also create string $X=u_1u_2\dots
+u_nc_1c_2\dots c_m$ and set the size of the restriction $k$ to equal
+the number of variables $n$. Every state path $\pi$ that can generate
+$X$ has probability $(2n|\Sigma|)^{-|X|}$; we set threshold $p$ to
+this value. Each 
+variable $u_i$ in the first part of $X$ 
+can be generated only by states $u_i$ and
+$\bar{u_i}$; therefore one of these states needs to be in the
+path. The first portion of the path thus traverses $k$ 
+different states; only these states can be used to emit the second part of the
+sequence. 
+%Every clause can be emitted only by states for literals that
+%satisfy it. 
+The set of states used by a state path with
+non-zero probability therefore corresponds to a satisfying assignment
+in a straightforward way. 
+%The HMM has a restriction of size $k$ with
+%probability at least $p$ if and only if the 3-SAT instance has a
+%satisfying assignment.
+
+Note that given a restriction $S$, we can easily verify if its
+probability is at least $p$ by a variant of the Forward algorithm
+in which we allow only states in $S$. Therefore the problem is in NP.
+\qed
+\end{proof}
+
+
+\section{The Most probable footprint}
 \label{sec:footprint}
 
 \begin{comment}
@@ -849,7 +916,8 @@ if there is a footprint $F$ such that $\prob{f(\pi)=F,X\mid H,n}\ge p$.
 \end{theorem}
 \end{comment}
 
-\begin{figure*}[t]
+
+\begin{figure*}
 \centerline{\includegraphics[scale=0.68]{../figures/jcss/cliquehmm.pdf}}
 \caption{\label{fig:footprint_hmm} The HMM from the proof of Theorem
   \ref{THEOREM::NPFOOT}. States are shown as circles; under each we
@@ -859,6 +927,13 @@ if there is a footprint $F$ such that $\prob{f(\pi)=F,X\mid H,n}\ge p$.
   state $S$. All outgoing transitions from a particular state have
   the same probability.}
 \end{figure*}
+
+\begin{definition*}[The most probable footprint problem]
+ Given an HMM $H$, sequence $X$
+of length $n$ and a number $p\in [0,1]$, decide if there exists a footprint $F$
+such that $\prob{f(\pi) = S, X\mid H}\geq p$
+\end{definition*}
+
 \begin{proof}
 We will prove NP-hardness by a reduction from the maximum clique problem
 using the HMM in Figure 
@@ -917,6 +992,8 @@ $j\notin R$ we have $b_{i,j}=0$ and $c_j=0$, thus they will use state
 0 in $\pi$. Since there is a different run for every $i\in R$, footprint 
 $F$ has at least $k$ runs.
 
+
+
 Conversely, let $F$ be a footprint with probability at least $qk>0$
 and thus with at least $k$ runs. We will construct a clique of size at
 least $k$ as follows. Let $R$ be the set of all vertices $i$ such that
@@ -946,14 +1023,41 @@ In this section, we show alternative proof of NP-hardness of the most
 probable set problem. We show how to modify proof of theorem \ref{THEOREM::NPFOOT}
 to obtain proof of theorem \ref{THEOREM::NPSET}.
 
+\begin{definition*}[The most probable set problem] Given an HMM $H$, sequence $X$ of
+length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
+such that $\prob{S(\pi) = S, X\mid H} \geq p$.
+\end{definition*}
+
+\begin{figure*}
+\centerline{\includegraphics[scale=0.68]{../figures/jcss/expandedcliquehmm.pdf}}
+\caption{The HMM from the proof of Theorem
+  \ref{THEOREM::NPSET}. States are shown as circles; under each we
+  list the set of symbols that the state emits with non-zero
+  probability. Each of these symbols is emitted with probability
+  $1/k$, where $k$ is the size of the set. The HMM always starts in
+  state $S$. All outgoing transitions from a particular state have
+  the same probability.}\label{fig:set_hmm2}
+\end{figure*}
+
 \begin{comment}
+\begin{figure*}
+\centerline{\includegraphics[scale=0.68]{../figures/jcss/expandedcliquehmm.pdf}}
+\caption{The HMM from the proof of Theorem
+  \ref{THEOREM::NPSET}. States are shown as circles; under each we
+  list the set of symbols that the state emits with non-zero
+  probability. Each of these symbols is emitted with probability
+  $1/k$, where $k$ is the size of the set. The HMM always starts in
+  state $S$. All outgoing transitions from a particular state have
+  the same probability.}\label{fig:set_hmm2}
+\end{figure*}
+
 \begin{theorem}The following problem is NP-hard:
 Given an HMM $H$, sequence $X$ of length $n$, and a number $p\in [0,1]$,
 decide if there exists a set of states $S$ such that 
 $\Pr\left(s(\pi)=S, X\mid H, n \right)\geq p$.
 \end{theorem}\label{thm:sets}
 \end{comment}
-
+\begin{proof}
 Let $G=(V,E)$ be an undirected graph with $n$ vertices as in proof of theorem
 \ref{THEOREM::NPFOOT}. Note that $V = \{1, 2, \dots, n\}$. $G$ will be encoded in
 sequence $X$ as in proof if theorem \ref{THEOREM::NPFOOT}, but without $\#$ symbols.
@@ -966,16 +1070,6 @@ denoted $0_v$ and $1_v$ for $v \in V$.  Transitions are from $S'$ to $0_1$ and
 $1_1$, from $0_n$ and $1_n$ to $T'$ and for all $i<n$ from $c_i$ to $d_{i+1}$
 for $c,d\in \{0, 1\}$ as in figure  \ref{fig:set_hmm2}. 
 
-\begin{figure*}[t]
-\centerline{\includegraphics[scale=0.68]{../figures/jcss/expandedcliquehmm.pdf}}
-\caption{\label{fig:set_hmm2} The HMM from the proof of Theorem
-  \ref{THEOREM::NPSET}. States are shown as circles; under each we
-  list the set of symbols that the state emits with non-zero
-  probability. Each of these symbols is emitted with probability
-  $1/k$, where $k$ is the size of the set. The HMM always starts in
-  state $S$. All outgoing transitions from a particular state have
-  the same probability.}
-\end{figure*}
 
 State paths that generate $X$ have a similar structure as in proof of theorem
 \ref{THEOREM::NPFOOT}. State $S$ generate the first symbol $S$, some initial blocks,
@@ -1016,71 +1110,7 @@ Given graph $G$ and threshold $k$, we can compute in
 polynomial time sequence $X$ and threshold $qk$ such that $G$ has a
 clique of size at least $k$ if and only if sequence $X$ has a
 set of states with probability at least $qk$. This completes our reduction.\qed
-
-\section{The Most Probable State Restriction}
-
-\label{sec:restriction}
-
-\begin{reformulate*}\todo {Tuto cast chcem presunut dopredu k problemom}
-In the most probable set problem, we consider only paths that use each
-state in the set. In some situations, it is more natural to allow
-paths to use only some of these states, as in the most probable
-restriction problem. However, the set of all states is
-trivially the most probable restriction. To get a meaningful problem
-definition, we restrict the size of the restriction to be $k$. As we
-will show, this problem is also NP-hard.
-\end{reformulate*}
-
-\begin{comment}
-\begin{theorem}
-The following problem is NP-complete: Given is an HMM $H$, sequence
-$X$, integer $k$ and number $p\in [0,1]$. Determine if
-there is a subset of states $S$ of size $k$ such that 
-$\Pr(s(\pi)\subseteq S, X\mid H,|X|)\ge p$. 
-\end{theorem}
-\end{comment}
-
-In this section we prove the most probable restriction problem.
-We will prove NP-hardness by a reduction from 3-SAT. Consider an
-instance of 3-SAT with the set of variables $U=\{u_1,u_2,\dots,u_n\}$
-and the set of clauses $C=\{c_1,c_2,\dots,c_m\}$. 
-Based on sets $U$ and $C$, we construct an HMM $H$ as
-follows.  The set of states $V$ will contain all positive and negative
-literals. The emission alphabet $\Sigma$ contains all clauses, all
-variables and a special error symbol $\psi$. The initial probability
-of each state is $1/(2n)$, and the transition probability
-between any two states is also $1/(2n)$. State for a literal
-$u$ emits with probability $1/|\Sigma|$ every clause that contains $u$.
-State for literal $u$ also generates the positive form of the literal
-with probability $1/|\Sigma|$. For proper normalization, 
-it also generates the error symbol 
-with probability $1-\sum_{x\in C\cup U}e(v,x)$. 
-
-We also create string $X=u_1u_2\dots
-u_nc_1c_2\dots c_m$ and set the size of the restriction $k$ to equal
-the number of variables $n$. Every state path $\pi$ that can generate
-$X$ has probability $(2n|\Sigma|)^{-|X|}$; we set threshold $p$ to
-this value. Each 
-variable $u_i$ in the first part of $X$ 
-can be generated only by states $u_i$ and
-$\bar{u_i}$; therefore one of these states needs to be in the
-path. The first portion of the path thus traverses $k$ 
-different states; only these states can be used to emit the second part of the
-sequence. 
-%Every clause can be emitted only by states for literals that
-%satisfy it. 
-The set of states used by a state path with
-non-zero probability therefore corresponds to a satisfying assignment
-in a straightforward way. 
-%The HMM has a restriction of size $k$ with
-%probability at least $p$ if and only if the 3-SAT instance has a
-%satisfying assignment.
-
-Note that given a restriction $S$, we can easily verify if its
-probability is at least $p$ by a variant of the Forward algorithm
-in which we allow only states in $S$. Therefore the problem is in NP.
-\qed
-
+\end{proof}
 \begin{comment}
 \section{Decoding of Pair-HMM}
 
@@ -1098,4 +1128,3 @@ druhej sekvencii by som mohol nejako kodovat stavy HMM s tym, ze by bola mozno
 iba ciastocne vacsia
 \end{notmytext*}
 \end{comment}
-\label{LastPage}
