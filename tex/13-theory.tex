@@ -432,17 +432,12 @@ worse then HERD, but their performance was similar.
 
 In the previous experiments, the footprint and the set were estimated using
 sampling, which does not guarantee to return the most probable set or footprint.
-In following sections we show that these problems are NP-hard.  We will focus on
-three problems: \firstUseOf{the most probable set}, \firstUseOf{the most
-probable footprint}, and \firstUseOf{the most probable restriction}.
+In following sections we show that these problems are NP-hard.  We focus on
+four problems: \firstUseOf{the most probable set}, \firstUseOf{the most probable
+footprint}, \firstUseOf{existence of a path} and \firstUseOf{the most probable
+restriction}. The latter two problems are variants of the most probable set.
 
-We focus on computational complexity of several decoding problems: computing the
-most probable footprint, the most probable set, and the most probable
-restriction for HMMs. At first, we have to define problems at first. The
-footprint is as in definition \ref{DEFINITION::FOOTPRINT}: the maximal
-subsequence of an annotation that does not contain two identical consecutive
-labels.
-
+\begin{comment}
 \begin{definition}[The most probable set problem]
 Let $S$ be an annotation set or state set of path  \abbreviation{set}{S} of
 state path $\pi$ (or labeling $\Lambda$) is the set of states (or labels)
@@ -457,21 +452,21 @@ probabilities of all state paths that has given set. Formally
 S(R) = \sum_{\pi, S(\pi) = R}\prob{\pi, X\mid H}
 \end{equation*}
 \end{definition}
+\end{comment}
 
-\begin{definition}
-\firstUseOf{The most probable set problem:} Given an HMM $H$, sequence $X$ of
+\begin{definition}[The most probable set problem] Given an HMM $H$, sequence $X$ of
 length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
 such that $\prob{S(\pi) = S, X\mid H} \geq p$.
 \end{definition}
 
-\begin{definition}[The most probable footprint]
-\firstUseOf{The most probable footprint problem:} Given an HMM $H$, sequence $X$
+\begin{definition}[The most probable footprint problem]
+ Given an HMM $H$, sequence $X$
 of length $n$ and a number $p\in [0,1]$, decide if there exists a footprint $F$
 such that $\prob{f(\pi) = S, X\mid H}\geq p$
 \end{definition}
 
-\begin{definition}[Existence of a path]
-\firstUseOf{The existence of path problem:} Given an HMM $H$, sequence
+\begin{definition}[Existence of a path problem]
+Given an HMM $H$, sequence
 $X$ of length $n$, a subset of states $S$ and a number $p\in [0,1]$, decide if
 exists $\pi$ such that $\prob{S(\pi)=S,X\mid H} > 0$
 \end{definition}
@@ -482,12 +477,13 @@ there exists a subset of states $S$ of size $k$, such that
 $\prob{S(\pi)\subseteq S, X\mid H} \geq p$.
 \end{definition}
 
+In the next sections we prove following theorems.
 \begin{theorem}
 The most probable set problem is NP-hard. \label{THEOREM::NPSET}
 \end{theorem}
 
 \begin{theorem}
-The most probable footprint problem is NP-hard even for fixed HMM.
+The most probable footprint problem is NP-hard.
 \label{THEOREM::NPFOOT}
 \end{theorem}
 
@@ -499,18 +495,15 @@ Existence of a path problem is NP-hard. \label{THEOREM::NPEXIST}
 The most probable restriction problem is NP-hard. \label{THEOREM::NPREST}
 \end{theorem}
 
-At first we show combinatorial? proof of theorem \ref{THEOREM::NPSET}. Then we
+At first we show combinatorial proof of theorem \ref{THEOREM::NPSET}. Then we
 show proof of theorem \ref{THEOREM::NPFOOT} by showing $8$-state HMM for 
-which is NP hard to find most probable footprint. Then we 
-Finally, we show short proof ot theorem \ref{THEOREM::NPREST}.
+which is NP hard to find the most probable footprint. Then we extend this prove
+theorem \ref{THEOREM::NPSET} again. Finally we show proof of theorems
+\ref{THEOREM::NPEXIST} and \ref{THEOREM::NPREST}.
 
-
-\section{The Most Probable Set of States}
+\section{The Most Probable Set Problem}
 \label{sec:set}
-In this section, we prove NP-hardness of finding the most probable set
-of states. This is a special case of the
-problem of finding the most probable set of labels. Now we prove theorem
-\ref{THEOREM::NPSET}.
+In this section, we prove NP-hardness of the most probable set problem, theorem \ref{THEOREM::NPSET}.
 
 \begin{comment}
 \begin{theorem}The following problem is NP-hard:
@@ -520,6 +513,7 @@ $\Pr\left(s(\pi)=S, X\mid H, n \right)\geq p$.
 \end{theorem}\label{thm:sets}
 \end{comment}
 
+\todo{Vloz sem definiciu max clique, alebo aspon cituj}
 To prove this theorem, we will use a reduction from the maximum clique
 problem.  Given a graph $G=(V,E)$ and a clique
 size $k$, we first choose a suitable threshold $k'\ge k$, as
