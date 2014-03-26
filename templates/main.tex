@@ -25,7 +25,12 @@
 \usepackage{fancyhdr}
 \renewcommand\baselinestretch{1.3} %riadkovanie jeden a pol -- takto sa to odovzdava
 %\renewcommand\baselinestretch{1.1} %riadkovanie jeden cela nieco
-
+\usepackage{afterpage}
+\newcommand\blankpage{%
+    \null
+    \thispagestyle{empty}%
+    \addtocounter{page}{-1}%
+    \newpage}
 \usepackage{amsmath}
 
 \input ../tex/macro.tex
