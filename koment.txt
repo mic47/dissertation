@@ -1,0 +1,59 @@
+Uvod:
+
+Vysvetlit problemy, co sa robi s hmm, ake problemy sa riesia. Nepouzivat DNA, len RNA, pre virus mame sequence, nie je uplne dolezite nad akou abecedou, ale moze sa to spomenut v biologickej introduction
+Citatel: Informatik, nic z bioinformatikov -- co som robil -- model, np tazke dokazy
+Bioinformatik: aj bioinformaticke slova, aby si to vedel zaradit.
+
+Structure -- to by sa mohlo skratit, nedat vlastny podtext
+Bilogical introduction: chcelo by to lepsi priklad, nie hladanie genov,
+ proteiny spomenut len trosku, presunut tam aj nieco o tej evolucii -- mozno presunut z uvodu kapitoly dva
+
+ Spojit prehlad do jednej dvoch kapitol: Re
+ Ciele prehladu: 
+ 1.) Zaviest vsetky pojmy
+ 2.) Ukazat suvisiacej prace -- co tiez vie byt aj v nasich vysledok, pripadne hlavne v prehladovej a potom spomenut k 
+
+ Co urvat -- asi algorithmic improvements,
+           -- mozno vela veci o parovych, to sa da nejako zmensit
+
+Extended Viterbi je spomenuty pre Viterbim, tam to je trosku chaosne, lepsie to nadviazat, lebo clovek by aj ocakaval ze anotacia je ten viterbi
+
+Other decoding -- hned za variants, Parove na koniec
+
+Aj v uvode do podkapitoly povedat ze preco su tam tie rozne dekodovania -- ze ich studujeme.
+
+Alignments:
+
+Vyhodme scoring schemes, spojit ich s parovymi.
+Algoritmicke veci sa este vymyslia ako sa spravia.
+
+spravit kapitolu 2.4 -- aloritmic improvements -- vsetko strucne popisat 
+Banding chcem nejako nazvat
+
+Exploiting sequence repetitions: to by som mal skratit
+Monotonne matice asi tiez vyhodit.
+
+HMM -- priklad -- mozno premenovat stav na I
+
+Forward - backward -- mam popisane len nevyhody, mohol by som dat aj vyhody.
+
+Sitelnt stav -- priklad -- mozno lepsi je priklad z profilovymi hmm a co sa stane ak by som ich odstranil, lebo teraz mam IID
+
+
+Parove HMM: viac citaci pre tie marginalized a podobne, lebo  lunter to nerobil prvy krat, 
+mozno lepsie popisat celkovu ideu, ktoru maju podobne -- 2 typy -- gen, gen, druhy robii exon ku genu, potom len vymenovat priklady softwarov
++ zvlast genwise, pairagon, teda ze robia nieco ine. Nerozpisovat vsetky detaily, ako napriklad ako to trenovali a podobnne
+
+Cize vseobecne, asi to viac skratit. 
+
+Spomenut Browm+Hudek -- take divne dekodovanie -- spomenut v inych decoding methods. -- cim to bolo motivovane -- tandemovymi jednopismenovymi repeatmi
+Ale nevenovat tomu nejako vela casu miesta.
+
+Biases -- skratit-- vyhodit mozno konkretne cisla, alebo tak. Nechat sposoby biasov, ale detaily simulacii odtial vyhodit. 
+
+
+2.1 HMM
+2.2 Sequence Alignment
+2.3 Alignment with Pair HMM
+2.4 Algorithmic improvements -- pre vsetko!, zavislosti nebudu potom take zle
+
