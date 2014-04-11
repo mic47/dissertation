@@ -129,6 +129,7 @@ $\lambda_{ID}$ and in expanded model we label states from submodel by label
 $R$, resulting in labeling function $\lambda_R$, distribution on annotations
 on alignments has also not changed. \todo{toto znie ako od hotentota}
 
+\todo{Ako je definovana pravdepodobnost emisie?}
 
 \begin{comment}
 By this we obtained model that 
@@ -191,6 +192,27 @@ $*$ Posterior (marginalized aj nie)\\
 $*$ Block viterbi\\
 $*$ Block posterior\\
 \end{reformulate*}
+
+In this part we describe several optimization criteria we have used. We used
+following optimization criterias/algorithms: the Viterbi algorithm (VA), the
+posterior decoding (PD), the marginalized posterior decoding (MPD), block
+Viterbi algorithm (BVA) and block posterior decoding (BPD). The first three
+methods we used with expanded models, the latter two methods we used with
+generalized version of the model.
+
+\todo{Zopakuj gain funkcie, nech vieme co optimalizujeme}
+
+Whenever in this chapter we refer to VA, PD, MPA, we mean algorithms from
+chapter \ref{} applied to algorithms applied to expanded version of SFF or TTP.
+BVA is Viterbi algorithm applied to non-expanded SFF or TTP. Block posterior
+decoding is however different. Problem is that posterior probabilities of
+emissions from generalized states are much smaller than from regular states,
+because they are much longer. Since the posterior probabilities are much lower,
+non-generalized states will be favored in the resulting alignment. Therefore 
+we added compensation element for generalized states, to level playing field.
+We have multiplied the posterior probability with the number of bases within
+such emissions. Therefore gain function for BPD is following: 
+
 \section{Implementation details \& optimizations}
 \begin{reformulate*}
 Implementacne detaily, optimalizacie, cachovanie
