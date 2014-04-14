@@ -278,7 +278,7 @@ $M$ in the memory or use one of the techniques that are described in section
 \ref{TODO: Aj tak sa to presunie}.
 
 
-\section{Dynamic Programming}  
+\section{Algorithmic improvements of sequence alignment}  
 %effectively and describe several methods how to decrease memory footprint and/or
 %time complexity. 
 
@@ -288,17 +288,18 @@ $M$ in the memory or use one of the techniques that are described in section
 %complexity $O(mn)$.  Using tricks described later, the memory and even time
 %complexity will be improved.
 
-In this section review several techniques that can be used to improve
-performance of dynamic programming used to compute alignment.
+In this section, we review several techniques that can be used to improve
+performance of dynamic programming used to compute sequence alignment.  This is
+important, because algorithms described above can be used with sequences that
+are several thousands bases long. Full genomes can be several billions bases
+long and using naive approach is not tractable. 
 
 \subsection{Restricting Search Space}
 
 One commonly used technique for speedup (and decreasing memory requirements) of
 sequence alignment is to restrict the search space of dynamic programming. We
 compute alignment only in some parts of matrix $M$ and we assume that omitted
-parts of matrix correspond to alignments with low score. In this section we will
-review a few techniques that are used to restrict the search space of local or
-global alignment.
+parts of matrix correspond to alignments with low score. 
 
 If the two sequences are quite similar, the optimal global alignment will not be
 too far from the main diagonal of matrix $M$. Therefore it is not necessary to compute
@@ -313,28 +314,28 @@ restricting search space of dynamic programming.
 
 \subsubsection{Seeds}
 
-Seeds are a technique frequently  used to reduce time complexity of local alignment.  They were
-introduced in BLAST algorithm \cite{Altschul1990}.  Seed is a short alignment which
-is likely to be a part of an alignment with high score. After a seed is
-found, it is extended with an extension algorithm to a local alignment.
+Seeds are a technique frequently  used to reduce time complexity of local
+alignment.  They were popularized by BLAST algorithm \cite{Altschul1990}.  A
+\firstUseOf{seed} is a short alignment which is likely to be a part of an
+alignment with high score. After a seed is found, it is extended with an
+extension algorithm to a local alignment.
 
-Seeds that cannot be extended to high-scoring alignments are
-discarded. Such candidate seeds are called false-positives.
-Alignments that were not found by our heuristics
-are called false-negatives.
-It is important that heuristics used to find seeds has a small number of
-false-negatives and large number of true-positives,
-otherwise many true high-scoring local alignments will not be found. On the other
-hand, high number of false positives implies longer running time. 
+Seeds that cannot be extended to high-scoring alignments are discarded. Such
+candidate seeds are called false positives.  Alignments that were not found by
+our heuristics are called false negatives.  It is important that heuristics
+used to find seeds has a small number of false negatives and a large number of
+true positives, otherwise many true high-scoring local alignments will not be
+found. On the other hand, high number of false positives implies longer running
+time. 
 
 
-The most traditional approach is to take as seeds all positions $i$ and $j$ in
-sequences $X$ and $Y$, such that $X[i:i+\tau]=Y[j:j+\tau]$ for some constant
-$\tau$. This approach is used in BLAST \cite{Altschul1990}.  Various
-generalization of BLAST heuristic were developed to improve trade off between
+The most traditional approach is to take as seeds all pairs of positions $i$
+and $j$, such that $X[i:i+\tau]=Y[j:j+\tau]$ for some
+constant $\tau$. This approach is used in BLAST \cite{Altschul1990}.  Various
+generalization were developed to improve trade off between
 speed and accuracy, such as seeds with mismatches \cite{Kent2002}, space seeds
 \cite{Ma2002}, vector seeds \cite{Brejova2005vector} or daughter seeds
-\cite{Csuros2005}. All of those methods vary in speed and accuracy.
+\cite{Csuros2005}.
 
 Extension of a seed to a full alignment is done in both directions, usually
 using equation \ref{ALIGN:ALGO:AFFINE} (equation is altered to reverse
@@ -343,23 +344,21 @@ BLAST introduced X-drop heuristics: extension stops if the score of an alignment
 is lower than the best score that was seen so far minus some user-defined
 constant \cite{Altschul1997}.
 
-%space seeds, daughter seeds
 \subsubsection{Stepping-Stone Algorithm}
 \label{SECTION:SSA}
 
 \abbreviation{Stepping-stone algorithm}{SSA} 
-\cite{Meyer2002,Pairagon2009} is suitable for global alignment. It uses
-a local alignment algorithm as a subprogram. The idea is to use good local
-alignments as anchors. An anchor is similar to a seed: it is a short alignment which we
-expect to be in the optimal global alignment.  However, local alignment tools
-give local alignments that do not have to be consistent with each other. A set of
-local alignments is consistent if all local alignments can be together in one
-global alignment. Let $A$ and $B$ be a local alignments of sequences $X$ and
-$Y$ and $(i,j)$ be the position of the last alignment column of $A$ in the dynamic
-programming matrix and $(k,l)$ be the position of the first alignment column of
-$B$ in the dynamic programming matrix. Then $A$ and $B$ are consistent if $i<k$
-and $j<l$.
-Therefore we need to choose a consistent subset of alignments.
+\cite{Meyer2002,Pairagon2009} is suitable for global alignment. The idea is to
+use good local alignments as anchors. An anchor is similar to a seed: it is a
+short alignment which we expect to be in the optimal global alignment.
+However, local alignment tools give local alignments that do not have to be
+consistent with each other. A set of local alignments is consistent if all
+local alignments can be together in one global alignment. Let $A$ and $B$ be a
+local alignments of sequences $X$ and $Y$ and $(i,j)$ be the position of the
+last alignment column of $A$ in the dynamic programming matrix and $(k,l)$ be
+the position of the first alignment column of $B$ in the dynamic programming
+matrix. Then $A$ and $B$ are consistent if $i<k$ and $j<l$.  Therefore we need
+to choose a consistent subset of alignments.
 
 To get such subset $S$, SSA uses the following greedy method. It starts with
 $S=\emptyset$. In every step, it finds alignment $A$, such that $S\cup\{A\}$ is
@@ -380,7 +379,7 @@ order of $O(\sqrt{|X|^2+|Y|^2})$ under the assumption that the maximum area betw
 two anchors is independent of the sequence length \cite{Meyer2002}.
 
 
-\subsection{Checkpointing}
+\subsection{Reducing memory complexity}
 
 Checkpointing is a general technique in dynamic programming, which allows reduce
 the number of rows of the dynamic programming matrix to $O(\sqrt n)$ while
