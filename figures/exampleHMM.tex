@@ -22,7 +22,7 @@
 \psset{unit=1.5cm}%
 \psset{linewidth=0.7pt}%
 \psset{arrowsize=1.8pt 4}%
-\begin{pspicture}(-2.0,-2)(2.7,1)
+\begin{pspicture}(-2.0,-3.7)(4,1.2)
 \psset{arrows=->}
 \def\xa{1.1}
 \def\xb{2.2}
@@ -31,15 +31,15 @@
 
 \NODE(1,0){random}{white}{$R$}
 \BNODE(0,1){erandom}{white}{$(0.25,0.25,0.25,0.25)$}
-\ncline{random}{erandom}
+\ncline[linestyle=dashed]{random}{erandom}
 
 \NODE(3,-2.5){exone}{white}{$E$}
 \BNODE(3,-3.5){eexone}{white}{$(0.1,0.2,0.3,0.4)$}
-\ncline{exone}{eexone}
+\ncline[linestyle=dashed]{exone}{eexone}
 
 \NODE(-1,-2.5){intron}{white}{$In$}
 \BNODE(-1,-3.5){eintron}{white}{$(0.5,0.2,0.25,0.05)$}
-\ncline{intron}{eintron}
+\ncline[linestyle=dashed]{intron}{eintron}
 
 \ncarc[angle=-90]{random}{exone}
 \naput{0.005}

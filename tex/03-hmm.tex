@@ -1,12 +1,14 @@
 \chapter{Hidden Markov Models}
 \label{CHAPTER:HMM}
 
+\todo{Ako to suvisi s dizertackou}
 \abbreviation{Hidden Markov Models}{HMM} are graphical probabilistic models
-commonly used to sequence annotation or sequence alignment. An HMM is
-a probabilistic finite state machine that in every state emits one symbol. Later
-we will also discuss variants of HMMs that emit more symbols or that emit symbols on multiple
-tapes. In this chapter, we will describe basic
-definitions and algorithms that are used with HMMs.
+commonly used for sequence annotation or sequence alignment. An HMM is a
+probabilistic finite state machine that in every state emits one symbol. Later
+we will also discuss variants of HMMs that emit more symbols or that emit
+symbols on multiple tapes. In this chapter, we will describe basic definitions
+and algorithms that are used with HMMs. In latter chapters, we will study use of HMMs 
+for annotation and aligning of biological sequences.
 
 \section{Definitions}\label{SECTION:HMMDEF}
                        
@@ -25,12 +27,12 @@ according to transition distribution $a_q$. Note that emission and transition
 distributions can be different for every state.  This process produces two
 sequences: sequence of states $\pi=\pi_0\pi_1\pi_2\dots$ called
 \firstUseOf{state path} and output sequence $X=X_0X_1X_2\dots$ over alphabet
-$\Sigma$. In this work we will use only discrete versions of HMMs with finite state
+$\Sigma$. In this work, we will use only discrete versions of HMMs with finite state
 space and alphabet.  
 
 
 \begin{definition}
-Any square matrix $M$ of size $n\times n$ is \firstUseOf{stochastic} if satisfy
+Any square matrix $M$ of size $n\times n$ is \firstUseOf{stochastic} if it satisfies the
 following properties.
 \begin{enumerate}
 \item $\forall 0\leq i<n,0\leq j < m, 0\leq M[i,j]\leq 1$
@@ -39,7 +41,7 @@ following properties.
 \end{definition}
 
 \begin{note}
-Stochastic matrix consists from $n$ distributions over set of size $n$.
+Stochastic matrix consists from $n$ probability distributions over a set of size $n$.
 \end{note}
 
 \begin{definition}\label{DEF:HMM}
@@ -49,8 +51,8 @@ $V=\{v_0,\dots,v_{k-1}\}$ is a finite set of state of size $k$, $I$ is
 a distribution over $V$, $e$ is $k\times m$ matrix where each row contains
 distribution over $\Sigma$ and $a$ is stochastic matrix of size $m\times m$.
 
-We will index elements of $e$ and $a$ by subscripts, therefore $e_{u,v}$ is
-element in $u$-th row and $v$-th column of $e$.  
+We will index elements of $e$ and $a$ by subscripts; therefore $e_{u,v}$ is
+the element in $u$-th row and $v$-th column of $e$.  
 
 %Therefore following conditions hold:
 %\begin{enumerate}
@@ -63,11 +65,11 @@ element in $u$-th row and $v$-th column of $e$.
 %\end{enumerate}
 \end{definition}
 
-\begin{example}\label{EXAMPLE:EXAMPLEHMM} Consider the HMM $H=(\Sigma,V,I,e,a)$ from figure
+\begin{example}\label{EXAMPLE:EXAMPLEHMM} Consider the HMM $H=(\Sigma,V,I,e,a)$ from Figure
 \ref{FIGURE:EXAMPLEHMM}.  Alphabet is $\Sigma=\{A,C,G,T\}$ and set of states is
 $V=\{R,In,E\}$.  Transition and emission distributions are described in the figure.
 We can define initial distribution to $I_R=0.5, I_E=0.3$ and $I_{In}=0.2$.
-
+\todo{Mozno premenovat stav In na nieco ine?}
 %Let $H=(\Sigma,V,I,e,a)$ be an HMM with
 %$\Sigma=\{A,C,G,T\}$, $V={I,G}$, $I=(0.2,0.8)$,
 %$e_{I,A}=0.1,e_{I,C}=0.2,e_{I,G}=0.3,e_{I,T}=0.4, e_{G,x}=0.25, x\in \Sigma$ and 
@@ -81,11 +83,10 @@ We can define initial distribution to $I_R=0.5, I_E=0.3$ and $I_{In}=0.2$.
 \includegraphics{../figures/exampleHMM.pdf}
 \end{center}
 \caption[Example of simple Hidden Markov Model]{
-A HMM with $3$ states
-that emits symbols from alphabet of size $4$.  Circles represents states, arc
-from state $u$ to $v$ indicated that $a_{u,v}>0$. Missing arc from state
-$In$ to $R$ means that $a_{In,R}=0$.  There are also arcs between states and
-four tuples. Every four tuple represents emission distribution of associated state.
+An HMM with $3$ states
+that emits symbols from alphabet of size $4$.  Circles represents states; an arc
+from state $u$ to $v$ indicates that $a_{u,v}>0$. The missing arc from state
+$In$ to $R$ means that $a_{In,R}=0$. Every four tuple represents the emission distribution of the associated state.
 }\label{FIGURE:EXAMPLEHMM} 
 \end{figure}
 
@@ -93,11 +94,11 @@ four tuples. Every four tuple represents emission distribution of associated sta
 \begin{definition}\label{DEF:STATEPATH}
 Let $H=(\Sigma,V,I,e,a)$ be an HMM. We say that there is \firstUseOf{transition}
 from state $u$ to state $v$ if $a_{u,v}>0$. We will write transition from $u$ to
-$v$ as $u\to v$ and $T=\{u\to v\mid a_{u,v}>0\}$ is set of all transitions of
+$v$ as $u\to v$ and $T=\{u\to v\mid a_{u,v}>0\}$ is the set of all transitions of
 $H$.
 
 \firstUseOf{State path} $\pi=\pi_0\pi_1\dots\pi_{n-1}$ is a sequence of
-states. We say that state path $\pi$ is \firstUseOf{admissible} if $I_{\pi_0}>0$
+states. We say that a state path $\pi$ is \firstUseOf{admissible} if $I_{\pi_0}>0$
 and  $\pi_{i-1}\to\pi_i\in T$ for all $1\leq i < n$. Otherwise $\pi$ is
 \firstUseOf{inadmissible}.
 \end{definition}
@@ -105,8 +106,9 @@ and  $\pi_{i-1}\to\pi_i\in T$ for all $1\leq i < n$. Otherwise $\pi$ is
 \begin{example}
 Consider the HMM from figure \ref{FIGURE:EXAMPLEHMM}. Set of transitions is
 $T=\{R\to R,R\to In, R\to E,In\to In, In\to E, E\to E, E\to In, E\to R\}$.
-State path $\pi_1=RRRRInER$ is admissible state path and $\pi_2=RRRInREER$ is inadmissible
-state path, because contain transition with zero probability ($In\to R$).
+State path $\pi_1=RRRRInER$ is an admissible state path and $\pi_2=RRRInREER$
+is an inadmissible state path, because it contains a transition with zero
+probability ($In\to R$).
 \end{example}
 
 
@@ -119,10 +121,10 @@ state path, because contain transition with zero probability ($In\to R$).
 %respectively defined for every state independently. We denote emission
 %distribution of state $q$ by $e_q$ and transition distribution by $a_{q}$. 
 
-Since hidden Markov models are generative probabilistic models, we have to
-define probability distribution of HMM's products. In following definitions we
-will define probability distribution of pairs (state path, sequence) and
-probability distribution of sequences generated by an HMM.
+Hidden Markov models are generative probabilistic models, meaning that they
+describe a simple process that can generate a pair of state path and sequence.
+In following definition we will define probability distribution of pairs (state
+path, sequence) and probability distribution of sequences generated by an HMM.
 
 \begin{definition}
 Let $H=(\Sigma,V,I,e,a)$ be an HMM and $X=X_0X_1\dots X_{n-1}$ be a sequence over
@@ -131,13 +133,11 @@ probability that state path $\pi$ generated sequence $X$ is
 
 \[\prob{X,\pi\mid H}=
 I_{\pi_0}e_{\pi_0,X_0}\prod_{i=1}^{|X|-1}a_{\pi_{i-1},\pi_i}e_{\pi_i,X_i}\]
+The probability that $X$ was generated by the
+model $H$ (using any state path) is 
+\[\Pr\left(X\mid H\right)=\sum_{\pi\in V^n}\Pr\left(X,\pi\mid H\right)\]
 
-If length of the sequence $X$ is not equal to length of the state path $\pi$,
-then
-probability that $\pi$ generates $X$ is zero.
 \end{definition}
-
-
 
 \begin{example}
 Consider the HMM $H$ from the example \ref{EXAMPLE:EXAMPLEHMM}. Let state path be $\pi=RRInInE$ and
@@ -146,13 +146,6 @@ and $X$ is
 $\prob{ X,\pi\mid H } = 0.5 \cdot 0.35 \cdot 0.99 \cdot 0.25 \cdot 0.005 \cdot 0.25 \cdot 0.95 \cdot 0.05 \cdot 0.05 \cdot 0.4 =
 0.5143359375  \cdot  10^{-7}$
 \end{example}
-
-\begin{definition}
-Let $H=(\Sigma,V,I,e,a)$ be a HMM and $X=X_0X_1\dots,X_{n-1}$ be a sequence over
-alphabet $\Sigma$ of length $n$. The probability that $X$ was generated by the
-model $H$ is 
-\[\Pr\left(X\mid H\right)=\sum_{\pi\in V^n}\Pr\left(X,\pi\mid H\right)\]
-\end{definition}
 
 
 
@@ -173,24 +166,23 @@ $H$, what is the best explanation of $X$? By explanation is usually meant state
 path that generated $X$. We call the process of computing explanation of
 sequence $X$ \firstUseOf{decoding}.
 \item Given training data $D$ (usually sequences with ``explanations'') and
-topology of model (set of states and transitions), what are the best parameters
+topology of the model (set of states and transitions), what are the best parameters
 (initial, transition and emission distributions) that explains training
 data $D$? This problem is also called \firstUseOf{training}
 \end{enumerate} 
 In following sections we will discuss several algorithms
-that are trying to solve problems describes above. We will mostly focus on the
+for the problems describes above. We will mostly focus on the
 decoding problem.
 
 
 \section{The Forward Algorithm}
-The Forward algorithm \cite{Durbin1998} computes for a given sequence $X$ of
-length $n$ the probability $\Pr\left(X\mid H\right)$ that sequence was
-generated by the model (it solves the first problem of HMM). The algorithm is
+The Forward algorithm computes for a given sequence $X$ of
+length $n$ the probability $\Pr\left(X\mid H\right)$ that the sequence was
+generated by the model (it solves the first problem of HMMs) \cite{Durbin1998}. The algorithm is
 based on the dynamic programming. It fills
-matrix $F$ of size $n\times m$ where $F[i,v]$ is the probability that $H$
-generated $X[:i+1]$ with state path that ends in state $v$ and $m$ is the number
-of states of $H$. Values $F[i,v]$ are  called \firstUseOf{forward
-variables}. $F[i,v]$ can be computed by following equations (also called the
+matrix $F$ of size $n\times m$ where $m$ is the number of states of $H$, $F[i,v]$ is the probability that $H$
+generated $X[:i+1]$ with state path that ends in state $v$. Values $F[i,v]$ are  called \firstUseOf{forward
+variables}. $F[i,v]$ can be computed by the following equations (also called the
 forward equations).
 
 \begin{align}
@@ -201,11 +193,10 @@ F[i,v] &= \sum_{u\in V}F[i-1,u] \cdot a_{u,v} \cdot e_{v,X_i}, v\in V,0< i < n
 %probability, that $X[:i+1]$ was generated by state path that ends with state
 %$v$. 
 The probability that $H$ generated $X$ is 
- \[\Pr\left(X\mid H\right) = \sum_{v\in V} F[|X|-1,v]\]
+ \[\Pr\left(X\mid H\right) = \sum_{v\in V} F[n-1,v]\]
 
 Using the recurrence equations above, we can compute the probability of $X$ in
-$O(nm^2)$ time and $O(m)$ memory dynamic programming where $n$ is the length
-of the input sequence and $m$ is the number of states of $H$. If the transition
+$O(nm^2)$ time and $O(m)$ memory. If the transition
 matrix is sparse, then this algorithm can be implemented in $O(n(m+t))$ time
 where $t$ is the number of transitions.  Forward variables are also used in other
 algorithms. 

@@ -2,3 +2,4 @@ relocations->translocations
 is not possible -> it is not possible
 evolution history->evolutionary history
 $M[i,j]$->Element $M[i,j]$...
+figure->Figure
