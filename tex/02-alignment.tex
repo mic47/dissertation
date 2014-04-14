@@ -1,11 +1,8 @@
 \chapter{Alignments}
 \label{CHAPTER:ALIGNMENT}
-In this chapter we define alignments, define basic scoring scheme for alignments
-and describe basic algorithms that compute biologically relevant alignments of
-two sequences. Then we describe several algorithmic improvements and heuristics
-that reduce the computational complexity of the sequence alignment algorithms.
-In the end we will discuss the possibilities of the extension of the algorithm
-to different gap models.
+In this chapter we introduce the sequence alignment problem, basic algorithms
+for computing optimal alignments of two sequences as well as several
+algorithmic improvements.
 
 Parts of two sequences are homologous, if they have evolved from same sequence
 in their common ancestor. Aim of sequence alignment is to identify homologous
@@ -14,13 +11,13 @@ mutation of a residue into another residue, deletion of a part of the sequence,
 insertion of residues into the sequence. There are also large-scale
 rearrangement events like duplications (some subsequence is duplicated and
 copied into other part of the sequence), inversions (some subsequence is
-reversed) or relocations in which part of the sequence change position.  We will
+reversed) or translocations in which part of the sequence change position.  We will
 ignore them for now because they cannot be represented by traditional
 alignments. An alignment is a data structure that represents comparisons of two
 or more sequences. We obtain an alignment of $k$ sequences by inserting dashes
 into individual sequences so that they have the same length. We can represent an
 alignment as a matrix or a table. Each row of the alignment is a sequence with
-inserted dashes, and each column is list of residues from all rows at the same
+inserted dashes, and each column is a list of residues from all rows at the same
 position.
 
 
@@ -28,13 +25,13 @@ An alignment has the following biological meaning: homologous residues (those th
 have evolved from a common ancestor) are in same column. Dashes represents
 either the parts of sequence that were deleted during evolution (deletions) or
 positions where some residues were inserted into some other sequence
-(insertions). In an alignment is not possible to distinguish between insertions and
+(insertions). In an alignment it is not possible to distinguish between insertions and
 deletions -- we cannot tell if something was inserted into one sequence or if
 there was deletion in the other sequences. Therefore we will refer to insertions
 and deletions as to \firstUseOf{indels}.
 
 \begin{example} 
-Consider the  following evolution history of hypothetical DNA sequences of two
+Consider the  following evolutionary history of hypothetical DNA sequences of two
 current organisms $X$ and $Y$. There was a parent sequence $P$ which evolved into
 $X'$ and $Y'$ and after that $X'$ evolved into $X$ and $Y'$ evolves into $Y$.
 These sequences are shown bellow: 
@@ -53,7 +50,7 @@ Similarly during evolution from $P$ to $Y'$, the two bases mutated and two
 sequences were deleted. During evolution from $Y'$ to $Y$ one base mutated and
 sequence ``CGACC'' was inserted. 
 
-From evolution history described above, we can create an alignment of current
+From evolutionary history described above, we can create an alignment of current
 sequences $X$ and $Y$ by removing ancestral sequences $X',Y'$ and $P$, 
 %\begin{verbatim}
 %X:      C C     G C G A C C T T G C             A C C A
@@ -66,27 +63,28 @@ replacing gaps with dashes (gap symbols).
 X:      C C - - G C G A C C T T G C - - - A C C A
 Y:      T C T A G - - - - - C C - - G A T A G C A
 \end{verbatim}
-In this alignment, symbols that are in same column are truly homologous (they
-evolved from same symbol in $P$).
+In this alignment, symbols that are in the same column are truly homologous (they
+evolved from the same symbol in $P$).
 %If two residues are in same column in alignment then they are homologous.
 As you can see, homologous symbols do not have to be equal.
 \end{example}
 
-There is only one alignment that reflects the true evolution history. Our goal
-is to find this alignment, or at least some alignment, that is as close as
+There is only one alignment that reflects the true evolutionary history. Our goal
+is to find this alignment, or at least some alignment, which is as close as
 possible. The alignment shown above is a \firstUseOf{global alignment} because it
-is alignment of whole sequences $X$ and $Y$. A local alignment is alignment of
-parts of sequences: a local alignment of sequences $X$ and $Y$ is a global alignment
-of strings $\bar{X}$ and $\bar{Y}$ where $\bar{X}$ is a substring of $X$ and
-$\bar{Y}$ is a substring of $Y$.  Since global alignments do not consider
-rearrangement events\footnote{Duplication, reversal or
-translocation.}, local alignments are useful in such scenarios.  We will mostly
-consider global alignments, but most of the methods can be extended also to local
-alignments.
+is an alignment of whole sequences $X$ and $Y$. A \firstUseOf{local alignment}
+is an alignment of parts of sequences: a local alignment of sequences $X$ and
+$Y$ is a global alignment of strings $\bar{X}$ and $\bar{Y}$ where $\bar{X}$ is
+a substring of $X$ and $\bar{Y}$ is a substring of $Y$.  Since global
+alignments do not consider rearrangement events\footnote{Duplication, reversal
+or translocation.}, local alignments are useful to align sequence parts that
+did not underwent such events. We will mostly consider global alignments, but
+most of the methods can be extended also to local alignments.
 
-In this chapter we will review basic methods for constructing alignments. We will
-discuss basic scoring schemes and algorithms that finds optimal alignment under
-such scheme.
+In this chapter we will review basic methods for constructing alignments. We
+will discuss basic scoring schemes and algorithms that find optimal alignment
+under these schemes. In this thesis we cover mostly probabilistic methods,
+which are in section \ref{TODO} and chapter \ref{TODO}.
 
 %At first
 %we will discuss pair alignments (alignment of two sequences).
@@ -100,10 +98,10 @@ Since we want to construct alignments that have biological meaning, we have to
 develop a method for assessing the quality of an alignment. One way of doing so
 is to define a scoring scheme. Scoring scheme is a method that assigns to every
 alignment a real number (called score). The alignments similar to the true
-alignment should have higher
-score than the alignments that differ from the true alignment. Once we have scoring scheme we will search for an
-alignments of the input sequences with the highest score.  There are many ways
-how to develop good scoring scheme. 
+alignment should have higher score than the alignments that differ from the
+true alignment. Once we have scoring scheme we will search for an alignments of
+the input sequences with the highest score.  There are many ways how to develop
+good scoring scheme. 
 
 
 Scoring schemes covered in this chapter will independently score each column of
