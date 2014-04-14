@@ -96,33 +96,38 @@ which are in section \ref{TODO} and chapter \ref{TODO}.
 
 Since we want to construct alignments that have biological meaning, we have to
 develop a method for assessing the quality of an alignment. One way of doing so
-is to define a scoring scheme. Scoring scheme is a method that assigns to every
-alignment a real number (called score). The alignments similar to the true
-alignment should have higher score than the alignments that differ from the
-true alignment. Once we have scoring scheme we will search for an alignments of
-the input sequences with the highest score.  There are many ways how to develop
-good scoring scheme. 
+is to define a scoring scheme, which assigns to every alignment a real number
+(called score). The alignments similar to the true alignment should have higher
+score than the alignments that differ from the true alignment. Once we have a
+scoring scheme, we will search for the alignment of the input sequences with
+the highest score.
 
-
-Scoring schemes covered in this chapter will independently score each column of
-an alignment, which does not contain a gap. Gaps will be scored by a penalty
+Typical scoring schemes used in practice score each column of
+an alignment without gaps independently. Gaps are scored by a penalty
 that depends on the length of the gap (the number of consecutive dashes). Score
 of an entire alignment is the sum of the scores of all ungapped columns plus the
 sum of the scores of all gaps.
 
+\todo{Nejake referencie}
 In particular
 we will assume that all sequences are from a finite alphabet $\Sigma$. For DNA,
 $\Sigma=\{A,C,G,T\}$, for proteins $\Sigma$ contains $20$ codes of amino acids.
 We will score a column containing residues $a$ and $b$ by $S[a,b]$ where $S$ is
 a matrix of size $|\Sigma|\times|\Sigma|$ called \firstUseOf{substitution
 matrix}.  A gap of length $x$ has a score $g+dx$, where $g$ is the gap opening
-penalty and $d$ is the gap extension penalty. Both are usually negative since we
+penalty and $d$ is the gap extension penalty. Both are usually negative, since we
 want alignments that contains many columns with same or similar symbols. With
 positive gap penalty there will be tendency towards alignments with many gaps
 which reduce the number of aligned residues.  We call this gap scoring scheme an
-affine gap model. In general, gaps can be penalized by arbitrary function $f(x)$
-(non-affine gap penalties will be discussed in the end of this chapter).
+affine gap model. 
 
+Matrices and gap penalties used as scoring schemes are usually derived from
+frequencies of the substitutions and indels of real alignments. Example of such
+matrices are PAM or BLOSUM matrices\cite{Durbin1998}. Additionally, scoring
+matrices can be also derived from theoretical models of evolution, one such
+example is Jukes-Cantor model\cite{Durbin1998}.
+
+\begin{comment}
 Intuition behind this scoring system is probabilistic. Assume that we have
 alignment of $X$ and $Y$ without gaps and that each base in DNA evolves
 independently. Therefore for every pair of residues $a,b$ there is probability
@@ -160,20 +165,19 @@ from alignments that were constructed manually by biologists. Such matrices are
 for example PAM or BLOSUM matrices. Other possible solution is to use a
 theoretical model of evolution, for example Jukes-Cantor model. More details can
 be found in \cite{Durbin1998}.
-
+\end{comment}
 
 
 \section{Needleman-Wunsch algorithm}
 \label{SECTION:NEEDLE}
 
 
-Recall that the higher score mean better alignment so we want to search for an
-alignment with the highest score.  Alignment with scoring scheme with previous
-section can be found by the Needleman-Wunsch algorithm \cite{Durbin1998}.
+The
+alignment with the highest score can be found by the Needleman-Wunsch algorithm \cite{Durbin1998}.
 This algorithm uses an arbitrary score table $S$, affine gap model with gap penalty
 $d$ and gap opening penalty $g=0$ (if $g=0$ then this model is also called
 linear gap model). To align sequences $X$ and $Y$ of length $n$ and $m$
-respectively, we define matrix $M$ of size $n\times m$. $M[i,j]$ will be the
+respectively, we define matrix $M$ of size $n\times m$. Element $M[i,j]$ will be the
 score of the best alignment of sequences $X[:i]$ and $Y[:j]$. We can compute
 $M[i,j]$ by the following equations:
 
@@ -188,15 +192,13 @@ M[i,j] &= \max
 \end{cases}, 0\leq i<n,0\leq j<m \label{ALIGN:ALGO:AFFINE}
 \end{align}
 
-By computing $M[n-1,m-1]$ we have the score of the optimal (highest-scoring) alignment of $X$ and $Y$. 
+By computing $M[n-1,m-1]$, we have the score of the optimal (highest-scoring) alignment of $X$ and $Y$ \cite{Durbin1998}. 
 
 To cope with gap opening penalty, we have to slightly change the algorithm.
 We define two other matrices $M_X$ and $M_Y$ of same size as $M$. $M_X[i,j]$
 will contain the highest score of an alignment of sequences $X[:i]$ and $Y[:j]$
 that ends
-with a gap in sequence $X$. $M_Y$ is analogous. Now we show how to compute
-$M,M_X,$
-and $M_Y$. 
+with a gap in sequence $X$. $M_Y$ is analogous. Values of these matrices can be computed byy the following recurrences.
 
 \begin{align}
 M[-1,-1] &= 0\\
@@ -207,8 +209,6 @@ M_Y[-1,i] &= -\infty, 0 \leq i< m\\
 M[i,j] &= \max
 \begin{cases}\label{ALIGN:ALGO:REALAFFINESTART}
  M[i-1,j-1]+S(X_i,X_j)\\
- M[i,j-1]+d\\
- M[i-1,j]+d\\
  M_X[i,j]\\
  M_Y[i,j]
 \end{cases}, 0\leq i<n,0\leq j<m\\
@@ -224,37 +224,29 @@ M_Y[i,j-1]+d
 \end{cases}, 0\leq i<n,0\leq j<m\label{ALIGN:ALGO:REALAFFINEEND}
 \end{align}
 
-
-
-
-Now we show how to compute  values of $M$ (and optionally $M_X$ and $M_Y$)
-effectively.
-Both algorithms from previous sections contain recurrent equations for computing
-values of matrix $M$ (or three matrices $M,M_X$ and $M_Y$). To compute the
-value of $M[i,j]$, these equations use only values
+To compute the
+value of $M[i,j]$ (and optionally $M_X$ and $M_Y$), these equations use only values
 from neighbouring cells which have at least one coordinate smaller. 
 Therefore we can order computation so that when we compute value $M[i,j]$ the
 necessary values are already computed.
 Let $F$ be
 the function, that takes as input matrix $M$  and coordinates $(i,j)$ and computes $M[i,j]$ according equation
-\ref{ALIGN:ALGO:AFFINE}.  Let $F'$ be
+\ref{ALIGN:ALGO:AFFINE}.  Let $F'$ be the
 same function as $F$, but with $\max$ replaced with $\arg\max$.  Function
-$F'(M,(i,j))$ will thus return which cell was used to computation of $F(M,(i,j))$.
+$F'(M,(i,j))$ will thus return which cell was used in computation of $F(M,(i,j))$.
 Note that if $g$ is not zero, then $F$ would take as input the matrices $M,M_X,$
-and $M_Y$ and compute computed $M[i,j],M_X[i,j],$ and $M_Y[i,j]$ according 
+and $M_Y$ and compute $M[i,j],M_X[i,j],$ and $M_Y[i,j]$ according 
  equations
 \ref{ALIGN:ALGO:REALAFFINESTART}-\ref{ALIGN:ALGO:REALAFFINEEND}
 %For simplicity, we will assume that both sequences has same length $n$. This
 %will allow us to express complexity in simple way.  At first we show how
 %to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$
 
-The Needleman-Wunsch algorithm can be computed by the following code. Note that
-if gap opening penalty is not zero, matrix $M$ should be replaced with triple of
-matrices $(M,M_X,M_Y)$. 
-
+The Needleman-Wunsch algorithm can be implemented by the following code. For simplicity 
+we show only computation of matrix $M$.
 
 \lstset{showstringspaces=false}
-\vbox{
+%\vbox{
 \begin{lstlisting}
 Initialize M[i,-1] and M[-1,i]
 for i in 0...n-1
@@ -269,20 +261,21 @@ while i > 0 or j > 0
   print column of alignment (a,b)
   (i,j) = (i',j')
 \end{lstlisting}
-}
+%}
+
 Lines 2-5 fills matrix $M$ and lines 6-12 implement the back-tracing procedure.
 Time complexity of this algorithm is $O(mn)$ and memory requirements are $O(mn)$
-since we keep matrix $M$ in memory (same complexity for the algorithm for
-affine gap model with $g\not=0$).
+since we keep matrix $M$ in memory. The algorithm for
+affine gap model with $g\not=0$ has the same complexity.
 
 
 Note that for computing  $i$-th row of matrix $M$ we need only values from row
 $i$ and $i-1$. Therefore if we want to know just the score of the optimal
 alignment,
 we can compute it in $O(m+n)$ memory: after computing of row $i$, we can discard
-row $i-1$. However if we want find the optimal alignment we have to keep matrix
-$M$ in the memory or use one of the techniques that are described in following
-chapter.
+row $i-1$. However if we want find the optimal alignment, we have to keep matrix
+$M$ in the memory or use one of the techniques that are described in section 
+\ref{TODO: Aj tak sa to presunie}.
 
 
 \section{Dynamic Programming}  
