@@ -1,14 +1,21 @@
 \chapter{Basics}
 \label{CHAPTER:BASICS}
 
+This chapter contains overview of methods and models that we will use in this
+thesis. We describe generative probabilistic models called hidden Markov
+models, their variants, and algorithms that are used with these models.
+Additionally we describe sequence alignment and several applications of hidden
+Markov models to sequence alignment and sequence annotation. In this thesis, we
+study hidden Markov models from two aspects: computational complexity of some
+HMM problems, and application of HMMs to sequence alignment problem.
+
 \section{Hidden Markov Models}
-\todo{Ako to suvisi s dizertackou}
 \abbreviation{Hidden Markov Models}{HMM} are graphical probabilistic models
 commonly used for sequence annotation or sequence alignment. An HMM is a
 probabilistic finite state machine that in every state emits one symbol. Later
 we will also discuss variants of HMMs that emit more symbols or that emit
-symbols on multiple tapes. In this chapter, we will describe basic definitions
-and algorithms that are used with HMMs. In this thesis, we will study computational complexity of some HMM problems and we will use HMM alignment of biological sequences.
+symbols on multiple tapes. This section describes basic definitions
+and algorithms that are used with HMMs.
 
 \subsection{Definitions}\label{SECTION:HMMDEF}
                        
@@ -201,157 +208,9 @@ where $t$ is the number of transitions.  Forward variables are also used in othe
 algorithms. 
 %Storing all of the forward variables requires soring $O(nm)$ numbers.
 
-\subsection{Sequence Annotation}
-
-%definujeme annotation, footprint, set of colors
-
-HMMs can be used for sequence annotation. By sequence annotation we mean
-assigning ``labels'' to parts of the input sequence according to their meaning.
-Now we give several examples of bioinformatics problems where HMMs were previously used.
-
-\paragraph{Gene finding:} Parts of DNA sequences that are in cells translated
-into proteins are called genes.  In gene finding we want to assign to every
-symbol of the input sequence a gene label if it is inside a gene or a different
-label if it is not part of a gene \cite{GeneWise2004, Brejova2005, Burge1997,
-Alexanderson2004}. Additionally, we want to label sequence according to the
-internal structure of a gene: gene starts with promoter followed by
-transcription start site and ends with transcription stop site. Between
-transcription sites are alternating exons and introns \cite{TODO}. 
-
-%For example in the gene-finding domain, we want to assign gene labels to those
-%parts of the sequence that encode proteins. To annotate transmembrane proteins,
-%we want to know, which parts of the sequence are on which  side of the membrane.
-%In recombination prediction we want to predict which parts of the sequence
-%belong to which subtype of an organism.  \todo{rozviest priklady, alebo zrusit}
-
-\paragraph{Transmembrane proteins:} Some proteins in cells pass through a membrane
-from one side to the another (usually they pass through the membrane several times).  In
-transmembrane protein prediction we want to assign labels to the symbols of the input
-protein sequence to distinguish the parts of the sequence that are on one side of the
-membrane from the parts that are on the other side of membrane or inside the membrane
-\cite{Brown2010}.
-%input sequence according to the side of the membrane Aim of transmembrane
-%proteins is to predict which parts of the protein sequence is on which part of
-%membrane and which parts are in membrane.
-
-\paragraph{Recombination prediction:} Some organisms, for example HIV virus,
-evolve rapidly and have been classified into several subtypes.  Moreover,
-some viruses are mosaic combination of viruses from different subtypes. For
-example, beginning and end of the sequence of a virus can be from one subtype and
-the middle of the sequence is from a different subtype. In recombination prediction,
-we want to annotate the sequence to distinguish between parts that originate in
-different subtypes \cite{Nanasi2010,Truszkowski2011}.  
-
-\paragraph{} In general,
-we have a finite set of labels $C=\{c_0,c_1,\dots,c_{l-1}\}$ and we want to
-assign one label to every symbol of the input sequence. We do it by assigning
-one label to every state of an HMM.
-%in a way, that states of HMM that encodes same meaning have same color. After
-%that we try 
-To predict the annotation of the input sequence $X$, we can  find the
-most probable state path that could generate $X$ and  annotate each symbol of
-the sequence $X$ according to the label assigned to the state that generated that
-symbol. We can formalize it in the following definition.
-
-\begin{definition}\label{DEFINITION:ANNOTATION}
-Let $H=(\Sigma,V,I,e,a)$ be HMM and $C=\{c_0,c_1,\dots,c_{l-1}\}$ be the finite
-sets of labels (or colors). Then the \firstUseOf{coloring function} 
-$\lambda: V^*\to C^*$ is function that satisfies following properties:
-\begin{enumerate}
-\item $\lambda(v)\in C$ for all $v\in V$.
-\item $\lambda(xy) = \lambda(x)\lambda(y)$ for all $x,y\in V^*$.
-\end{enumerate}
-
-Let $X$ be a sequence generated by state path $\pi$. Then annotation
-$\Lambda$ of sequence $X$ is $\Lambda = \lambda(\pi)$.
-\end{definition}
-
-In the sequence annotation problem, we do not know the state path $\pi$ that
-generated a given sequence. Our goal is to reconstruct the state path $\pi$ or
-at least to give a good approximation of the correct annotation $\Lambda(\pi)$.
-Note that in general, several state paths can have the same label.
-
-%Since many states of the HMM can have assigned same label, there may be may be
-%many state path with same annotation.
-
-\begin{definition}
-Let $H$ be an $HMM$, $X$ be a sequence of length $n$, $\Lambda$ be an annotation of sequence
-$X$. The probability of annotation $\Lambda$ given sequence $X$ is 
-\begin{equation}
-\Pr\left(\Lambda\mid X,H\right)=\sum_{\pi \in V^n,\lambda(\pi) =
-\Lambda}\Pr\left(\pi\mid X,H \right)\label{DEF:ANNOTATION:PROBABILITY}
-\end{equation}
-\end{definition}
-
-Note that $\prob{\pi\mid X,H}=\frac{\prob{\pi,X\mid H}}{\prob{X\mid
-H}}$.
-
-\begin{example}\label{EXAMPLE:ANNOTATION}
-Let $H$ be the HMM from the example \ref{EXAMPLE:EXAMPLEHMM}. Let $C=\{I,G\}$ and
-$\lambda(R)=I$ and $\lambda(0)=\lambda(1)=G$.  Consider sequence
-$X=AACT$, which was generated by the state path $\pi=R011$. The correct
-annotation of $X$ is therefore  $\lambda(R011) =
-IGGG$. 
-
- We can imagine $H$ as very simple (and not very realistic) gene
-predictor. $R$ represents intergenic regions, state $In$
-represents introns and $E$ represents exons. Label $I$ represents
-intergenic regions and label $G$ represents regions that are genes.
-
-Using this interpretation, the sequence $AACT$ contains gene $ACT$. There are
-several state paths consistent with this annotation: if $AACT$ was generated by state path
-$REEE$ then subsequence $EEE$ is exon; if it was generated by state path $REIE$
-then sequence contain two exons and one intron in the middle. There are $2^3$
-different state paths $\pi$ with $\lambda(\pi)=IGGG$.  All of those state path
-support ``fact'' that $IGGG$ is the correct annotation of $X$.
-
-\end{example}
-
-
-%\begin{example}
-%Consider again HMM from example \ref{EXAMPLE:EXAMPLEHMM} and annotation function
-%from example \ref{EXAMPLE:ANNOTATION}.
-%\end{example}
-
-Given a sequence $X$, the natural question is what is the best annotation of
-$X$.  One measure of quality of an annotation is its probability. The more
-probable is annotation, the more likely $X$ was generated with some state path with
-such annotation. We can formulate this in following problem.
-
-\begin{definition}
-Given HMM $H$ and sequence $X$, \abbreviation{the most probable annotation
-problem}{MPA} is the problem of finding an annotation $\Lambda$ of $X$ that maximizes
-the probability \[\prob{\Lambda\mid X,H}\]
-\end{definition}
-
-\begin{theorem}
-Most probable annotation problem is NP-hard.
-\end{theorem}
-This theorem was proved in 2002 by Lyngsø {\it et al.} and proof can be found in
-\cite{Lyngso2002}. Their proof was done by a reduction from the maximum clique problem.
-For input graph with $n$ vertices they construct an HMM $H$ with $O(n^2)$ states and
-sequence $X$ of the length $n$. The most probable annotation of $X$ could be
-converted into maximum clique of input graph. 
-Their result was later strengthened in a sense that the problen is hard even for some constant-sized HMMs \cite{Brejova2007mpa}.
-
-\begin{theorem}
-There exists an HMM such that it is NP-hard to find the most probable annotation
-to a given input sequence $X$.
-\end{theorem}
-\todo{Presunut za Viterbiho?}
-This paper also
-contain polynomial algorithm (Extended Viterbi Algorithm) that finds most
-probable annotation for special classes of HMMs. 
-
-Note that from the probabilistic nature of the HMMs, the most probable
-annotation does not have to be the best approximation of the correct annotation.
-We will discuss alternative decoding criteria in section \ref{TODO}.
-\nocite{Brown2010,Gross2007,Nanasi2010,Truszkowski2011}.
-
-\subsection{The Viterbi Algorithm}
+\subsection{The Viterbi Algorithm}\label{SECTION:VITERBI}
 %\todo{Viterbi variable ma rovnake oznacenie ako mnozina stavov. Treba to
 %upravit} -- Brona tvrdi ze netreba
-\todo{Zle nadvazuje na anotaciu. Mozno dat pred anotaciu?}
 The Viterbi algorithm  is probably the most frequently used
 decoding algorithm for hidden Markov
 models \cite{Durbin1998}.
@@ -395,49 +254,7 @@ Time complexity of the Viterbi algorithm is $O(nm^2)$ or $O(n(m+t))$ for sparse
 transition matrices ($m$ is the number of states and $t$ is the number of
 transitions).
 
-
-We can use the Viterbi algorithm to annotate sequence $X$ by finding the most
-probable state path $\pi$ and then computing $\lambda(\pi)$. If the  coloring
-function $\lambda$ is the identity function, this will find the most probable
-annotation, but in general the Viterbi algorithm is not even a good approximation of
-the most probable annotation as shown in the following example.
-
-\begin{figure}
-\begin{center}
-\includegraphics{../figures/multiplePathProblemHMM.pdf}
-\end{center}
-\caption[Hidden Markov Model with multiple path problem.]{Example of an HMM with
-multiple path problem. States $w_1,w_2,b$ emit symbol $0$ with probability $1$
-and state $e$ emits symbol $1$ with probability $1$. Initial distribution is set
-to $I_{w_1}=I_{w_2}=\frac14, I_{b}=0.5$
-and $I_e=0$. Annotations of the states are represented by the colors of the states
-($\lambda(w_1)=\lambda(w_2)$ and $\lambda(b)=\lambda(e)$). }\label{FIGURE:BADVITERBIEXAMPLE}
-\end{figure}
-
-\begin{example} \todo{Pouzivamie niekde multiple path problem?}
-Consider the HMM from Figure \ref{FIGURE:BADVITERBIEXAMPLE}. Take sequence
-$X=0^n1$.  Since state $e$ is the only state that can emit $1$, every state
-path with non-zero probability ends in state $e$. If a state path starts in
-state $b$ then state path has form $b^ne$. Annotation of such a state path is
-$\Lambda_1=\lambda(b)^{n+1}$ and probability of the annotation $\Lambda_1$ (and
-also the state path $b^ne$) is $p^n(1-p)$.  If a state path starts in the one
-of the white states, then a state path has form $w'_0w'_1\dots w'_{n-1}e$ where
-$w'_i$ is either $w_1$ or $w_2$.  There are $2^n$ such state paths and each of
-them has probability $0.5\cdot 0.25^n$ and annotation
-$\Lambda_2=\lambda(w_1)^n\lambda(e)$. Probability of annotation $\Lambda_2$ is
-therefore $0.5^{n+1}$.  If $n$ is sufficiently high and $\frac14<p<\frac12$
-then the most probable state path is $b^ne$ which corresponds to the annotation
-$\Lambda_1$. However, the most probable annotation is $\Lambda_2$ and its
-probability is exponentially higher then the probability of $\Lambda_1$.
-Therefore the Viterbi algorithm it not even a good approximation of the most
-probable annotation problem.
-
-\begin{comment}
-We say that an HMM has the \firstUseOf{multiple path problem} if it has an annotation that
-corresponds to more than one state path.
-\end{comment}
-\end{example}
-
+\subsubsection{Implementation of the }
 
 \subsection{The Forward-Backward Algorithm and  the Posterior Decoding}
 
@@ -574,7 +391,7 @@ We can compute values of $F[i,v]$ and $B[i,v]$ and find the posterior decoding
 in $O(n(m+t))$ time and $O(nm)$ memory.  Advantage of posterior decoding is
 that it uses information from many slightly suboptimal state paths as opposed
 to Viterbi decoding, which uses only one state path. One drawback is that it
-can reconstruct inadmissible state path. One example is given below.
+can reconstruct inadmissible state path. Example is given below.
 
 
 
@@ -623,6 +440,198 @@ the sequence $X$ and the HMM $H$ from the figure \ref{FIGURE:INADMISSIBLESTATEPA
 \end{table}
 
 \end{example}
+
+\subsection{Sequence Annotation}
+
+%definujeme annotation, footprint, set of colors
+
+HMMs can be used for sequence annotation. By sequence annotation we mean
+assigning ``labels'' to parts of the input sequence according to their meaning.
+So far we have described two algorithms that can be used for sequence
+annotation: the Viterbi algorithm and the Posterior decoding. In both
+algorithms, the sequence annotation is the output from the algorithm: the
+decoded state path. Now we give several examples of bioinformatics problems
+where HMMs were previously used. 
+
+\paragraph{Gene finding:} Parts of DNA sequences that are in cells translated
+into proteins are called genes.  In gene finding we want to assign to every
+symbol of the input sequence a gene label if it is inside a gene or a different
+label if it is not part of a gene \cite{GeneWise2004, Brejova2005, Burge1997,
+Alexanderson2004}. Additionally, we want to label sequence according to the
+internal structure of a gene: gene starts with promoter followed by
+transcription start site and ends with transcription stop site. Between
+transcription sites are alternating exons and introns \cite{TODO}. 
+
+%For example in the gene-finding domain, we want to assign gene labels to those
+%parts of the sequence that encode proteins. To annotate transmembrane proteins,
+%we want to know, which parts of the sequence are on which  side of the membrane.
+%In recombination prediction we want to predict which parts of the sequence
+%belong to which subtype of an organism.  \todo{rozviest priklady, alebo zrusit}
+
+\paragraph{Transmembrane proteins:} Some proteins in cells pass through a membrane
+from one side to the another (usually they pass through the membrane several times).  In
+transmembrane protein prediction we want to assign labels to the symbols of the input
+protein sequence to distinguish the parts of the sequence that are on one side of the
+membrane from the parts that are on the other side of membrane or inside the membrane
+\cite{Brown2010}.
+%input sequence according to the side of the membrane Aim of transmembrane
+%proteins is to predict which parts of the protein sequence is on which part of
+%membrane and which parts are in membrane.
+
+\paragraph{Recombination prediction:} Some organisms, for example HIV virus,
+evolve rapidly and have been classified into several subtypes.  Moreover,
+some viruses are mosaic combination of viruses from different subtypes. For
+example, beginning and end of the sequence of a virus can be from one subtype and
+the middle of the sequence is from a different subtype. In recombination prediction,
+we want to annotate the sequence to distinguish between parts that originate in
+different subtypes \cite{Nanasi2010,Truszkowski2011}.  
+
+\paragraph{} In general,
+we have a finite set of labels $C=\{c_0,c_1,\dots,c_{l-1}\}$ and we want to
+assign one label to every symbol of the input sequence. We do it by assigning
+one label to every state of an HMM.
+%in a way, that states of HMM that encodes same meaning have same color. After
+%that we try 
+To predict the annotation of the input sequence $X$, we can  find the
+most probable state path that could generate $X$ and  annotate each symbol of
+the sequence $X$ according to the label assigned to the state that generated that
+symbol. We can formalize it in the following definition.
+
+\begin{definition}\label{DEFINITION:ANNOTATION}
+Let $H=(\Sigma,V,I,e,a)$ be HMM and $C=\{c_0,c_1,\dots,c_{l-1}\}$ be the finite
+sets of labels (or colors). Then the \firstUseOf{coloring function} 
+$\lambda: V^*\to C^*$ is function that satisfies following properties:
+\begin{enumerate}
+\item $\lambda(v)\in C$ for all $v\in V$.
+\item $\lambda(xy) = \lambda(x)\lambda(y)$ for all $x,y\in V^*$.
+\end{enumerate}
+
+Let $X$ be a sequence generated by state path $\pi$. Then annotation
+$\Lambda$ of sequence $X$ is $\Lambda = \lambda(\pi)$.
+\end{definition}
+
+In the sequence annotation problem, we do not know the state path $\pi$ that
+generated a given sequence. Our goal is to reconstruct the state path $\pi$ or
+at least to give a good approximation of the correct annotation $\Lambda(\pi)$.
+Note that in general, several state paths can have the same label.
+
+%Since many states of the HMM can have assigned same label, there may be may be
+%many state path with same annotation.
+
+\begin{definition}
+Let $H$ be an $HMM$, $X$ be a sequence of length $n$, $\Lambda$ be an annotation of sequence
+$X$. The probability of annotation $\Lambda$ given sequence $X$ is 
+\begin{equation}
+\Pr\left(\Lambda\mid X,H\right)=\sum_{\pi \in V^n,\lambda(\pi) =
+\Lambda}\Pr\left(\pi\mid X,H \right)\label{DEF:ANNOTATION:PROBABILITY}
+\end{equation}
+\end{definition}
+
+Note that $\prob{\pi\mid X,H}=\frac{\prob{\pi,X\mid H}}{\prob{X\mid
+H}}$.
+
+\begin{example}\label{EXAMPLE:ANNOTATION}
+Let $H$ be the HMM from the example \ref{EXAMPLE:EXAMPLEHMM}. Let $C=\{I,G\}$ and
+$\lambda(R)=I$ and $\lambda(0)=\lambda(1)=G$.  Consider sequence
+$X=AACT$, which was generated by the state path $\pi=R011$. The correct
+annotation of $X$ is therefore  $\lambda(R011) =
+IGGG$. 
+
+ We can imagine $H$ as very simple (and not very realistic) gene
+predictor. $R$ represents intergenic regions, state $In$
+represents introns and $E$ represents exons. Label $I$ represents
+intergenic regions and label $G$ represents regions that are genes.
+
+Using this interpretation, the sequence $AACT$ contains gene $ACT$. There are
+several state paths consistent with this annotation: if $AACT$ was generated by state path
+$REEE$ then subsequence $EEE$ is exon; if it was generated by state path $REIE$
+then sequence contain two exons and one intron in the middle. There are $2^3$
+different state paths $\pi$ with $\lambda(\pi)=IGGG$.  All of those state path
+support ``fact'' that $IGGG$ is the correct annotation of $X$.
+
+\end{example}
+
+
+%\begin{example}
+%Consider again HMM from example \ref{EXAMPLE:EXAMPLEHMM} and annotation function
+%from example \ref{EXAMPLE:ANNOTATION}.
+%\end{example}
+
+Given a sequence $X$, the natural question is what is the best annotation of
+$X$.  One measure of quality of an annotation is its probability. The more
+probable is annotation, the more likely $X$ was generated with some state path with
+such annotation. We can formulate this in following problem.
+
+\begin{definition}
+Given HMM $H$ and sequence $X$, \abbreviation{the most probable annotation
+problem}{MPA} is the problem of finding an annotation $\Lambda$ of $X$ that maximizes
+the probability \[\prob{\Lambda\mid X,H}\]
+\end{definition}
+
+\begin{theorem}
+Most probable annotation problem is NP-hard.
+\end{theorem}
+This theorem was proved in 2002 by Lyngsø {\it et al.} and proof can be found in
+\cite{Lyngso2002}. Their proof was done by a reduction from the maximum clique problem.
+For input graph with $n$ vertices they construct an HMM $H$ with $O(n^2)$ states and
+sequence $X$ of the length $n$. The most probable annotation of $X$ could be
+converted into maximum clique of input graph. 
+Their result was later strengthened in a sense that the problen is hard even for some constant-sized HMMs \cite{Brejova2007mpa}.
+
+\begin{theorem}
+There exists an HMM such that it is NP-hard to find the most probable annotation
+to a given input sequence $X$.
+\end{theorem}
+
+Same paper also contain polynomial Viterbi-like algorithm (Extended Viterbi
+Algorithm) that finds most probable annotation for special classes of HMMs. 
+
+Traditional way to find sequence annotation is to use Viterbi algorithm: given
+sequence $X$, we find the most probable state path $\pi$ and then compute
+$\lambda(\pi)$. If the  coloring function $\lambda$ is the identity function,
+this will find the most probable annotation. In general, the Viterbi
+algorithm is not even a good approximation of the most probable annotation as
+shown in the following example.
+
+\begin{figure}
+\begin{center}
+\includegraphics{../figures/multiplePathProblemHMM.pdf}
+\end{center}
+\caption[Hidden Markov Model with multiple path problem.]{Example of an HMM with
+multiple path problem. States $w_1,w_2,b$ emit symbol $0$ with probability $1$
+and state $e$ emits symbol $1$ with probability $1$. Initial distribution is set
+to $I_{w_1}=I_{w_2}=\frac14, I_{b}=0.5$
+and $I_e=0$. Annotations of the states are represented by the colors of the states
+($\lambda(w_1)=\lambda(w_2)$ and $\lambda(b)=\lambda(e)$). }\label{FIGURE:BADVITERBIEXAMPLE}
+\end{figure}
+
+\begin{example} 
+Consider the HMM from Figure \ref{FIGURE:BADVITERBIEXAMPLE}. Take sequence
+$X=0^n1$.  Since state $e$ is the only state that can emit $1$, every state
+path with non-zero probability ends in state $e$. If a state path starts in
+state $b$ then state path has form $b^ne$. Annotation of such a state path is
+$\Lambda_1=\lambda(b)^{n+1}$ and probability of the annotation $\Lambda_1$ (and
+also the state path $b^ne$) is $p^n(1-p)$.  If a state path starts in the one
+of the white states, then a state path has form $w'_0w'_1\dots w'_{n-1}e$ where
+$w'_i$ is either $w_1$ or $w_2$.  There are $2^n$ such state paths and each of
+them has probability $0.5\cdot 0.25^n$ and annotation
+$\Lambda_2=\lambda(w_1)^n\lambda(e)$. Probability of annotation $\Lambda_2$ is
+therefore $0.5^{n+1}$.  If $n$ is sufficiently high and $\frac14<p<\frac12$
+then the most probable state path is $b^ne$ which corresponds to the annotation
+$\Lambda_1$. However, the most probable annotation is $\Lambda_2$ and its
+probability is exponentially higher then the probability of $\Lambda_1$.
+Therefore the Viterbi algorithm it not even a good approximation of the most
+probable annotation problem.
+
+We say that an HMM has the \firstUseOf{multiple path problem} if it has an
+annotation that corresponds to more than one state path.
+\end{example}
+
+
+Note that from the probabilistic nature of the HMMs, the most probable
+annotation does not have to be the best approximation of the correct annotation.
+We will discuss alternative decoding criteria in section \ref{TODO}.
+\nocite{Brown2010,Gross2007,Nanasi2010,Truszkowski2011}.
 
 
 \subsection{Training} 
@@ -740,22 +749,38 @@ probability that $\pi$ generates $X$ is zero.
 \end{definition}
 \end{comment}
 
+\begin{figure}
+\begin{center}
+\includegraphics[width=10cm]{../figures/silent_removal.pdf}
+\end{center}
+\caption[Removal of silent state]{
+Upper model without silent states, lower model has silent states $D_1, \dots, D_5$ to simplify 
+transitions between states $M_i, 1\leq i\leq 6$.
+}\label{FIGURE:SILENTREMOVE}
+\end{figure}
+
 \begin{example}
 Example of an HMM with silent states that reduces the number of transitions by factor
 of $\Theta(m)$.
-\todo{Prepis tento example na profilove HMM}
 
-Consider following HMM $H=(\Sigma,V,I,e,a)$ with $m$ states such that every row
-of $a$ is the uniform distribution over $V$. In other words, there is transition
-between any two pairs of states from $V$, that is exactly $n^2$
-transitions\footnote{$u\to u$ is also a transition}.
+Consider following HMM $H=(\Sigma,V,I,e,a)$ with $m$ states $M_1,\dots, M_m$
+there is transitions from $M_i$ to $M_j$ if and only if $i<j$. Example of such
+HMM is in Figure \ref{FIGURE:SILENTREMOVE} and it has in general
+$\frac{(m-1)(m-2)}{2}$ transitions.
 
-We create a new HMM $H'$ by removing all transitions from $H$, adding one silent
-state $s$ and adding transitions
-from state $s$ to all states from $V$ with probability $\frac1m$  and from every
-state $V$ to $s$ with probability $1$. This new HMM
-defines the same distribution of sequences, but has one more state and only $2m$
-transitions. 
+To reduce number of transitions, we can create HMM $H'=(\Sigma, V', I', e', a')$ by removing all
+transitions and  adding chain of delete states $D_1,\dots, D_{m-1}$ with
+following transitions: $M_i\to M_{i+1}, M_{i}\to D_{i}, D_{i}]\to M_{i+1}$ for
+all $1\leq i<m$ and $D_{i}\to D_{i+1}$ for all $1\leq i<m-1$. Structure of $H'$
+is in lower part of Figure \ref{FIGURE:SILENTREMOVE}. We have changed the
+number of transitions to $4m-5$ at expense of additional $m-1$ states. In case
+of sufficiently large $m$ (at least $12$), $H'$ is smaller. 
+
+Problem is that for certain transition matrices $a$, it is not possible to find
+transition matrix $a'$ such that the distributions of sequences of HMM $H$ will
+be the same as the distribution of sequences of HMM $H'$. However, this type of
+reduction is used in often in practice, for example in profile HMM
+\cite{Durbin1998} which are later explained in section \ref{HERD:METHODS}.
 
 The Viterbi algorithm, the Forward algorithm or Posterior decoding can be
 implemented for $H'$ in $O(nm)$ time while these algorithm will have time
@@ -768,7 +793,7 @@ Forward algorithm and others. For example if we have silent cycle out of states
 $u$ and $v$, the recurrency for computing the Forward algorithm contain a
 cycle: value $F[i, v]$ depends on value $F[i, u]$, and value $F[i,u]$ depends
 on value $F[i, v]$.  Such cycles can be removed from an HMM without affecting
-of the distribution of the sequence. Additionally, for every HMM with silent
+of the distribution of the sequence, and for every HMM with silent
 states there is an HMM without silent states that defines same distribution of
 sequences \cite{Nanasi2010mgr}.
 
@@ -905,7 +930,7 @@ maximum probability.
 %In following section we show that the Posterior decoding is
 %equivalent to maximizing the expected number of correctly predicted states in
 %state path.  
-We have shown that in some cases these algorithm recover bad
+We have shown that in some cases these algorithms can recover bad
 annotation. However, maximizing the most probable annotation is NP-hard and
 therefore it is not tractable. Additionally, the most probable annotation does
 not necessary have to be the best approximation of the true annotation.
