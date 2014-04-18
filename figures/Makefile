@@ -22,13 +22,13 @@ all:  $(TEXPDF) $(FIGPDF) $(JGRAPHPDF) $(JPGPDF) $(PNGPDF)
 %.eps : %.tex *.texm 
 	latex $*.tex 
 	dvips -G0 -E $*.dvi -o $*.eps
-	#-rm $*.log $*.aux $*.dvi 
 
 %.eps : %.jgraph
 	jgraph $*.jgraph >$*.eps
 
 %.pdf : %.eps
 	epstopdf $*.eps
+	-rm $*.log $*.aux $*.dvi 
 
 %.pdf : %.jpg
 	convert $*.jpg $*.pdf
