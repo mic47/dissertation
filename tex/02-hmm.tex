@@ -700,7 +700,7 @@ simplifying  models. We will use all the described variants later in the
 thesis.
 
 \subsubsection{Silent states}
-
+\label{SECTION:SILENT}
 One common variant of HMMs are HMMs with silent states. A silent state is a state
 that does not emit any symbol. In the presence of silent states a state path can
 be longer than the emitted sequence. However, the number of non-silent states in
@@ -823,6 +823,10 @@ the sequence is $\sum_{q\in F}F[n-1,q]$.  Similarly, in the Viterbi algorithm
 we have to find $\max_{q\in F} V[n-1,q]$ not $\max_{q\in V} V[n-1,q]$.  The
 Backward algorithm is changed by setting $B[n-1,q]$ to zero for all $q\notin
 F$.
+
+Advantage of start and final states is, that it is trivial to compose model
+together.  For example to chain two model, we just merge start state of one
+state with final state of other state.
 
 \subsubsection{High Order HMMs}
 

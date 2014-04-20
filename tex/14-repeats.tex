@@ -1,4 +1,4 @@
-\chapter{Alignment with repeats}
+\chapter{Alignment with tandem repeats}
 
 \section{Tandem Repeats}
 Tandem repeat is a region in the gnomic sequence that contain two or more
@@ -17,21 +17,144 @@ $*$ Ako vznikaju\\
 $*$ Priklad zarovnania aj s problemovym tandem repeatom a problemom ako to zarovnat
 
 \end{reformulate*}
-\section{Finding repeats}
+\section{Methods for finding and aligning tandem repeats}
 \begin{reformulate*}
 Popiseme ako sa daju hladat repeaty, napriklad aj nasim jednoduchym modelom,
 alebo napriklad aj tandem repeat finderom.
 Presnejsie:\\
 $*$ Tandem repeat finder\\
 $*$ TANTAN\\
-$*$ SUNFLOWER model \\
-$**$ Najskor taky pekny s cyklom \\
-$**$ Potom taky menej symetricky, ale bez cyklu \\
+%$*$ SUNFLOWER model \\
+%$**$ Najskor taky pekny s cyklom \\
+%$**$ Potom taky menej symetricky, ale bez cyklu \\
 $*$ Kontextove gramatiky?
 $*$ Repeat masking
 \end{reformulate*}
-\section{Models}
+\subsection{Tandem Repeat Finder}
+\abbreviation{Tandem repeat finder}{TRF} is probable the most used tool for
+finding tandem repeats.
 
+\subsection{TANTAN}
+
+Tantan is high-order HMM aimed for finding tandem repeats. It consists from
+high-order states $R_i$, $1\leq i\leq k$ where $k$ is the maximal length of a
+repeat. Unlike states with order $i$, which emission depends of $i$ previous
+emissions, state $R_i$ depends only on $i$-th previous emission. The position
+on th $R_i$ state with self-loop therefore it models tandem repeats without
+insertions or deletions.
+
+
+\subsection{Sunflower model}
+\firstUseOf{Sunflower model} is HMM that models tandem repeats of one
+previously specified consensus $C=c_1\dots c_k$. We developed it for our model
+for aligning sequences with tandem repeats, but it can be also used as an
+simple tool for searching tandem repeats (but it is highly likely that its
+performance would be worse than TRF).
+
+Sunflower is extension of profile HMM described in section \ref{HERD:METHODS}
+in Figure \ref{FIGURE:PROFILEHMM} (page \pageref{FIGURE:PROFILEHMM}). Sunflower
+models sequence of tandem repeats of single original consensus $C$. This model
+assumes that repeats evolved independently from consensus $C$. One can think
+about it as that at single point of time, sequence $C$ in genome was copied
+several times, then resulting sequence undergo through simple evolution events:
+substitution, deletions and insertions.
+
+\begin{figure}
+\begin{center}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics{../figures/SunflowerSilentCircle.pdf}
+\caption{Cyclic profile model}\label{SUBFIGURE:SUNFLOWERSILENTCYCLE}
+\end{subfigure}%
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics{../figures/Sunflower.pdf}
+\caption{Sunflower model}\label{SUBFIGURE:SUNFLOWER}
+\end{subfigure}
+\end{center}
+\caption[Example of the Sunflower model]{Example of the Sunflower model for
+consensus of length $10$. White states emits one character and gray states are
+silent states. States $s$ and $e$ are initial silent states. Sunflower model
+has additional delete states $D'_0, \dots D'_8$ to remove silent cycle from the
+model.}
+\label{FIGURE:SUNFLOWERMODEL}
+\end{figure}
+
+To model this process, start with profile HMM for consensus $C$ and made it
+cyclic: It contains states $M_0,\dots, M_{k-1}, I_{0}, \dots, I_{k-1}$ and
+$D_{0}, \dots, D_{k-1}$. The transitions between the states are similar to
+profile HMM:  $M_{i}\to M_{i\oplus 1}, M_i\to I_i, M_i\to D_{i\oplus 1}, I_i\to
+I_i, I_i\to M_{i\oplus 1}, I_i\to D_{i\oplus 1}, D_{i}\to D_{i \oplus 1},
+D_{i}\to M_{i\oplus 1}, D_{i}\to I_i$ for all $0\leq i < k$, where $\oplus$ is
+$+$ modulo $k$. As in profile HMM, $D_i$ states are silent. Additionally we add
+silent start state $s$ and silent end state $e$ with transitions $s\to M_0,
+s\to D_0, D_{k-1}\to e, M_{k-1}\to e$ and transition $s\to e$ to model empty
+tandem repeat.  Whole model topology is in Figure
+\ref{SUBFIGURE:SUNFLOWERSILENTCYCLE}.
+
+The problem with this model is that it contains cycle of silent states, which
+causes problems with training and decoding algorithm, as was briefly mentioned
+in section \ref{SECTION:SILENT}. We could remove these states, but we would
+have to add additional $\theta(k^2)$ edges to by able to delete arbitrary (in
+cyclic sense) parts of consensus cycle. Therefore we have decided to remove
+transition between delete states $D_{k-1}$ and $D_0$. To compensate to the lost
+possibility of deleting arbitrary part of tandem repeat, we add additional
+chain of delete states $D'_0, \dots, D'_{k-2}$ that are accessible only from
+state $D_{k-1}$ (by transition $D_{k-1}\to D'_0}$ and their outgoing
+transitions are similar to delete state transitions: $D'_{i}\to M_{i+1},
+D'_{i}\to I_i$ for $0\leq i\leq k-2$ and $D'_{i} \to D'_{i+1}$ for $0\leq i <
+k-2$. Full model is in Figure \ref{SUBFIGURE:SUNFLOWER}. We call this model the
+\firstUseOf{Sunflower} model.
+
+\todo{Premenuj end state na final state, vsade!} This model has $4k+1$ states
+out of which $2k+1$ are silent, and $12k+1$ transitions. Since alphabet size is
+$4$, there are $14k+2$ parameters to train for a consensus $C$ (including
+emissions of insert and match states). Models with large number of parameters
+are hard to train, so we reduce the number of parameters. We bind similar
+transitions so that they have the same probability.  We ended with parameters
+$p_{ab}$ where $a,b\in \{m, i, d, \cdot\}$. $m$ stands for any match state, $i$
+stands for any insert state, $d$ states for any delete state (from both
+chains), and $\cdot$ is either start or end state. Therefore probability of
+transition from match state to delete state is $p_{md}$ and probability of
+transition from insert state to final state is $p_{i\cdot}$.  Probabilities
+were set in a way, that $\sum_{b\in\{m,i,d\}p_{ab}}=1$ for all possible $a$.
+Therefore, transitions from $M_{k-1}, D_{k-1}$ and $D'_{k-1}$ does not sum to
+$1$, because they are either missing one transition of having one additional
+transition. Therefore for those states the probability of transitions were
+multiplied by constant so that they form probability distribution.
+\todo{Skontroluj ci tu nie su nejake vynimky}
+
+Emission parameters were reduced in following way: all insert states shared
+same emission distribution. For emission distribution of match state $M_i$ we
+assumed that base from consensus $c_i$ evolved over evolutionary time $t$
+according to Jukes-Cantor model. This model is theoretical model of evolution
+that assumes constant rate of evolution. Under this model base $B_1$ evolved
+over time $t$ to different base $B_2$  with probability $1/4(1-\exp(-4t/3))$.
+The probability that $B_1$ after time $t$ will be again $B_1$ is
+$1/4(1+3\exp(-4t/3))$ \cite{Durbin1998}. Time $t$ was same for all match
+states. Therefore emissions of all states has only $4$ parameters ($1$ for
+match states and $3$ for insert states).
+
+\begin{note}
+In Jukes-Cantor model, the parameter $t$ is not time as measured by
+seconds/years. It is a branch length in evolutionary tree and it is
+multiplication of substitution rate and time. We used this small inaccuracy to
+simplify explanation.  More details can be found in \cite{Durbin1998}.
+
+\end{note}
+
+Sunflower model models only tandem repeat and it is not directly usable for
+finding tandem repeats. To do so, we have to alter this model. Let $S_C$ be the
+Sunflower for consensus sequence $C$. Then we create model consisting of state
+$B$, that model non-repetitive part of the sequence with model $S_C$ with an
+transition $B\to s$ with probability $p_r$ which is the probability of repeat
+starting at particular position in the sequence and with transition $e\to B$
+with probability $1$. There is also transition $B\to B$ with probability
+$1-p_r$. Afterwards, we can use the Viterbi algorithm with this model to find
+all of the occurrences of tandem repeat with consensus $C$. However, with this
+model we can search only for specific repeats. We will use this model as an
+submodel in following section. 
+
+
+\section{Models}\label{SECTION:REPMODELS}
 \begin{reformulate*}
 Popiseme nase oba modely. sunflower, a ten tantan-like
 Presnejsie:\\
@@ -244,7 +367,7 @@ and uses only those consensuses to build SFF.
 very large.  Therefore to compensate for this drawback, we used TRF program to
 get list of candidate intervals where tandem repeats could occur. We use this
 intervals to restrict parts of the sequence where the repeat state $R$ could be
-used.
+used. Since TRF tool is not perfect in finding tandem repeats, ...
 
 \item When using gadget that generated tandem repeats for particular consensus,
 we run submodels independently on each sequence and cached results to prevent
@@ -281,7 +404,7 @@ counted as an correctly predicted).
 
 \section{Results}
 \begin{reformulate*}
-Tabulky, grafy, ...
+Tabulky, grafy, ... -- presnejsie tabulka, graf
 \end{reformulate*}
 
 \section{Possible Improvements}
