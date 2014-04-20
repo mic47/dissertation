@@ -1,23 +1,80 @@
 \chapter{Alignment with tandem repeats}
 
-\section{Tandem Repeats}
 Tandem repeat is a region in the gnomic sequence that contain two or more
-consecutive repetitions of the same sequence. After this evolution event
-occurred, mutations, insertions and deletions could happened so the repetitions
-seen in current sequences are not necessary exact. This occurs when ??.\todo{Ako sa stavaju repeaty}
-Tandem repeats causes problem in the alignment
+consecutive repetitions of the similar sequence.  Tandem repeats are important
+for sequence alignment, since more than $2\%$ of the human genome is covered by
+short tandem repeats, and they occurs in many genes and regulatory regions
+\cite{Gemayel2010}. Additionally, recent short insertions in human genome are
+mostly caused by tandem duplication \cite{Messer2007}.  Tandem repeats, like
+other sequences, undergo evolution and therefore mutations, insertions, and
+deletions occurs. Therefore individual copies of repeated sequence are not
+exact.  Additionally, most of the tandem repeats evolved using tandem segmental
+duplications, and therefore segments with tandem repeats contain variable
+number of copies (not exact) of original segment. Aligning segments with tandem
+repeats is hard, because it is not clear which copies of tandem repeat are
+orthologous (created by speciation, not duplication within same genome).
+Tandem repeat does not only affect quality of alignment within repetitive
+segments, but error spread into adjacent columns of an alignment, as we show in
+section \ref{}.
 
-\begin{reformulate*}
-Tu chcem popisat co su to repeaty, ake problemy mozu robit v zarovnani (nejake
-priklady) a podobndde.
-Presnejsie: \\
-$*$ Co je tandem repeat\\
-$*$ Priklad tandem repeatu\\
-$*$ Ako vznikaju\\
-$*$ Priklad zarovnania aj s problemovym tandem repeatom a problemom ako to zarovnat
+\todo{Co je to tandem duplication}
 
-\end{reformulate*}
-\section{Methods for finding and aligning tandem repeats}
+\todo{Priklad tandem repeatu a zleho zarovnania -- vyber nieco zo simulacie}
+
+\section{Methods for aligning tandem repeats}
+
+Alignment with tandem duplications were studied first by Benson
+\cite{Benson1997}, who proposed extension of the Needleman-Wunsch
+algorithm. In their scoring scheme, they scored duplications as an separate
+event. Each duplication was penalized by duplication initiation cost,
+duplication extension costs for each copy and Needleman-Wunsch like scoring
+scheme to score original string with its repetitions. Time complexity of
+resulting algorithm was $O(n^4)$ and Benson proposed heuristic algorithm to
+compute alignment in reasonable time. \todo{Mozno to strosku rozsirit a dat
+presnu formulaciu} Additional work was done by alternative incorporation of
+tandem duplication (and other operations) into the scoring schemes
+\cite{Sammeth2006, Berard2006, Freschi2012}, or using lossy compression scheme
+that collapsed tandem repeats and aligning compressed sequences
+\cite{Freschi2012}.
+
+Traditional approach to deal with tandem repeats is to mask repeats in both
+sequences and then aligned masked sequences by alignment algorithm of our
+choice. Masking is replacing low complexity region (e.g. tandem repeats) either
+with lower-case letters (soft-masking) or with N symbols (hard-masking, N
+represents any base). Masking is done by method for finding tandem repeats,
+such as \abbreviation{Tandem Repeat Finder}{TRF} \cite{Benson1999}, TANTAN
+\cite{Frith2011}, mreps \cite{Kolpakov2003}, or ATRhunter \cite{Wexler2005}. 
+
+Methods mentioned above were not probabilistic methods. The first probabilistic
+method specifically targeting tandem repeats was introduced by Hickey and
+Blanchette \cite{Hickey2011}. They developed context-sensitive model based on
+pair Tree-Adjoining grammars, and taking into account that majority (roughly
+$90\%$  \cite{Hickey2011}) are caused by tandem duplications.  Their model does
+not explicitly model arbitrary number of copies of repetitive region, it
+focused on short context sensitive indels caused by tandem duplications.  Time
+complexity for their decoding algorithm was $O(n^2L^2)$, where $n$ is the
+length of the sequences and $L$ is the maximal length of context sensitive
+indels.
+
+Another, not entirely probabilistic method was developed by Kováč {et. al
+(2012)} \nocite{Kovac2012}. Aim of the method was to align repetitive motif
+inside some protein families (for example zinc finger proteins), which are
+similar to the tandem repeats. Their method focused on correctly aligning
+individual occurrences of motifs. They combined profile HMM and pair HMM, and
+developed new decoding algorithm similar to the Viterbi algorithm. Despite
+usage of probabilistic models, their method was not probabilistic model. 
+
+
+\section{Models and Methods Searching Tandem Repeats}
+
+In this section we describe methods and models we used for finding tandem
+repeats and as parts of larger model for aligning sequences with tandem
+repeats. Probably the most popular method for searching for tandem repeats is
+to use TRF \cite{Benson1999}.
+
+\subsection{Tandem Repeat Finder}
+Tandem repeat finder is met
+
 \begin{reformulate*}
 Popiseme ako sa daju hladat repeaty, napriklad aj nasim jednoduchym modelom,
 alebo napriklad aj tandem repeat finderom.
@@ -27,16 +84,15 @@ $*$ TANTAN\\
 %$*$ SUNFLOWER model \\
 %$**$ Najskor taky pekny s cyklom \\
 %$**$ Potom taky menej symetricky, ale bez cyklu \\
-$*$ Kontextove gramatiky?
-$*$ Repeat masking
+%$*$ Kontextove gramatiky?
+%$*$ Repeat masking
 \end{reformulate*}
-\subsection{Tandem Repeat Finder}
 \abbreviation{Tandem repeat finder}{TRF} is probable the most used tool for
 finding tandem repeats.
 
 \subsection{TANTAN}
 
-Tantan is high-order HMM aimed for finding tandem repeats. It consists from
+\firstUseOf{TANTAN} is high-order HMM aimed for finding tandem repeats. It consists from
 high-order states $R_i$, $1\leq i\leq k$ where $k$ is the maximal length of a
 repeat. Unlike states with order $i$, which emission depends of $i$ previous
 emissions, state $R_i$ depends only on $i$-th previous emission. The position
@@ -98,7 +154,7 @@ cyclic sense) parts of consensus cycle. Therefore we have decided to remove
 transition between delete states $D_{k-1}$ and $D_0$. To compensate to the lost
 possibility of deleting arbitrary part of tandem repeat, we add additional
 chain of delete states $D'_0, \dots, D'_{k-2}$ that are accessible only from
-state $D_{k-1}$ (by transition $D_{k-1}\to D'_0}$ and their outgoing
+state $D_{k-1}$ (by transition $D_{k-1}\to D'_0$ and their outgoing
 transitions are similar to delete state transitions: $D'_{i}\to M_{i+1},
 D'_{i}\to I_i$ for $0\leq i\leq k-2$ and $D'_{i} \to D'_{i+1}$ for $0\leq i <
 k-2$. Full model is in Figure \ref{SUBFIGURE:SUNFLOWER}. We call this model the
@@ -154,7 +210,7 @@ model we can search only for specific repeats. We will use this model as an
 submodel in following section. 
 
 
-\section{Models}\label{SECTION:REPMODELS}
+\section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
 \begin{reformulate*}
 Popiseme nase oba modely. sunflower, a ten tantan-like
 Presnejsie:\\
