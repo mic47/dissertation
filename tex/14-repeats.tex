@@ -91,15 +91,37 @@ not successful (candidate pattern has to be aligned at least $2$ times to be
 successful), candidate repeat is discarded. Otherwise, the consensus sequence
 is computed from the alignment along with other statistics about tandem repeat.
 
+
 Tandem repeats found by TRF can be redundant.  They can overlap, have slightly
 different consensuses, the consensuses can be shifted cyclically, and can have
-different lengths: for example sequence $CACCGCCACCACCGTAG$ can contain tandem
+different lengths, as in following example:
+
+\begin{verbatim}
+Sequence  X:        CACCGCCACCACCGTAG
+Consensus ACCACC:    ACCACCACCACC      2 repetitions
+Consensus AAC:       ACCACCACCACC      4 repetitions
+consensus CAC:      CACCACCACCACC      4.3 repetitions
+\end{verbatim}
+
+The sequence $X$ contain repetitive subsequence, and there are three possible
+consensus sequences with different number of repetitions. Note that the
+repetition of the consensus does not have to be full; as with the $CAC$
+consensus where we have $4.3$ ($0.3$ stands for the last $C$ in the repetitive
+sequence). This is important to know, because we will use the TRF to find
+the set candidate repetitive regions of input sequences, not as the definitive
+list of repetitive regions.
+
+Note that the purpose of this example to illustrate redundancy of TRF output.
+If we ran TRF on sequence $X$, the output would be only repeat with $CAC$ as an
+consensus.
+
+\begin{comment}
+for example sequence $CACCGCCACCACCGTAG$ can contain tandem
 repeat with consensus $ACCACC$ with $2$ repetitions starting at position $2$,
 or a consensus can be $ACC$ with $4$ repetitions, or consensus can be $CAC$
 with $4.33$ repetitions\footnote{Repetitions can be partial.} and starting at
-position $1$.  This is important to know, because we will use the TRF to find
-the set candidate repetitive regions of input sequences, not as the definitive
-list of repetitive regions.
+position $1$.  
+\end{comment}
 
 \begin{comment}
 \begin{reformulate*}
