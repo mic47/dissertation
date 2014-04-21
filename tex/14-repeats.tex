@@ -15,7 +15,7 @@ repeats is hard, because it is not clear which copies of tandem repeat are
 orthologous (created by speciation, not duplication within same genome).
 Tandem repeat does not only affect quality of alignment within repetitive
 segments, but error spread into adjacent columns of an alignment, as we show in
-section \ref{}.
+section \ref{}.\todo{Ujednot oznacenie repeatov a poctu opakovani}
 
 \todo{Co je to tandem duplication}
 
@@ -67,14 +67,41 @@ usage of probabilistic models, their method was not probabilistic model.
 
 \section{Models and Methods Searching Tandem Repeats}
 
-In this section we describe methods and models we used for finding tandem
-repeats and as parts of larger model for aligning sequences with tandem
-repeats. Probably the most popular method for searching for tandem repeats is
-to use TRF \cite{Benson1999}.
+In this section we describe methods and models we used for improving
+performance of our methods or as a parts of larger model for aligning sequences
+with tandem repeats. 
 
 \subsection{Tandem Repeat Finder}
-Tandem repeat finder is met
 
+Probably the most popular method for searching for tandem repeats is to use TRF
+\cite{Benson1999}.  Tandem repeat finder find the position of tandem repeats,
+consensus sequence (the pattern that is repeating), alignment of the consensus
+sequence and the input sequence, and various other information about repeats.
+
+Method consists from two components: detection and analysis. Detection
+component tries to find a set of candidate tandem repeats by analyzing the
+differences in the positions of matching $k$-tuples (subsequence of the input
+sequence of length $k$). It uses several statistical criteria to detect repeats
+and distinguish between tandem repeats and non-tandem repeats
+\cite{Benson1999}.
+
+Analysis component aligns candidate pattern using wraparound dynamic
+programming \cite{Myers1989} with the surrounding sequence. If the alignment is
+not successful (candidate pattern has to be aligned at least $2$ times to be
+successful), candidate repeat is discarded. Otherwise, the consensus sequence
+is computed from the alignment along with other statistics about tandem repeat.
+
+Tandem repeats found by TRF can be redundant.  They can overlap, have slightly
+different consensuses, the consensuses can be shifted cyclically, and can have
+different lengths: for example sequence $CACCGCCACCACCGTAG$ can contain tandem
+repeat with consensus $ACCACC$ with $2$ repetitions starting at position $2$,
+or a consensus can be $ACC$ with $4$ repetitions, or consensus can be $CAC$
+with $4.33$ repetitions\footnote{Repetitions can be partial.} and starting at
+position $1$.  This is important to know, because we will use the TRF to find
+the set candidate repetitive regions of input sequences, not as the definitive
+list of repetitive regions.
+
+\begin{comment}
 \begin{reformulate*}
 Popiseme ako sa daju hladat repeaty, napriklad aj nasim jednoduchym modelom,
 alebo napriklad aj tandem repeat finderom.
@@ -87,8 +114,7 @@ $*$ TANTAN\\
 %$*$ Kontextove gramatiky?
 %$*$ Repeat masking
 \end{reformulate*}
-\abbreviation{Tandem repeat finder}{TRF} is probable the most used tool for
-finding tandem repeats.
+\end{comment}
 
 \subsection{TANTAN}
 
