@@ -137,17 +137,6 @@ $*$ TANTAN\\
 %$*$ Repeat masking
 \end{reformulate*}
 \end{comment}
-
-\subsection{TANTAN}
-
-\firstUseOf{TANTAN} is high-order HMM aimed for finding tandem repeats. It consists from
-high-order states $R_i$, $1\leq i\leq k$ where $k$ is the maximal length of a
-repeat. Unlike states with order $i$, which emission depends of $i$ previous
-emissions, state $R_i$ depends only on $i$-th previous emission. The position
-on th $R_i$ state with self-loop therefore it models tandem repeats without
-insertions or deletions.
-
-
 \subsection{Sunflower model}
 \firstUseOf{Sunflower model} is HMM that models tandem repeats of one
 previously specified consensus $C=c_1\dots c_k$. We developed it for our model
@@ -257,18 +246,46 @@ all of the occurrences of tandem repeat with consensus $C$. However, with this
 model we can search only for specific repeats. We will use this model as an
 submodel in following section. 
 
+\subsection{TANTAN}
+
+\firstUseOf{TANTAN} is high-order HMM aimed for finding tandem repeat developed
+by Frith \cite{Frith2011}. Unlike Sunflower model, TANTAN models tandem repeats
+with arbitrary consensus. Its only restriction is the maximal length of the
+repeated motif $k$.
+
+Main idea is to use state of order $l$ to model repeats with consensus length
+$l$. If we have high-order state of order $l$ and want to generate $i$-th
+symbol of sequence $X$, standard high order state of order $l$ depends on
+subsequence $X[i-l:l]$. TANTAN's states of order $l$ depends only on symbol
+$X[i-l]$. Model consists from $k$ high-order states $R_l$, $1\leq l\leq k$,
+where state $R_l$ is of order $l$. Each of such states represents 
+
+\begin{figure}
+\begin{center}
+\begin{subfigure}{0.19\textwidth}
+\includegraphics{../figures/tantan_simple.pdf}
+\caption{Simple model}\label{FIGURE:TANTAN:SIMPLE}
+\end{subfigure}%
+\begin{subfigure}{0.3\textwidth}
+\includegraphics{../figures/tantan_indel.pdf}
+\caption{With indels}\label{FIGURE:TANTAN:INDEL}
+\end{subfigure}%
+\begin{subfigure}{0.35\textwidth}
+\includegraphics{../figures/tantan_init.pdf}
+\caption{With first repetition}\label{FIGURE:TANTAN:INIT}
+\end{subfigure}%
+\end{center}
+\caption{Three variants of the core of the TANTAN model. Gray states are
+silent. The first one is simplified model, only with repeat states. The second
+one is one used by Frith \cite{Frith2011} allowing insertions and deletions.
+Last one is our extension with additional state $P_1, \dots P_5$ that models
+first occurrence of repetitive sequence.}\label{FIGURE:TANTAN}
+
+\end{figure}
+
 
 \section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
-\begin{reformulate*}
-Popiseme nase oba modely. sunflower, a ten tantan-like
-Presnejsie:\\
-$*$ Ake zhruba ciele mame (mozno do inej kapitoly)\\
-%$*$ Popisat to ako 4-stavovy generalizovany model\\
-%$*$ Instancia ako SUNFLOWER\\
-%$*$ Instancia ako TANTAN\\
-%$*$ Expandovanie ciernej skrinky
-\end{reformulate*}
-
+\todo{Mozno chceme aj niekde popisat ake mame ciele}
 In this section we describe models that we have used in our methods. We
 describe it in an dual way. As an generalized PHMM and later we extend it into
 equivalent PHMM (emissions length are at most $1$ in all sequences).
