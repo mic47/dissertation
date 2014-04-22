@@ -509,7 +509,7 @@ $*$ Ako sa vyberali hinty pre block viterbi
 \end{comment}
 
 To reduce processing time, we implemented following optimizations:
-\begin{itemize}
+\begin{itemize}[itemsep=-1mm]
 \item Banding: at first we align sequences using Muscle\cite{} to get guide
 alignment. We explore only alignments that were within 30 bases from the guide
 alignment.
@@ -570,9 +570,12 @@ Tabulky, grafy, ... -- presnejsie tabulka, graf
 \def\RR{$^{\yen\yen}$}
 \def\CC#1{\multicolumn{1}{c}{#1}} % center column
 \def\S{$^{\star}$}
-\begin{reformulate*}
-Accuracy of several decoding methods on simulated data.
-\begin{itemize}
+Additionally to the variants of the method above, there are additional variants
+of the model and algorithms, here is the set of marks that will be used to
+distinguish between them.
+
+\begin{itemize}[itemsep=-1mm]
+
 \item[\M] method uses the real consensus motifs. 
 
 \item[\D] method uses intervals from the real repeat blocks.
@@ -587,12 +590,11 @@ human-chicken alignment.
 
 \item[\DD] Columns with at least one masked character are considered as
 repeats.
+
 \item[\S] Non-overlapping set of repeats from TRF output with maximal total
 score is used.
 
 \end{itemize}
-\end{reformulate*}
-
 
 \begin{table*}
 \begin{center}

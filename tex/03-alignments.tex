@@ -310,7 +310,7 @@ Emission probability matrix $e$ is
 a $|V|\times\left(|\Sigma\cup\{\varepsilon\}|\right)^2$ matrix with the following
 properties:
 \def\lala#1{\{#1\}}
-\begin{enumerate}
+\begin{enumerate}[itemsep=-1mm]
 \item
 $\forall v\in V\forall \sigma_1,\sigma_2\in\Sigma\cup\{\varepsilon\}:
 0\leq e_{v,(\sigma_1,\sigma_2)}\leq 1$
@@ -940,7 +940,7 @@ we mean an alignment that corresponds to the actual evolution history.  Since
 true alignments are unknown for real data we can simulate evolution on randomly
 generated sequences, this obtaining a dataset of ``true'' alignments.
 
-\begin{itemize}
+\begin{itemize}[itemsep=-1mm]
 
 \item \firstUseOf{Gap wander} means that a gap is in a different location that in
 the true alignment. Is is due to random short similarities around the borders of
@@ -1341,7 +1341,7 @@ a predecessor of block $B_{i,j}$ if one of the following conditions is true:
 %We say that $(S_k,T_l)$ is predecessor of $(S_i,T_j)$ if one of the following
 %conditions is true:
 
-\begin{itemize}
+\begin{itemize}[itemsep=-1mm]
 \item $X_k$ is predecessor of $X_i$ and $l=j$
 \item $k=i$ and $Y_l$ is predecessor of $Y_j$
 \item $X_k$ is predecessor of $X_i$ and $Y_l$ is predecessor of $Y_j$
@@ -1614,7 +1614,7 @@ Now we can formulate the final algorithm. After updating $L_j$ from $L_{j-1}$,
 $L_j$ will satisfy the following invariant.
 \begin{invariant}\label{LogGapInvariant}
 All consecutive elements $k,k'$ in $L_j$ satisfy the following properties:
-\begin{enumerate}
+\begin{enumerate}[itemsep=-1mm]
 \item $k<k'$
 \item $G(k,j)>G(k',j)$ (decreasing rank)
 \item if $k'$ is not the last element of $L_j$ and $k''$ is the element
@@ -1628,7 +1628,7 @@ Since the rank is decreasing, we can find the maximum in $O(1)$ time. Now we sho
 to compute $L_{j+1}$ from $L_j$. Let $L$ be our working list,
 $L[k]$ be its $k$-th element, and $l$ be the index of the last element of $L$. 
 List $L_{j+1}$ can be computed by the following algorithm. 
-\begin{enumerate}
+\begin{enumerate}[itemsep=-1mm]
 \item $L=L_j$
 \item $L_{j+1}=L\cup\{j\}$.
 \item If $G(L[0],j+1)\leq G(L[1],j+1)$ then remove $L[0]$ from

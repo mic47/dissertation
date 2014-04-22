@@ -139,9 +139,12 @@ finding the most probable guide is for certain guide functions NP-hard.
 
 In section \ref{SECTION:HERD} we described HERD decoding. It was used with
 jumping HMMs \cite{Schultz2006} for detecting recombinations in HIV virus.
-However, using this criteria lead to two artefacts: \begin{itemize} \item
-Producing annotations with many short recombinations.  \item Producing
-recombinations of wrong virus subtype.  \end{itemize} Example of both type of
+However, using this criteria lead to two artefacts: 
+\begin{itemize}[itemsep=-1mm]
+\item Producing annotations with many short recombinations.  
+\item Producing recombinations of wrong virus subtype.  
+\end{itemize}
+Example of both type of
 errors are illustrated in figure \ref{FIGURE:HERD_BAD} at page
 \pageref{FIGURE:HERD_BAD}.
 
@@ -358,7 +361,7 @@ to compare it with the other methods for recombination detection.
 
 To measure performance of the algorithm and amount of systematic errors, we use
 following metrics to compare different versions of algorithm.
-\begin{enumerate}
+\begin{enumerate}[itemsep=-1mm]
 \item {\bf \%id}: Percentage of the bases with correctly predicted label.
 
 \item {\bf Segment specificity}: Percentage of the number of correctly predicted
@@ -536,7 +539,7 @@ straightforward way of converting a graph to an HMM.
 \begin{definition}\label{GraphHMM}
 Let $G=(V,E)$ be an undirected graph (without self-loops). 
 Then the \emph{graph HMM} $H_G$ is defined as follows:
-\begin{itemize}
+\begin{itemize}[itemsep=-1mm]
 \item Its set of states is $V\cup \{\psi\}$, where $\psi\notin V$ is a
   new state called the error state.
 \item Its emission alphabet is $\{0,1\}$.
@@ -650,7 +653,7 @@ us assume that there is a set of states $S$ such that
 $\prob{s(\pi)=S,X \mid H,n}\ge p$. This means that if we consider walks in the
 subgraph $G'(S)$ induced by the set $S$, we get $Y(n,G'(S))\ge
 D(n,k')$. We will consider three cases:
-\begin{itemize}
+\begin{itemize}[itemsep=-1mm]
 \item If $S$ is a clique and $|S|\ge k'$, we have the desired clique in 
 graph $G'$, and therefore there is also a clique of size $k$ in graph $G$. 
 \item If $S$ is a clique and $|S|<k'$, then by definition of $M_n$ we have 
@@ -778,7 +781,7 @@ $\Pr\left(s(\pi)=S, X\mid H, n\right)$ is non-zero is NP-complete.
 \begin{definition}\label{GraphHMM}
 Let $G=(V,E)$ be an undirected graph (without self-loops). 
 Then the \emph{graph HMM} $H_G$ is defined as follows:
-\begin{itemize}
+\begin{itemize}[itemsep=-1mm]
 \item Its set of states is $V\cup \{\psi\}$, where $\psi\notin V$ is a
    new state called the error state.
 \item Its emission alphabet is $\{0,1\}$.
