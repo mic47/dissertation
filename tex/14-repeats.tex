@@ -562,6 +562,129 @@ counted as an correctly predicted).
 Tabulky, grafy, ... -- presnejsie tabulka, graf
 \end{reformulate*}
 
+\todo{reformuluj tabulku, navyse rozbi ju na viac casti a pridaj dalsie}
+\begin{table*}[t]
+\def\M{$^*$} % mark by a star
+\def\MM{$^{**}$} % mark by two stars
+\def\D{$^{\dagger}$} % mark by dagger
+\def\DD{$^{\dagger\dagger}$} % mark by dagger
+\def\R{$^{\diamond}$}
+\def\RR{$^{\diamond\diamond}$}
+\caption{Accuracy of several decoding methods on simulated data.
+\M: method uses the real consensus motifs. \MM: method uses 
+the real consensus motifs and intervals from the real repeat blocks.
+\D: method uses intervals from the real repeat blocks.
+\DD: Columns with at least one masked character are considered as repeats.
+\R: Parameters for the three-state submodel 
+were estimated from human-chicken
+alignment. 
+\RR: Parameters for SFF submodel were perturbed randomly.
+}
+\label{tab:sim}
+\def\CC#1{\multicolumn{1}{c}{#1}} % center column
+\centerline{\begin{tabular}{lr@{\quad}rr@{\quad}rr}
+\hline
+          & \CC{Alignment} & \multicolumn{2}{c}{Repeat} & 
+\multicolumn{2}{c}{Block}\\
+Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
+\hline
+%\hline
+SFF marginalized    & {\bf 3.37\%} & {\bf 95.97\%} & 97.78\% & {\bf 43.07\%} & 44.87\%\\
+SFF posterior       & 3.53\% & 95.86\% & 97.87\% & 42.70\% & 47.37\%\\
+SFF block           & 3.51\% & 93.09\% & {\bf 98.07}\% & 36.50\% & 41.67\%\\
+SFF block Viterbi   & 3.91\% & 93.26\% & 97.96\% & 35.77\% & 40.66\%\\
+SFF Viterbi         & 4.04\% & 95.29\% & 97.85\% & 42.70\% & {\bf 48.95\%}\\
+TANTAN block           & 5.05\% & 61.38\% & 97.48\% & 0.00\% & 0.00\%\\
+TANTAN block Viterbi   & 6.17\% & 67.86\% & 96.51\% & 0.00\% & 0.00\%\\
+\hline
+\multicolumn{6}{l}{\bf Correct intervals and consensuses}\\
+SFF marginalized\M  & 3.02\% & 98.93\% & 99.64\% & 77.01\% & 76.17\% \\ 
+SFF posterior\M     & 3.42\% & 98.84\% & 99.51\% & 75.91\% & 80.93\% \\
+SFF block\MM        & 3.21\% & 97.70\% & 99.87\% & 80.66\% & 94.44\% \\
+SFF block Viterbi\MM& 3.71\% & 98.12\% & 99.85\% & 81.75\% & 92.18\% \\
+SFF Viterbi\M       & 3.94\% & 98.54\% & 99.45\% & 75.55\% & 83.47\% \\
+TANTAN block\D        & 3.42\% & 60.45\% & 99.90\% & 0.36\% & 0.46\% \\
+TANTAN block Viterbi\D & 3.83\% & 61.74\% & 99.88\% & 0.00\% & 0.00\% \\
+\hline
+\multicolumn{6}{l}{\bf Other methods}\\
+Context             & 5.98\% \\
+Muscle              & 5.62\% \\
+3-state posterior   & 4.41\% \\
+3-state posterior with masked repeats\DD & 5.03\% & 99.23\% & 74.16\% & 7.66\% & 7.24\%\\
+3-state Viterbi (baseline)    & 4.78\% \\
+\hline
+\multicolumn{6}{l}{\bf Changed model}\\
+SFF marginalized\R & 3.63\% & 96.03\% & 97.74\% &  42.70\% &  43.33\% \\ 
+SFF marginalized\RR & 3.36\% & 95.99\% & 97.81\% & 40.88\% & 43.08\% \\ 
+\hline
+\end{tabular}}
+\label{simulated_experiment}
+\end{table*}
+
+%\begin{figure}
+%\includegraphics[width=\textwidth]{../figures/error_graph_overview.pdf}
+%\caption{}
+%\end{figure}
+%\begin{figure}
+%\includegraphics[width=\textwidth]{../figures/error_graph_overview.pdf}
+%\caption{}
+%\end{figure}
+%\begin{figure}
+%\includegraphics[width=\textwidth]{../figures/error_graph_overview.pdf}
+%\caption{}
+%\end{figure}
+%\begin{figure}
+%\includegraphics[width=\textwidth]{../figures/error_graph_overview.pdf}
+%\caption{}
+%\end{figure}
+%\begin{figure}
+%\includegraphics[width=\textwidth]{../figures/error_graph_overview.pdf}
+%\caption{}
+%\end{figure}
+%\begin{figure}
+%\includegraphics[width=\textwidth]{../figures/error_graph_overview.pdf}
+%\caption{}
+%\end{figure}
+%
+%
+
+
+
+
+\begin{figure}
+\begin{center}
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{../figures/error_graph_overview.pdf}
+\caption{Our methods and traditional methods}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{../figures/error_graph_other.pdf}
+\caption{Other methods}
+\end{subfigure}%
+
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{../figures/error_graph_sffblock.pdf}
+\caption{Block decodings}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{../figures/error_graph_marginalized.pdf}
+\caption{Same method, different models}
+\end{subfigure}%
+
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{../figures/error_graph_sffvstantan.pdf}
+\caption{Sunflower and TANTAN}
+\end{subfigure}%
+\begin{subfigure}{0.5\textwidth}
+\includegraphics[width=\textwidth]{../figures/error_graph_3statemasking.pdf}
+\caption{Different methods of masking}
+\end{subfigure}%
+\caption{
+On the X axis of all graphs is error rate of all algorithms
+}
+\end{center}
+\end{figure}
+
 \section{Possible Improvements}
 
 \begin{reformulate*}
