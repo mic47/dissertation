@@ -558,67 +558,162 @@ is consecutive sequence of columns, block must have been identical to be
 counted as an correctly predicted).
 
 \section{Results}
+
 \begin{reformulate*}
 Tabulky, grafy, ... -- presnejsie tabulka, graf
 \end{reformulate*}
-
-\todo{reformuluj tabulku, navyse rozbi ju na viac casti a pridaj dalsie}
-\begin{table*}[t]
-\def\M{$^*$} % mark by a star
-\def\MM{$^{**}$} % mark by two stars
-\def\D{$^{\dagger}$} % mark by dagger
-\def\DD{$^{\dagger\dagger}$} % mark by dagger
-\def\R{$^{\diamond}$}
-\def\RR{$^{\diamond\diamond}$}
-\caption{Accuracy of several decoding methods on simulated data.
-\M: method uses the real consensus motifs. \MM: method uses 
-the real consensus motifs and intervals from the real repeat blocks.
-\D: method uses intervals from the real repeat blocks.
-\DD: Columns with at least one masked character are considered as repeats.
-\R: Parameters for the three-state submodel 
-were estimated from human-chicken
-alignment. 
-\RR: Parameters for SFF submodel were perturbed randomly.
-}
-\label{tab:sim}
+\def\M{$^\circ$} % mark by a star
+\def\MM{$^{\circ\circ\circ}$} % mark by two stars
+\def\D{$^{\circ\circ}$} % mark by dagger
+\def\DD{$^{\dagger}$} % mark by dagger
+\def\R{$^{\yen}$}
+\def\RR{$^{\yen\yen}$}
 \def\CC#1{\multicolumn{1}{c}{#1}} % center column
-\centerline{\begin{tabular}{lr@{\quad}rr@{\quad}rr}
+\def\S{$^{\star}$}
+\begin{reformulate*}
+Accuracy of several decoding methods on simulated data.
+\begin{itemize}
+\item[\M] method uses the real consensus motifs. 
+
+\item[\D] method uses intervals from the real repeat blocks.
+
+\item[\MM] method uses the real consensus motifs and intervals from the real
+repeat blocks.
+
+\item[\R] Parameters for the three-state submodel were estimated from
+human-chicken alignment. 
+
+\item[\RR] Parameters for SFF submodel were perturbed randomly.
+
+\item[\DD] Columns with at least one masked character are considered as
+repeats.
+\item[\S] Non-overlapping set of repeats from TRF output with maximal total
+score is used.
+
+\end{itemize}
+\end{reformulate*}
+
+
+\begin{table*}
+\begin{center}
+\begin{tabular}{lr@{\quad}rr@{\quad}rr}
 \hline
           & \CC{Alignment} & \multicolumn{2}{c}{Repeat} & 
 \multicolumn{2}{c}{Block}\\
 Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \hline
+\hline
 %\hline
+3-state Viterbi (baseline)    & 4.78\% \\
+\hline
 SFF marginalized    & {\bf 3.37\%} & {\bf 95.97\%} & 97.78\% & {\bf 43.07\%} & 44.87\%\\
 SFF posterior       & 3.53\% & 95.86\% & 97.87\% & 42.70\% & 47.37\%\\
 SFF block           & 3.51\% & 93.09\% & {\bf 98.07}\% & 36.50\% & 41.67\%\\
 SFF block Viterbi   & 3.91\% & 93.26\% & 97.96\% & 35.77\% & 40.66\%\\
 SFF Viterbi         & 4.04\% & 95.29\% & 97.85\% & 42.70\% & {\bf 48.95\%}\\
-TANTAN block           & 5.05\% & 61.38\% & 97.48\% & 0.00\% & 0.00\%\\
-TANTAN block Viterbi   & 6.17\% & 67.86\% & 96.51\% & 0.00\% & 0.00\%\\
+TANTAN block        & 5.05\% & 61.38\% & 97.48\% & 0.00\% & 0.00\%\\
+TANTAN block Viterbi& 6.17\% & 67.86\% & 96.51\% & 0.00\% & 0.00\%\\
 \hline
-\multicolumn{6}{l}{\bf Correct intervals and consensuses}\\
-SFF marginalized\M  & 3.02\% & 98.93\% & 99.64\% & 77.01\% & 76.17\% \\ 
-SFF posterior\M     & 3.42\% & 98.84\% & 99.51\% & 75.91\% & 80.93\% \\
-SFF block\MM        & 3.21\% & 97.70\% & 99.87\% & 80.66\% & 94.44\% \\
-SFF block Viterbi\MM& 3.71\% & 98.12\% & 99.85\% & 81.75\% & 92.18\% \\
-SFF Viterbi\M       & 3.94\% & 98.54\% & 99.45\% & 75.55\% & 83.47\% \\
-TANTAN block\D        & 3.42\% & 60.45\% & 99.90\% & 0.36\% & 0.46\% \\
-TANTAN block Viterbi\D & 3.83\% & 61.74\% & 99.88\% & 0.00\% & 0.00\% \\
+\end{tabular}
+\end{center}
+\caption{Accuracy of decoding methods on simulated data.}\label{TABLE:SFFMAIN}
+\end{table*}
+
+\begin{table*}
+\begin{center}
+\begin{tabular}{lr@{\quad}rr@{\quad}rr}
 \hline
-\multicolumn{6}{l}{\bf Other methods}\\
+          & \CC{Alignment} & \multicolumn{2}{c}{Repeat} & 
+\multicolumn{2}{c}{Block}\\
+Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
+\hline
+\hline
+%\hline
+3-state Viterbi (baseline)    & 4.78\% \\
+\hline
+SFF marginalized\M            & {\bf 3.02}\% & {\bf 98.93}\% & 99.64\% & 77.01\% & 76.17\% \\ 
+SFF posterior\M               & 3.42\% & 98.84\% & 99.51\% & 75.91\% & 80.93\% \\
+SFF block\MM                  & 3.21\% & 97.70\% & 99.87\% & 80.66\% & {\bf 94.44}\% \\
+SFF block Viterbi\MM          & 3.71\% & 98.12\% & 99.85\% & {\bf 81.75}\% & 92.18\% \\
+SFF Viterbi\M                 & 3.94\% & 98.54\% & 99.45\% & 75.55\% & 83.47\% \\
+TANTAN block\D                & 3.42\% & 60.45\% & {\bf 99.90}\% & 0.36\% & 0.46\% \\
+TANTAN block Viterbi\D        & 3.83\% & 61.74\% & 99.88\% & 0.00\% & 0.00\% \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Accuracy of decoding methods using real consensus and/or real intervals on simulated data.}\label{TABLE:SFFMAINORIGINAL}
+\end{table*}
+
+\begin{table*}
+\begin{center}
+\begin{tabular}{lr@{\quad}rr@{\quad}rr}
+\hline
+          & \CC{Alignment} & \multicolumn{2}{c}{Repeat} & 
+\multicolumn{2}{c}{Block}\\
+Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
+\hline
+\hline
+%\hline
+3-state Viterbi (baseline)    & {\bf 4.78}\% \\
+\hline
 Context             & 5.98\% \\
 Muscle              & 5.62\% \\
 3-state posterior   & 4.41\% \\
-3-state posterior with masked repeats\DD & 5.03\% & 99.23\% & 74.16\% & 7.66\% & 7.24\%\\
+3-state masked posterior\DD & 5.03\% & 99.23\% & 74.16\% & 7.66\% & 7.24\%\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Accuracy for standard algorithms and other tools on simulated data.}\label{TABLE:OTHER}
+\end{table*}
+
+\begin{table*}
+\begin{center}
+\begin{tabular}{lr@{\quad}rr@{\quad}rr}
+\hline
+          & \CC{Alignment} & \multicolumn{2}{c}{Repeat} & 
+\multicolumn{2}{c}{Block}\\
+Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
+\hline
+\hline
+%\hline
 3-state Viterbi (baseline)    & 4.78\% \\
 \hline
-\multicolumn{6}{l}{\bf Changed model}\\
-SFF marginalized\R & 3.63\% & 96.03\% & 97.74\% &  42.70\% &  43.33\% \\ 
-SFF marginalized\RR & 3.36\% & 95.99\% & 97.81\% & 40.88\% & 43.08\% \\ 
+SFF marginalized    & 3.37\% & 95.97\% & 97.78\% & {\bf 43.07\%} & {\bf 44.87}\%\\
+SFF marginalized\R & 3.63\% & {\bf 96.03\%} & 97.74\% &  42.70\% &  43.33\% \\ 
+SFF marginalized\RR & {\bf 3.36}\% & 95.99\% & {\bf 97.81}\% & 40.88\% & 43.08\% \\ 
+SFF marginalized\M  & \bf 3.02\% & \bf 98.93\% & \bf 99.64\% &\bf 77.01\% &\bf 76.17\% \\ 
 \hline
-\end{tabular}}
-\label{simulated_experiment}
+\end{tabular}
+\end{center}
+\caption{Accuracy for marginalized posterior with different models or real consensuses.
+The best and the second best are bold.} \label{TABLE:SFFMARGINALIZED}
+\end{table*}
+
+\begin{table*}
+\begin{center}
+\begin{tabular}{lr@{\quad}rr@{\quad}rr}
+\hline
+          & \CC{Alignment} & \multicolumn{2}{c}{Repeat} & 
+\multicolumn{2}{c}{Block}\\
+Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
+\hline
+\hline
+%\hline
+3-state Viterbi (baseline)    & 4.78\% \\
+\hline
+3 state masked posterior, TRF\DD       &5.03&{\bf 99.23}&74.16&7.66&7.24\\
+3 state masked posterior, Sunflower\DD &5.21&98.30&68.65&{\bf 9.12}&7.53\\
+3 state masked posterior, TRF\S\DD     &{\bf 4.77}&88.17&{\bf 79.63}&7.66&{\bf 9.13}\\
+3 state masked posterior, \MM\DD       &{\bf 4.50}&{\bf 100.00}&{\bf 97.23}&{\bf 45.99}&{\bf 61.13}\\
+\hline
+3 state masked Viterbi, TRF\DD         &5.89&{\bf 99.25}&73.29&5.47&5.14\\
+3 state masked Viterbi, Sunflower\DD   &5.82&98.32&67.90&{\bf 5.84}&4.89\\
+3 state masked Viterbi, TRF\S\DD       &{\bf 5.10}&88.33&{\bf 78.68}&5.47&{\bf 6.47}\\
+3 state masked Viterbi, \MM\DD         &{\bf 5.02}&{\bf 100.00}&{\bf 95.41}&{\bf 45.99}&{\bf 44.21}\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Accuracy of decoding method using simple 3-state HMM and masking. The best and the second best are bold. }\label{TABLE:3STATEMASK}
 \end{table*}
 
 
