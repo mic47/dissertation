@@ -557,7 +557,64 @@ and specificity and sensitivity of identifying the correct repeat block (block
 is consecutive sequence of columns, block must have been identical to be
 counted as an correctly predicted).
 
-\section{Results}
+\section{Results of simulation experiments}
+
+\begin{reformulate*}
+In this section we discuss the results of the simulation experiment. The tables
+\ref{TABLE:SFFMAIN}, \ref{TABLE:SFFMAINORIGINAL},
+\ref{TABLE:SFFOTHER},\ref{TABLE:SFFMARGINALIZED}, \ref{TABLE:SFF3STATEMASK},
+and Figure \ref{FIGURE:SFF_GRAPHS}. 
+
+We used 3-state model with Viterbi algorithm as the baseline method.
+
+Nechcem este skusit spravit block marginalized posterior?
+\end{reformulate*}
+
+
+
+Using SFF model leads to decrease of the alignment error by $15-30\%$ as
+opposed to baseline method as can be seen in table \ref{TABLE:SFFMAIN}. The
+$15\%$ decrease was obtained just by replacing 3-state model with Sunflower
+Field model, other improvements were made through using different decoding
+algorithms; leading with the marginalized posterior decoding. The Viterbi based
+methods had higher error rate than posterior based methods and the
+block-versions decreased error rate only slightly. Surprisingly, block based
+methods had poorest performance in the block sensitivity and specificity and
+repeat sensitivity, because these measures are closer to what those methods
+optimize. Reason for this is perhaps due to \reformulate{intervals obtained
+from TRF}. This can be backed up by table \ref{TABLE:SFFMAINORIGINAL}, where
+all of the algorithms used correct intervals and consensuses. As we see, in
+these metrics the use of the correct intervals improved performance.
+
+Similar behaviour was obtained for TTP model; using the original intervals, TTP
+model has only slightly worse error rate than SFF, which is expectable, since
+the data were generated from the SFF model. However, using TRF for intervals,
+TTP has significantly higher error rate, which means that TANTAN is even more
+sensitive to the intervals that are used. 
+
+Table \ref{TABLE:SFFOTHER} contain other algorithms for sequence alignment. Namely, 
+there is mreps tool\cite{}, which has even  TODO
+
+It could be argued, that using same model for training and testing is not
+\reformulate{good}. We have therefore make changes to model to demonstrate
+robustness of our method. SFF model have two principal types of parameters;
+parameters of the 3-state HMM and parameters of the Sunflower model. We
+investigate the effect of \reformulate{misspecification} for both types
+independently. For parameters of 3-state model, we have estimate parameters
+from human-chicken alignments instead of human-dog alignment. For the second
+type, we have perturbed the parameters of Sunflower model randomly by at most
+$0.05$. On these models we run marginalized posterior decoding. The results are
+in the table \ref{TABLE:SFFMARGINALIZED}.
+
+Final simulations were investigating using different repeat fonding algorithm
+for masking methods. We used for masking correct intervals, Sunflower model
+(modified for finding tandem repeats as described in section \ref{}), TRF, and
+TRF with non-overlapping repeats (we select maximal scoring non-overlapping set
+of tandem repeats out of TRF output). We used soft-masking; we replaced masked
+bases with N symbol, that represents unknown base.
+
+masking methods and use of repeat masking,
+
 
 \begin{reformulate*}
 Tabulky, grafy, ... -- presnejsie tabulka, graf
@@ -665,7 +722,7 @@ Muscle              & 5.62\% \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy for standard algorithms and other tools on simulated data.}\label{TABLE:OTHER}
+\caption{Accuracy for standard algorithms and other tools on simulated data.}\label{TABLE:SFFOTHER}
 \end{table*}
 
 \begin{table*}
@@ -715,7 +772,7 @@ Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy of decoding method using simple 3-state HMM and masking. The best and the second best are bold. }\label{TABLE:3STATEMASK}
+\caption{Accuracy of decoding method using simple 3-state HMM and masking. The best and the second best are bold. }\label{TABLE:SFF3STATEMASK}
 \end{table*}
 
 
@@ -752,7 +809,7 @@ Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 Relation between error rate and the distance from the nearest repeat. On the Y
 axis is error rate of the algorithm; the number of incorrectly aligned columns.
 On the X axis is the distance from the nearest repeat.  
-} 
+}\label{FIGURE:SFF_GRAPHS} 
 \end{center}
 \end{figure}
 
