@@ -542,20 +542,44 @@ TRF, alebo sunflower.
 
 \end{reformulate*}
 
-To evaluate our approach, we do simulation experiment. At first we build model
-resembling human-dog alignment. Then we sampled alignments 200 test and 200
-train alignments. We trained model on training sample, evaluated several algorithms
-on the test set. In this section we summarize details of this experiment and 
-measures we were \reformulate{looking at}.
 
+This section summarizes the details of this experiment and measures we were
+using for evaluation. We evaluate our model using simulation experiments.  We
+estimate parameters of the model using human-dog alignment (we annotated
+alignment columns using TRF). Parameter for 3-state model and 3-state submodel
+and transitions to the repeat state were therefore fully supervised.
+We set the parameters of the Sunflower submodel to TODO
+
+We sampled 200 test alignments each of length at least 200 bases \todo{check}
+from the SFF submodel with the condition, that the number of repetitions in the
+tandem repeat has to be at least three in at least one of the sequences. Reason
+for this condition is that we want to prevent fake tandem repeats ( sequences
+that are from the tandem repeat submodel, but are not in tandem repeats since
+they are only repeats) which would not be detected by TRF.
+
+We used same model for evaluation of parameters. To evaluate the robustness of
+our model, we assess the effects of misspecification of parameters by
+estimating model parameters from human-chicken alignment and perturbing model
+parameters (details are in next section). Mreps was trained of the 200 separate
+alignments sampled from the model. 
 
 \paragraph{Measures:} The first measure we use was the error rate on the
 alignments: number of incorrectly predicted columns of an alignment. Other
-measures we investigate were measuring precision of repeat annotation. Therefore 
-we were measuring the specificity and sensitivity of repeat labeling of columns
-and specificity and sensitivity of identifying the correct repeat block (block
-is consecutive sequence of columns, block must have been identical to be
-counted as an correctly predicted).
+measures we investigate were measuring precision of repeat annotation.
+Therefore we were measuring the specificity and sensitivity of repeat labeling
+of columns and specificity and sensitivity of identifying the correct repeat
+blocks; repeat block is maximal consecutive sequence of columns that are
+annotated as repeat. Block must have been identical to be counted as an
+correctly predicted.
+
+Another measure we were using is the relation of the error rate and the
+distance from the nearest repeat. Alignment column was considered as repeat if
+in the correct alignment at least one base of the column was annotated as an
+repeat. The distance is measured by the number of columns. This measure is more
+important, because it illustrate the effect of SFF-like model. In the parts
+that are distant from repeats, we do not expect improvement in the error rate
+over the 3-state model, but we expect to improve alignments around tandem
+repeats. 
 
 \section{Results of simulation experiments}
 
@@ -606,14 +630,33 @@ type, we have perturbed the parameters of Sunflower model randomly by at most
 $0.05$. On these models we run marginalized posterior decoding. The results are
 in the table \ref{TABLE:SFFMARGINALIZED}.
 
-Final simulations were investigating using different repeat fonding algorithm
-for masking methods. We used for masking correct intervals, Sunflower model
-(modified for finding tandem repeats as described in section \ref{}), TRF, and
-TRF with non-overlapping repeats (we select maximal scoring non-overlapping set
-of tandem repeats out of TRF output). We used soft-masking; we replaced masked
-bases with N symbol, that represents unknown base.
+Last we were investigating using different repeat finding
+algorithm for masking methods. We used for masking correct intervals, Sunflower
+model (modified for finding tandem repeats as described in section \ref{}),
+TRF, and TRF with non-overlapping repeats (we select maximal scoring
+non-overlapping set of tandem repeats out of TRF output). We used soft-masking;
+we replaced masked bases with N symbol, that represents unknown base. For
+decoding we used both the Viterbi and the posterior decoding. Results are in
+table \ref{TABLE:SFF3STATEMASK}. Apart from  using correct intervals, the best
+performing masking was used with non-overlapping repeats from TRF.
 
-masking methods and use of repeat masking,
+Additional metric we were investigating was the relation between error rate and
+the distance from the nearest repeat. Figure \ref{FIGURE:SFF_GRAPHS} contains
+graphs for this metric for various combination of parameters. In general, all
+algorithms has highest error rate near borders of the repeat, with the error
+rate lowering with the distance from the repeat. Most methods reach the
+baseline error rate within distance $10$ bases of the repeat border.
+
+Since we run many combinations of the model and algorithm, we can observe their
+effect on error rate near repeat borders. Figures \ref{FIGURE:SFFOVER} and
+\ref{FIGURE:SFFOTHER} suggests that decoding can improve error rate near
+repeats, but most of the drop in the error rate was caused by using SFF model.
+As with previous metrics, TANTAN with correct intervals performs similarly to
+SFF model, however, its error rate near repeat raises significantly where
+intervals were obtained from TRF (see Figure \ref{FIGURE:SFFTANTAN}). Using
+incorrect model did not have large effect also on this metric as we can see in
+the Figure \ref{FIGURE:SFFWEIRD}. Figure \ref{FIGURE:SFFBLOCKS} shows that when
+comparing block method, using block Viterbi double the error rate near repeat.
 
 
 \begin{reformulate*}
@@ -722,7 +765,10 @@ Muscle              & 5.62\% \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy for standard algorithms and other tools on simulated data.}\label{TABLE:SFFOTHER}
+\caption{Accuracy for standard algorithms and other tools on simulated data.
+Most of the methods did not annotate the alignment with tandem repeats and
+therefore relating metrics are not available.
+}\label{TABLE:SFFOTHER}
 \end{table*}
 
 \begin{table*}
@@ -781,25 +827,25 @@ Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \begin{center}
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=\textwidth]{../figures/error_graph_overview.pdf}
-\caption{Our methods and traditional methods}
+\caption{Our methods and traditional methods}\label{FIGURE:SFFOVER}
 \end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=\textwidth]{../figures/error_graph_other.pdf}
-\caption{Other methods}
+\caption{Other methods}\label{FIGURE:SFFOTHER}
 \end{subfigure}%
 
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=\textwidth]{../figures/error_graph_sffblock.pdf}
-\caption{Block decodings}
+\caption{Block decodings}\label{FIGURE:SFFBLOCKS}
 \end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=\textwidth]{../figures/error_graph_marginalized.pdf}
-\caption{Same method, different models}
+\caption{Same method, different models}\label{FIGURE:SFFWEIRD}
 \end{subfigure}%
 
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=\textwidth]{../figures/error_graph_sffvstantan.pdf}
-\caption{Sunflower and TANTAN}
+\caption{Sunflower and TANTAN}\label{FIGURE:SFFTANTAN}
 \end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=\textwidth]{../figures/error_graph_3statemasking.pdf}
@@ -808,7 +854,9 @@ Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \caption{
 Relation between error rate and the distance from the nearest repeat. On the Y
 axis is error rate of the algorithm; the number of incorrectly aligned columns.
-On the X axis is the distance from the nearest repeat.  
+On the X axis is the distance from the nearest repeat. Baseline is the overall
+error rate, with no relation to the distance from the repeat border, for
+3-state model with the Viterbi algorithm.
 }\label{FIGURE:SFF_GRAPHS} 
 \end{center}
 \end{figure}
