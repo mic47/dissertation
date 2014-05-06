@@ -1,6 +1,6 @@
 \chapter{Alignment with tandem repeats}
 
-Tandem repeat is a region in the gnomic sequence that contain two or more
+Tandem repeat is a region in the genomic sequence that contain two or more
 consecutive repetitions of the similar sequence.  Tandem repeats are important
 for sequence alignment, since more than $2\%$ of the human genome is covered by
 short tandem repeats, and they occurs in many genes and regulatory regions
@@ -15,7 +15,14 @@ repeats is hard, because it is not clear which copies of tandem repeat are
 orthologous (created by speciation, not duplication within same genome).
 Tandem repeat does not only affect quality of alignment within repetitive
 segments, but error spread into adjacent columns of an alignment, as we show in
-section \ref{}.\todo{Ujednot oznacenie repeatov a poctu opakovani}
+section \ref{}. \reformulate{Addtionally, comparative genomic methods are
+sensitive to the quality of underlying alignment, and even ssmall inaccuracies
+may lead to artifacts in the results of comparative methods.} \todo{Ujednot
+oznacenie repeatov a poctu opakovani}
+
+We introduce tractable model that explicitly accounts for tandem repeats. We
+additionally use the maximum expected gain framework to explore several decoding
+criteria for our model.
 
 \todo{Co je to tandem duplication}
 
@@ -64,6 +71,18 @@ individual occurrences of motifs. They combined profile HMM and pair HMM, and
 developed new decoding algorithm similar to the Viterbi algorithm. Despite
 usage of probabilistic models, their method was not probabilistic model. 
 
+\todo{check ci to tak naozaj je}
+\begin{reformulate*}
+Hudek \cite{Hudek2010} developed algorithm that is mixture of the Viterbi and
+posterior decoding. The algorithm was aimed to reduce the misalignments due to
+short tandem repeats with the consensus length $1$, for example $u=AA$ in the
+first sequence and $v=AAAAAAAAA$ in the second sequence. Algorithm developed by
+Hudek was considering all possible alignments of $u$ and $v$ in the final
+alignment. Algorithms goal was to segment alignment into blocks, such that each
+block contain gaps in at most one sequence. The cost of the block was the sum of
+the probabilities of all alignments of such block. The final alignments is
+created from blocks by the Viterbi algorithm.
+\end{reformulate*}
 
 \section{Models and Methods Searching Tandem Repeats}
 
@@ -407,7 +426,28 @@ $\lambda_{ID}$ and in expanded model we label states from submodel by label
 $R$, resulting in labeling function $\lambda_R$, distribution on annotations
 on alignments has also not changed. \todo{toto znie ako od hotentota}
 
+For consensuses in SFF model, we use $310,091$ motifs found by TRF program run
+on the human chromozome 15 and its orthologous sequences in the dog genome. The
+probability of choosing particular consensus was the observed frequency of the
+consensus in the TRF output. In practice, we limit the Sunflower submodels only
+to those which was found by TRF in the input sequence.  Additionally, the input
+sequence contain motif that is not in predefined set, we add it to the model
+with the probability of the least occurring motif in the model (this is necessary
+if we run our model on sequences that are not sampled from the model).
+
+We set parameters of the Sunflower submodel manually: the insert and delete
+rates were set to $0.005$, the match states allows mutations from consensus
+according to the JC model with parameters $t=0.05$.
 \todo{Ako je definovana pravdepodobnost emisie?}
+Parameters of the TANTAN submodels were estimated by the Baum-Welch algorithm
+\cite{Durbin1998} on 500 repeats sampled from SFF.
+
+The size of the TTP model depends on the length of the longest possible
+consensus TODO, while the size of the SFF model depends of the total lenght of
+all consensuses used. Therefore SFF can be exponentially larger than TTP model.
+On the other hand, SFF model models assumes that consensuses were developed
+independently, while the TTP model assumes that repetition evolves from the
+previous occurrence of the repetition.
 
 \begin{comment}
 By this we obtained model that 
@@ -460,6 +500,17 @@ Topology of both of these models are described in figure \ref{}.
 
 \end{comment}
 
+While decoding methods are Tandem repeats at orthologous positions in two
+species may share common ancestor and therefore share part of their evolutionary
+history. However, it is possible that they were consequently modified by
+additional evolution events after speciation (including more tandem
+duplications). In our model we ignore such complex evolution of repeats, because
+modeling it would lead to very complex model and increase the difficulty in
+decoding and training. Kováč {\it et. al} developed method added limited
+dependence by adding repeat submodels emitting copies in the two sequences at
+same time \cite{Kovac2012}.
+
+
 \section{Decoding methods}
 \begin{reformulate*}
 Tu popiseme ake dekodovacie metody pozname: viterbi, posterior, block \{viterbi,
@@ -476,7 +527,123 @@ following optimization criterias/algorithms: the Viterbi algorithm (VA), the
 posterior decoding (PD), the marginalized posterior decoding (MPD), block
 Viterbi algorithm (BVA) and block posterior decoding (BPD). The first three
 methods we used with expanded models, the latter two methods we used with
-generalized version of the model.
+generalized version of the model. We have already described first three
+algorithm in section \ref{}. Here we introduce the highest expected gain
+framework for pair HMM and formulate used algorithms using gain functions.
+
+\todo{uprav indexy}
+To be able to use highest expected framework, we will represent alignment using
+indices to sequences. In this scenario, alignment of length $t$ of sequences
+$X=x_1x_2\dots x_n$ and $Y=y_1y_2\dots y_m$ will be represented as sequence of
+tuples $(a_1, b_1), \dots (a_t, b_t)$ where $a_i\in \{0, \dots, n\}\cup\{-_0,
+\dots, -_n\}$ and $b_i \in \{1, \dots, m\}\cup\{-_0, \dots, -_m\}$. Number $i$
+represents $i$-th symbol in respective input sequence and $-_i$ represents gap
+in the sequence before position $i$. For example $(47, -_{42})$ means that
+$x_{47}$ is aligned to gap that is between $y_{41}$ and $y_{42}$.  Naturally,
+indices in $a_i$ and $b_i$ have to be non-decreasing, $a_0$ has to be $0$ or
+$-_{-1}$, $a_t$ is $n$ or $-_m$. The constrains for $b$ are analogous.
+
+\todo{Spravit to tak, ze budeme mat dvojice stav/anotacia a alignment cast co
+bola vygenerovana}
+The \firstUseOf{state path} of an alignment is the sequence of states $s_0,
+\dots, s_t$ such that $s_i$ generated pair $(a_i, b_i)$. Note that in the case
+of generalized pair HMM, several consecutive states in a state annotation (such
+as emissions of $R$ state in SFF and TTP models) can correspond to the same
+emission. \firstUseOf{Annotation} of an state path is same as for HMMs with one.
+Specially we will be interested in \firstUseOf{repeat annotation}, where
+annotation function $\lambda_R(u)$ is $R$ if state is $R$ state (or was created
+from $R$ state in the expanded version of the model) and $u$ otherwise (for
+match, insert and delete state). Repeat annotation $\lambda_R$ is equivalent to
+identity function for $3$ state HMM that does not explicitly model repeats.
+The probability of a state path and annotation is defined exactly as for 
+HMM that generates only one sequence.
+
+\todo{Treba sem nejako zakomponovat aj ostatne informacie, ako napriklad 
+zarovnanie, asi by to chcelo spravit nieco ako }
+Similarly as with regular HMMs, we can define gain functions for annotation
+$G(\Lambda, \Lambda')$ that corresponds to ``similarity'' of two alignments.
+Since PHMM define probability distribution $\Lambda_T$ of the correct
+annotation, we can define the expected gain of annotation given sequence $X$ and
+$Y$ and gain function $G$:
+
+\todo{uprav oznacenia tak, aby boli konzistentne s obycajnymi HMM}
+\begin{equation}
+E_{A_T}\left[G(\Lambda, \Lambda_T)\mid X, Y\right] = 
+\sum_{\Lambda_T}G(\Lambda, \Lambda_T)\prob{\Lambda_T\mid X, Y}
+\end{equation}
+
+Since we do not know the correct annotation, we search for the annotation 
+$\Lambda^*$ with the highest expected gain:
+
+\begin{equation}
+\Lambda^* = \arg\max_AE_{A_T}\left[G(\Lambda, \Lambda_T)\mid X, Y\right]
+\end{equation}
+
+Now we express optimization criteria of decoding methods we use within this
+framework. \todo{Pridat tam aj anotacie}
+
+\paragraph{The Viterbi algorithm}
+
+Gain $G_V(\Lambda, \Lambda_T)$ function for the Viterbi algorithms assigns $+1$
+if the predicted annotation $\Lambda$ is identical to true alignment
+$\Lambda_T$. Optimization algorithm was described in the section \ref{}.  The
+time complexity run in time $O(nmE)$ where $E$ is the number of non-zero
+transitions in the model. 
+
+\paragraph{Posterior decoding}
+
+In the Viterbi algorithm, the non-zero gain is awarded only if an annotation is
+entirely correct. Posterior decoding gain function $G_P$ is more gradual.  It
+assigns $+1$ for every correctly predicted alignment column. Alignment column
+$(a_i, b_i)$ is correctly predicted if there is identical alignment column in
+the true alignment. We will consider stricter version of the posterior decoding
+by adding additional condition: the corresponding alignment column in the
+correct alignment has to have same annotation, i.e. if $i$-th column is
+equivalent to $j$-th column in the correct annotation, then $\Lambda_i$ has to
+be equal to $\Lambda_{Tj}$. We use this stricter condition, because with
+expanded SFF and TTP it would treat repeats as gaps despite having orthologs in
+the other sequence (because our models treat such repeats independently).  For
+the 3-state HMM, this stricter condition does not have effect. The running time
+of the posterior decoding is again $O(nmE)$.
+
+\paragraph{Marginalized posterior decoding}
+
+Marginalized posterior decoding (gain function $G_M$) is similar to the
+posterior decoding. The only difference is that we treat all gaps to be
+identical despite their position in the sequence. Therefore we treat column $(i,
+-_j)$ to be same as $(i, -_k)$ (gaps in other sequence are treated
+symmetrically). The optimization of this gain function is almost identical to
+optimization of $G_P$. Only difference is that after computation of the
+posterior probabilities, we replace probability $(i, -_j)$ with the sum of $(i,
+-_l)$ of all $l$. The algorithms has also time complexity $O(nmE)$.
+
+\paragraph{Block decoding}
+\todo{Prekopat to tak, aby som nepouzival generalizovany model}
+
+Block decoding is variant po posterior decoding 
+
+This decoding method uses stricter gain function, that is defined over
+generalized pair hidden Markov models (therefore we use it on the generalized
+SFF or TTP). It can be viewed as an variant of posterior decoding; instead of
+columns we score emissions. If same emission exists in the true alignment,
+$+l$, where 
+
+it will require repetitive
+blocks to be correctly recognized. We split the alignment into blocks. Repeat
+blocks are maximal consecutive sequence of columns that are annotated as repeat
+by annotation function $\lambda_R$ and were generated by . Non-repeat blocks are other columns (each
+column is one block). Non-repeat blocks are scored exactly as in the posterior
+decoding. Repeat block
+
+Alternative definition can be using generalized version of SFF or TTP. Block
+decoding scores every correctly predicted emission by the number of emitted
+columns (repeat submodel emit sequence independently, therefore the number of
+columns is equal to the number of emitted labels). Therefore it can be seen as
+an variant of posterior decoding for generalized model.  
+
+\paragraph{Block Viterbi decoding}
+
+\paragraph{Model and algorithm combinations}
 
 \todo{Zopakuj gain funkcie, nech vieme co optimalizujeme}
 
