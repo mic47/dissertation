@@ -512,15 +512,6 @@ same time \cite{Kovac2012}.
 
 
 \section{Decoding methods}
-\begin{reformulate*}
-Tu popiseme ake dekodovacie metody pozname: viterbi, posterior, block \{viterbi,
-posterior\}
-Presnejsie:\\
-$*$ Viterbi\\
-$*$ Posterior (marginalized aj nie)\\
-$*$ Block viterbi\\
-$*$ Block posterior\\
-\end{reformulate*}
 
 In this part we describe several optimization criteria we have used. We used
 following optimization criteria: the Viterbi algorithm (VA), the
@@ -529,7 +520,9 @@ Viterbi algorithm (BVA) and block posterior decoding (BPD). The first three
 methods we used with expanded models, the latter two methods we used with
 generalized version of the model. We have already described first three
 algorithm in section \ref{}. Here we introduce the highest expected gain
-framework for pair HMM and formulate used algorithms using gain functions.
+framework for pair HMM and formulate used algorithms using gain
+functions.\todo{Mohol by si bud vyhodit tieto skratky, alebo ich zacat
+pouzivat}
 
 To be able to use highest expected framework, we will represent alignment using
 \todo{uprav indexy}
@@ -762,16 +755,12 @@ zakomponujem bronine poznamky + pridat casove zlozitosti}
 \end{comment}
 
 \section{Implementation details \& optimizations}
-\begin{comment}
-\begin{reformulate*}
-Implementacne detaily, optimalizacie, cachovanie
-Presnejsie:\\
-$*$ Banding, \\
-$*$ Konsenzy -- TANTAN vs SFF\\
-$*$ ako sa cachovali, spomenut ze ake rozne optimizacne kriteria by to mohlo mat\\
-$*$ Ako sa vyberali hinty pre block viterbi
-\end{reformulate*}
-\end{comment}
+
+In this section we summarize additional techniques we have used to decrease
+running time of decoding algorithms. The fastest decoding algorithms described
+above run in $O(nmE)$ time, which is still prohibitive for longer sequences.
+Additionally, block-based methods are even slower and needed way to address
+these problems.
 
 To reduce processing time, we implemented following optimizations:
 \begin{itemize}[itemsep=-1mm]
