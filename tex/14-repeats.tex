@@ -634,25 +634,37 @@ $O((n^2+m^2)E)$ time. Therefore the overall time complexity of the Block
 posterior decoding is $O(kn^2m^2 + (n^2+m^2)E)$. By same techniques we
 can optimize the block Viterbi decoding with same time complexity.
 
-\section{Implementation details \& optimizations}
+\section{Optimizations}
 
 In this section we summarize additional techniques we have used to decrease
 running time of decoding algorithms. The fastest decoding algorithms described
 above run in $O(nmE)$ time, which is still prohibitive for longer sequences.
-Additionally, block-based methods are even slower and needed way to address
-these problems.
-
-To reduce processing time, we implemented following optimizations:
+Additionally, block-based methods are even slower, so we need to use techniques
+to speed them up. We used following optimizations:
 \begin{itemize}[itemsep=-1mm]
-\item Banding: at first we align sequences using Muscle\cite{} to get guide
-alignment. We explore only alignments that were within 30 bases from the guide
-alignment.
+\item We implemented standard technique of banding. We restrict the alignment
+to window around guide alignment, that can be obtained by faster but less
+precise alignment algorithms. We used Muscle\cite{Edgar2004} with default
+parameters to compute guide alignment. The final alignment methods were
+restricted to be within 30 bases from the guide alignment. This technique
+reduce the $O(nm)$ term from the time complexity to $O((n+m)d)$ where $d$ is
+the distance from the guided alignment.
 
-\item TTP does is not dependent on consensus, however size of SFF is. Therefore
-we have used TRF program to find all candidate consensuses in input sequences
-and uses only those consensuses to build SFF.
+\item The size of the SFF model is enormous. It is not practical to use model
+with $310,091$ sunflower pairs. Therefore we used TRF program \cite{Benson1999}
+to find consensus motifs in the input alignment and used only those to build
+SFF model. Note that the transition probabilities to sunflower pairs were kept
+same as in the original model. In case that TRF did find consensus that was not
+in the original set of consensuses, we assign it the probability of the least
+occurring consensus from the original set. This technique was not applicable to
+TTP model.
 
-\item When using generalized models, time complexity of the decoding methods is
+\item To further reduce running time of the block Viterbi decoding and block
+posterior decoding, we restrict the intervals where the generalized state could
+emit sequences. We used repeat finders to get the list of possible intervals of tandem repeats in both sequences. Then we have
+\todo{Tu som TERAZ!}
+
+When using generalized models, time complexity of the decoding methods is
 very large.  Therefore to compensate for this drawback, we used TRF program to
 get list of candidate intervals where tandem repeats could occur. We use this
 intervals to restrict parts of the sequence where the repeat state $R$ could be
