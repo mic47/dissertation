@@ -28,6 +28,9 @@
 		\addtocounter{correctioncolor}{1}%
 		{\bf #2}%
 }}
+\renewcommand\correction[2]{%
+\pdfmarkupcomment[color=pink]{#1}{#2}%
+}
 
 \newcounter{todocolor}[page]
 \newcommand\todo[1]{%
@@ -44,6 +47,7 @@
 		{\footnotesize #1}%
 }%
 }
+\renewcommand\todo[1]{\pdfcomment{#1}}
 
 
 \newcommand\firstUseOf[1]{%
@@ -69,7 +73,7 @@
 \definecolor{greencolor}{RGB}{180, 255, 180}
 \definecolor{yellowcolor}{RGB}{255, 255, 180}
 \newcommand\notmytext[1]{\colorbox{redcolor}{#1}}
-\newcommand\reformulate[1]{\colorbox{bluecolor}{#1}}
+\newcommand\reformulate[1]{\pdfmarkupcomment[color=pink]{#1}{}}
 \newcommand\shadedtext[1]{\colorbox{shadecolor}{#1}}
 
 %\newcommand\qed[0]{$\square$}
