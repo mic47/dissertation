@@ -51,11 +51,6 @@ sequence ``CGACC'' was inserted.
 
 From evolutionary history described above, we can create an alignment of current
 sequences $X$ and $Y$ by removing ancestral sequences $X',Y'$ and $P$, 
-%\begin{verbatim}
-%X:      C C     G C G A C C T T G C             A C C A
-%Y:      T C T A G           C C           G A T A G C A
-%\end{verbatim}
-%We obtain actual alignment by 
 removing columns that contain only gaps and
 replacing gaps with dashes (gap symbols). 
 \begin{verbatim}
@@ -64,7 +59,6 @@ Y:      T C T A G - - - - - C C - - G A T A G C A
 \end{verbatim}
 In this alignment, symbols that are in the same column are truly homologous (they
 evolved from the same symbol in $P$).
-%If two residues are in same column in alignment then they are homologous.
 As you can see, homologous symbols do not have to be equal.
 \end{example}
 
@@ -84,12 +78,6 @@ In this section we will review basic methods for constructing alignments. We
 will discuss basic scoring schemes and algorithms that find optimal alignment
 under these schemes. In this thesis we cover mostly probabilistic methods,
 which are in section \ref{TODO} and chapter \ref{TODO}.
-
-%At first
-%we will discuss pair alignments (alignment of two sequences).
-%\correction{Later in this
-%chapter we will review some methods how to construct multiple alignments.}{urvat
-%ak to nie je pravda}
 
 \subsection{Scoring Schemes}
 
@@ -125,47 +113,6 @@ frequencies of the substitutions and indels of real alignments. Example of such
 matrices are PAM or BLOSUM matrices\cite{Durbin1998}. Additionally, scoring
 matrices can be also derived from theoretical models of evolution, one such
 example is Jukes-Cantor model\cite{Durbin1998}.
-
-\begin{comment}
-Intuition behind this scoring system is probabilistic. Assume that we have
-alignment of $X$ and $Y$ without gaps and that each base in DNA evolves
-independently. Therefore for every pair of residues $a,b$ there is probability
-that $a$ will evolve into $b$. We denote this probability as $p(a,b)$. Therefore the probability that $X$ will evolve
-into $Y$ is product of probabilities that $X_i$ will evolve into $Y_i$
-\[
-\prob{X\text{ evolved into }Y} = \prod_{i=0}^{|X|-1}p(X_i,Y_i)
-\]
-If $X$ and $Y$ were generated independently be some random model $R$, then probability that we see $X_i$
-and $Y_i$ is $\prob{X_i\mid R}\prob{Y_i\mid R}$ ($R$ usually samples symbols
-of sequence independently from some distribution). The probability that we $X$
-and $Y$ under model $R$ is
-\[
-\prob{X,Y\mid R} = \prod_{i=0}^{|X|-1}\prob{X_i\mid R}\prob{Y_i\mid R}
-\]
-As a measure of  $X$ and $Y$ being homologous we take the ratio of the
-probability that $X$ evolved into $Y$ and the probability that $X$ and $Y$ are
-independent.
-By taking logarithm of this ratio we have
-\[
-\log\left(
-\frac{\prob{X\text{ evolved into }Y}}{\prob{X,Y\mid R} }\right)
-= \sum_{i=0}^{|X|-1}\log\left(\frac{p(X_i,Y_i)}{\prob{X_i\mid R}\prob{Y_i\mid
-R}}
-\right)
-\]
-Therefore by setting $S[a,b]=\frac{p(a,b)}{\prob{a\mid R}\prob{b\mid R}}$ we have one
-possible scoring model. $S[a,b]$ is positive if is more likely that $a$ evolved
-into $b$ and negative if it is more likely that $a$ and $b$ were generated
-independently.  Values of $S$ are usually probabilities multiplied by some
-constant and rounded to integers to avoid use of floating point numbers. 
-
-There are two ways of deriving substitution matrices. One way is to derive them
-from alignments that were constructed manually by biologists. Such matrices are
-for example PAM or BLOSUM matrices. Other possible solution is to use a
-theoretical model of evolution, for example Jukes-Cantor model. More details can
-be found in \cite{Durbin1998}.
-\end{comment}
-
 
 \subsection{Needleman-Wunsch algorithm}
 \label{SECTION:NEEDLE}
@@ -237,9 +184,6 @@ Note that if $g$ is not zero, then $F$ would take as input the matrices $M,M_X,$
 and $M_Y$ and compute $M[i,j],M_X[i,j],$ and $M_Y[i,j]$ according 
  equations
 \ref{ALIGN:ALGO:REALAFFINESTART}-\ref{ALIGN:ALGO:REALAFFINEEND}
-%For simplicity, we will assume that both sequences has same length $n$. This
-%will allow us to express complexity in simple way.  At first we show how
-%to compute compute those algorithms in $O(n^2)$ time and $O(n^2)$
 
 The Needleman-Wunsch algorithm can be implemented by the following code. For simplicity 
 we show only computation of matrix $M$.
@@ -332,8 +276,6 @@ and $Y$ we can assign a state from $\pi$ that generated that symbol.  However,
 given only two sequences $X$ and $Y$ and no state path, it is not possible to
 determine which symbols of the two sequences were generated together.
 
-%Before we continue, we will define cumulative duration times which will make
-%further expressions simpler.
 \todo{koniec feedbacku}
 
 \begin{definition}
@@ -366,32 +308,6 @@ match columns, insert states represent gap).  Finding the most probable state
 path for this HMM is equivalent to the Needleman-Wunsch algorithm with affine gap
 model \cite{Durbin1998}.
 
-%\begin{figure}
-%\begin{center}
-%\includegraphics{../figures/simplePairHMM.pdf}
-%\end{center}
-%\caption[Example of pair hidden Markov model.]{
-%State $M$ generates aligned pairs of residues residues, state $I_X$ ($I_Y$) generates
-%symbol only in the first (second) sequence.
-%}\label{FIGURE:EXAMPLEPAIRHMM}
-%\end{figure}
-%\section{Use of Pair Hidden Markov Models}\label{SECTION:SIMPLEPHMM}
-
-
-%We can divide states of pHMM into three types.  Ones that generates symbol in
-%both sequences (match states), states that generates symbol in only one sequence
-%(indel states) and silent
-%states. If pHMM generates  symbols in both sequences we consider those symbols
-%to be homologous. We will consider symbols that were not generated by such state
-%as indels. Alternative view is to imagine that indel states generate symbol in
-%one sequence and gap symbol in the second sequence. In such view pHMM generates
-%an alignment.
-
-%Now we show classical pHMM for sequence alignment. It is equivalent to scoring
-%scheme of Needleman-Wunsch algorithm with affine gap model. It consists of three
-%states: one that generates aligned pairs, and two states for generating
-%indels (one for each sequence). Model is shown in figure \ref{FIGURE:SIMPLEPHMM}. 
-%
 \begin{figure}
 \begin{center}
 \includegraphics{../figures/pairHMM.pdf}
@@ -404,14 +320,6 @@ and states $I_X$ and $I_Y$ generates symbols only in $X$ or $Y$ respectively.
 Initial distribution is uniform.
 }\label{FIGURE:SIMPLEPHMM}
 \end{figure}
-
-%As mentioned before, score of the alignment is the probability of state path
-%that correspond to such alignment. Therefore we can find the alignment with
-%highest score by two dimensional version of Viterbi algorithm. Advantage of
-%using this model instead of the Needleman-Wunsch algorithm is that pHMM gives
-%probabilistic explanation of the alignments. 
-
-
 
 \end{example}
 
@@ -509,17 +417,6 @@ is the number of states of a pHMM and $d$ is the maximum duration length \cite{M
 GpHMMs were successfully used for gene-finding
 \cite{SLAM2003,Alexanderson2004,Majoros2005,Meyer2002}. 
 
-%Recall from section \ref{SECTION:PAIRHMM} that a pair HMM generates two
-%sequences simultaneously and that from state path we are able to recover
-%annotation.
-
-
-%In following sections we will review several pHMMs and GpHMMs that were used to
-%sequence alignments or other purpose, for example gene finding. We will review
-%the application domain of the model, its topology, decoding function, parameter
-%estimation and optimisation heuristics. But at first, we have to introduce small
-%biological background.
-
 \subsection{Decoding Methods}
 
 In this section we review three decoding methods that were used in literature to
@@ -605,15 +502,6 @@ states of pHMM), we can find the alignment that maximizes the desired
 function in $O(|X||Y|)$ time. Therefore the time complexity of the PD and MPD is 
 $O(|X||Y|k^2)$ \cite{Lunter2008}. 
 
-%Other decoding method can be done by the poster
-%Other option is to
-%use the  Posterior decoding: for every pairs of residues $X[i],Y[j]$ we compute
-%posterior probability that $X[i]$ and $Y[j]$ are aligned $\prob{X[i]\sim Y[j]\mid X,Y,H}$.
-%Score of an alignment is sum of posterior probabilities of the aligned residues.
-%Later in this chapter we show different variants of the Posterior decoding for
-%pHMM.
-
-
 \subsection{Pair Hidden Markov Models with Gene Structures}
 
 In this section we describe several pair hidden Markov models (or generalized
@@ -642,11 +530,6 @@ substructure is a single state emitting codons (triplets that will be translated
 into amino acids).  There is one additional intron substructure connected to
 states that generate intergenic regions. This additional intron substructure is
 in the model to avoid detecting of pseudogenes. The GpHMM has $54$ states.
-
-%Every such
-%structure has three version: one matching version, which emit aligned residues
-%and one structure per sequence to emit indels.  Overview of DoubleScan's HMM
-%structure is in figure \ref{}. 
 \nocite{Meyer2002}
 
 Emission probabilities of the {\it match exon} state were estimated from
@@ -1039,23 +922,6 @@ to these algorithms. Some of the techniques will not be universally applicable.
 With these techniques, alignment algorithms could be used with sequences much
 longer than several thousand bases.
 
-%effectively and describe several methods how to decrease memory footprint and/or
-%time complexity. 
-
-%As in previous case, values of $M,M_X$ and $M_Y$ can be computed by simple
-%dynamic programming and by back-tracing these matrices we can obtain optimal alignment of
-%$X$ and $Y$.  Both algorithms have time complexity of $O(nm)$ and memory
-%complexity $O(mn)$.  Using tricks described later, the memory and even time
-%complexity will be improved.
-
-\begin{comment}
-In this section, we review several techniques that can be used to improve
-performance of dynamic programming used to compute sequence alignment.  This is
-important, because algorithms described above can be used with sequences that
-are several thousands bases long. Full genomes can be several billions bases
-long and using naive approach is not tractable. 
-\end{comment}
-
 \subsection{Restricting Search Space}
 
 One commonly used technique for speedup (and decreasing memory requirements) of
@@ -1115,14 +981,6 @@ short alignment which we expect to be in the optimal global alignment.
 However, local alignment tools give local alignments that do not have to be
 consistent with each other. A set of local alignments is consistent if all
 local alignments can be together in one global alignment.
-\begin{comment}
-Let $A$ and $B$ be a
-local alignments of sequences $X$ and $Y$ and $(i,j)$ be the position of the
-last alignment column of $A$ in the dynamic programming matrix and $(k,l)$ be
-the position of the first alignment column of $B$ in the dynamic programming
-matrix. Then $A$ and $B$ are consistent if $i<k$ and $j<l$.  Therefore we need
-to choose a consistent subset of alignments.
-\end{comment}
 
 SSA chooses a consistent set of local alignments  by a simple greedy method,
 always adding highest-scoring alignment consistent with those selected so far.
@@ -1134,20 +992,9 @@ for some user defined constant $\tau$. Similarly, $Y_j$ can be aligned to
 positions from $i-\tau$ to $i+\tau$. This technique is also called \firstUseOf{banding},
 and it is often used. We used this technique in chapter \ref{TODO}.
 
-\begin{comment}
-Time complexity and memory requirements of the stepping-stone algorithm are of
-order of $O(\sqrt{|X|^2+|Y|^2})$ under the assumption that the maximum area between
-two anchors is independent of the sequence length \cite{Meyer2002}.
-\end{comment}
-
 \subsection{Reducing memory complexity}
-\begin{comment}
-Checkpointing is a general technique in dynamic programming, which allows reduce
-the number of rows of the dynamic programming matrix to $O(\sqrt n)$ while
-doubling the running time
-\cite{Grice1997}. 
-\end{comment}
-One general technique to reduce the memory requirements of dynamic programing is \firstUseOf{checkpointing} \cite{Grice1997}.
+One general technique to reduce the memory requirements of dynamic programing
+is \firstUseOf{checkpointing} \cite{Grice1997}.
 
 In order to compute the $i$-th row of matrix $M$, we need only row $i-1$. As
 mentioned in section \ref{SECTION:NEEDLE}, to compute the score of the best
@@ -1178,27 +1025,6 @@ that $X_i$ is aligned to gap that comes right after $X_j$.
 The algorithm then uses such $j$ to determine submatrices $M_1,M_2$ and finds alignments in them recursively.
 The optimal alignment is a concatenation of optimal alignments in matrices $M_1$ and
 $M_2$.
-
-\begin{comment}
-To determine $j$, such that $X_i,i=\lceil n/2\rceil$ is aligned to $Y_j$ (or
-$X_i$ is aligned to gap right after $Y_j$) HA uses following algorithm: Let
-$B(X,Y)$ be the algorithm, that computes for $X$ and $Y$ vector $LL(k)$, where
-$LL(k)=M[n-1,k]$ ($LL$ is the last row of $M$). This can be computed in
-$O(nm)$ time and $O(n+m)$ memory using algorithm from section
-\ref{SECTION:NEEDLE}.  
-
-We compute a vector $LL_1=B(X[0:i],Y)$. $LL_1[k]$ contains score of the optimal
-alignment of $X[0:i]$ and $Y[0,k]$. Let $LL_2[k]$ contains score of the optimal
-alignment of $X[i,n]$ and $Y[k,m]$. Then $LL_2=B( (X[i,n])^R,Y^R)^R$.
-%which is the last row of the 
-%dynamic programming matrix applied to the left part of matrix $M$, and $LL_2=B(
-%(X[i,n])^R,Y^R)$, which is the last
-%.
-%While $LL_1[k]$ contains score of optimal alignment of $X[0:i]$ and $Y[0:k]$,
-%$LL_2^R[k]$ contains score of optimal alignment of $X[i,n]$ and $Y[k,m]$.
-Searched column $j$ is column that maximizes $\max\{LL_1[j]+d+LL_2[j],
-LL_1[j-1]+LL_2[j] \}$.
-\end{comment}
 
 Since total size of the two subproblems is always at most half of the size of
 the original problem, the running time of the algorithm will be roughly double
@@ -1302,19 +1128,6 @@ output border in time $O(n'+m')$ by the SMAWK algorithm.
 Now we show how to divide matrix $M$ into several submatrices so that
 it is possible to efficiently represent matrices $DIST$ and $OUT$.
 
-%Let $M$ be dynamic programming matrix for alignment algorithm for some sequences
-%$X$ and $Y$. Let $M' =
-%M[i:j,k:l]$ be rectangular submatrix of $M$. Values of $M'$ depends on 
-%values cells in submatrices $M[i-1,j:l]$ and $M[i:k,j-1]$ and on value
-%$M[i-1,j-1]$. Let $I_{M'}$ be the set of such cells. Let $O_{M'}$ be the 
-%the set of cells in $M[i-1,j:l]$ and $M[i:k,j-1]$ (the cells in the top row or
-%right column of $M'$). Let $I_0,I_1,\dots$ be enumeration of cells in $I_{M'}$
-%and $O_0,O_1,\dots$ be enumeration of cells in $O_{M'}$.  Now we will construct
-%the  matrix $DIST_{M'}$ of size $|I_{M'}|\times|O_{M'}|$ where  
-%$DIST_{M'}[i,j]$ is the cost of optimal alignment from cell $I_i$ to cell $O_j$.
-%Let $OUT[i,j]=I_i+DIST[i,j]$. Both $DITS$ and $OUT$ are totally monotone with
-%convex condition 
-
 
 \subsubsection{LZ78 factorization}
 
@@ -1335,11 +1148,6 @@ defines a rectangular submatrix $B_{i,j}$ of $M$.  All $B_{i,j}$ are
 disjoint and all blocks cover matrix $M$. We say that block $B_{k,l}$ is
 a predecessor of block $B_{i,j}$ if one of the following conditions is true:
 
-%If we want to align sequences $S$ and $T$, we factorize $S$ and $T$
-%into sequences of strings $\{S_i\}_{0\leq i < k_s}$ and $\{T_i\}_{0\leq i<
-%k_t}$. Every pair $(S_i,T_j)$ defines rectangular block of matrix $M$.
-%We say that $(S_k,T_l)$ is predecessor of $(S_i,T_j)$ if one of the following
-%conditions is true:
 
 \begin{itemize}[itemsep=-1mm]
 \item $X_k$ is predecessor of $X_i$ and $l=j$
@@ -1351,7 +1159,6 @@ Note that every block has $0,1$ or $3$ predecessors. Only block
 $B_{0,0}$ has $0$ predecessors and only blocks $B_{i,0}$ and $B_{0,i}$
 ($i>0$) have only $1$ predecessor.  
 
-%\todo{Mozno by nebolo odveci popisat aj tu strukturu, ak bude cas} NEBUDE
 {\it Crochemore et al.} described a data structure that represents $DIST$ and $OUT$
 matrices for  \nocite{Crochemore2002} individual blocks $B_{i,j}$. Structures
 for $B_{i,j}$ can be
@@ -1360,495 +1167,3 @@ $O(|X_i|+|Y_j|)$. Details of this algorithm can be found in
 \cite{Crochemore2002}. Time complexity of this algorithm is proportional to the
 sum of the sizes of all blocks, which is $O(n^2/\log n)$ where $n$ is the length
 of the longer sequence.
-
-
-\begin{comment}
-\section{Algorithmic Improvements For HMMs}
-\label{SECTION:ALGORITHMICIMPROVEMENTS}
-
-
-In this section we review implementation details and several algorithmic
-improvements of the Viterbi algorithm and the Posterior decoding for HMMs and
-pHMMs. Mostly we will assume that HMMs does not have silent states.  Most of these
-techniques are easily adjustable to HMMs with silent states. 
-
-\subsection{Basic Implementations}
-
-Implementation of the Viterbi algorithm and the Forward-Backward algorithm can be
-done by a two-dimensional dynamic programming, similarly as with the sequence
-alignment. Let $H$ be an HMM, $V[i,v]$ be  $n\times m$ matrix where $n$ is the
-length of the sequence and $m$ is the number of states of the HMM. $V$ will be the
-dynamic programming matrix for the Viterbi algorithm or the Forward algorithm.
-
-Code for the Viterbi algorithm is following:
-\begin{lstlisting}
-Initialize D[0,*]
-for i = 1...n-1:
-  for v = 0...m-1:
-    V[i,v] = max    [u=0...m-1] V[i-1,u]*[v,X[i]]*a[u,v]
-    B[i,v] = argmax [u=0...m-1] V[i-1,u]*[v,X[i]]*a[u,v]
-statePath[n-1] = argmax [u=0...m-1] V[n-1,u]
-for i=n-1...1:
-    statePath[i-1] = B[i,statePath[i]]
-\end{lstlisting}
-
-This algorithm runs in $O(nm^2)$ and requires $O(nm)$ memory. Note that values
-of row $V[i,\cdot]$ and $B[i,\cdot]$ are computed from rows $V[i-1,\cdot]$ so if
-we want just the probability of the most probable state path, we need to
-remember only last two rows of $V$ (and we do not need $B$) so the memory
-requirements will be $O(n+m)$. If we replace on line $4$ maximum with summation
-and remove lines $5-8$, we will obtain the Forward algorithm. Lines $6-8$
-implements back-tracing procedure, which will be omitted in the Forward
-algorithm. The Backward algorithm is analogous to the Forward algorithm.
-
-Note that if $a[u,v]$ is zero, then value on the right side of lines $4$ nd $5$
-is zero. Therefore we have to iterate only for such $u$, that $u\to v$ is
-transition in $H$. By this we will reduce time complexity to $O(n(m+t))$ where
-$t$ is the number of transitions of $H$ not only for the Viterbi algorithm, but
-also for the Forward algorithm and the Posterior decoding.
-
-\end{comment}
-
-\begin{comment}
-\section{Non-Affine Gap Models} 
-
-
-%\todo{Mozno by sa dalo dodat aj viac citacii} 
-The reasons why affine gap models are
-used in sequence alignment are that they are simple, easy to compute and give
-reasonable results. While affine gap scoring works fine for short gaps, penalty
-for long gaps is too high. Use of different gap models can improve quality of
-reconstructed alignments \cite{Gill2004,Cartwright2009}.
-
-Let $f(x)$ be the gap penalty for a gaps of length $X$.
-In 
-affine gap models, this function has the form $f(x)=g+dx$. For general gap function, we have to
-reformulate equation \ref{ALIGN:ALGO:AFFINE} for computing the highest scoring
-alignment in following way:
-\begin{align}
-M[i,j] &= \max
-\begin{cases}
- M[i-1,j-1]+S(X_i,X_j)\\
- \max_{x\leq j}M[i,j-x]+f(x)\\
- \max_{x\leq i}M[i-x,j]+f(x)
-\end{cases}, 0<x\leq i<n\label{ALIGN:ARBITRARYGAPEQUATION}
-\end{align}
-This algorithm has time complexity of $O(n^3)$, where $n$ is the length of the
-longer sequence. Note that this was the original Needleman-Wunsch 
-algorithm \cite{Needleman1970}, and later it was improved to $O(n^2)$ algorithm
-\cite{Sankoff1972} for alignment with linear gap penalties.
-Unlike previous recursive equations, in this algorithm $M[i,j]$ depends not
-only on neighbouring cells, but also on all previous cells in the same row and column.
-Therefore some memory-saving techniques like Hirschberg algorithm or checkpointing cannot be
-used with general gap penalties.
-
-
-\subsection{Convex/Concave Gap Functions}\label{SECTION:CONVEX}
-
-Arbitrary gap penalties increased running time of the Needleman-Wunsch algorithm
-by factor of $O(n)$. However if we place some
-restrictions on the  gap penalty function, we can use faster algorithms. In this
-section, we
-show an algorithm that computes the optimal alignment in $O(nm\log n)$ time if
-the gap
-penalty is convex or concave. In some cases this algorithm can be improved to
-$O(nm)$ time. This algorithm was discovered independently by Miller
-{\it et al. (1988)} and Galil {\it et al. (1989)} \nocite{Miller1988,Galil1989}.
-
-We will present a variant of $O(nm\log n)$ algorithm for convex gap functions which
-we believe is easiest to explain . Algorithm for concave gap function is similar.
-We consider only convex functions defined on natural numbers (gap length can be only
-natural number). Our definition of convex function is similar to one used in
-\cite{GusfieldBook}.
-
-
-\begin{definition}
-We assume that $f(x)$ is a  function defined on natural numbers. Function $f$
-is convex if and only if 
-\[f(x+1)-f(x)\geq f(x)-f(x-1)\]
-for all $x\in\mathbb{N}$.
-\end{definition}
-\begin{note}
-It is easy to show that if $f$ is convex then $f(x+d)-f(x) \leq f(x+e+d) -
-f(x+e)$ for nonnegative $d$ and $e$.
-\end{note}
-
-We will improve dynamic programming that computes matrix $M$ using equation
-\ref{ALIGN:ARBITRARYGAPEQUATION}. The increase in running time is caused by two
-terms: $M[i,j-y]+f(y)$ and
-$M[i-x,j]+f(x)$. In dynamic programming from section \ref{SECTION:NEEDLE} we  have
-to add additional nested cycles that go through all values $x$ and $y$. We show
-a data
-structure that can compute $\max_{0\leq y < j}M[i,j-y]+f(y)$ in $O(\log n)$
-amortized time.
-This data structure can also handle the second problematic term, but we
-will describe only the first one. First we change the variable in the
-maximization so that we maximize
-
-%$\max_{0\leq y < j}M[i,j-y]+f(y)$ is equivalent to
-\begin{equation}
-\max_{0\leq k < j}M[i,k]+f(j-k)\label{CONVEX:MAXFUNCTION}
-\end{equation}
-which is equivalent to the original expression from the equation
-\ref{ALIGN:ARBITRARYGAPEQUATION}.  Our data structure is a list $L_j$ containing
-values of 
-$k$ that can become maximum for future values of $j$. We will try to keep this list as small as
-possible. List $L_j$ will be a called \firstUseOf{candidate list} and members of $L_j$
-will be called \firstUseOf{candidates}. Rank of candidate $k$ is the value
-$G(k,j)=M[i,k]+f(j-k)$. To compute $M[i,j]$ we iterate over values of $k$ in
-$L_j$ and find the one with the highest rank.
-%$L_j$ is candidate list for computing $M[i,j]$. 
-List $L_{j+1}$ will be computed from $L_j$ by adding $j$ and
-removing some elements of $L_j$. 
-%For simplicity, let $G(k,j) = M[i,k]+f(j-k)$.
-%If $k\in L_j$, than \firstUseOf{rank} of $k$ is $G(k,j)$. 
-Note that the rank of
-candidates will change when we move from $L_j$ to $L_{j+1}$.
-
-We will explain this algorithm in iterative way: we will be adding to algorithm
-new features until it will have desired time complexity. 
-
-%Let $L_j$ be the list of such $k$'s. We will call $L_j$ a \firstUseOf{candidate
-%list} and members of $L_j$ \firstUseOf{candidates}. $L_j$ will be created from
-%$L_{j-1}\cup\{j-1\}$ by removing some elements. Let $G(k,j) =
-%M[i,k]+f(j-k)$.  \firstUseOf{Rank} of candidate $k$ is $G(k,j)$.  i
-The trivial algorithm includes all values smaller than $j$ in $L_j$.
-%We start with $L_j$ containing all $k$ that are smaller then $j$.  We can find
-%element with maximal rank by computing rank for all candidates from candidate
-%list $L_j$. 
-This leads to $O(j)$ time for finding maximum and $O(1)$ for update
-from $L_i$ to $L_{i+1}$
-%candidate list (we have to add element $j$ to list $L_{j}$ to create
-%list $L_{j+1}$). 
-This is equivalent to the original Needleman-Wunsch algorithm
-\cite{Needleman1970}. 
-We will use the following lemma to
-decrease size of candidate lists. This lemma and proof is  slightly modified
-from 
-\cite{GusfieldBook}.
-
-
-\begin{lemma}\label{OneStrikeAndOut}
-If $G(k,j)\leq G(k',j)$ for some $k<k'<j$, then
-$G(k,j')\leq G(k',j')$ for all $j'\geq j$. 
-\end{lemma}
-
-
-\begin{proof}
-
-Inequality $M[i,k]+f(j-k)\leq M[i,k']+f(j-k')$ implies that
-$M[i,k]-M[i,k']\leq f(j-k')-f(j-k)$. From convexity of $f$ we have
-$f(j-k')-f(j-k)\leq f(j'-k')-f(j'-k)$, and therefore
-$M[i,k]-M[i,k']\geq f(j'-k')-f(j'-k)$ which 
-is equivalent to
-$M[i,k]+f(j'-k)\leq M[i,k']+f[(j'-k')$ or $G(k,j')\leq G(k',j')$.
-
-\end{proof}
-
-Using this lemma, we can improve our algorithm.
-Once we find out that $G(k,j)\leq
-G(k',j)$, for $k<k'$, we can remove $k$ from $L_{j'}, j'\geq j$ without
-affecting the result
-of the algorithm, because rank of $k$ will remain smaller than rank of $k'$ for
-all $j'\geq j$.
-When we move from $j$ to $j+1$, we therefore set $L_{j+1}=L_{j}\cup\{j\}$ and
-then
-we remove from $L_{j+1}$ that candidates that have lower or equal rank than the 
-candidate following them in the list.
-%when we move from
-%$j-1$ to $j$ we add set $L_j=L_{j-1}\cup\{j-1\}$ and we compute $G(k,j)$ for
-%all $k\in L_j$ and remove all such $k$ where there exists $k'\in L_j$ such that
-%$G(k',j)\geq G(k,j)$. i
-This can be done in $O(|L_{j}|)$ time. Candidates in the resulting list,
-$L_{j+1}$ will have decreasing rank. Therefore the first item in
-$L_{j+1}$ is the maximal one, so we can find it $O(1)$ time.  This change
-does not improve the worst-case behaviour of our algorithm, but it might
-significantly reduce the  size of $L_j$ in practice. 
-
-
-Using this algorithm, $L_j$ will be always ordered by rank. However when we move
-from $j$ to $j+1$, the ranks will change, and we have to remove some elements 
-to restore this property. The algorithm can be improved if we can compute the column in
-which two adjacent  candidates will brake the ordering.
-
-%Nice property of $L_j$ is that it's members are ordered by rank. However, 
-%when we move to column $j+1$, ranks of candidates will change and order might be
-%broken and therefore we have to traverse through whole $L$ to fix that.
-\begin{definition}
-For $k<k'$, let $H(k,k')=l$ be the minimal $l$ such that $G(k,l)\leq G(k',l)$. If such $l$ does
-not exists,  $H(k,k')=\infty$ 
-\end{definition}
-
-If the rank of $k$ is greater than the rank of $k'$ then $H(k,k')$ is the first
-column $j'$
- where the rank of $k$ is less than or equal to the
-rank of $k'$. Candidate $k$ will be removed in column $j'$, or possibly earlier.  Note that
-such $l$ can be found using binary search (based on lemma \ref{OneStrikeAndOut})
-in $O(\log n)$ time for any convex function. For some convex functions we can
-find it analytically in constant time.
-
-
-We can further decrease the size of the candidate list using the following
-lemma.
-
-\begin{lemma}\label{TimeLemma}
-Let $k,k',k''\in L_j$ and $k<k'<k''$. If $H(k,k')\geq H(k',k'')$, element $k'$ can be
-removed from $L_j$.
-\end{lemma}
-
-\begin{proof}
-Since candidates in $L_j$ are ordered by rank, $G(k,j)>G(k',j)>G(k'',j)$.
-From definition of $H$ we know that 
-$G(k',j')\leq G(k'',k')$ for  all $j'\geq H(k',k'')$. Since
-$H(k,k')\geq H(k',k'')$, then $G(k,j')\geq G(k',j')$ for all $j'<H(k,k'')$.
-Therefore the rank
-of $k'$ will never be maximum and $k'$ can be removed.
-
-%and both are in $L_j$ then $k$ has higher rank that $k'$. Therefore
-%it is not maximum. $k'$ have in $H(k',k'')$ lower rank and will be removed from
-%candidate list (using lemma \ref{OneStrikeAndOut}). However, since $H(k,k')\geq
-%H(k',k'')$ rank of $k'$ will never be maximum.
-\end{proof}
-
-Now we can formulate the final algorithm. After updating $L_j$ from $L_{j-1}$,
-$L_j$ will satisfy the following invariant.
-\begin{invariant}\label{LogGapInvariant}
-All consecutive elements $k,k'$ in $L_j$ satisfy the following properties:
-\begin{enumerate}[itemsep=-1mm]
-\item $k<k'$
-\item $G(k,j)>G(k',j)$ (decreasing rank)
-\item if $k'$ is not the last element of $L_j$ and $k''$ is the element
-following $k'$
-in $L$, then $H(k,k')> H(k',k'')$ (increasing ``time'' when consecutive
-candidates will brake the ordering of ranks)
-\end{enumerate}
-\end{invariant}
-
-Since the rank is decreasing, we can find the maximum in $O(1)$ time. Now we show how
-to compute $L_{j+1}$ from $L_j$. Let $L$ be our working list,
-$L[k]$ be its $k$-th element, and $l$ be the index of the last element of $L$. 
-List $L_{j+1}$ can be computed by the following algorithm. 
-\begin{enumerate}[itemsep=-1mm]
-\item $L=L_j$
-\item $L_{j+1}=L\cup\{j\}$.
-\item If $G(L[0],j+1)\leq G(L[1],j+1)$ then remove $L[0]$ from
-list (lemma \ref{OneStrikeAndOut}).
-\item While $H(L[{l-1}],L[{l}])\leq H(L[l-1],L[l-2])$ or $G(L[l],j+1)\geq
-G([l-1],j+1)$, remove $L[l-1]$ from the list (lemma
-\ref{TimeLemma} and lemma \ref{OneStrikeAndOut}).
-\end{enumerate}
-
-The first element is also the first element that can break order, so we have to
-test it (step 3). Since we add candidate $j$, we have to remove from the end of
-the list all candidates with smaller rank than $j$ and those that can be removed
-based on lemma \ref{TimeLemma} and lemma \ref{OneStrikeAndOut}.  Since both
-ranks and times are ordered, we need to remove candidates only from the end of
-the list.
-
-It is easy to see that if $L_j$ satisfies the invariant, $L_{j+1}$  satisfy it.
-It is also clear that this algorithm will never remove any candidate that will
-be the maximum later, which implies the correctness of the algorithm.
-
-The algorithm described above has running time $O(l\log(n))$, but the amortized time
-complexity for computing all columns of one row of matrix $M$ is $O(n\log n)$ since every candidate will
-be added/removed to/from list at most once. If we can compute function $H$ in
-constant time, the time complexity is $O(n)$.
-
-Using this algorithm, we can compute the optimal alignment with convex gap functions in
-$O(nm\log n)$ time and in $O(nm)$ time  if $H$ can be computed
-in constant time.
-
-There is also a more complicated $O(nm\alpha(n))$ algorithm for this problem
-\cite{Klawe1990}, where $\alpha(n)$ is the inverse Ackermann function. This algorithm
-is very complex, and we doubt that it is useful in practice. However, we are
-not aware of any experimental comparison of these two algorithms.
-
-
-
-
-%tu chcem definiciu convexnej gap funkcie
-%algoritmus ktory je v case n^2 log(n)
-%algoritmus, ktory bezi v case n^2 alpha(n)
-%kubicky algoritmus v worstcase, ale prakticky konstantny (budem musiet najst 
-%citaciu -- nepodarilo sa mi to najst. Zaujimave\ldots)
-
-\end{comment}
-
-\begin{comment}
-\subsection{Using Sequence Repetition}
-
-This techniques uses dictionary based encoding schemes to speedup calculation of
-algorithms. We will show how to use this technique to Forward algorithm. Details
-about how to use this technique to other algorithms can be found in
-\cite{Lifshits2009}.
-
-
-Idea of this speedup is that we reformulate Forward algorithm into sequence of
-matrix multiplications.
-Let $H=(\Sigma,V,I,e,a)$ be a HMM, $|V|=m$.  Let $M_x[u,v]=a_{u,v}e_{v,x},
-u,v\in V,x\in \Sigma$ be the $m\times m$ matrix and $I_x[u]=I_ue_{u,x}$ be
-$1\times m$ vector. Matrix $M_x[u,v]$ corresponds to the transition from the
-state $u$ to the state $v$ with emission of $x$ from the state $v$.
-
-\begin{lemma}\label{LEMA:MATRIXMULTI}
-Let $X=X_1\dots X_n$ be a sequence, $H$ be a HMM and $M_x$ and $I_x$ defined as above and
-$F[i,\cdot]$ be row vector from the Forward algorithm.
-Then
-\begin{align}
-F[0,\cdot] &= I_{X_0}\\
-F[i,\cdot] &= I_{X_0}\prod_{j=1}^i M_{X_j}
-\end{align}
-for all $i< n$.
-\end{lemma}
-
-\begin{proof}
-We prove this lemma by induction.  If $|X|=1$ then
-$F[0,v]=I_{X_0}[v]=I_{v}e_{v,X_0}$ for all $v\in V$.  Assume that for
-$F[k,:] = I_{X_0}\prod_{j=1}^k M_{X_j}$ (note that the  product of zero matrices
-is the identity matrix). We have 
-\begin{align*}
-\left(I_{X_0}\prod_{j=1}^{k+1} M_{X_j}\right)[v] &= 
-\left(F[k,:] M_{X_{k+1}}\right)[v]\\ &= \sum_{u\in V} F[k,u]
-M_{X_{k+1}}[u,v]\\ &= \sum_{u\in V} F[k,u] a_{u,v}e_{v,X_{k+1} } \\&= F[k+1,v] 
-\end{align*}
-for all $v$. 
-\end{proof}
-
-Consequence is that we can write the Forward algorithm as the sequence of
-multiplications of $|\Sigma|$ different matrices. Since matrix multiplication
-is associative, we can use repetitive patters to speedup the calculation. 
-Let $x$ be a subsequence of $X$ that has $k>1$ non-overlapping occurrences in $X$.
-We can compute $M_{x[0]}M_{x[1]}\dots M_{x[{|x|-1}]}$ once and use it several
-times. Let $M_{x}=\prod_{i=0}^{|x|-1}M_{x[i]}$ for any string $x$.
-
-By proper choosing of substrings $x$ we can speedup computation of the Viterbi
-algorithm\footnote{For the Viterbi algorithm we need different matrix
-multiplication}, the Forward algorithm  or the
-Forward-Backward algorithm. Algorithms have following structure:
-\begin{enumerate}
-\item We choose the \firstUseOf{dictionary} $D$. $D$ is set of strings over
-alphabet $\Sigma$. String is a
-\firstUseOf{good} if it belongs to $D$.
-\item We compute $M_x$ for all $x\in D$.
-\item We split input sequence $X[1:]$ into the sequences of a good strings
-$x_0,x_1,\dots,x_{k-1}$ such that $x_0x_1\dots x_{k-1}=X[1:]$.
-%and $x_i\in D$ for
-%all $0\leq i<k$
-\item We compute $I^{X_0}\prod_{i=0}^{k-1}M_{x_i}$ in $O(kf(m))$ time where
-$f(m)$ is time needed to compute multiplication of two matrices of size $m\times m$
-\end{enumerate}
-
-Lifshits {\it et al.} \cite{Lifshits2009} showed several ways how to choose set
-$D$ and split $X$ into sequence of good words. One of them is to use LZ78 factorization
-to split $X$ into $O(n/\log n)$ good words. Computation of $M_x$ for all $x\in
-D$ can be done in $O(|D|m^3)$. For all $x\in D$, the matrix $M_x$ can be
-computed from $M_{x[:|x|-1]}$ in $O(m^3)$
-time with the following algorithm:
-if $|x|=1$ then we compute $M_x$ trivially.
-If $|x|>1$ then there is $x'\in D$ such that $x=x'a,a\in \Sigma$ and therefore $M_x =
-M_{x'}M_{a}$. 
-
-Since $|D|=O(n/log n)$, computing $M_x$ takes $\Omega(nm^3/log m)$
-time if
-we use $O(m^3)$ algorithm for computing the matrix multiplication. Computing the fourth
-step of the algorithm takes also $\Omega(nm^3/\log n)$ time and therefore the overall time complexity
-is $\Omega(nm^3/\log n)$ which is $\Omega(\log n/m)$ speedup over the
-classical implementation of the Forward algorithm for the dense matrices.
-
-It is possible to use different encoding methods. Speedup for the run length encoding 
-is $\Omega(r/\log r)$, for the straight-line programs is $\Omega(r/m)$ and for the
-byte pair encoding is $\Omega(r)$ where $r$ is the compression ratio under each
-compression scheme. We will not discuss details of this implementations, they
-can be found in \cite{Lifshits2009}.
-
-To adapt this approach to the Viterbi algorithm we have to make two adjustments. 
-We have to use the max-time matrix multiplication instead of matrix multiplication
-\cite{Lifshits2009}. The max-time matrix multiplication is the  matrix multiplication
-where summation is replaced with the maximization:
-\[M_1\odot M_2 [u,v] = \max_{0\leq i\leq m-1}M_1[u,i]M_2[i,v] \]
-where $M_1$ and $M_2$ are matrices of size $m\times m$. This matrix
-multiplication is also associative \cite{Lifshits2009}.
-
-The second adaptation is that we have to had the ability to reconstruct 
-the most probable state path.
-After computing $I^{X_0}\prod_{i=0}^{k-1}M_{x_i}$ we do the back-trace to obtain 
-the partial state path $\pi'_0,\pi'_1,\dots \pi'_{k}$ which is the subsequence of the
-most probable state path. Each $\pi'_i$ is a state corresponding to the last
-symbol of $x_i$. We have to reconstruct state path between $\pi'_i$'s; for
-every $x_i$ we have to reconstruct state path between $\pi'_{i-1}$ and $\pi'_i$.
-
-All mentioned compression schemes has the property,
-that for every good string $x$ there are also two good strings $x^1,x^2$ such
-that $x=x^1x^2$. To recover state path, for every good string $x$ and $u,v\in V$
-we have to pre-compute \[R_x[u,v] = \arg\max_{i\in V}M_{x^1}[u,i]M_{x^2}[i,v]\]
-
-Let $x=x_i$. Then $R_{x}[\pi'_{i-1},\pi'_{i}]$ corresponds to the state in the
-position of the last symbol of $x^1$. By recursive applying this rule to $x^1$
-and $x^2$ we can reconstruct the most probable state path on $x$. By doing this
-we can reconstruct the most probable state path with the time complexity $O(n)$.
-
-Lifshits {\it et al.} also applied this  speedup  to the Posterior decoding and
-the Baum-Welsch training. 
-
-%Let $X$ be the most probable state path that uses 
-%To adapt
-%this approach to the Viterbi algorithm we have to use in matrix multiplication
-%maximum instead of summation (such multiplication is also associative)
-%\cite{Lifshits2009}.
-
-\subsection{On-line Viterbi Algorithm}
-\label{SECTION:ONLINEVITERBI}
-
-The On-line Viterbi algorithm is different approach to reduce the memory complexity of
-the Viterbi algorithm. In this approach we represent matrix $B$ in sparse way
-and we keep only those parts of $B$ that can be necessary for the reconstruction of
-the most probable state path \cite{Sramek2007}.
-We  represent $B$ as the forest $G=(V',E)$ where
-\begin{align*}
-V' &= \left\{ (i,v)\mid 0\leq i< n, v\in V  \right\}\\
-E &= \left\{ (i,v)\to (i-1,B[i,v])\mid 0<i<n,v\in V\right\}
-\end{align*}
-Edges in this forest are oriented from the children to parents. Roots of the
-trees are vertices $(0,v),v\in V$.  The most probable state path that generated
-$X[:i]$ and ending in vertex $v$ corresponds to the path from vertex $(i-1,v)$
-to root of its tree. Let $S_{i,v}$ be the set of all vertices on the path from
-the vertex
-$(i,v)$ to the root of its tree. Let $S_i=\cup_{v\in V}S_{i,v}$.
-After computation of $B[i,v]$, only the vertices in $S_i$ can be in the most
-probable state path so others can be removed. State paths corresponding to
-$S_{i,v}$ may overlap, so by removing not necessary vertices we can reduce the memory
-requirements.
-
-{\v S}r{\'a}mek {\it et al.} developed data structure that maintains $S_i$
-without introducing significant overhead.  Let $G_i$ be the induced subgraph of $G$
-consisting from the vertex set $S_i$. Leaf $(j,v)$ is \firstUseOf{unreachable} if
-$j<i$.  $G_i$ does not contain unreachable leaf and therefore $G_i$ contains $m$
-leaves $(i,v),v\in V$. Construction of $G_{i+1}$ is following.
-After computing $B[i+1,\cdot]$ we add vertices $(i+1,v),v\in V$ and edges 
-$(i+1,v)\to (i,B[i+1,v]),v\in V$. Vertices $(i+1,v),v\in V$ are the new leaves.
-While in $G_{i+1}$ are some internal leaves, we remove them.
-After removing all internal leaves, $G_{i+1}$ contains only vertices from
-$S_{i+1}$.
-To make $G_i$ smaller, we use the compressed representation of the trees. We compress
-chains of vertices with one children into one edge (but we keep
-corresponding state path of compressed chain). If we do so, every vertex will
-have at most two children and therefore there will be at most $m-1$ internal
-nodes. $G_i$ has therefore always $O(m)$ leaves and updating can be done in
-$O(m)$ time. Therefore this technique does not alter the asymptotic running time
-of the Viterbi algorithm. In practice this technique increase running time by
-$5$\% \cite{Sramek2007}.
-
-Improvement in the memory requirements can be significant. However, there exists
-an HMM on which this technique will not improve memory requirements
-\cite{Sramek2007}. In practice, {\v S}r{\'a}mek {\it et al.} reports polylogarithmic 
-memory requirements for HMM used for gene finding.
-They also proved that for two
-state HMMs (with one exception), expected memory complexity of this algorithm is
-$O(H\log n)$ where $H$ is a constant specific for an HMM. Estimation of the expected time
-complexity for given HMM is still open problem.
-
-Keibler {\it et al. (2007)} developed similar algorithm called the Treeterbi
-algorithm. Both algorithms are similar, but the Treeterbi does not use the
-compressed version of the graph. Both algorithms can be extended to the GHMM and
-pHMM, the extensions of the Treeterbi algorithm can found in \cite{Keibler2007}.
-\end{comment}

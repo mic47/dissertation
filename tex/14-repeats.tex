@@ -134,28 +134,6 @@ Note that the purpose of this example to illustrate redundancy of TRF output.
 If we ran TRF on sequence $X$, the output would be only repeat with $CAC$ as an
 consensus.
 
-\begin{comment}
-for example sequence $CACCGCCACCACCGTAG$ can contain tandem
-repeat with consensus $ACCACC$ with $2$ repetitions starting at position $2$,
-or a consensus can be $ACC$ with $4$ repetitions, or consensus can be $CAC$
-with $4.33$ repetitions\footnote{Repetitions can be partial.} and starting at
-position $1$.  
-\end{comment}
-
-\begin{comment}
-\begin{reformulate*}
-Popiseme ako sa daju hladat repeaty, napriklad aj nasim jednoduchym modelom,
-alebo napriklad aj tandem repeat finderom.
-Presnejsie:\\
-$*$ Tandem repeat finder\\
-$*$ TANTAN\\
-%$*$ SUNFLOWER model \\
-%$**$ Najskor taky pekny s cyklom \\
-%$**$ Potom taky menej symetricky, ale bez cyklu \\
-%$*$ Kontextove gramatiky?
-%$*$ Repeat masking
-\end{reformulate*}
-\end{comment}
 \subsection{Sunflower model}
 \firstUseOf{Sunflower model} is HMM that models tandem repeats of one
 previously specified consensus $C=c_1\dots c_k$. We developed it for our model
@@ -449,57 +427,6 @@ On the other hand, SFF model models assumes that consensuses were developed
 independently, while the TTP model assumes that repetition evolves from the
 previous occurrence of the repetition.
 
-\begin{comment}
-By this we obtained model that 
-
-We started from HMM $H$ that model repeats and alter it to
-PHMM, so that it generates empty sequences in one strand. By this we get 2 HMMs
-$H_X$ and $H_Y$, first that generates bases only in sequence $X$ and second
-that generates bases only in sequence $Y$. 
-
-tandem repeats together, just label them that they 
-\begin{itemize}
-\item Reduce alignment alignment error near repeats
-\item Improve alignment of the repeats
-\end{itemize}
-We kept in mind following \reformulate{???} while designing model:
-\begin{itemize}
-\item We assume star phylogeny of the repeats: all repetitions of repeat evolved
-from single consensus sequence independently.
-\item We want to label repetitive regions.
-\item Correct alignment of two repetitive regions is very hard, if not
-impossible. This is because these regions are very similar \todo{Chcelo by to
-vygenerovat graf, sekvencnej identity, poctu insertov a podobne ako funkciu vo
-vzdialenosti od repeatu}.
-\end{itemize}
-
-
-We have two models, sunflower and TANTAN-like model. They both differ
-significantly in how they treat consensus.
-
-The main model is similar to standard 3-state model for pair alignments. We
-have added  submodel modeling repeats. All states in the submodel had same
-label. Repeats were modeled in each sequence independently, so basically to
-model repeats, we have chained model for repeats in sequence $X$ and model for
-repeats in sequence $Y$. We did not try to model evolution of the repeats due
-to the high sequence similarity of repeats.  We do not believe that there is
-enough information in the repeats (and errors in them) to practically improve
-the alignments of the repeat parts. On the other hand, this model produces
-alignments where all repetitions were indels, which is not realistic. To cope
-with this drawback, we realigned repetitive parts along with flanking
-insertions by simple 3-state HMM.
-
-While the TANTAN model models repeats of any sequences, we could just have one
-copy of TANTAN model for sequence $X$ and one copy for sequence $Y$.  However,
-for the sunflower submodel, each sunflower models only repeats of one specific
-sequence, therefore we can model only one possible repetitive sequence by using
-only one\footnote{Two same sunflowers for both sequences.} sequence. To
-overcome this very strict constrained, we have to one sunflower per consensus
-we want to model. We put sunflowers together in parallel way, so that they are 
-Topology of both of these models are described in figure \ref{}.
-
-\end{comment}
-
 While decoding methods are Tandem repeats at orthologous positions in two
 species may share common ancestor and therefore share part of their evolutionary
 history. However, it is possible that they were consequently modified by
@@ -521,8 +448,7 @@ methods we used with expanded models, the latter two methods we used with
 generalized version of the model. We have already described first three
 algorithm in section \ref{}. Here we introduce the highest expected gain
 framework for pair HMM and formulate used algorithms using gain
-functions.\todo{Mohol by si bud vyhodit tieto skratky, alebo ich zacat
-pouzivat}
+functions.\todo{Mohol by si zacat pouzivat tieto skratky}
 
 To be able to use highest expected framework, we will represent alignment using
 \todo{uprav indexy}
@@ -560,13 +486,6 @@ insert and delete state). Repeat annotation $\lambda_R$ is equivalent to
 identity function for 3-state HMM that does not explicitly model repeats.
 The probability of a state path and annotation is defined exactly as for HMM
 that generates only one sequence.
-\begin{comment}
-The \firstUseOf{state path} of an alignment is the sequence of states $s_0,
-\dots, s_t$ such that $s_i$ generated pair $(a_i, b_i)$. Note that in the case
-of generalized pair HMM, several consecutive states in a state annotation (such
-as emissions of $R$ state in SFF and TTP models) can correspond to the same
-emission. \firstUseOf{Annotation} of an state path is same as for HMMs with one.
-\end{comment}
 
 Similarly as with regular HMMs, we can define gain functions for annotation
 $G(\Lambda, \Lambda')$ that corresponds to ``similarity'' of two annotated
@@ -714,45 +633,6 @@ analogous. By using these techniques we can pre-compute the emission terms in
 $O((n^2+m^2)E)$ time. Therefore the overall time complexity of the Block
 posterior decoding is $O(kn^2m^2 + (n^2+m^2)E)$. By same techniques we
 can optimize the block Viterbi decoding with same time complexity.
-
-\begin{comment}
-Block posterior decoding function is aimed for the generalized \todo{Popisat to
-ako posterior decoding, ale vahy pre dlhe emisie davame inac} This decoding
-method uses stricter gain function, that is defined over generalized pair
-hidden Markov models (therefore we use it on the generalized SFF or TTP). It
-can be viewed as an variant of posterior decoding; instead of columns we score
-emissions. If same emission exists in the true alignment, $+l$, where 
-
-it will require repetitive
-blocks to be correctly recognized. We split the alignment into blocks. Repeat
-blocks are maximal consecutive sequence of columns that are annotated as repeat
-by annotation function $\lambda_R$ and were generated by . Non-repeat blocks are other columns (each
-column is one block). Non-repeat blocks are scored exactly as in the posterior
-decoding. Repeat block
-
-Alternative definition can be using generalized version of SFF or TTP. Block
-decoding scores every correctly predicted emission by the number of emitted
-columns (repeat submodel emit sequence independently, therefore the number of
-columns is equal to the number of emitted labels). Therefore it can be seen as
-an variant of posterior decoding for generalized model.  
-
-\paragraph{Model and algorithm combinations}
-Whenever in this chapter we refer to VA, PD, MPA, we mean algorithms from
-chapter \ref{} applied to algorithms applied to expanded version of SFF or TTP.
-BVA is Viterbi algorithm applied to non-expanded SFF or TTP. Block posterior
-decoding is however different. Problem is that posterior probabilities of
-emissions from generalized states are much smaller than from regular states,
-because they are much longer. Since the posterior probabilities are much lower,
-non-generalized states will be favored in the resulting alignment. Therefore 
-we added compensation element for generalized states, to level playing field.
-We have multiplied the posterior probability with the number of bases within
-such emissions. Therefore gain function for BPD is following: We add +1 for
-every base, that is aligned with base/gap that was generated by same state as
-in the original alignment.
-\todo{Sem chcem dodat detaily, ale asi az po tom, ako prepisem 4-tu kapitolu a
-zakomponujem bronine poznamky + pridat casove zlozitosti}
-
-\end{comment}
 
 \section{Implementation details \& optimizations}
 

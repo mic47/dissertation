@@ -511,14 +511,6 @@ such that $\prob{S(\pi) = S, X\mid H} \geq p$.
 
 In this section, we prove NP-hardness of the most probable set problem, theorem \ref{THEOREM::NPSET}.
 
-\begin{comment}
-\begin{theorem}The following problem is NP-hard:
-Given an HMM $H$, sequence $X$ of length $n$, and a number $p\in [0,1]$,
-decide if there exists a set of states $S$ such that 
-$\Pr\left(s(\pi)=S, X\mid H, n \right)\geq p$.
-\end{theorem}\label{thm:sets}
-\end{comment}
-
 \todo{Vloz sem definiciu max clique, alebo aspon cituj}
 To prove this theorem, we will use a reduction from the maximum clique
 problem.  Given a graph $G=(V,E)$ and a clique
@@ -883,14 +875,9 @@ $\bar{u_i}$; therefore one of these states needs to be in the
 path. The first portion of the path thus traverses $k$ 
 different states; only these states can be used to emit the second part of the
 sequence. 
-%Every clause can be emitted only by states for literals that
-%satisfy it. 
 The set of states used by a state path with
 non-zero probability therefore corresponds to a satisfying assignment
 in a straightforward way. 
-%The HMM has a restriction of size $k$ with
-%probability at least $p$ if and only if the 3-SAT instance has a
-%satisfying assignment.
 
 Note that given a restriction $S$, we can easily verify if its
 probability is at least $p$ by a variant of the Forward algorithm
@@ -901,24 +888,6 @@ in which we allow only states in $S$. Therefore the problem is in NP.
 
 \section{The Most probable footprint}
 \label{sec:footprint}
-
-\begin{comment}
-Finding the most probable
-footprint is a reasonable decoding criterion,
-and it may also serve as a starting point in a multi-stage
-strategy. In this section, we show that this problem is
-NP-hard. In particular, we will consider the footprint of a state path
-$f(\pi)$. The problem of optimizing the footprint of a labeling
-$f(\ell(\pi))$ is also NP-hard, because optimizing $f(\pi)$ is its special case, 
-equivalent to optimizing $f(\ell(\pi))$ in an HMM in
-which each state has a unique label.
-\begin{theorem}
-There is a fixed HMM $H$ such that the following problem is NP-complete:
-Given a sequence $X$ of length $n$ and probability $p\in [0,1]$, determine
-if there is a footprint $F$ such that $\prob{f(\pi)=F,X\mid H,n}\ge p$.
-\label{thm:foot}
-\end{theorem}
-\end{comment}
 
 
 \begin{figure*}
@@ -1043,24 +1012,6 @@ such that $\prob{S(\pi) = S, X\mid H} \geq p$.
   the same probability.}\label{fig:set_hmm2}
 \end{figure*}
 
-\begin{comment}
-\begin{figure*}
-\centerline{\includegraphics[scale=0.68]{../figures/jcss/expandedcliquehmm.pdf}}
-\caption{The HMM from the proof of Theorem
-  \ref{THEOREM::NPSET}. States are shown as circles; under each we
-  list the set of symbols that the state emits with non-zero
-  probability. Each of these symbols is emitted with probability
-  $1/k$, where $k$ is the size of the set. The HMM always starts in
-  state $S$. All outgoing transitions from a particular state have
-  the same probability.}\label{fig:set_hmm2}
-\end{figure*}
-
-\begin{theorem}The following problem is NP-hard:
-Given an HMM $H$, sequence $X$ of length $n$, and a number $p\in [0,1]$,
-decide if there exists a set of states $S$ such that 
-$\Pr\left(s(\pi)=S, X\mid H, n \right)\geq p$.
-\end{theorem}\label{thm:sets}
-\end{comment}
 \begin{proof}
 Let $G=(V,E)$ be an undirected graph with $n$ vertices as in proof of theorem
 \ref{THEOREM::NPFOOT}. Note that $V = \{1, 2, \dots, n\}$. $G$ will be encoded in
@@ -1115,20 +1066,4 @@ polynomial time sequence $X$ and threshold $qk$ such that $G$ has a
 clique of size at least $k$ if and only if sequence $X$ has a
 set of states with probability at least $qk$. This completes our reduction.\qed
 \end{proof}
-\begin{comment}
-\section{Decoding of Pair-HMM}
 
-\notmytext{
-Tu treba aj nejake veci podokazovat}
-\reformulate{Tu treba aj nejake veci podokazovat}
-\begin{reformulate*}
-Tento text by sa mal asi reformulovat
-\end{reformulate*}
-
-\begin{notmytext*}
-Intuitivne: Ked sa pohnem k parovym, tak vsetko ostane aspon rovnako tazke, ale mozno budem vediet znizit pocet stavov.
-Pravdepodobne intuitivne budem vediet prekladat do znizenia poctu stavov -- v
-druhej sekvencii by som mohol nejako kodovat stavy HMM s tym, ze by bola mozno
-iba ciastocne vacsia
-\end{notmytext*}
-\end{comment}
