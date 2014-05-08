@@ -710,57 +710,98 @@ TRF, alebo sunflower.
 
 
 This section summarizes the details of this experiment and measures we were
-using for evaluation. We evaluate our model using simulation experiments.  We
-estimate parameters of the model using human-dog alignment (we annotated
-alignment columns using TRF). Parameter for 3-state model and 3-state submodel
-and transitions to the repeat state were therefore fully supervised.
-We set the parameters of the Sunflower submodel to TODO
+using for evaluation. We evaluate our model on the simulated data. At first we
+estimated parameters of the model using annotated human-dog alignment by TRF
+program \cite{Benson1999}.  Parameters for 3-state model, and 3-state submodel
+of SFF and transitions to the repeat state were therefore trained by supervised
+learning. Setting SFF and TTP parameters was discussed in the section \ref{}.
 
-We sampled 200 test alignments each of length at least 200 bases \todo{check}
-from the SFF submodel with the condition, that the number of repetitions in the
-tandem repeat has to be at least three in at least one of the sequences. Reason
-for this condition is that we want to prevent fake tandem repeats ( sequences
-that are from the tandem repeat submodel, but are not in tandem repeats since
-they are only repeats) which would not be detected by TRF.
+We sampled 200 test alignments each of length at least 200 bases from the SFF
+submodel with the condition, that the number of repetitions in the tandem
+repeat has to be at least three in both sequences. Reason for this is that
+otherwise we would have segments of alignments that are annotated as repeats,
+but in fact are not because it contain only one copy of the motif. We refer to
+these alignments (along with sampled repeat annotation) as the correct
+alignments and correct annotation (repeat intervals and consensuses).
 
 We used same model for evaluation of parameters. To evaluate the robustness of
 our model, we assess the effects of misspecification of parameters by
 estimating model parameters from human-chicken alignment and perturbing model
-parameters (details are in next section). Mreps was trained of the 200 separate
-alignments sampled from the model. 
+parameters (details are in next section). Context \cite{} was trained of the
+200 separate alignments sampled from the model. 
 
 \paragraph{Measures:} The first measure we use was the error rate on the
-alignments: number of incorrectly predicted columns of an alignment. Other
-measures we investigate were measuring precision of repeat annotation.
-Therefore we were measuring the specificity and sensitivity of repeat labeling
-of columns and specificity and sensitivity of identifying the correct repeat
-blocks; repeat block is maximal consecutive sequence of columns that are
-annotated as repeat. Block must have been identical to be counted as an
-correctly predicted.
+alignments: fraction of incorrectly predicted columns of an alignment. It was
+measured only on the alignment columns generated from non-repeats states during
+sampling. Reason for this is that SFF and TTP does not model alignment of
+repetitive regions.
 
-Another measure we were using is the relation of the error rate and the
-distance from the nearest repeat. Alignment column was considered as repeat if
-in the correct alignment at least one base of the column was annotated as an
-repeat. The distance is measured by the number of columns. This measure is more
-important, because it illustrate the effect of SFF-like model. In the parts
-that are distant from repeats, we do not expect improvement in the error rate
-over the 3-state model, but we expect to improve alignments around tandem
-repeats. 
+We also measured the precision of predicting exact repeat segments boundaries
+in alignments. We measure the number of correctly predicted repeat segments;
+segment is correctly predicted if it contain identical parts of sequences as
+the corresponding segment in the correct alignment. We report the block
+sensitivity, which is the fraction of the number of correctly predicted
+segments and the number of correct segments, and block specificity, which is
+the fraction of the number of correctly predicted segments and all predicted
+segments. We also investigate the accuracy of prediction of repeat annotation
+for individual alignment columns; the repeat sensitivity and specificity.
+
+We have additionally measure the relation of the error rate and the distance
+from the nearest repeat. Alignment column was considered as repeat if in the
+correct alignment at least one base of the column was annotated as an repeat.
+The distance is measured by the number of columns. This measure is important,
+because when the distance from the repeat is high, our model is identical to
+3-state PHMM and therefore the performance of both models should be similar in
+such regions.  However, we do expect models incorporating repeats to be more
+precise in the regions near tandem repeats.
 
 \section{Results of simulation experiments}
 
-\begin{reformulate*}
-In this section we discuss the results of the simulation experiment. The tables
-\ref{TABLE:SFFMAIN}, \ref{TABLE:SFFMAINORIGINAL},
-\ref{TABLE:SFFOTHER},\ref{TABLE:SFFMARGINALIZED}, \ref{TABLE:SFF3STATEMASK},
-and Figure \ref{FIGURE:SFF_GRAPHS}. 
+This section discuss results of simulation experiment. We split results of
+various version of algorithms into several tables. The results for SFF models
+are in the table \ref{TABLE:SFFMAIN}. Table \ref{TABLE:SFFMAINORIGINAL} contain
+results for algorithms that uses correct intervals and consensuses instead of
+of their approximate counterparts obtained by TRF program. Results for non-SFF
+alignment programs and methods for aligning sequences with repeats is in the
+Table \ref{TABLE:SFFOTHER}. The effects of misspecification of mode parameters
+is in the Table \ref{TABLE:SFFMARGINALIZED} and the effects of different
+masking methods on posterior and Viterbi decoding is in the table
+\ref{TABLE:SFF3STATEMASK}. Figure \ref{FIGURE:SFF_GRAPHS} compare relation
+between the error rate and the distance from the repeat for studied methods.
 
-We used 3-state model with Viterbi algorithm as the baseline method.
+\def\M{$^\circ$} % mark by a star
+\def\MM{$^{\circ\circ\circ}$} % mark by two stars
+\def\D{$^{\circ\circ}$} % mark by dagger
+\def\DD{$^{\dagger}$} % mark by dagger
+\def\R{$^{\yen}$}
+\def\RR{$^{\yen\yen}$}
+\def\CC#1{\multicolumn{1}{c}{#1}} % center column
+\def\S{$^{\star}$}
+Since we use run decoding algorithms described in the section \ref{} with various 
+combination of additional information (i.e. repeat intervals and consensuses), we
+use following symbols to distinguish them.
 
-Nechcem este skusit spravit block marginalized posterior?
-\end{reformulate*}
+\begin{itemize}[itemsep=-1mm]
 
+\item[\M] method uses the correct consensus motifs. 
 
+\item[\D] method uses intervals from the correct repeat blocks.
+
+\item[\MM] method uses the correct consensus motifs and intervals from the
+correct repeat blocks.
+
+\item[\R] Parameters for the three-state submodel were estimated from
+human-chicken alignment. 
+
+\item[\RR] Parameters for SFF submodel were perturbed randomly.
+
+\item[\DD] Columns with at least one masked character are considered as
+repeats.
+
+\item[\S] Non-overlapping set of repeats from TRF output with maximal total
+score is used.
+
+\end{itemize}
 
 Using SFF model leads to decrease of the alignment error by $15-30\%$ as
 opposed to baseline method as can be seen in table \ref{TABLE:SFFMAIN}. The
@@ -783,7 +824,7 @@ TTP has significantly higher error rate, which means that TANTAN is even more
 sensitive to the intervals that are used. 
 
 Table \ref{TABLE:SFFOTHER} contain other algorithms for sequence alignment. Namely, 
-there is mreps tool\cite{}, which has even  TODO
+there is Context tool\cite{}, which has even  TODO
 
 It could be argued, that using same model for training and testing is not
 \reformulate{good}. We have therefore make changes to model to demonstrate
@@ -823,44 +864,6 @@ intervals were obtained from TRF (see Figure \ref{FIGURE:SFFTANTAN}). Using
 incorrect model did not have large effect also on this metric as we can see in
 the Figure \ref{FIGURE:SFFWEIRD}. Figure \ref{FIGURE:SFFBLOCKS} shows that when
 comparing block method, using block Viterbi double the error rate near repeat.
-
-
-\begin{reformulate*}
-Tabulky, grafy, ... -- presnejsie tabulka, graf
-\end{reformulate*}
-\def\M{$^\circ$} % mark by a star
-\def\MM{$^{\circ\circ\circ}$} % mark by two stars
-\def\D{$^{\circ\circ}$} % mark by dagger
-\def\DD{$^{\dagger}$} % mark by dagger
-\def\R{$^{\yen}$}
-\def\RR{$^{\yen\yen}$}
-\def\CC#1{\multicolumn{1}{c}{#1}} % center column
-\def\S{$^{\star}$}
-Additionally to the variants of the method above, there are additional variants
-of the model and algorithms, here is the set of marks that will be used to
-distinguish between them.
-
-\begin{itemize}[itemsep=-1mm]
-
-\item[\M] method uses the real consensus motifs. 
-
-\item[\D] method uses intervals from the real repeat blocks.
-
-\item[\MM] method uses the real consensus motifs and intervals from the real
-repeat blocks.
-
-\item[\R] Parameters for the three-state submodel were estimated from
-human-chicken alignment. 
-
-\item[\RR] Parameters for SFF submodel were perturbed randomly.
-
-\item[\DD] Columns with at least one masked character are considered as
-repeats.
-
-\item[\S] Non-overlapping set of repeats from TRF output with maximal total
-score is used.
-
-\end{itemize}
 
 \begin{table*}
 \begin{center}
