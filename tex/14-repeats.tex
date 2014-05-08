@@ -661,12 +661,12 @@ TTP model.
 
 \item To further reduce running time of the block Viterbi decoding and block
 posterior decoding, we restrict the intervals where the generalized state could
-emit sequences. We used repeat finders to get the list of possible intervals of tandem repeats in both sequences. Then we have
-\todo{Tu som TERAZ!}
+emit sequences. We used repeat finders to get the list of possible intervals of
+tandem repeats in both sequences. Then we have \todo{Tu som TERAZ!}
 
-When using generalized models, time complexity of the decoding methods is
-very large.  Therefore to compensate for this drawback, we used TRF program to
-get list of candidate intervals where tandem repeats could occur. We use this
+When using generalized models, time complexity of the decoding methods is very
+large.  Therefore to compensate for this drawback, we used TRF program to get
+list of candidate intervals where tandem repeats could occur. We use this
 intervals to restrict parts of the sequence where the repeat state $R$ could be
 used. Since TRF tool is not perfect in finding tandem repeats, ...
 
