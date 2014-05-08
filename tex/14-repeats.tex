@@ -635,7 +635,11 @@ posterior decoding is $O(kn^2m^2 + (n^2+m^2)E)$. By same techniques we
 can optimize the block Viterbi decoding with same time complexity.
 
 \paragraph{Postprocessing}
-\todo{Ako sa to robi}
+The problem with SFF and TTP models is that they model repeat sequences
+independently and do not try to align tandem repeats at orthologous locations.
+Therefore we postprocess alignment using 3-state PHMM by realigning segments of
+alignments that are annotated as repeats. We include also adjacent gaps into
+this postprocess step.
 
 \section{Optimizations}
 
