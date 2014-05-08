@@ -2,3 +2,4 @@ main.pdf
 .*.sw*
 buildtmp
 diplomovka
+.ipynb_checkpoints
