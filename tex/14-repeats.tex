@@ -634,6 +634,9 @@ $O((n^2+m^2)E)$ time. Therefore the overall time complexity of the Block
 posterior decoding is $O(kn^2m^2 + (n^2+m^2)E)$. By same techniques we
 can optimize the block Viterbi decoding with same time complexity.
 
+\paragraph{Postprocessing}
+\todo{Ako sa to robi}
+
 \section{Optimizations}
 
 In this section we summarize additional techniques we have used to decrease
@@ -660,15 +663,36 @@ occurring consensus from the original set. This technique was not applicable to
 TTP model.
 
 \item To further reduce running time of the block Viterbi decoding and block
-posterior decoding, we restrict the intervals where the generalized state could
-emit sequences. We used repeat finders to get the list of possible intervals of
-tandem repeats in both sequences. Then we have \todo{Tu som TERAZ!}
+posterior decoding, we restrict the emissions of $R$ state to specific
+intervals in both input sequences. At first, we found candidate set of tandem
+repeat intervals for both input sequences $X$ and $Y$ independently. Let $T_X$ and $T_Y$ are
+the sets of candidate intervals (not necessarily disjoint) for sequences $X$
+and $Y$ respectively. We restrict emission of $R$ state only to pair of
+intervals $i_X, i_Y$ where $i_X$ and $i_Y$ have beginning and end within $10$
+bases from some interval from $T_X$ and $T_Y$ respectively or if one of $i_X$
+or $i_Y$ is an empty interval (there is tandem repeat in only one sequence).
+By this heuristic, $R$ state do emissions in at most $(400|T_X|+n)(400|T_Y|+m)$
+positions. We applied this method to both SFF and TPP models.
 
-When using generalized models, time complexity of the decoding methods is very
-large.  Therefore to compensate for this drawback, we used TRF program to get
-list of candidate intervals where tandem repeats could occur. We use this
-intervals to restrict parts of the sequence where the repeat state $R$ could be
-used. Since TRF tool is not perfect in finding tandem repeats, ...
+We used following algorithm to select candidate intervals $T_X$ and $T_Y$:
+\begin{enumerate}[itemsep=-1mm]
+\item Run TRF program on the input sequences $X$ and $Y$. Obtain sets of
+intervals $T_X$ and $T_Y$ and lists of consensuses $C_X$ and $C_Y$.
+
+\item For every consensus $c\in C_X\cup C_Y$, build SRF model $S_c$ (sunflower
+repeat finding model from section \ref{}). \todo{Skontroluj, ci mame definovany
+SRF model}
+
+\item Each model $S_c$ run on the sequences $X$ and $Y$ using the Viterbi
+algorithm. Add found repeat intervals into corresponding sets $T_X$ and $T_Y$.
+
+\end{enumerate}
+The reason for using this method instead of using intervals from TRF only is
+that running TRF on the input sequences independently can cause several
+problems. At first if sequence $X$ contain three repetition of motif $m$ and
+sequence $Y$ contain only one, then TRF would return interval only for the
+sequence $X$. Additionally, consensus motifs can be found in both sequences but
+they can be rotated and therefore theirs intervals would be shifted.
 
 \end{itemize}
 
