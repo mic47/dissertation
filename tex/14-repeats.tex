@@ -768,6 +768,7 @@ is in the Table \ref{TABLE:SFFMARGINALIZED} and the effects of different
 masking methods on posterior and Viterbi decoding is in the table
 \ref{TABLE:SFF3STATEMASK}. Figure \ref{FIGURE:SFF_GRAPHS} compare relation
 between the error rate and the distance from the repeat for studied methods.
+Following text contain discussion of the results of the experiment.
 
 \def\M{$^\circ$} % mark by a star
 \def\MM{$^{\circ\circ\circ}$} % mark by two stars
@@ -777,93 +778,6 @@ between the error rate and the distance from the repeat for studied methods.
 \def\RR{$^{\yen\yen}$}
 \def\CC#1{\multicolumn{1}{c}{#1}} % center column
 \def\S{$^{\star}$}
-Since we use run decoding algorithms described in the section \ref{} with various 
-combination of additional information (i.e. repeat intervals and consensuses), we
-use following symbols to distinguish them.
-
-\begin{itemize}[itemsep=-1mm]
-
-\item[\M] method uses the correct consensus motifs. 
-
-\item[\D] method uses intervals from the correct repeat blocks.
-
-\item[\MM] method uses the correct consensus motifs and intervals from the
-correct repeat blocks.
-
-\item[\R] Parameters for the three-state submodel were estimated from
-human-chicken alignment. 
-
-\item[\RR] Parameters for SFF submodel were perturbed randomly.
-
-\item[\DD] Columns with at least one masked character are considered as
-repeats.
-
-\item[\S] Non-overlapping set of repeats from TRF output with maximal total
-score is used.
-
-\end{itemize}
-
-Using SFF model leads to decrease of the alignment error by $15-30\%$ as
-opposed to baseline method as can be seen in table \ref{TABLE:SFFMAIN}. The
-$15\%$ decrease was obtained just by replacing 3-state model with Sunflower
-Field model, other improvements were made through using different decoding
-algorithms; leading with the marginalized posterior decoding. The Viterbi based
-methods had higher error rate than posterior based methods and the
-block-versions decreased error rate only slightly. Surprisingly, block based
-methods had poorest performance in the block sensitivity and specificity and
-repeat sensitivity, because these measures are closer to what those methods
-optimize. Reason for this is perhaps due to \reformulate{intervals obtained
-from TRF}. This can be backed up by table \ref{TABLE:SFFMAINORIGINAL}, where
-all of the algorithms used correct intervals and consensuses. As we see, in
-these metrics the use of the correct intervals improved performance.
-
-Similar behaviour was obtained for TTP model; using the original intervals, TTP
-model has only slightly worse error rate than SFF, which is expectable, since
-the data were generated from the SFF model. However, using TRF for intervals,
-TTP has significantly higher error rate, which means that TANTAN is even more
-sensitive to the intervals that are used. 
-
-Table \ref{TABLE:SFFOTHER} contain other algorithms for sequence alignment. Namely, 
-there is Context tool\cite{}, which has even  TODO
-
-It could be argued, that using same model for training and testing is not
-\reformulate{good}. We have therefore make changes to model to demonstrate
-robustness of our method. SFF model have two principal types of parameters;
-parameters of the 3-state HMM and parameters of the Sunflower model. We
-investigate the effect of \reformulate{misspecification} for both types
-independently. For parameters of 3-state model, we have estimate parameters
-from human-chicken alignments instead of human-dog alignment. For the second
-type, we have perturbed the parameters of Sunflower model randomly by at most
-$0.05$. On these models we run marginalized posterior decoding. The results are
-in the table \ref{TABLE:SFFMARGINALIZED}.
-
-Last we were investigating using different repeat finding
-algorithm for masking methods. We used for masking correct intervals, Sunflower
-model (modified for finding tandem repeats as described in section \ref{}),
-TRF, and TRF with non-overlapping repeats (we select maximal scoring
-non-overlapping set of tandem repeats out of TRF output). We used soft-masking;
-we replaced masked bases with N symbol, that represents unknown base. For
-decoding we used both the Viterbi and the posterior decoding. Results are in
-table \ref{TABLE:SFF3STATEMASK}. Apart from  using correct intervals, the best
-performing masking was used with non-overlapping repeats from TRF.
-
-Additional metric we were investigating was the relation between error rate and
-the distance from the nearest repeat. Figure \ref{FIGURE:SFF_GRAPHS} contains
-graphs for this metric for various combination of parameters. In general, all
-algorithms has highest error rate near borders of the repeat, with the error
-rate lowering with the distance from the repeat. Most methods reach the
-baseline error rate within distance $10$ bases of the repeat border.
-
-Since we run many combinations of the model and algorithm, we can observe their
-effect on error rate near repeat borders. Figures \ref{FIGURE:SFFOVER} and
-\ref{FIGURE:SFFOTHER} suggests that decoding can improve error rate near
-repeats, but most of the drop in the error rate was caused by using SFF model.
-As with previous metrics, TANTAN with correct intervals performs similarly to
-SFF model, however, its error rate near repeat raises significantly where
-intervals were obtained from TRF (see Figure \ref{FIGURE:SFFTANTAN}). Using
-incorrect model did not have large effect also on this metric as we can see in
-the Figure \ref{FIGURE:SFFWEIRD}. Figure \ref{FIGURE:SFFBLOCKS} shows that when
-comparing block method, using block Viterbi double the error rate near repeat.
 
 \begin{table*}
 \begin{center}
@@ -890,6 +804,54 @@ TANTAN block Viterbi& 6.17\% & 67.86\% & 96.51\% & 0.00\% & 0.00\%\\
 \caption{Accuracy of decoding methods on simulated data.}\label{TABLE:SFFMAIN}
 \end{table*}
 
+Since we use run decoding algorithms described in the section \ref{} with various 
+combination of additional information (i.e. repeat intervals and consensuses), we
+use following symbols to distinguish them.
+
+\begin{itemize}[itemsep=-1mm]
+
+\item[\M] method uses the correct consensus motifs. 
+
+\item[\D] method uses intervals from the correct repeat blocks.
+
+\item[\MM] method uses the correct consensus motifs and intervals from the
+correct repeat blocks.
+
+\item[\R] Parameters for the three-state submodel were estimated from
+human-chicken alignment. 
+
+\item[\RR] Parameters for SFF submodel were perturbed randomly.
+
+\item[\DD] Columns with at least one masked character are considered as
+repeats.
+
+\item[\S] Non-overlapping set of repeats from TRF output with maximal total
+score is used.
+
+\end{itemize}
+
+
+
+In general, using SFF model decreased alignment error by $15-30\%$ as opposed
+to baseline method as can be seen in table \ref{TABLE:SFFMAIN}. The $15\%$
+decrease was obtained by replacing 3-state model with Sunflower Field model,
+other improvements were through using different decoding algorithms; with the
+marginalized posterior decoding having the lowest error rate. The Viterbi based
+methods had consistently higher error rate than posterior based methods and the
+block-based versions of the algorithms decreased the error rate by at most
+$3.3\%$ as opposed to non-block based methods.  Surprisingly, block based
+methods had poorest performance in the block sensitivity and specificity and
+repeat sensitivity, because these measures are closer to what block methods
+optimize. Reason for this is perhaps due to {intervals and/or consensuses
+obtained TRF and SRF}, since when running algorithms that uses correct
+intervals and consensuses (see Table \ref{TABLE:SFFMAINORIGINAL}), their
+performances improved significantly.  Results in Table
+\ref{TABLE:SFFMAINORIGINAL} helps us to quantify the effect of not using exact
+repeat intervals and also can be used as an upper bounds for the performance of
+our models. There is clearly room for improvements of repeat intervals, we
+could perhaps try to use other programs that detect tandem repeats, like
+ATRhunter \cite{Wexler2005} or mreps \cite{Kolpakov2003}
+
 \begin{table*}
 \begin{center}
 \begin{tabular}{lr@{\quad}rr@{\quad}rr}
@@ -915,6 +877,29 @@ TANTAN block Viterbi\D        & 3.83\% & 61.74\% & 99.88\% & 0.00\% & 0.00\% \\
 \caption{Accuracy of decoding methods using real consensus and/or real intervals on simulated data.}\label{TABLE:SFFMAINORIGINAL}
 \end{table*}
 
+
+
+Similar behaviour was obtained for TTP model; using the original intervals, TTP
+model has only slightly worse error rate than SFF, which is expectable, since
+the data were generated from the SFF model. However, using TRF for intervals,
+TTP has significantly higher error rate, which means that TTP is even more
+sensitive to the intervals that are used. Also the high error rate and low
+repeat and block prediction performance could be caused by improperly treating
+the first repetition, because annotations of TTP methods almost always skip the
+first copy of repeat motif. TTP could be improved by merging the chain of
+prefix states $P_1, \dots, P_K$\todo{Skontroluj ci to dobre oznacene} into
+chain of match states aligning the first repetition.
+
+Results of other alignment methods are in the Table \ref{TABLE:SFFOTHER}.
+Namely the Context program, Muscle, 3-state posterior algorithm and 3-state
+posterior algorithm with soft masking. Apart from the 3-state posterior
+algorithm, all methods had higher error rate than the baseline method. The high
+error rate of the Context program could be caused by insufficient training data
+or some software issues. We run muscle with default parameters and therefore
+its scoring scheme was not tailored to our method. Using soft masking produced
+alignment with higher error rate. It might be cause by the insufficient
+accuracy of tandem repeat annotation.
+
 \begin{table*}
 \begin{center}
 \begin{tabular}{lr@{\quad}rr@{\quad}rr}
@@ -925,11 +910,11 @@ Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \hline
 \hline
 %\hline
-3-state Viterbi (baseline)    & {\bf 4.78}\% \\
+3-state Viterbi (baseline)    & {4.78}\% \\
 \hline
 Context             & 5.98\% \\
 Muscle              & 5.62\% \\
-3-state posterior   & 4.41\% \\
+3-state posterior   & \bf 4.41\% \\
 3-state masked posterior\DD & 5.03\% & 99.23\% & 74.16\% & 7.66\% & 7.24\%\\
 \hline
 \end{tabular}
@@ -939,6 +924,21 @@ Most of the methods did not annotate the alignment with tandem repeats and
 therefore relating metrics are not available.
 }\label{TABLE:SFFOTHER}
 \end{table*}
+
+Since we did use same model for generating data and testing, we tried to
+quantify the effect of misspecification of the model parameters.  SFF model
+have two principal types of parameters; parameters of the 3-state HMM and
+parameters of the Sunflower model. We investigate the effect of
+{misspecification} for both types independently. For parameters of 3-state
+model, we have estimate parameters from human-chicken alignments instead of
+human-dog alignment. For the second type, we have perturbed the each parameter
+of Sunflower model randomly by additive term from $0.02$ to $0.05$. On these
+models we run marginalized posterior decoding. Table
+\ref{TABLE:SFFMARGINALIZED} shows that our method is quite robust. Our method
+is more sensitive to change in the training alignment, since the error rate for
+MPD increased by $8\%$, which is still significantly better than the baseline
+method. Perturbing parameters for Sunflower submodel did not have significant
+effect on error rate (increase by $0.5\%$). 
 
 \begin{table*}
 \begin{center}
@@ -962,6 +962,15 @@ SFF marginalized\M  & \bf 3.02\% & \bf 98.93\% & \bf 99.64\% &\bf 77.01\% &\bf 7
 \caption{Accuracy for marginalized posterior with different models or real consensuses.
 The best and the second best are bold.} \label{TABLE:SFFMARGINALIZED}
 \end{table*}
+
+Table \ref{TABLE:SFF3STATEMASK} investigates use of different repeat finding
+methods for masking. We used for masking correct intervals, Sunflower model
+(modified for finding tandem repeats as described in section \ref{}), TRF, and
+TRF with non-overlapping repeats (we select maximal scoring non-overlapping set
+of tandem repeats out of TRF output). We used soft-masking; we replaced masked
+bases with N symbol, that represents unknown base. For decoding we used both
+the Viterbi and the posterior decoding.  Apart from  using correct intervals,
+the best performing masking was used with non-overlapping repeats from TRF.
 
 \begin{table*}
 \begin{center}
@@ -990,7 +999,12 @@ Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \caption{Accuracy of decoding method using simple 3-state HMM and masking. The best and the second best are bold. }\label{TABLE:SFF3STATEMASK}
 \end{table*}
 
-
+Finally, we investigate the relation between error rate and
+the distance from the nearest repeat. Figure \ref{FIGURE:SFF_GRAPHS} contains
+graphs for this metric for various combination of parameters. In general, all
+algorithms has highest error rate near borders of the repeat, with the error
+rate lowering with the distance from the repeat. Most methods reach the
+baseline error rate within distance $10$ bases of the repeat border.
 
 \begin{figure}
 \begin{center}
@@ -1030,6 +1044,18 @@ error rate, with no relation to the distance from the repeat border, for
 \end{center}
 \end{figure}
 
+Figures \ref{FIGURE:SFFOVER} and \ref{FIGURE:SFFOTHER} suggests that right
+selection of decoding method can improve error rate near repeats, but most of
+the drop in the error rate was caused by using SFF model. As with other
+metrics, TTP with correct intervals performs similarly to SFF model, but TTPs
+error rate near repeats raises significantly where intervals were obtained from
+TRF (see Figure \ref{FIGURE:SFFTANTAN}). Using different  model did not have
+large effect also on error rate as we can see in the Figure
+\ref{FIGURE:SFFWEIRD}. Figure \ref{FIGURE:SFFBLOCKS} demostrates that for block
+methods, using block Viterbi double the error rate near repeat.
+
+
+\begin{comment}
 \section{Possible Improvements}
 
 \begin{reformulate*}
@@ -1037,5 +1063,5 @@ Sem by som mohol napisat, ako by sa dal pouzit symetricky model s cyklom
 stavov, alebo ako by sa dal ten cyklus stavov odstranit odstranenim jednej
 hrany a pridanych n hran -- co je lepsie ako pridat n vrcholov.
 \end{reformulate*}
-
+\end{comment}
 \label{LastPage}
