@@ -447,74 +447,85 @@ developed method with limited dependence by adding repeat submodels emitting
 copies in the two sequences at same time \cite{Kovac2012}.
 
 \section{Decoding methods}
-\todo{TU SOM}
-In this part we describe several optimization criteria we have used. We used
-following optimization criteria: the Viterbi algorithm (VA), the
-posterior decoding (PD), the marginalized posterior decoding (MPD), block
-Viterbi algorithm (BVA) and block posterior decoding (BPD). The first three
-methods we used with expanded models, the latter two methods we used with
-generalized version of the model. We have already described first three
-algorithm in section \ref{}. Here we introduce the highest expected gain
-framework for pair HMM and formulate used algorithms using gain
+\todo{Rozhodni sa medzi viterbi algorithm a viterbi decoding a podobne}
+In this section we describe several optimization criteria we used with 3-state
+model, SFF model and TTP model: the \abbreviation{Viterbi algorithm}{VA}, the
+\abbreviation{posterior decoding}{PD}, the \abbreviation{marginalized posterior
+decoding}{MPD}, the \abbreviation{block Viterbi algorithm}{BVA} and the
+\abbreviation{block posterior decoding}{BPD}. The first three methods are used
+with the non-generalized models, the latter two methods (block methods) are
+used with generalized version of the model. We have already described first
+three algorithm in section \ref{SECTION:ALNDECODING}.  We introduce the highest
+expected gain framework for pair HMM and formulate all algorithms using gain
 functions.\todo{Mohol by si zacat pouzivat tieto skratky}
 
-To be able to use highest expected framework, we will represent alignment using
-\todo{uprav indexy}
-indices to sequences. We will also include the state that generated that
-symbols (or it's annotation). In case of generalized models (can generate more
-than one columns), only the first column will contain state, other columns will
-contain symbol $\varnothing$. We will call this structure annotated alignment.
-Formally, annotated alignment of length $t$ will of sequences $X=x_0x_1\dots
-x_{n-1}$ and $Y=y_0y_2\dots y_{m-1}$ will be represented as sequence of tuples
-$(u_0, a_0, b_0), \dots, (u_{t-1}, a_{t-1}, b_{t-1})$ where $a_i\in \{0, \dots,
-{n-1}\}\cup\{-_0, \dots, -_n\}$ and $b_i \in \{0, \dots, m-1\}\cup\{-_0,
-\dots, -_m\}$, and $u_i$ is either annotation symbol or symbol $\varnothing$.
-Number $i$ represents $i$-th symbol in respective input sequence and $-_i$
-represents gap in the sequence before position $i$ (if $i$ is the length of the
-sequence, it represents the gap at the end of the sequence). For example $(47,
--_{42})$ means that $x_{47}$ is aligned to gap that is between $y_{41}$ and
-$y_{42}$.  Naturally, indices in $a_i$ and $b_i$ have to be non-decreasing,
-each non-dashed symbol can be in the alignment only once.  Naturally, $a_0$ has
-to be $0$ or $-_{-1}$, $a_t$ is $n$ or $-_m$. The constrains for $b$ are
-analogous. Additionally, $u_0\not=\varnothing$ and if some $u_i$ is equal to
+In section \ref{SECTION:HEG} we defined gain functions as the functions of two
+annotation. For pair HMMs we define gain function as an function of annotated
+alignment: alignment columns along with annotation symbols. This is necessary
+since we use generalized models and annotation symbols does not uniquely
+determine alignment (there can be multiple alignments with the same
+annotation).
+
+We represent annotated alignments using indices to
+sequences and annotation symbols. In case of generalized models, which can
+generate more than one column, only the first column will contain state, other
+columns will contain symbol $\varnothing$. Formally, \firstUseOf{annotated
+alignment} of length $t$ of sequences $X=x_0x_1\dots x_{n-1}$ and
+$Y=y_0y_2\dots y_{m-1}$ is represented as sequence of tuples $(u_0, a_0, b_0),
+\dots, (u_{t-1}, a_{t-1}, b_{t-1})$ where $a_i\in \{0, \dots, {n-1}\}\cup\{-_0,
+\dots, -_n\}$ and $b_i \in \{0, \dots, m-1\}\cup\{-_0, \dots, -_m\}$, and $u_i$
+is either annotation symbol or symbol $\varnothing$. Number $i$ represents
+$i$-th symbol in respective input sequence and $-_i$ represents gap in the
+sequence before position $i$ (if $i$ is the length of the sequence, it
+represents the gap at the end of the sequence). For example $(I_X, 47, -_{42})$
+means that $x_{47}$ is aligned to gap that is between $y_{41}$ and $y_{42}$ and
+that this column has annotation $I_X$.  Naturally, indices in $a_i$ and $b_i$
+have to be non-decreasing, each non-dashed symbol have to be in the
+corresponding sequence in alignment exactly once. Additionally, $a_0$ has to be
+$0$ or $-_{0}$, $a_t$ is $n$ or $-_m$. The constrains for $b$ are analogous.
+The first annotation symbol $u_0\not=\varnothing$ and if some $u_i$ is equal to
 $\varnothing$ then such column was emitted by same emission as previous column.
-If we use non-generalized model, the annotated alignment will not contain
-symbol $\varnothing$. The reason for using annotation symbol is that we will
-need to be able to distinguish between different generalized emissions. We can
-define probability of annotated alignment $\Lambda$ as the sum of of the
-probabilities of the state paths that generate such alignment and it's
-annotation is equal to annotation from $\Lambda$. We denote this probability as
+If we use non-generalized model, the annotated alignment cannot contain symbol
+$\varnothing$. The reason for using annotation symbol is that we will need to
+be able to distinguish between different generalized emissions. We can define
+probability of annotated alignment $\Lambda$ as the sum of of the probabilities
+of the state paths that generate such alignment and state paths annotation is
+equal to the annotation from $\Lambda$. We denote this probability as
 $\prob{\Lambda\mid X, Y}$. We will refer to triple $(u_i, a_i, v_i)$ as an
 \firstUseOf{annotated alignment column}.
 
-We will be interested in \firstUseOf{repeat annotation}, where annotation
-function $\lambda_R(u)$ is $R$ if state is $R$ state (or was created from $R$
-state in the expanded version of the model) and $u$ otherwise (for match,
-insert and delete state). Repeat annotation $\lambda_R$ is equivalent to
-identity function for 3-state HMM that does not explicitly model repeats.
-The probability of a state path and annotation is defined exactly as for HMM
-that generates only one sequence.
+We are interested in the \firstUseOf{repeat annotation} with annotation
+function $\lambda_R$.  For generalized SFF and TTP (and 3-state pHMM),
+$\lambda_R$ is identify function. For non-generalized version, $\lambda_R(u)=R$
+for all states $u$ from submodel modeling tandem repeats.  The probability of a
+state path and annotation is defined exactly as for HMM that generates only one
+sequence.
 
+\todo{TU SOM}
 Similarly as with regular HMMs, we can define gain functions for annotation
-$G(\Lambda, \Lambda')$ that corresponds to ``similarity'' of two annotated
-alignments.  Since pHMM define probability distribution $\Lambda_T$ of the
-correct annotated alignments, we can define the expected gain of annotated
-alignment given sequence $X$ and $Y$ and gain function $G$:
-\todo{uprav oznacenia tak, aby boli konzistentne s obycajnymi HMM}
+alignment $G(\Lambda, \Lambda')$ that corresponds to ``similarity'' of two
+annotated alignments (Note that for HMMs, symbol $\Lambda$ represents
+annotation. With pHMM we use this symbol for annotated alignment).  Since pHMM
+define probability distribution $\Lambda_T$ of the correct annotated
+alignments, we can define the expected gain of annotated alignment given
+sequence $X$ and $Y$ and gain function $G$: \todo{uprav oznacenia tak, aby boli
+konzistentne s obycajnymi HMM}
+
 \begin{equation}
-E_{A_T}\left[G(\Lambda, \Lambda_T)\mid X, Y\right] = 
-\sum_{\Lambda_T}G(\Lambda, \Lambda_T)\prob{\Lambda_T\mid X, Y}
+E_{\Lambda_T\mid X, Y}\left[G(\Lambda_T, \Lambda)\right] = 
+\sum_{\Lambda_T}G(\Lambda_T, \Lambda)\prob{\Lambda_T\mid X, Y}
 \end{equation}
 
 Since we do not know the correct annotated alignment, we search for the
 annotated alignment $\Lambda^*$ with the highest expected gain:
 
 \begin{equation}
-\Lambda^* = \arg\max_AE_{A_T}\left[G(\Lambda, \Lambda_T)\mid X, Y\right]
+\Lambda^* = \arg\max_{\Lambda}
+E_{\Lambda_T\mid X, Y}\left[G(\Lambda_T, \Lambda)\right]
 \end{equation}
 
-Now we express optimization criteria of decoding methods we use within this
-framework. 
+Finally, we express optimization criteria of various decoding methods using
+highest expected gain framework.
 
 \paragraph{The Viterbi decoding and block Viterbi decoding} Gain $G_V(\Lambda,
 \Lambda_T)$ function for the Viterbi algorithms assigns $+1$ if the predicted
