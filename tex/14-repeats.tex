@@ -1,88 +1,93 @@
 \chapter{Alignment with tandem repeats}
 
-Tandem repeat is a region in the genomic sequence that contain two or more
-consecutive repetitions of the similar sequence.  Tandem repeats are important
-for sequence alignment, since more than $2\%$ of the human genome is covered by
-short tandem repeats, and they occurs in many genes and regulatory regions
-\cite{Gemayel2010}. Additionally, recent short insertions in human genome are
-mostly caused by tandem duplication \cite{Messer2007}.  Tandem repeats, like
-other sequences, undergo evolution and therefore mutations, insertions, and
-deletions occurs. Therefore individual copies of repeated sequence are not
-exact.  Additionally, most of the tandem repeats evolved using tandem segmental
-duplications, and therefore segments with tandem repeats contain variable
-number of copies (not exact) of original segment. Aligning segments with tandem
-repeats is hard, because it is not clear which copies of tandem repeat are
-orthologous (created by speciation, not duplication within same genome).
-Tandem repeat does not only affect quality of alignment within repetitive
-segments, but error spread into adjacent columns of an alignment, as we show in
-section \ref{}. \reformulate{Addtionally, comparative genomic methods are
-sensitive to the quality of underlying alignment, and even ssmall inaccuracies
-may lead to artifacts in the results of comparative methods.} \todo{Ujednot
-oznacenie repeatov a poctu opakovani}
+\firstUseOf{Tandem repeat} is a region in the genomic sequence that contain two
+or more consecutive repetitions of some \firstUseOf{motif}, which is sequence
+of bases. Instances of motif in tandem repeat we call \firstUseOf{repetitions}.
+Tandem repeats, like other sequences, undergo evolution and therefore evolution
+like mutations, insertions, and deletions occurs in the individual repetitions.
+Therefore individual repetitions are not exact copies of motif. More than $2\%$
+of the human genome is covered by short tandem repeats, and they occurs in many
+genes and regulatory regions \cite{Gemayel2010}. Additionally, recent short
+insertions in human genome are mostly caused by tandem duplication
+\cite{Messer2007}. Most of the tandem repeats evolved using tandem segmental
+duplications, which means that tandem repeat was created using several
+duplication events. The consequence is that the homologous tandem repeats in
+two related sequences can contain variable number of copies of the original
+motif. Note that it is highly likely that none of the repetition is exact copy
+of original motif.
 
-We introduce tractable model that explicitly accounts for tandem repeats. We
-additionally use the maximum expected gain framework to explore several decoding
-criteria for our model.
+Aligning homologous tandem repeats is hard, because it is not clear which
+copies of tandem repeat are orthologous (created by speciation, not duplication
+within same genome) and which are paralogous (created by duplication event in
+only one sequence). Tandem repeats does not only affect quality of alignment
+within them, but error spread into adjacent columns of an alignment as we show
+in section \ref{SECTION:REPSIMRESULTS}, figure \ref{FIGURE:SFF_GRAPHS}.  There
+inaccuracies can spread further and cause artifacts in the results of
+comparative genomic methods that uses sequence alignments.
 
-\todo{Co je to tandem duplication}
+In this chapter we introduce tractable model that explicitly accounts for
+tandem repeats. We use the maximum expected gain framework to explore several
+decoding criteria for our model. We evaluate our model using simulated data. 
+\todo{
+Oznacenia:
+1) motif -- to co sa opakuje
+2) repetition -- instancia motifu
+3) consensus -- motif, obycajne referujeme
+4) tandem repeat, repeat -- cely blok, niekolko repeatov
+5) segment, block -- podsekvencia zarovnania (alebo to rozdelit na sekvenciu a nie sekvenciu?)
+} 
+\section{Methods for aligning tandem repeats}\label{SECTION:REPALNMETHODS}
 
-\todo{Priklad tandem repeatu a zleho zarovnania -- vyber nieco zo simulacie}
+Alignment with tandem duplications were first studied by Benson
+\cite{Benson1997}, who proposed extension of the Needleman-Wunsch algorithm. In
+their scoring scheme, they scored duplications as an separate event. Each
+duplication was penalized by duplication initiation cost, duplication extension
+costs for each copy and Needleman-Wunsch like scoring scheme to score original
+string with its repetitions. Time complexity of his algorithm was $O(n^4)$ and
+Benson proposed heuristic algorithm to compute alignment in reasonable time.
+Additional work was done by alternative incorporation of tandem duplication
+(and other operations) into the scoring schemes \cite{Sammeth2006, Berard2006,
+Freschi2012}, or using lossy compression scheme that collapsed tandem repeats,
+then aligning compressed sequences \cite{Freschi2012}.
 
-\section{Methods for aligning tandem repeats}
-
-Alignment with tandem duplications were studied first by Benson
-\cite{Benson1997}, who proposed extension of the Needleman-Wunsch
-algorithm. In their scoring scheme, they scored duplications as an separate
-event. Each duplication was penalized by duplication initiation cost,
-duplication extension costs for each copy and Needleman-Wunsch like scoring
-scheme to score original string with its repetitions. Time complexity of
-resulting algorithm was $O(n^4)$ and Benson proposed heuristic algorithm to
-compute alignment in reasonable time. \todo{Mozno to strosku rozsirit a dat
-presnu formulaciu} Additional work was done by alternative incorporation of
-tandem duplication (and other operations) into the scoring schemes
-\cite{Sammeth2006, Berard2006, Freschi2012}, or using lossy compression scheme
-that collapsed tandem repeats and aligning compressed sequences
-\cite{Freschi2012}.
-
-Traditional approach to deal with tandem repeats is to mask repeats in both
-sequences and then aligned masked sequences by alignment algorithm of our
-choice. Masking is replacing low complexity region (e.g. tandem repeats) either
-with lower-case letters (soft-masking) or with N symbols (hard-masking, N
-represents any base). Masking is done by method for finding tandem repeats,
-such as \abbreviation{Tandem Repeat Finder}{TRF} \cite{Benson1999}, TANTAN
+Traditional approach to deal with tandem repeats is to mask tandem repeats in
+both sequences and then aligned masked sequences by some alignment algorithm.
+Masking is replacing low complexity regions (e.g. tandem repeats) either with
+lower-case letters (soft-masking) or with N symbols (hard-masking, N represents
+any base). Masking is done by method for finding tandem repeats, such as
+\abbreviation{Tandem Repeat Finder}{TRF} \cite{Benson1999}, TANTAN
 \cite{Frith2011}, mreps \cite{Kolpakov2003}, or ATRhunter \cite{Wexler2005}. 
 
 Methods mentioned above were not probabilistic methods. The first probabilistic
 method specifically targeting tandem repeats was introduced by Hickey and
-Blanchette \cite{Hickey2011}. They developed context-sensitive model based on
-pair Tree-Adjoining grammars, and taking into account that majority (roughly
-$90\%$  \cite{Hickey2011}) are caused by tandem duplications.  Their model does
-not explicitly model arbitrary number of copies of repetitive region, it
-focused on short context sensitive indels caused by tandem duplications.  Time
+Blanchette \cite{Hickey2011}.  They developed context-sensitive model based on
+pair Tree-Adjoining grammars.  Their model does not explicitly model arbitrary
+number of copies of repetitive region, it focused on short context sensitive
+indels caused by tandem duplications, because majority ($90\%$
+\cite{Hickey2011}) of short indels are caused by tandem duplication. Time
 complexity for their decoding algorithm was $O(n^2L^2)$, where $n$ is the
 length of the sequences and $L$ is the maximal length of context sensitive
 indels.
 
-Another, not entirely probabilistic method was developed by Kováč {et. al
-(2012)} \nocite{Kovac2012}. Aim of the method was to align repetitive motif
+Another, not entirely probabilistic method was developed by Kováč {\it et. al
+(2012)}\nocite{Kovac2012}. Aim of the method was to align repetitive motif
 inside some protein families (for example zinc finger proteins), which are
 similar to the tandem repeats. Their method focused on correctly aligning
 individual occurrences of motifs. They combined profile HMM and pair HMM, and
 developed new decoding algorithm similar to the Viterbi algorithm. Despite
-usage of probabilistic models, their method was not probabilistic model. 
+usage of probabilistic models, their method was not a probabilistic model. 
 
-\todo{check ci to tak naozaj je}
-\begin{reformulate*}
 Hudek \cite{Hudek2010} developed algorithm that is mixture of the Viterbi and
 posterior decoding. The algorithm was aimed to reduce the misalignments due to
 short tandem repeats with the consensus length $1$, for example $u=AA$ in the
 first sequence and $v=AAAAAAAAA$ in the second sequence. Algorithm developed by
 Hudek was considering all possible alignments of $u$ and $v$ in the final
 alignment. Algorithms goal was to segment alignment into blocks, such that each
-block contain gaps in at most one sequence. The cost of the block was the sum of
-the probabilities of all alignments of such block. The final alignments is
-created from blocks by the Viterbi algorithm.
-\end{reformulate*}
+block contain gaps only in one sequence. They developed PHMM model that defines
+probability distribution over all possible segmentation of alignments of input
+sequences and give the algorithm that finds the most probable segmentation.
+Unlike Viterbi algorithm, their algorithm considers all possible alignments
+within each segment.
 
 \section{Models and Methods Searching Tandem Repeats}
 
@@ -755,7 +760,7 @@ because when the distance from the repeat is high, our model is identical to
 such regions.  However, we do expect models incorporating repeats to be more
 precise in the regions near tandem repeats.
 
-\section{Results of simulation experiments}
+\section{Results of simulation experiments}\label{SECTION:REPSIMRESULTS}
 
 This section discuss results of simulation experiment. We split results of
 various version of algorithms into several tables. The results for SFF models
@@ -892,11 +897,11 @@ chain of match states aligning the first repetition.
 
 Results of other alignment methods are in the Table \ref{TABLE:SFFOTHER}.
 Namely the Context program, Muscle, 3-state posterior algorithm and 3-state
-posterior algorithm with soft masking. Apart from the 3-state posterior
+posterior algorithm with hard-masking. Apart from the 3-state posterior
 algorithm, all methods had higher error rate than the baseline method. The high
 error rate of the Context program could be caused by insufficient training data
 or some software issues. We run muscle with default parameters and therefore
-its scoring scheme was not tailored to our method. Using soft masking produced
+its scoring scheme was not tailored to our method. Using hard-masking produced
 alignment with higher error rate. It might be cause by the insufficient
 accuracy of tandem repeat annotation.
 
@@ -967,10 +972,10 @@ Table \ref{TABLE:SFF3STATEMASK} investigates use of different repeat finding
 methods for masking. We used for masking correct intervals, Sunflower model
 (modified for finding tandem repeats as described in section \ref{}), TRF, and
 TRF with non-overlapping repeats (we select maximal scoring non-overlapping set
-of tandem repeats out of TRF output). We used soft-masking; we replaced masked
-bases with N symbol, that represents unknown base. For decoding we used both
-the Viterbi and the posterior decoding.  Apart from  using correct intervals,
-the best performing masking was used with non-overlapping repeats from TRF.
+of tandem repeats out of TRF output). We used hard-masking as secribed in
+section \ref{SECTION:REPALNMETHODS}. For decoding we used both the Viterbi and
+the posterior decoding.  Apart from  using correct intervals, the best
+performing masking was used with non-overlapping repeats from TRF.
 
 \begin{table*}
 \begin{center}
