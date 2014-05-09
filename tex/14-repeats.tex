@@ -98,9 +98,10 @@ with tandem repeats.
 \subsection{Tandem Repeat Finder}
 
 Probably the most popular method for searching for tandem repeats is to use TRF
-\cite{Benson1999}.  Tandem repeat finder find the position of tandem repeats,
-consensus sequence (the pattern that is repeating), alignment of the consensus
-sequence and the input sequence, and various other information about repeats.
+\cite{Benson1999}.  Tandem repeat finder find the position of tandem repeats
+(referred as an \firstUseOf{interval}), consensus sequence (the approximation
+of original motif), alignment of the consensus sequence and the input sequence,
+and various other information about repeats.
 
 Method consists from two components: detection and analysis. Detection
 component tries to find a set of candidate tandem repeats by analyzing the
@@ -109,12 +110,12 @@ sequence of length $k$). It uses several statistical criteria to detect repeats
 and distinguish between tandem repeats and non-tandem repeats
 \cite{Benson1999}.
 
-Analysis component aligns candidate pattern using wraparound dynamic
+Analysis component aligns candidate consensus using wraparound dynamic
 programming \cite{Myers1989} with the surrounding sequence. If the alignment is
-not successful (candidate pattern has to be aligned at least $2$ times to be
-successful), candidate repeat is discarded. Otherwise, the consensus sequence
-is computed from the alignment along with other statistics about tandem repeat.
-
+not successful (candidate consensus has to be aligned at least $2$ times to be
+successful), candidate repeat is discarded. Otherwise, the final consensus
+sequence is computed from the alignment along with other statistics about
+tandem repeat.
 
 Tandem repeats found by TRF can be redundant.  They can overlap, have slightly
 different consensuses, the consensuses can be shifted cyclically, and can have
@@ -127,13 +128,12 @@ Consensus AAC:       ACCACCACCACC      4 repetitions
 consensus CAC:      CACCACCACCACC      4.3 repetitions
 \end{verbatim}
 
-The sequence $X$ contain repetitive subsequence, and there are three possible
-consensus sequences with different number of repetitions. Note that the
-repetition of the consensus does not have to be full; as with the $CAC$
-consensus where we have $4.3$ ($0.3$ stands for the last $C$ in the repetitive
-sequence). This is important to know, because we will use the TRF to find
-the set candidate repetitive regions of input sequences, not as the definitive
-list of repetitive regions.
+The sequence $X$ contain tandem repeat and there are three possible consensus
+sequences with different number of repetitions. Note that the repetition of the
+consensus can be incomplete; as with the $CAC$ consensus where we have $4.3$
+($0.3$ stands for the last $C$ in the repetitive sequence). This is important
+to know, because we will use the TRF to find the set candidate tandem repeats
+of input sequences, not as the definitive list of repetitive regions.
 
 Note that the purpose of this example to illustrate redundancy of TRF output.
 If we ran TRF on sequence $X$, the output would be only repeat with $CAC$ as an
