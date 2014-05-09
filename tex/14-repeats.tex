@@ -15,6 +15,14 @@ duplication events. The consequence is that the homologous tandem repeats in
 two related sequences can contain variable number of copies of the original
 motif. Note that it is highly likely that none of the repetition is exact copy
 of original motif.
+\todo{
+Oznacenia:
+1) motif -- to co sa opakuje
+2) repetition -- instancia motifu
+3) consensus -- motif, obycajne referujeme
+4) tandem repeat, repeat -- cely blok, niekolko repeatov
+5) segment, block -- podsekvencia zarovnania (alebo to rozdelit na sekvenciu a nie sekvenciu?)
+} 
 
 Aligning homologous tandem repeats is hard, because it is not clear which
 copies of tandem repeat are orthologous (created by speciation, not duplication
@@ -28,14 +36,7 @@ comparative genomic methods that uses sequence alignments.
 In this chapter we introduce tractable model that explicitly accounts for
 tandem repeats. We use the maximum expected gain framework to explore several
 decoding criteria for our model. We evaluate our model using simulated data. 
-\todo{
-Oznacenia:
-1) motif -- to co sa opakuje
-2) repetition -- instancia motifu
-3) consensus -- motif, obycajne referujeme
-4) tandem repeat, repeat -- cely blok, niekolko repeatov
-5) segment, block -- podsekvencia zarovnania (alebo to rozdelit na sekvenciu a nie sekvenciu?)
-} 
+
 \section{Methods for aligning tandem repeats}\label{SECTION:REPALNMETHODS}
 
 Alignment with tandem duplications were first studied by Benson
@@ -83,7 +84,7 @@ short tandem repeats with the consensus length $1$, for example $u=AA$ in the
 first sequence and $v=AAAAAAAAA$ in the second sequence. Algorithm developed by
 Hudek was considering all possible alignments of $u$ and $v$ in the final
 alignment. Algorithms goal was to segment alignment into blocks, such that each
-block contain gaps only in one sequence. They developed PHMM model that defines
+block contain gaps only in one sequence. They developed pHMM model that defines
 probability distribution over all possible segmentation of alignments of input
 sequences and give the algorithm that finds the most probable segmentation.
 Unlike Viterbi algorithm, their algorithm considers all possible alignments
@@ -250,7 +251,7 @@ can use for example the Viterbi algorithm with this model to find all
 occurrences of tandem repeat with motif $C$. However, with this model we can
 search only for specific motif. 
 
-\subsection{TANTAN}
+\subsection{TANTAN}\label{SECTION:TANTAN}
 
 \firstUseOf{TANTAN} is high-order HMM aimed for finding tandem repeat developed
 by Frith \cite{Frith2011}. Unlike Sunflower model, TANTAN models tandem repeats
@@ -321,51 +322,54 @@ emission $X[i]$ evolved from $X[i-l]$ over time $t$.
 \section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
 \todo{Mozno chceme aj niekde popisat ake mame ciele}
 In this section we describe models that we have used in our methods. We
-describe it in an dual way. As an generalized PHMM and later we extend it into
-equivalent PHMM (emissions length are at most $1$ in all sequences).
-Equivalency is in the way, that distribution of generated alignments and
-annotations are same.
+describe model in an dual way; As an generalized pHMM and as an equivalent
+non-generalized pHMM (emissions length are at most $1$ in all sequences).  By
+equivalency we mean that the distribution of generated alignments and
+annotations (with certain annotation function) are same, but clearly the
+distribution of state paths will be different due to different sets of
+states.
 
-Generalized model is obtained by taking simple three state HMM model from
-section \ref{} and adding single generalized pair state $R$, called
-\firstUseOf{repeat state}, that in single step generates whole tandem repeats
-in both sequences. Since $R$ state can in theory generate arbitrary long
-sequences, while decoding using this model, $R$ state does not produce
-alignment of bases of tandem repeats. Its aim is to filter tandem repeats out
-of alignment so that they do not cause biases in the alignments formed by other
-states (match and indel states). To realign those parts later in
-post-processing step. The overall topology of GPHMM is illustrated in figure
+Generalized model is obtained by taking simple 3-state pHMM model from section
+\ref{SECTION:ALIGNWITHPHMM} and adding single generalized pair state $R$,
+called \firstUseOf{repeat state}, that in single step generates whole tandem
+repeats in both sequences. Since $R$ state can in theory generate arbitrary
+long sequences, $R$ state does not produce alignment of bases of tandem repeats
+during decoding. Its task is to filter tandem repeats out of alignment so that
+they do not cause biases in the alignments formed by other states (match and
+indel states). We align homologous tandem repeats later in post-processing
+step. The overall topology of GpHMM is illustrated in figure
 \ref{FIGURE:REPEAT_GENERAL}.
 
 To made this model flexible, emission distribution of $R$ is defined by
-additional PHMM. Since repetitive sequences in tandem repeat are very similar
-to each other, we did not try to model the evolution of repetitive part of the
-sequence. We assumed that repeats generated by one emissions of $R$ originates
-from single consensus sequence and were developed independently. Model was
-constructed from sunflower models. Let $C$ be the set of all consensuses that
-we want to model. For each consensus $c\in C$ we created sunflowers $S_c^X$ and
-$S_c^Y$.  $S_c^X$ is pairwise sunflower model with consensus $c$ that generates
-symbols in sequence $X$ and nothing in second sequence. $S_c^Y$ is analogous.
-We connect $S_c^Y$ after $S_c^X$ and thus getting model $H_c$ that generates
+additional pHMM. Since repetition in tandem repeat are very similar to each
+other, we did not try to model the evolution of repetitive parts of the
+sequences. We assumed that repeats generated by one emissions of $R$ originates
+from single motif and then evolved independently. Model was constructed from
+the Sunflower models. Let $C$ be the set of all motifs that can occur in the
+alignment. For each motif $c\in C$ we created sunflowers $S_c^X$ and $S_c^Y$.
+Sunflower $S_c^X$ is pairwise sunflower model with motif $c$ that generates
+symbols only in sequence $X$, $S_c^Y$ is analogous.  We connect $S_c^Y$ and
+$S_c^X$ by transition from the final state of $S_c^X$ to the start state of
+$S_c^Y$ with probability $1$ and thus getting model $H_c$ that generates
 repeats in both sequences. We connected models $H_c$ for $c\in C$ in parallel
-by single start and single end state as in figure \ref{FIGURE:REPEAT_GENERAL}.
-The probability from start state to model $H_c$ was determined from posterior
-distribution of consensuses $\prob{c}$. Note that the size of this model is
-determined mostly by the size of set of all consensuses and therefore this
-model can be very large, even infinite if we consider all possible sequences as
-an possible consensus for an repeat. To keep the model size small we used
-program TRF to compute a set of candidate consensuses $C$ and use it for
-construction of model.  We call this generalized model \abbreviation{sunflower
-field}{SFF}.
+by single start and single end state as in the Figure
+\ref{FIGURE:REPEAT_GENERAL}.  The probability of transition from start state to
+the start state of model $H_c$ was determined from the distribution of
+motifs $\prob{c}$. Note that the size of this model is determined mostly
+by the total length of all motifs and therefore this model can be very large,
+even infinite if we consider all possible sequences as an possible motif for a
+tandem repeat. To keep the model size small we used program TRF to compute a
+set of candidate motifs $C$ and use it for construction of model.  We call this
+generalized model the \abbreviation{sunflower field}{SFF}.
 
 \begin{figure}
 \begin{center}
 \includegraphics[width=14cm]{../figures/PairRepeatHMMGeneral.pdf}
 \end{center}
-\caption[General topology of Repeat PHMM]{ 
-Topology of Repeat PHMM. We extend 3-state PHMM with one generalized states
+\caption[General topology of Repeat pHMM]{ 
+Topology of Repeat pHMM. We extended 3-state pHMM with one generalized states
 $R$, that in one emission generates tandem repeats in both sequences. The
-emission distribution of $R$ state is defined by another PHMM. Gray lines
+emission distribution of $R$ state is defined by another pHMM. Gray lines
 represents emissions: dashed lines corresponds to multiple emissions from same
 states, while full line represents one emission. Dotted black line represents
 connection to submodel that is used for generating tandem repeats.
@@ -374,75 +378,76 @@ Black states in submodel on the right are silent start and end states. Spirals
 represents submodels generating tandem repeat in one sequence. They are in
 pairs of two identical models, one for generating tandem repeat in one
 sequence, other for generating tandem repeat in other sequence. There are
-multiple pairs of submodels, each for modeling different consensus.
-
+multiple pairs of submodels, each for modeling different motif.
  }\label{FIGURE:REPEAT_GENERAL} 
 \end{figure}
 
-We also experimented with using TANTAN-like model in construction of PHMM
-defining emissions distribution of state $R$. Since TANTAN model does not model
-the first repetition, we have added chain of states $I_1, \dots, I_n$ to model
-first repetition.  Similarly as with sunflowers, we created two copies of
-TANTAN, each generating repeats in only one sequence and connect them together
-exactly as we would connect sunflowers. Since TANTAN model does not rely on
-consensus, it is not necessary to create more copies of TANTAN HMM and it's
-general topology looks like SFF's with only one consensus. Since TANTAN is high
-order HMM, resulting model is high order and generalized pair HMM. We refer to
-this model as \abbreviation{TANTAN PHMM}{TTP}. Advantage of this model over SFF
-is in it's size, since TTP will have in practice less states than SFF. However
-in TTP, does not satisfy assumption that repeats origins from single consensus,
-since each repetitive element is created from previous occurrence and repeats
-in sequences $X$ and $Y$ are independent of each other. \todo{obrazok?}
+We also experimented with using TANTAN-like model for construction of pHMM
+defining emissions distribution of state $R$. We used TANTAN model with prefix
+states from section \ref{SECTION:TANTAN}. Similarly as with sunflower model, we
+created two copies of TANTAN, each generating repeats in only one sequence and
+connect them together exactly as we would connect sunflower models. Since TANTAN
+model does not rely on motif, it is not necessary to create more copies of
+TANTAN HMM and it's general topology looks like SFF's with only one motif.
+Since TANTAN is high order HMM, resulting model is high order and generalized
+pair HMM. We refer to this model as \abbreviation{TANTAN pHMM}{TTP}. Advantage
+of this model over SFF is in it's size, since TTP will have in practice less
+states than SFF. However in TTP, model evolution of repetitions differently,
+since each repetition is created from previous repetition and tandem repeats in
+sequences $X$ and $Y$ are independent of each other; They can have different
+motifs. \todo{Chcelo by to dat v buducnosti poznamku ze aj toto moze byt dovod
+preco to nefunguje dobre}
 
-While having SFF or TTP defined as an $4$ state hight order GPHMM might be
-convenient for some decoding methods, in general using generalized models
-increase time complexity of decoding algorithms quadratically. Therefore we
-also worked with their expanded versions: we removed state $R$ and replace it
-with model generating repeats (referred as a submodel). All transitions
-entering originally into $R$ were directed to start state of submodel and all
-outgoing transitions from $R$ now start in end state of submodel. Distributions
-of alignments generated by this PHMM has clearly not changed. Additionally, if
-in original GPHMM we used identity function as an labeling function
-$\lambda_{ID}$ and in expanded model we label states from submodel by label
-$R$, resulting in labeling function $\lambda_R$, distribution on annotations
-on alignments has also not changed. \todo{toto znie ako od hotentota}
+SFF or TTP are defined as an $4$ state hight order GpHMM.  In general, using
+generalized models increase time complexity of decoding algorithms
+quadratically. Therefore we also used expanded versions of models: we replaced
+generalized state $R$ with model defining emissions of $R$ (referred as a
+submodel). All transitions entering into $R$ were replaced with transition to
+the start state of the submodel, and all outgoing transitions from $R$ were
+replaced by transitions starting in final state of the submodel.  Distributions
+of alignments generated by this pHMM has not changed. Additionally, the
+distribution of annotation of an alignment did not changed, if we use following
+annotation functions: For original GpHMM we use identity function as a labeling
+function $\Lambda_{ID}$.  For expanded model we use function $\Lambda_R$, which
+label all states from submodel by label $R$, and labels for other states is
+same as for GpHMM. 
 
-For consensuses in SFF model, we use $310,091$ motifs found by TRF program run
-on the human chromozome 15 and its orthologous sequences in the dog genome. The
-probability of choosing particular consensus was the observed frequency of the
-consensus in the TRF output. In practice, we limit the Sunflower submodels only
-to those which was found by TRF in the input sequence.  Additionally, the input
+\paragraph{Parameter estimation:}
+We use $310,091$ consensuses found by TRF program run on the human chromozome
+15 and its orthologous sequences in the dog genome as motifs for building SFF.
+The probability of choosing particular motif was the observed frequency of the
+motif in the TRF output. In practice, we limit the Sunflower submodels only to
+those which was found by TRF in the input sequence.  Additionally, the input
 sequence contain motif that is not in predefined set, we add it to the model
-with the probability of the least occurring motif in the model (this is necessary
-if we run our model on sequences that are not sampled from the model).
+with the probability of the least occurring motif in the model.
 
 We set parameters of the Sunflower submodel manually: the insert and delete
-rates were set to $0.005$, the match states allows mutations from consensus
-according to the JC model with parameters $t=0.05$.
-\todo{Ako je definovana pravdepodobnost emisie?}
-Parameters of the TANTAN submodels were estimated by the Baum-Welch algorithm
-\cite{Durbin1998} on 500 repeats sampled from SFF.
+rates were set to $0.005$, the match states allows mutations from motif
+sequence according to the Jukes-Cantor model with parameter $t=0.05$. The
+emission of the insert states were set according to the frequency of the bases
+in the input human-dog alignment.  Parameters of the TANTAN submodel were
+estimated by the Baum-Welch algorithm \cite{Durbin1998} on 500 repeats sampled
+from SFF.
 
-The size of the TTP model depends on the length of the longest possible
-consensus TODO, while the size of the SFF model depends of the total lenght of
-all consensuses used. Therefore SFF can be exponentially larger than TTP model.
-On the other hand, SFF model models assumes that consensuses were developed
-independently, while the TTP model assumes that repetition evolves from the
-previous occurrence of the repetition.
+The size of the TTP model depends on the length of the longest possible motif,
+which we to to the $50$ bases. The size of the SFF model depends of the total
+length of all motifs used. Therefore SFF can be exponentially larger than TTP
+model. SFF model models assumes that repetitions were developed independently,
+while the TTP model assumes that repetition evolves from the previous
+occurrence of the repetition. Additionally, there is no dependence of tandem
+repeats between sequence for TTP model.
 
-While decoding methods are Tandem repeats at orthologous positions in two
-species may share common ancestor and therefore share part of their evolutionary
-history. However, it is possible that they were consequently modified by
-additional evolution events after speciation (including more tandem
-duplications). In our model we ignore such complex evolution of repeats, because
-modeling it would lead to very complex model and increase the difficulty in
-decoding and training. Kováč {\it et. al} developed method added limited
-dependence by adding repeat submodels emitting copies in the two sequences at
-same time \cite{Kovac2012}.
-
+Tandem repeats at orthologous positions in two species may share common
+ancestor and therefore share part of their evolutionary history. However, it is
+possible that they were consequently modified by additional evolution events
+after speciation (including more tandem duplications). In our model we ignore
+such complex evolution of repetitions, because it would lead to very complex
+model and increase the difficulty in decoding and training. Kováč {\it et. al}
+developed method with limited dependence by adding repeat submodels emitting
+copies in the two sequences at same time \cite{Kovac2012}.
 
 \section{Decoding methods}
-
+\todo{TU SOM}
 In this part we describe several optimization criteria we have used. We used
 following optimization criteria: the Viterbi algorithm (VA), the
 posterior decoding (PD), the marginalized posterior decoding (MPD), block
@@ -492,7 +497,7 @@ that generates only one sequence.
 
 Similarly as with regular HMMs, we can define gain functions for annotation
 $G(\Lambda, \Lambda')$ that corresponds to ``similarity'' of two annotated
-alignments.  Since PHMM define probability distribution $\Lambda_T$ of the
+alignments.  Since pHMM define probability distribution $\Lambda_T$ of the
 correct annotated alignments, we can define the expected gain of annotated
 alignment given sequence $X$ and $Y$ and gain function $G$:
 \todo{uprav oznacenia tak, aby boli konzistentne s obycajnymi HMM}
@@ -587,7 +592,7 @@ did not used such model). Example of this gain function in in the Figure
 \begin{center}
 \includegraphics[width=14cm]{../figures/BlockPosterior.pdf}
 \end{center}
-\caption[General topology of Repeat PHMM]{ 
+\caption[General topology of Repeat pHMM]{ 
 Explanation of block decoding gain function. Gray solid lines represents single
 emissions, dashed lines represents multiple emissions (each alignment column is
 one emission). Emission from repeat state have gain $+16$ because it emits same
@@ -599,7 +604,7 @@ in the correct alignment that was generated by same state.
 \end{figure}
 
 To optimize this gain functions, we have to compute posterior probabilities for
-all emissions. In generalized PHMM, emission is given two intervals; one in the
+all emissions. In generalized pHMM, emission is given two intervals; one in the
 sequence $X$ and one in the sequence $Y$. The number of possible emissions is
 $O(n^2m^2)$. The expected gain of the emission is the posterior probability
 multiplied by the number of emitted symbols. After computing expected gains of
@@ -640,7 +645,7 @@ can optimize the block Viterbi decoding with same time complexity.
 \paragraph{Postprocessing}
 The problem with SFF and TTP models is that they model repeat sequences
 independently and do not try to align tandem repeats at orthologous locations.
-Therefore we postprocess alignment using 3-state PHMM by realigning segments of
+Therefore we postprocess alignment using 3-state pHMM by realigning segments of
 alignments that are annotated as repeats. We include also adjacent gaps into
 this postprocess step.
 
@@ -754,7 +759,7 @@ from the nearest repeat. Alignment column was considered as repeat if in the
 correct alignment at least one base of the column was annotated as an repeat.
 The distance is measured by the number of columns. This measure is important,
 because when the distance from the repeat is high, our model is identical to
-3-state PHMM and therefore the performance of both models should be similar in
+3-state pHMM and therefore the performance of both models should be similar in
 such regions.  However, we do expect models incorporating repeats to be more
 precise in the regions near tandem repeats.
 
