@@ -254,11 +254,10 @@ search only for specific motif.
 
 \firstUseOf{TANTAN} is high-order HMM aimed for finding tandem repeat developed
 by Frith \cite{Frith2011}. Unlike Sunflower model, TANTAN models tandem repeats
-with arbitrary consensus. Its only restriction is the maximal length of the
-repeated motif $k$. TANTAN is aimed at finding tandem repeats. Here we describe
-only the core of the model; the part that models tandem repeats. The core of
-the model can be transformed to the model usable for search by same method as
-we described for Sunflower model.
+with arbitrary motif. Its only restriction is the maximal length of the motif
+$k$. In this section we describe the core of the model; the part that models
+tandem repeats. This core can be transformed to the model usable for search by
+same method as we described for Sunflower model.
 
 \begin{figure}
 \begin{center}
@@ -277,48 +276,47 @@ we described for Sunflower model.
 \end{center}
 \caption{Three variants of the core of the TANTAN model. Gray states are
 silent. The first one is simplified model, only with repeat states. The second
-one is one used by Frith \cite{Frith2011} allowing insertions and deletions.
-Last one is our extension with additional state $P_1, \dots P_5$ that models
-first occurrence of repetitive sequence.}\label{FIGURE:TANTAN}
-
+was used by Frith \cite{Frith2011} allowing insertions and deletions.  Last one
+is our extension with additional prefix states $P_1, \dots P_5$ that models
+first repetition.}\label{FIGURE:TANTAN}
 \end{figure}
 
-Main idea is to use state of order $l$ to model repeats with consensus length
-$l$. If we have high-order state of order $l$ and want to generate $i$-th
-symbol of sequence $X$, standard high order state of order $l$ depends on
-subsequence $X[i-l:l]$. TANTAN's states of order $l$ depends only on symbol
-$X[i-l]$. Model consists from $k$ high-order states $R_l$, $1\leq l\leq k$
-called repeat states, where state $R_l$ is of order $l$. Emission of state
-$R_l$ is set in such way, that state emits same symbol as $X[i-l]$ with high
-probability. By adding transition $R_l\to R_l$ we obtain HMM modeling tandem
-repeats without indels with consensus length $l$. By connecting states
-$R_1,\dots, R_k$ to single start and end state as show in figure
-\ref{FIGURE:TANTAN:SIMPLE} we obtain HMM that models repeats with consensus
-lengths $1$ through $k$.
+Principal idea is to use state of order $l$ to model repeat with motif length
+$l$. TANTANs high order states uses less information than standard high order
+states.  Standard high order state of order $l$ depends on subsequence
+$X[i-l:l]$. TANTANs states of order $l$ depends only on symbol $X[i-l]$. Model
+consists from $k$ high-order states $R_l$, $1\leq l\leq k$ called repeat
+states, where state $R_l$ is of order $l$. Emission of state $R_l$ is set in
+such way, that state emits same symbol as $X[i-l]$ with high probability. By
+adding transition $R_l\to R_l$ we obtain HMM modeling tandem repeats without
+indels with motif length $l$. By connecting states $R_1,\dots, R_K$ to single
+start and end state as shown in figure \ref{FIGURE:TANTAN:SIMPLE} we obtain HMM
+that models repeats with motif lengths $1$ through $K$.
 
-This model however does not allow insertions and deletions from the model. This
-can be done similarly to the profile HMMs by adding insert states $I_1,\dots,
-I_{k-1}$ and silent delete states $D_1, \dots, D_{k-1}$ connected as in the
-Figure \ref{FIGURE:TANTAN:INDEL}. There are however slight differences with the
-profile HMM.  In profile HMM, delete states were used to skip at least one
-match state, while in TANTAN delete state is used move to state with lower
-order. Additionally, insert states moves in opposite direction, using insert
-state causes increase of the order of the repeat state. It is also possible to
-move from insert state $I_{j}$ to insert state $I_{j+1}$ which is not possible 
-in the profile HMM.
+This simplified model does not allow insertions and deletions from the model.
+Idels are handled similarly to the profile HMMs, by adding insert states
+$I_1,\dots, I_{k-1}$ and silent delete states $D_1, \dots, D_{k-1}$ connected
+as in the Figure \ref{FIGURE:TANTAN:INDEL}. There are however significant 
+difference from the profile HMM.  In profile HMM, delete states were used to
+skip at least one match state, while in TANTAN delete state is used move to
+state with lower order. Additionally, insert states moves in opposite
+direction, using insert state causes increase of the order of the repeat state.
+It is also possible to move from insert state $I_{j}$ to insert state $I_{j+1}$
+which is not possible in the profile HMM.
 
-One disadvantage of this model is that it does not model the first occurrence
-of the consensus sequence, since repeat states model only the repetitions of
-the sequence. This was problem when we wanted to incorporate TANTAN into our
-model. Therefore we added additional chain of prefix states $P_1,\dots, P_k$
-modeling first repetition. Transitions are now only to end state (modeling
-empty sequence) and state $P_1$. State $P_l$ has transitions to the end state,
-repeat state $R_l$ and the state $P_{l_1}$ (if such state exists).
+One disadvantage of TANTAN model is that it does not model the first occurrence
+of the motif sequence, since repeat states model only the repetitions of
+the sequence. This caused problems when we wanted to incorporate TANTAN as submodel
+for aligning sequences. Therefore we have added additional chain of prefix states $P_1,\dots, P_k$
+modeling first repetition. Transitions from start state are now only to final state (modeling
+empty sequence) and state $P_1$. State $P_l, 1\leq l\leq k$ has transitions to the final state,
+repeat state $R_l$ and the state $P_{l+1}$, if such state exists.
 
 %Emisie a sme hotovy
 We set emission distribution of the insert and prefix states to the background
 probability: the distribution of the bases in DNA. Emission state of the state
-$R_l$ was derived using Jukes-Cantor model with parameter $t$. \todo{spresni}
+$R_l$ was derived using Jukes-Cantor model with parameter $t$, where the
+emission $X[i]$ evolved from $X[i-l]$ over time $t$.
 
 \section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
 \todo{Mozno chceme aj niekde popisat ake mame ciele}
