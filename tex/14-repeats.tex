@@ -507,9 +507,7 @@ annotated alignments (Note that for HMMs, symbol $\Lambda$ represents
 annotation. With pHMM we use this symbol for annotated alignment).  Since pHMM
 define probability distribution $\Lambda_T$ of the correct annotated
 alignments, we can define the expected gain of annotated alignment given
-sequence $X$ and $Y$ and gain function $G$: \todo{uprav oznacenia tak, aby boli
-konzistentne s obycajnymi HMM}
-
+sequence $X$ and $Y$ and gain function $G$: 
 \begin{equation}
 E_{\Lambda_T\mid X, Y}\left[G(\Lambda_T, \Lambda)\right] = 
 \sum_{\Lambda_T}G(\Lambda_T, \Lambda)\prob{\Lambda_T\mid X, Y}
@@ -526,96 +524,98 @@ E_{\Lambda_T\mid X, Y}\left[G(\Lambda_T, \Lambda)\right]
 Finally, we express optimization criteria of various decoding methods using
 highest expected gain framework.
 
-\todo{TU SOM}
-\paragraph{The Viterbi decoding and block Viterbi decoding} Gain $G_V(\Lambda,
-\Lambda_T)$ function for the Viterbi algorithms assigns $+1$ if the predicted
-annotated alignment $\Lambda$ is identical to true annotated alignment
-$\Lambda_T$. Optimization algorithm for non-generalized model was described in
-the section \ref{}.  The time complexity run in time $O(nmE)$ where $E$ is the
-number of non-zero transitions in the model.  We will discuss the time
-complexity for the block Viterbi decoding in the end of this section.
+\paragraph{The Viterbi decoding and block Viterbi decoding} Gain function for
+the Viterbi algorithm assigns $+1$ if the predicted annotated alignment is
+identical to true annotated alignment. Optimization algorithm for
+non-generalized model was described in the section
+\ref{SECTION:PAIRHMMVITERBI}. The time complexity is $O(nmE)$ where $E$ is the
+number of non-zero transitions in the model. We will discuss the time
+complexity for the generalized model in the end of this section.
 
-We will make distinction between the Viterbi decoding and block Viterbi
+We make distinction between the Viterbi decoding and block Viterbi
 decoding when using SFF or TTP models. Using the Viterbi algorithm on the
-expanded model will be referred to as the Viterbi decoding. Using the Viterbi
+expanded model is referred to as the Viterbi decoding. Using the Viterbi
 algorithm on the generalized version of the model will be referred as the block
 Viterbi decoding. The difference between these two versions is that in the
-Viterbi decoding, we account only one state path through the repeat submodel.
-The block Viterbi decoding however sum all possible paths through the repeat
-submodel and therefore abstract from exact realization of the alignment of
-repetitive sequences.
+Viterbi decoding, we account for only one state path through the repeat
+submodel.  The block Viterbi decoding however sum all possible paths through
+the repeat submodel and therefore abstract from exact realization of the
+alignment of tandem repeats.
 
 \paragraph{Posterior decoding}
-In the Viterbi algorithm, the non-zero gain is awarded only if an annotated
-alignment is entirely correct. Gain function $G_P$ of posterior decoding (which
-was defined in section \ref{})is more gradual. It assigns $+1$ for every
-correctly predicted annotated alignment column. Annotated alignment column
-$(u_i, a_i, b_i)$ is correctly predicted if there is alignment column $(v, a_i,
-b_i)$ for arbitrary $v$ in the true annotated alignment (posterior decoding
-ignored labels). 
+The Viterbi decoding awards non-zero gain only if an annotated alignment is
+entirely correct. Gain function of posterior decoding (which was defined
+in section \ref{SECTION:ALNDECODING}) is more granular. It assigns $+1$ for
+every correctly predicted annotated alignment column. Annotated alignment
+column $(u_i, a_i, b_i)$ is correctly predicted if there is alignment column
+$(v, a_i, b_i)$ for arbitrary $v$ in the true annotated alignment (posterior
+decoding ignored labels). 
 
 We will consider stricter version of the posterior decoding by adding
 additional condition: the corresponding annotated alignment column in the
-correct annotated alignment has to have same annotation; $\Lambda_i$ has to be
-equal to $\Lambda_{Tj}$. This stricter condition is aimed for the expanded
-versions of SFF and TTP, since otherwise it would treat repeats as gaps despite
-having orthologs in the other sequence (our models treat such repeats
-independently and models them formally as gaps).  For the 3-state HMM, this
-stricter condition does not have effect. Note that we use this decoding only
-with expanded versions of SFF and TPP or with 3-state model.  The running time
-of the posterior decoding is again $O(nmE)$.
+correct annotated alignment has to be identical (also annotations has to be
+same).  This stricter condition is aimed for the expanded versions of SFF and
+TTP, since otherwise it would treat repeats as gaps despite having orthologs in
+the other sequence (our models treat such repeats independently and models them
+formally as gaps).  For the 3-state HMM, this stricter condition does not have
+effect. Note that we use this decoding only with expanded versions of SFF and
+TPP or with 3-state model.  The running time of the posterior decoding is again
+$O(nmE)$.
 
 \paragraph{Marginalized posterior decoding}
-
-Marginalized posterior decoding (gain function $G_M$) is similar to the
-posterior decoding. The only difference is that we treat all gaps to be
-identical despite their position in the sequence. Therefore we treat column
-$(u, i, -_j)$ to be same as $(u, i, -_k)$ (gaps in other sequence are treated
-symmetrically). The optimization of this gain function is almost identical to
-optimization of $G_P$. Only difference is that after computation of the
-posterior probabilities, we replace probability $(u, i, -_j)$ with the sum of
-$(u, i, -_l)$ of all $l$. The algorithms has also time complexity $O(nmE)$.  As
-with posterior decoding, this decoding method is not used on the generalized
-models.
+Marginalized posterior decoding is similar to the posterior decoding. The only
+difference is that gaps are identical despite their position in the sequence.
+Therefore we treat column $(u, i, -_j)$ to be same as $(u, i, -_k)$ (gaps in
+other sequence are treated symmetrically). The optimization of this gain
+function is almost identical to optimization of posterior decoding. The only
+difference is that after computation of the posterior probabilities, we replace
+probability $(u, i, -_j)$ with the sum of $(u, i, -_l)$ for all $l$. The
+algorithm has also time complexity $O(nmE)$.  As with posterior decoding, this
+decoding method is not used on the generalized models.
 
 \paragraph{Block posterior decoding}
-\todo{numvber of emitted symbols -> number of emitted non-gap symbols}
-Block posterior decoding is version of the posterior decoding for generalized
-models. In block posterior decoding we score emissions instead of independent
-columns. In particular, for SFF and TTP models columns from states $M$, $I_X$
-and $I_Y$ are scored exactly as in the posterior decoding, since those state
-emits only one column. Column $(u_i, a_i, b_i)$ gets $+1$ if in the true
-alignment exists exactly same column and $u_i\in\{M, I_X, I_Y\}$. Emission from
-state $R$ in form of $\Lambda_E=(u_i, a_i, b_i)(\varnothing, a_{i+1},
-b_{i+1})\dots (\varnothing, a_{j}, b_{j})$ where $(j+1)$-th column does not
-contain $\varnothing$ get score $+l$ where $l$ is the number of emitted
-characters in the emission $\Lambda_E$ is in the correct annotation is emission
-of state $u_i$ that emit exactly same set of position symbols.  The reason for
-using $+l$ instead of $+1$ is that it would be better not to use $R$ state,
-because its long emission get score $+1$ while same region would get higher
-score when columns would be scored independently. Instead of $l$, the number of
-emitted bases, we could use the number of emitted columns. However we would
-then discriminate the submodels that would tried to align repeats (although we
-did not used such model). Example of this gain function in in the Figure
-\ref{FIGURE:BLOCK_POSTERIOR}.
+Block posterior decoding is based on the posterior decoding and aim for
+generalized models. Block posterior decoding score emissions instead of
+individual columns. The segment of annotated alignment that was emitted by one
+emission is called \firstUseOf{block}. In particular, states $M$, $I_X$ and
+$I_Y$ emits one-column blocks, state $R$ emits multicolumn blocks. Annotated
+alignment is divided into blocks using $\varnothing$ symbol and each block is
+scored individually.  One column of block $(u_i, a_i, b_i), u_i\in\{M, I_X,
+I_Y\}$ gets $+1$ if there is identical column in the true annotated alignment,
+otherwise gain for such block is $0$. Block of form $\Lambda_E=(u_i, a_i,
+b_i)(\varnothing, a_{i+1}, b_{i+1})\dots (\varnothing, a_{j}, b_{j})$ where
+$(j+1)$-th column does not contain $\varnothing$ (or there is no $(j+1)$-th
+column) gets score $+l$ if the block is correct. The gain $l$ is the number of
+emitted non-gap indices in the block. For example block $(R, 4,
+-_5)(\varnothing, 5, -_5)(\varnothing, 6, 5)$ contain $4$ non-gap indices: $4,
+5, 6$ in the first sequence and $5$ in the second sequence.  The block is
+considered correct if exactly same regions in $X$ and $Y$ forms block with same
+annotation in the true annotated alignment.
 
 \begin{figure}
 \begin{center}
 \includegraphics[width=14cm]{../figures/BlockPosterior.pdf}
 \end{center}
-\caption[General topology of Repeat pHMM]{ 
+\caption[Block posterior decoding function]{ 
 Explanation of block decoding gain function. Gray solid lines represents single
 emissions, dashed lines represents multiple emissions (each alignment column is
-one emission). Emission from repeat state have gain $+16$ because it emits same
-set of $16$ bases from correct positions as does repeat state in the correct
-alignment. Other alignment columns get $+1$ only if there is same alignment column
-in the correct alignment that was generated by same state.
+one emission). Emission from repeat state have gain $+16$ because it emits $16$
+sequences in exactly same regions of the input sequences.  Other alignment
+columns get $+1$ only if there is same alignment column in the correct
+alignment that was generated by same state.
 
 }\label{FIGURE:BLOCK_POSTERIOR} 
 \end{figure}
 
-To optimize this gain functions, we have to compute posterior probabilities for
-all emissions. In generalized pHMM, emission is given two intervals; one in the
+The reason for using $+l$ instead of $+1$ is that otherwise decoding method
+would be biased towards short blocks. Instead of $l$, the number of emitted
+symbols, we could use the number of emitted columns. However we would then
+discriminate the submodels that would tried to align repeats (although we did
+not used such model). Example of this gain function in in the Figure
+\ref{FIGURE:BLOCK_POSTERIOR}.
+
+To optimize this gain function, we have to compute posterior probabilities for
+all emissions. In generalized pHMM, emission is given by two intervals; one in the
 sequence $X$ and one in the sequence $Y$. The number of possible emissions is
 $O(n^2m^2)$. The expected gain of the emission is the posterior probability
 multiplied by the number of emitted symbols. After computing expected gains of
@@ -624,44 +624,44 @@ $O(n^2m^2)$ time.
 
 Let $E$ be the number of transitions in the repeat submodel. The naive
 computation of the expected gain for the pair of intervals of length $n'$ and
-$m'$ can be computed $O(n'm'E)$ by forward algorithm for generalized pair HMM,
-which would lead to $O(n^3m^3E)$ algorithm for computing posterior
+$m'$ can be computed in $O(n'm'E)$ time by forward algorithm for generalized
+pair HMM, which would lead to $O(n^3m^3E)$ algorithm for computing posterior
 probabilities by forward-backward algorithm. By using proper preprocessing that
 can be done in $O((n^2+m^2)E)$ time, we can lower the time complexity of
-computing expected gain for an pairs of interval to $O(k)$ where $k$ is the
+computing expected gain for an pairs of intervals to $O(k)$ where $k$ is the
 number of sunflower submodels (in case of TTP, $k=1$).
 
-Let consider the repeat submodel $R$ with $k$ sunflower pairs $S^X_1, S^Y_1,
+Let consider the repeat submodel $H$ with $k$ sunflower pairs $S^X_1, S^Y_1,
 \dots, S^X_k, S^Y_k$. Let $p_i$ be the probability of entering sunflower
 $S^X_i$.  The probability of transition from $S^X_i$ to $S^Y_i$ is $1$. We can
-write the probability of generating sequences $X'$ and $Y'$ by submodel $R$ as
+write the probability of generating arbitrary pair of sequences $X'$ and $Y'$ by $H$ as
 \begin{equation}
-\prob{X', Y'\mid R} = \sum_{i=1}^k p_i\prob{X'\mid S^X_i}\prob{Y'\mid S^Y_i}
+\prob{X', Y'\mid H} = \sum_{i=1}^k p_i\prob{X'\mid S^X_i}\prob{Y'\mid S^Y_i}
 \end{equation}
 By pre-computing all of the term $\prob{X'\mid S^X_i}$ and $\prob{Y'\mid
-S^Y_i}$, we can compute the posterior probability of the emission in $O(k)$
-time. Naive computation of all $\prob{X'\mid S^X_i}$ would take $O(n^3E)$ time,
-but this can be further improved. When computing $\prob{X'\mid S^X_i}$ using
-the forward algorithm, we can use the values from the forward table to compute
-the probability of emitting any prefix of $X'$ by looking at the value in the
-final state in the corresponding column of the forward table (In case of the
-model without final state, we sum the probabilities in the corresponding
-column). Using this, we need to run forward algorithm only for sequences
-$X[i:]$ for all $0\leq i< n$. The optimization for the other sequence is
-analogous. By using these techniques we can pre-compute the emission terms in
-$O((n^2+m^2)E)$ time. Therefore the overall time complexity of the Block
-posterior decoding is $O(kn^2m^2 + (n^2+m^2)E)$. By same techniques we
-can optimize the block Viterbi decoding with same time complexity.
+S^Y_i}$, we can compute the posterior probability of the block in $O(k)$ time.
+Naive computation of all $\prob{X'\mid S^X_i}$ would take $O(n^3E)$ time, but
+this can be further improved. When computing $\prob{X'\mid S^X_i}$ using the
+forward algorithm, we can use the values from the forward table to compute the
+probability of emitting any prefix of $X'$ by looking at the forward
+probability of final state for the corresponding column. We need to run forward
+algorithm only for sequences $X[i:]$ for all $0\leq i< n$. The optimization for
+the other sequence is analogous. By using these techniques we can pre-compute
+the emission terms in $O((n^2+m^2)E)$ time. Therefore the overall time
+complexity of the Block posterior decoding is $O(kn^2m^2 + (n^2+m^2)E)$. By
+same techniques we can optimize the block Viterbi decoding with same time
+complexity.
 
 \paragraph{Postprocessing}
 The problem with SFF and TTP models is that they model repeat sequences
 independently and do not try to align tandem repeats at orthologous locations.
 Therefore we postprocess alignment using 3-state pHMM by realigning segments of
-alignments that are annotated as repeats. We include also adjacent gaps into
+alignments that are annotated as repeats. We also include adjacent gaps into
 this postprocess step.
 
 \section{Optimizations}
 
+\todo{TU SOM}
 In this section we summarize additional techniques we have used to decrease
 running time of decoding algorithms. The fastest decoding algorithms described
 above run in $O(nmE)$ time, which is still prohibitive for longer sequences.
