@@ -140,7 +140,7 @@ Note that the purpose of this example to illustrate redundancy of TRF output.
 If we ran TRF on sequence $X$, the output would be only repeat with $CAC$ as an
 consensus.
 
-\subsection{Sunflower model}
+\subsection{Sunflower model}\label{SECTION:SUNFLOWERMODEL}
 \firstUseOf{Sunflower model} is HMM that models tandem repeats of one
 previously specified motif $C=c_0\dots c_{k-1}$. We developed it as a part of
 our model for aligning sequences with tandem repeats in
@@ -249,7 +249,8 @@ position in the sequence. Probability of transition from final state of $S_C$
 to $B$ is $1$.  There is also transition $B\to B$ with probability $1-p_r$. We
 can use for example the Viterbi algorithm with this model to find all
 occurrences of tandem repeat with motif $C$. However, with this model we can
-search only for specific motif. 
+search only for specific motif. We call this method of finding tandem repeats 
+the \abbreviation{Sunflower repeat finder}{SRF}.
 
 \subsection{TANTAN}\label{SECTION:TANTAN}
 
@@ -661,16 +662,15 @@ this postprocess step.
 
 \section{Optimizations}
 
-\todo{TU SOM}
 In this section we summarize additional techniques we have used to decrease
 running time of decoding algorithms. The fastest decoding algorithms described
 above run in $O(nmE)$ time, which is still prohibitive for longer sequences.
-Additionally, block-based methods are even slower, so we need to use techniques
-to speed them up. We used following optimizations:
+Additionally, block-based methods are even slower. We used following
+optimizations:
 \begin{itemize}[itemsep=-1mm]
 \item We implemented standard technique of banding. We restrict the alignment
 to window around guide alignment, that can be obtained by faster but less
-precise alignment algorithms. We used Muscle\cite{Edgar2004} with default
+precise alignment algorithms. We used Muscle \cite{Edgar2004} with default
 parameters to compute guide alignment. The final alignment methods were
 restricted to be within 30 bases from the guide alignment. This technique
 reduce the $O(nm)$ term from the time complexity to $O((n+m)d)$ where $d$ is
@@ -688,14 +688,15 @@ TTP model.
 \item To further reduce running time of the block Viterbi decoding and block
 posterior decoding, we restrict the emissions of $R$ state to specific
 intervals in both input sequences. At first, we found candidate set of tandem
-repeat intervals for both input sequences $X$ and $Y$ independently. Let $T_X$ and $T_Y$ are
-the sets of candidate intervals (not necessarily disjoint) for sequences $X$
-and $Y$ respectively. We restrict emission of $R$ state only to pair of
-intervals $i_X, i_Y$ where $i_X$ and $i_Y$ have beginning and end within $10$
-bases from some interval from $T_X$ and $T_Y$ respectively or if one of $i_X$
-or $i_Y$ is an empty interval (there is tandem repeat in only one sequence).
-By this heuristic, $R$ state do emissions in at most $(400|T_X|+n)(400|T_Y|+m)$
-positions. We applied this method to both SFF and TPP models.
+repeat intervals for both input sequences $X$ and $Y$ independently. Let $T_X$
+and $T_Y$ are the sets of candidate intervals (not necessarily disjoint) for
+sequences $X$ and $Y$ respectively. We restrict emission of $R$ state only to
+pair of intervals $i_X, i_Y$ where $i_X$ and $i_Y$ have beginning and end
+within $10$ bases from some interval from $T_X$ and $T_Y$ respectively or if
+one of $i_X$ or $i_Y$ is an empty interval (there is tandem repeat in only one
+sequence).  By this heuristic, $R$ state do emissions in at most
+$(400|T_X|+n)(400|T_Y|+m)$ positions. We applied this method to both SFF and
+TPP models.
 
 We used following algorithm to select candidate intervals $T_X$ and $T_Y$:
 \begin{enumerate}[itemsep=-1mm]
@@ -703,79 +704,74 @@ We used following algorithm to select candidate intervals $T_X$ and $T_Y$:
 intervals $T_X$ and $T_Y$ and lists of consensuses $C_X$ and $C_Y$.
 
 \item For every consensus $c\in C_X\cup C_Y$, build SRF model $S_c$ (sunflower
-repeat finding model from section \ref{}). \todo{Skontroluj, ci mame definovany
-SRF model, ak nie zisti ako ho volame}
+repeat finding model from section \ref{SECTION:SUNFLOWERMODEL}). 
 
-\item Each model $S_c$ run on the sequences $X$ and $Y$ using the Viterbi
-algorithm. Add found repeat intervals into corresponding sets $T_X$ and $T_Y$.
+\item Each model $S_c$ is run on the sequences $X$ and $Y$ using the Viterbi
+algorithm. All found repeat intervals are added into corresponding sets $T_X$
+and $T_Y$.
 
 \end{enumerate}
-The reason for using this method instead of using intervals from TRF only is
+The reason for using this method instead of using only intervals from TRF is
 that running TRF on the input sequences independently can cause several
-problems. At first if sequence $X$ contain three repetition of motif $m$ and
+problems. At first, if sequence $X$ contain three repetition of motif $m$ and
 sequence $Y$ contain only one, then TRF would return interval only for the
-sequence $X$. Additionally, consensus motifs can be found in both sequences but
-they can be rotated and therefore theirs intervals would be shifted.
+sequence $X$. Additionally, consensus can be found in both sequences but can be
+rotated, and therefore intervals in both sequences would be shifted.
 
 \end{itemize}
 
 \section{Experiments}
-\begin{reformulate*}
-Ako sa generovali data, ako sa trenovali modely, ake miery sledujeme.  Bolo by
-zaujimave sa pozriet ako porovname s hladanim tandemovych repeatov ak pouzijeme
-TRF, alebo sunflower.
 
-\end{reformulate*}
-
-
-This section summarizes the details of this experiment and measures we were
-using for evaluation. We evaluate our model on the simulated data. At first we
-estimated parameters of the model using annotated human-dog alignment by TRF
-program \cite{Benson1999}.  Parameters for 3-state model, and 3-state submodel
-of SFF and transitions to the repeat state were therefore trained by supervised
-learning. Setting SFF and TTP parameters was discussed in the section \ref{}.
+This section summarizes the details of simulation experiment and measures we
+were using for evaluation. At first, we estimated parameters of the model using
+annotated human-dog alignment by TRF program \cite{Benson1999}. Parameters for
+3-state model, and 3-state submodel of SFF and transitions to the repeat state
+were therefore trained by supervised learning. Setting SFF and TTP parameters
+was discussed in the sections \ref{SECTION:SUNFLOWERMODEL} and
+\ref{SECTION:TANTAN}.
 
 We sampled 200 test alignments each of length at least 200 bases from the SFF
 submodel with the condition, that the number of repetitions in the tandem
 repeat has to be at least three in both sequences. Reason for this is that
 otherwise we would have segments of alignments that are annotated as repeats,
-but in fact are not because it contain only one copy of the motif. We refer to
-these alignments (along with sampled repeat annotation) as the correct
+but in fact are not because it would contain only one copy of the motif. We
+refer to these alignments (along with sampled repeat annotation) as the correct
 alignments and correct annotation (repeat intervals and consensuses).
 
-We used same model for evaluation of parameters. To evaluate the robustness of
-our model, we assess the effects of misspecification of parameters by
+We used the same model for evaluation of parameters. To evaluate the robustness
+of our method, we assess the effects of misspecification of parameters by
 estimating model parameters from human-chicken alignment and perturbing model
-parameters (details are in next section). Context \cite{} was trained of the
-200 separate alignments sampled from the model. 
+parameters (details are in the next section). Context \cite{Hickey2011} was
+trained of the 200 separate alignments sampled from the model. 
 
-\paragraph{Measures:} The first measure we use was the error rate on the
-alignments: fraction of incorrectly predicted columns of an alignment. It was
-measured only on the alignment columns generated from non-repeats states during
-sampling. Reason for this is that SFF and TTP does not model alignment of
-repetitive regions.
+\paragraph{Measures:} The first measure we used was the error rate: the
+fraction of incorrectly predicted columns of an alignment. It was measured only
+on the alignment columns generated from non-repeats states during sampling.
+Reason for this is that SFF and TTP does not model alignment of repetitive
+regions.
 
-We also measured the precision of predicting exact repeat segments boundaries
-in alignments. We measure the number of correctly predicted repeat segments;
-segment is correctly predicted if it contain identical parts of sequences as
-the corresponding segment in the correct alignment. We report the block
-sensitivity, which is the fraction of the number of correctly predicted
-segments and the number of correct segments, and block specificity, which is
-the fraction of the number of correctly predicted segments and all predicted
-segments. We also investigate the accuracy of prediction of repeat annotation
-for individual alignment columns; the repeat sensitivity and specificity.
+Additionally, we investigate the precision of predicting exact repeat block
+boundaries in alignments by measuring the number of correctly predicted repeat
+blocks; block is correctly predicted if it contain identical parts of sequences
+as the corresponding block in the correct alignment. We report the block
+sensitivity, which is the fraction of the number of correctly predicted blocks
+and the number of correct block, and block specificity, which is the fraction
+of the number of correctly predicted blocks and all predicted blocks. We also
+investigate the accuracy of prediction of repeat annotation for individual
+alignment columns; the repeat sensitivity and specificity.
 
-We have additionally measure the relation of the error rate and the distance
+We also measured the relation of the error rate and the distance
 from the nearest repeat. Alignment column was considered as repeat if in the
 correct alignment at least one base of the column was annotated as an repeat.
 The distance is measured by the number of columns. This measure is important,
 because when the distance from the repeat is high, our model is identical to
 3-state pHMM and therefore the performance of both models should be similar in
-such regions.  However, we do expect models incorporating repeats to be more
+such regions. However, we do expect models incorporating repeats to be more
 precise in the regions near tandem repeats.
 
 \section{Results of simulation experiments}\label{SECTION:REPSIMRESULTS}
 
+\todo{TU SOM}
 This section discuss results of simulation experiment. We split results of
 various version of algorithms into several tables. The results for SFF models
 are in the table \ref{TABLE:SFFMAIN}. Table \ref{TABLE:SFFMAINORIGINAL} contain
