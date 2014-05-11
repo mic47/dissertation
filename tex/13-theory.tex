@@ -138,7 +138,8 @@ we did not study such variations.
 
 In this section we apply the two-stage decoding methods on the HIV
 recombination detection problem. Our goal is to illustrate the effect and
-usefulness of the two-stage decoding algorithms. We will describe the HIV
+usefulness of the two-stage decoding algorithms, not to compare it with the
+other methods for recombination detection.  We will describe the HIV
 recombination detection domain, two two-stage decoding algorithm and show
 experiment on the artificial dataset of recombinant HIV sequences.
 
@@ -337,6 +338,15 @@ number of colors and as a result, graph is much smaller then in the unguided
 version. Implementation details of other parts of an algorithm can be found in
 \cite{Nanasi2010mgr}.
 
+As we will show in this chapter, finding the most probable set or the most
+probable footprint are NP-hard problems.  Therefore we used heuristic algorithm
+implemented in the from program balls \cite{Brown2010}, which is also described
+in section \ref{SECTION:DISTANTMEASURES}. Note that the balls algorithm
+estimates the footprint by sampling state paths and selecting the most
+frequent footprint of sampled paths. For using the set as a guide, we have chosen
+the set of labels used in the footprint guide, since these sets were almost
+always correct. 
+
 \subsection{Data and results}
 We created an artificial dataset of recombinant HIV sequences and run HERD with
 two guide functions: annotation set and footprint. HERD was run with default
@@ -353,53 +363,42 @@ segment lengths: either $200-300$ (short) or $950-1050$ (long) with additional
 $0-750$ and $0-500$ bases for the first and for the last segment respectively.
 The Length of each segment was drawn from the uniform distribution.
 
-\todo{TU SOM}
-\todo{Tieto experimenty by som radsej zbehol este raz}
 Apart from two different recombination length, we also evaluated algorithm of
 recombinants of sequences from same subtypes but different sub-subtypes, which
 gave us $4$ different data sets. For all datasets we generated $150$
 recombinants of two sequences. For subtypes we use subtypes A, BD, C, F, G. For
 sub-subtypes we . For sub-subtypes we have used sub-subtype pairs A1-A2, B-D and
 F1-F2.
+\todo{Tieto experimenty by som radsej zbehol este raz}
 
-Since finding the most probable set or the most probable footprint is con
-tractable, we used approximations in this experiments. The approximations of the
-most probable set and the most probable footprint for given recombinant were
-taken from program balls by \cite{Brown2010}, which is also described in section
-\ref{SECTION:DISTANTMEASURES}. Note that balls algorithm estimate footprint by
-sampling of the state paths. For using set as guide, we have chosen to take the
-set of labels used in footprint as an approximation to the most probable set,
-since these sets were almost always correct. Note that the aim of these
-experiments is to demonstrate the usefulness of two-stage decoding approach, not
-to compare it with the other methods for recombination detection.
-
-To measure performance of the algorithm and amount of systematic errors, we use
-following metrics to compare different versions of algorithm.
+To measure accuracy of the algorithms and amount of systematic errors, we use
+the following metrics.
 \begin{enumerate}[itemsep=-1mm]
 \item {\bf \%id}: Percentage of the bases with correctly predicted label.
 
 \item {\bf Segment specificity}: Percentage of the number of correctly predicted
 segments out of the number of all predicted segments. Segment is correctly
-predicted if it's boundaries are within $10$ bases.
+predicted if its boundaries are within $10$ bases of the correct boundaries.
 
 \item {\bf Segment sensitivity}: Percentage of the number of correctly predicted
-segments out of the number of segments in the correct alignment.
+segments out of the number of segments in the correct annotation.
 
 \item {\bf \%correct footprints}: Percentage of correctly predicted footprints.
 
-\item {\bf Footprint distance}: Normalized edit distance of predicted footprint
-and correct footprint (averaged over all samples).
+\item {\bf Footprint distance}: Edit distance of predicted footprint and
+correct footprint normalized by the sum of the lengths of the correct footprint
+and the predicted (averaged over all samples). \todo{Asi by som to normalizoval lepsie}
 
-\item {\bf Set specificity}: Percentage of the number or correctly predicted label
-types out of the total number of predicted labels.
+\item {\bf Set specificity}: Percentage of the number of correctly predicted label
+types out of the total size of predicted label set.
 
 \item {\bf Set sensitivity}: Percentage of the number of correctly predicted label
-types out of the total number of label types in correct labeling.
+types out of the total size of correct label set.
 
 \end{enumerate} 
 Aim of measures $1-3$ is to quantify the performance of the algorithm in terms
 of ability to correctly predict the correct annotation. Measures $4-7$ quantify
-the amount of previously mentioned systematic errors in predicted annotation.
+the amount of previously mentioned systematic errors in the predicted annotation.
 
 We use three versions of HERD in our experiments: original version of HERD,
 version with annotation set as a guide denoted by S-HERD and version using
@@ -429,46 +428,49 @@ F-HERD &{\bf 94.19}& {\bf 53.57}& {\bf 63.83}& {\bf 100}&    {\bf 0.0}&
 \multicolumn{8}{l}{\bf sub-subtypes, long recombination length}\\
 HERD   &84.10& 19.87& 25.63& 21.33& 0.1491& 29.3&{\bf 100}\\
 S-HERD &83.90& 24.87& 28.55& 47.97& 0.0524& {\bf 98.6}&{\bf 100}\\
-F-HERD &{\bf 85.03}& {\bf 26.65}& {\bf 30.24}& {\bf 98}&   {\bf 0.0018}& {\bf
+F-HERD &{\bf 85.03}& {\bf 26.65}& {\bf 30.24}& {\bf 98.0}&   {\bf 0.0018}& {\bf
 98.6}&{\bf 100}\\
 \end{tabular}
 \end{center}
 \caption[Results of F/S-HERD on artificial recombinants.]{Results of experiments
-on four data sets. Larger values are better for all columns  except
-{\it footprint distance} column where lower value is better. Best value out of
-each column is bold.}\label{HERD:EXPTABLE}
+on four data sets. Note that larger values are better for all columns  except
+{\it footprint distance} column where a lower value is better. The best value out of
+each column is shown in bold.}\label{HERD:EXPTABLE}
 \end{table*}
 
 In general, we expect short recombination length to be harder than long
-recombination length and additionally distinguishing between sub-subtypes is
-harder than distinguishing between subtypes. Both of these expectations were
-observed in the results. In all experiments on recombinants with long
-recombination length, F-HERD outperformed HERD in all metrics, especially with
-the metrics $4-7$: percent of correct footprint was increased from $76.67\%$ to
-$100\%$ in case of subtypes and from $21.33\%$ to $98\%$ in case of
-sub-subtypes. However on recombinants with short recombination length,
-footprints used were wrong most of the time and in sub-subtypes dataset all of
-the algorithms predict zero correct footprints.  In fact, performance of F-HERD
-decreased in all metrics but annotation set specificity and sensitivity. This
-and increase in footprint distance suggests that improvement in finding the best
-footprint is needed.
+recombination length and distinguishing between sub-subtypes to be harder than
+distinguishing between subtypes. Both of these expectations were observed in
+the results. In all experiments on recombinants with long recombination length,
+F-HERD outperformed HERD in all metrics, especially with the metrics $4-7$:
+fraction of correct footprint was increased from $76.67\%$ to $100\%$ in case of
+subtypes and from $21.33\%$ to $98\%$ in case of sub-subtypes. However on
+recombinants with short recombination length, used footprints were wrong most
+of the time and in the sub-subtypes dataset all of the algorithms predict zero
+correct footprints.  In fact, accuracy of F-HERD decreased in all metrics
+except for annotation set specificity and sensitivity\todo{Vieme overit ze
+zvolene footprinty maju nizsiu pravdepodobnost nez skutocne?}. This and
+increase in footprint distance suggest the problem might be cause by heuristic
+methods for finding the best footprint and that improvements in these methods
+are needed.
 
 
-S-HERD performs slightly worse than F-HERD on the long recombination length, but
-the metrics were still significantly better than unguided HERD algorithm.
-Additionally, using S-HERD with short recombination length was not performing
-worse then HERD, but their performance was similar.
+S-HERD performs slightly worse than F-HERD on the data sets with long
+recombination lengths, but the metrics were still significantly better than
+unguided HERD algorithm.  Additionally, using S-HERD with short recombination
+length was not performing worse than HERD; their accuracy was similar.
 
 \section{Computational complexity problems}
 
-In the previous experiments, we demonstrated that two-stage algorithm can be
-useful technique to improve decoding algorithm. In this and following sections
-we will discuss mostly theoretical aspects of defining guides and finding the
-most probable guides. In particular, we show that following problems are
-NP-hard: \firstUseOf{the most probable set},
-\firstUseOf{the most probable footprint}, and \firstUseOf{the most probable
-restriction}. The last problem is variant of the most probable set.
-
+In the previous experiments, we demonstrated that the two-stage algorithm can
+be a useful technique to improve HMM decoding algorithm. In this and following
+sections we will discuss theoretical aspects of defining guides and finding the
+most probable guides. In particular, we show that the following problems are
+NP-hard: \firstUseOf{the most probable set}, \firstUseOf{the most probable
+footprint}, and \firstUseOf{the most probable restriction}. The last problem is
+variant of the most probable set. In this section we define these problems and
+state the main results. The following sections then discuss individual problems
+and prove the results.
 
 \begin{definition}[The most probable set problem] Given an HMM $H$, sequence $X$ of
 length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
@@ -479,12 +481,16 @@ such that $\prob{S(\pi) = S, X\mid H} \geq p$.
 The most probable set problem is NP-hard. \label{THEOREM::NPSET}
 \end{theorem}
 
-In the most probable set problem, guide restricts us only to paths that use all
-of the states from annotation set. As in the experiments, it is more natural to 
-allow also to use only subsets of annotation set in the alignment. Therefore we
-might be interested in maximizing $\prob{S(\pi) \subseteq S, X\mid H}$. However, 
-in this case we would get the set of all labels. To get a meaningful and useful
-problem definition, we can restrict the size of an annotation set to be $k$:
+In the most probable set problem, we consider only paths that use all
+of the states from the annotation set. As in the experiments, it is more natural to 
+include also paths that use only a subsets of annotation set. Therefore we
+might be interested in maximizing 
+\[
+\prob{S(\pi) \subseteq S, X\mid H} = \sum_{\pi'\subseteq\pi}\prob{S(\pi') = S, X\mid H}
+\]
+However, this probability is trivially maximized by the set of all labels. To
+get a meaningful problem definition, we can restrict the size of the annotation
+set to be $k$:
 
 \begin{definition}[The most probable restriction problem]
 Given an HMM $H$, sequence $X$, integer $k$ and number $p\in[0,1]$, decide if
@@ -493,40 +499,40 @@ $\prob{S(\pi)\subseteq S, X\mid H} \geq p$.
 \end{definition}
 
 \begin{theorem}
-The most probable restriction problem is NP-hard. \label{THEOREM::NPREST}
+The most probable restriction problem is NP-complete. \label{THEOREM::NPREST}
 \end{theorem}
 
 Finally, we also show that the most probable footprint problem is NP-complete.
 \begin{definition}[The most probable footprint problem]
 Given an HMM $H$, sequence $X$
 of length $n$ and a number $p\in [0,1]$, decide if there exists a footprint $F$
-such that $\prob{f(\pi) = S, X\mid H}\geq p$
+such that $\prob{f(\pi) = F, X\mid H}\geq p$.
 \end{definition}
 
 \begin{theorem}
 The most probable footprint problem is NP-complete.
 \label{THEOREM::NPFOOT}
 \end{theorem}
-
-
-At first we show combinatorial proof of theorem \ref{THEOREM::NPSET}. Then we
+\todo{States alebo labels? Pre labels trivialne redukcia z most probable labeling}
+First we show combinatorial proof of theorem \ref{THEOREM::NPSET}. Then we
 show proof of theorem \ref{THEOREM::NPREST}. Finally we show proof of theorem
 \ref{THEOREM::NPFOOT} by showing $8$-state HMM for which is NP hard to find the
-most probable footprint and then we extend this prove theorem
+most probable footprint and then we extend this proof to theorem
 \ref{THEOREM::NPSET} again. 
 
 \section{The Most Probable Set Problem}
 \label{sec:set}
 
-\begin{definition*}[The most probable set problem] Given an HMM $H$, sequence $X$ of
-length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
-such that $\prob{S(\pi) = S, X\mid H} \geq p$.
-\end{definition*}
+%\begin{definition*}[The most probable set problem] Given an HMM $H$, sequence $X$ of
+%length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
+%such that $\prob{S(\pi) = S, X\mid H} \geq p$.
+%\end{definition*}
 
-In this section, we prove NP-hardness of the most probable set problem, theorem \ref{THEOREM::NPSET}.
+In this section, we prove NP-hardness of the most probable set problem, theorem
+(\ref{THEOREM::NPSET}).
 
 \todo{Vloz sem definiciu max clique, alebo aspon cituj}
-To prove this theorem, we will use a reduction from the maximum clique
+We will use a reduction from the maximum clique
 problem.  Given a graph $G=(V,E)$ and a clique
 size $k$, we first choose a suitable threshold $k'\ge k$, as
 detailed below, and construct a graph $G'=(V',E')$ such that $G'$ has
@@ -537,10 +543,10 @@ As long as $k'-k$ is not too large, this transformation can be done in
 polynomial time.
 
 In the next step, we use $G'$ and $k'$ to construct an HMM $H_{G'}$, an input
-sequence and a probability threshold. $H_{G'}$ have property the set with
-probability above threshold on given sequence corresponds to the clique of size
-$k'$ in graph $G'$. We will use the following
-straightforward way of converting a graph to an HMM.
+sequence and a probability threshold. Every state set in $H_{G'}$ with
+probability above threshold for the given sequence corresponds to a clique of
+size $k'$ in graph $G'$. We will use the following straightforward way of
+converting a graph to an HMM.
 
 \begin{definition}\label{GraphHMM}
 Let $G=(V,E)$ be an undirected graph (without self-loops). 
@@ -565,6 +571,7 @@ probability 1: $a_{\psi,\psi}=1$.
 \end{itemize}
 \end{definition}
 
+\todo{TU SOM}
 The purpose of error state $\psi$ is to level the probabilities of admissible
 state paths without $\psi$ to the same probability. Since $\psi$ is the only
 states that generates $1$, only sequences of form $X=0^n$ can be generated by

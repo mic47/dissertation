@@ -6,3 +6,4 @@ figure->Figure
 ->hidden Markov models
 Baum Welsch->Baum Welch
 et. al -> et al.
+At first -> First
