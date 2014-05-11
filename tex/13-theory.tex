@@ -1,30 +1,43 @@
 \chapter{Two Stage Decoding of HMMs}
 
-In this chapter we will study computational complexity of some decoding
-techniques that are aimed to reduce systematic errors sequence annotation. In
-this chapter we will focus only on HMMs and not pair HMM. We can find one
-example in the HIV recombination prediction domain. As we summarized in section
-\ref{SECTION:HERD}, in recombination prediction we want to  find out which parts
-of recombinant virus sequence originates in which subtype.  To do so, we have
-previously developed HERD decoding method \cite{Nanasi2010, Nanasi2010mgr} that
-performed better than the Viterbi algorithm. However, in some cases resulting
-annotation contains some systematic errors, for example rapid switching between
-different subtypes. One such example can be found in figure
-\ref{FIGURE:HERD_BAD}.  To mitigate such effects, one can use two-stage decoding
-strategy: At first search for the most probable footprint $F$, then find the
-annotation with footprint $F$ that maximize the expected reward. By fixing
-footprint, original method is forced to keep the structure of footprint and
-therefore rapid change of types as if figure \ref{FIGURE:HERD_BAD} is not
-possible (of course, unless footprint contains large number of recombinations).
+In this chapter we will study several decoding techniques, which are aimed to
+reduce systematic errors in sequence annotation.  We will illustrate our
+approach using the HIV recombination prediction domain, discussed in Section
+\ref{SECTION:HERD}. Here, the goal is to find out which parts of a recombinant
+virus sequence originate in which subtype.  For this task, we have previously
+developed the HERD decoding method \cite{Nanasi2010, Nanasi2010mgr} (Section
+\ref{SECTION:HERD}) which performed better than the Viterbi algorithm. However,
+in some cases the resulting annotation contains some systematic errors, for
+example frequent switching between different subtypes. One such example can be
+found in Figure \ref{FIGURE:HERD_BAD}. To mitigate such effects, one can use a
+two-stage decoding strategy. First we search for the most probable footprint
+$F$. The footprint is what is left from labeling after removing consecutive
+identical labels. Formally it was defined in section
+\ref{SECTION:DISTANTMEASURES} by definition \ref{DEFINITION::FOOTPRINT}. In the
+second stage we find the annotation with footprint $F$ that maximizes the
+expected reward or some other criterion. The second stage is forced to keep the
+structure of footprint, and therefore rapid change of types as in Figure
+\ref{FIGURE:HERD_BAD} is not possible (unless the footprint contains a large
+number of recombinations).
 
-Footprint is not the only way how to restrict search space for the second stage
-of the algorithm. Alternatively, we also explore fixing the set of states or
-labels that can be used in the final alignment. In such case, in the first stage
-we search for a set of labels with maximal probability (in practice we could
-also choose different criteria to select such set). In informal and more general
-way, in the first stage we search for the best guide, which can be in the form
-of footprint or a set of labels. In the second stage we find optimal
+%Footprint is not the only way how to restrict search space for the second stage
+%of the algorithm. Alternatively, we also explore fixing the set of states or
+%labels that can be used in the final alignment. In such case, in the first stage
+%we search for a set of labels with maximal probability (in practice we could
+%also choose different criteria to select such set). 
+%In informal and more general way, 
+More generally, in the first stage we search for the best guide, which 
+is a general constraint on the allowed annotation, for example in the form
+of footprint or a set of labels. In the second stage, we find optimal
 annotation using the selected guide.
+\todo{Brona: Pridaj zmienku o Jakubovom clanku, kde to robili a zhrnutie nasich
+vysledkov (experimenty, np-tazkost, formalizovanie problemu -> z konca 5.1}
+
+At first we give formal definition of the two-stage algorithm. Then we show
+experiment illustrating effects of the two-stage decoding on the HIV
+recombination detection problem.  Further in this chapter we prove that finding
+the most probable guide is for certain guide functions NP-hard.
+
 
 \begin{figure}
 \begin{center}
@@ -32,58 +45,54 @@ annotation using the selected guide.
 \end{center}
 \caption[Example of annotation with systematic error.]{ 
 Each row corresponds to one annotation of the same HIV recombinant, colors
-represents original virus subtypes. Unaltered HERD algorithm predicts wrong
+represent virus subtypes. Unaltered HERD algorithm predicts a wrong
 subtype and also contains too many segments. But restricting to the specified
-footprint (F-HERD) or to the specified set (S-HERD) provides almost correct
+footprint (F-HERD) or to the specified set (S-HERD) provides an almost correct
 annotation without these errors.  }\label{FIGURE:HERD_BAD} 
 \end{figure}
 
 \section{Formal definition}
+In this section we will define two-stage decoding algorithms, and the
+generalization of the footprint function from the first stage, the guide
+function. Additionally to the footprint, we define additional guide called
+annotation set. Footprint was already defined in the definition
+\ref{DEFINITION::FOOTPRINT}, and we denote the footprint of annotation
+$\Lambda$ as $F(\Lambda)$. 
 
 \begin{note}
-In following text, all of the definitions could be done similarly for the
-annotations and state paths. Annotations are more general, because by setting
-$\lambda$ to identity function, all annotations became state paths.
+The following definitions could also use state paths instead of 
+annotations. However, annotations are more general, because by setting
+$\lambda$ to the identity function, all annotations become state paths.
 \end{note}
-\todo{Restriction->Guide}
 
 \begin{definition}[Annotation set]
-The \abbreviation{\firstUseOf{Annotation set}}{S} of labeling
-$\Lambda$ of state path $\pi$ the set of labels visited on the state path.
-Let $\pi = \pi_1\pi_2\dots \pi_n$ and $\lambda$ be coloring function as in definition
-\ref{DEFINITION:ANNOTATION}. Then 
+Let $\pi = \pi_1\pi_2\dots \pi_n$ be a state path and $\lambda$ be coloring
+function as in definition \ref{DEFINITION:ANNOTATION}.  The
+\firstUseOf{Annotation set} of labeling $\Lambda$ is the set of labels visited
+on the state path:
 \[S(\pi) = \left\{\lambda(\pi_1), \lambda(\pi_2)\dots\lambda(\pi_n)\right\}\]
-
-Similarly, since $\Lambda = \Lambda_1\Lambda_2\dots \Lambda_n$ where $\Lambda_i
-= \lambda(\pi_i)$, 
+Annotation set of an annotation $\Lambda = \Lambda_1\Lambda_2\dots \Lambda_n$
+is the set
 \[S(\Lambda) =
 \left\{\Lambda_1,\Lambda_2,\dots\Lambda_n\right\}\]
-
-The \firstUseOf{State set} is annotation set where labeling function is identity
-function.\label{DEFINITION:ANNOTATION_SET}
+A \firstUseOf{state set} is an annotation set when the labeling function is the
+identity function.\label{DEFINITION:ANNOTATION_SET}
 \end{definition}
-
-The footprint is what is left from labeling after removing consecutive identical
-labels. Formally it was defined in section \ref{SECTION:DISTANTMEASURES} by
-definition \ref{DEFINITION::FOOTPRINT}.  We denote the footprint of annotation
-$\Lambda$ as $F(\Lambda)$.
 
 Two-stage decoding system can be described in Highest Expected Gain framework
 introduced in section \ref{SECTION:HEG}. At first, we define guide and guide
 function.
 
 \begin{definition}[Guide function, guide relation, guide]
-Let $H$ be an HMM, $f$ be a annotation gain function as in definition
-\ref{DEFINITION:GAINFUNCTION} in section \ref{SECTION:HEG}, $L$ be the set of
+Let $H$ be an HMM, and $f$ be an annotation gain function. Let $L$ be the set of
 all annotations, $W$ be an arbitrary set. We call any function
-$R:L\to W$ a \firstUseOf{guide function} and $R(\Lambda)$ is
-\firstUseOf{guide} $r$ of annotation $\Lambda$.
+$R:L\to W$ a \firstUseOf{guide function} and $R(\Lambda)$ is the
+\firstUseOf{guide} of annotation $\Lambda$.
 
-\firstUseOf{Guide relation} is relation $\hat{R}\subseteq L\times W$
-with property that for all $\Lambda\in L$, $(\Lambda, R(\Lambda))\in \hat{R}$.
+A \firstUseOf{guide relation} is a relation $\hat{R}\subseteq L\times W$
+with the property that for all $\Lambda\in L$, $(\Lambda, R(\Lambda))\in \hat{R}$.
 
-Similarly to definition of annotation (definition \ref{DEFINITION:ANNOTATION}),
-we can define the probability of guide given sequence $X$:
+We will define the probability of guide $r$ given sequence $X$:
 
 \begin{equation}
 \prob{r\mid X, H} = \sum_{\Lambda \in L, R(\Lambda)=r} \prob{\Lambda\mid X, H}
@@ -91,20 +100,20 @@ we can define the probability of guide given sequence $X$:
 
 \end{definition}
 
-Natural way of defining guide relation is following: $(\Lambda, r)\in \hat{R}$
-if and only if $R(\Lambda)=R$. However, in some cases it might be useful
-to relax the restriction provided by the guide. 
+A natural way of defining guide relation is the following: $(\Lambda, r)\in
+\hat{R}$ if and only if $R(\Lambda)=R$. However, in some cases it might be
+useful to relax the restriction provided by the guide. 
 
-Note that we can see a guide as generalization of annotation. On the other hand,
-our use of guides is quite different from our use of annotations. While
-annotations are the final product, purpose of guides is to capture some
-important properties of the input, that can be subsequently used to find correct
-annotation. Finally, we can formally define two-stage decoding:
+Note that we can see a guide as a generalization of an annotation. However, our
+use of guides is quite different from our use of annotations. While annotations
+are the final product, purpose of guides is to capture some important
+properties of the input, that can be subsequently used to find the correct
+annotation. Finally, we can formally define the two-stage decoding:
 
 \begin{definition}[Two-stage decoding]
-Let $H$ be an HMM, $f$ be an annotation gain function, $R$ be an guide 
-function and $W$ set of all possible guides. Let $X$ be an sequence of
-interest and $L$ be the set of all annotations of $X$. In \firstUseOf{two-stage
+Let $H$ be an HMM, $f$ be an annotation gain function, $R$ be a guide 
+function and $W$ be a set of all possible guides. Let $X$ be a sequence of
+interest and $L$ be the set of all annotations of $X$. In the \firstUseOf{two-stage
 decoding} we search for annotation $\Lambda$, defined as:
 
 \begin{equation}
@@ -119,23 +128,25 @@ r = \arg\max_{r'\in W}\prob{r'\mid H, X}
 \end{definition}
 
 Finding the most probable guide can be decoupled from finding the
-annotation with highest expected reward. In this chapter we will focus
+annotation with highest expected reward. In this chapter, we will focus
 mainly on the complexity of the first step: finding the most
 probable guide. Complexity of the second step, namely finding the annotation
 with highest expected gain without guides we studied in \cite{Nanasi2010mgr,
-Nanasi2010}. Implementing search with guides is straightforward and we will
+Nanasi2010}. Implementing search with guides is straightforward, and we will
 discuss it later.
 
-Note that we could use different method to select guide $r$. While it is
+Note that we could use a different method to select guide $r$. While it is
 possible to use gain functions for defining optimization criteria to select
 guide (and altering the equation \ref{EQUATION:MOST_PROBABLE_RESTRICTION}), 
 we did not study such variations.
 
-At first we show experiment illustrating effects of the two-stage decoding on
-the HIV recombination detection problem.  Further in this chapter we prove that
-finding the most probable guide is for certain guide functions NP-hard.
-
 \section{Experiments}
+
+In this section we apply the two-stage decoding methods on the HIV
+recombination detection problem. Our goal is to illustrate the effect and
+usefulness of the two-stage decoding algorithms. We will describe the HIV
+recombination detection domain, two two-stage decoding algorithm and show
+experiment on the artificial dataset of recombinant HIV sequences.
 
 In section \ref{SECTION:HERD} we described HERD decoding. It was used with
 jumping HMMs \cite{Schultz2006} for detecting recombinations in HIV virus.
@@ -145,13 +156,12 @@ However, using this criteria lead to two artefacts:
 \item Producing recombinations of wrong virus subtype.  
 \end{itemize}
 Example of both type of
-errors are illustrated in figure \ref{FIGURE:HERD_BAD} at page
-\pageref{FIGURE:HERD_BAD}.
+errors are illustrated in Figure \ref{FIGURE:HERD_BAD}.
 
 \subsection{Application Domain}
 % Az na citacie, toto sa da povazovat za viac menej hotove
 \todo{pridaj citacie}
-We use problem of recombination detection in HIV virus for the demonstration of
+We use the problem of recombination detection in HIV virus for the demonstration of
 usefulness of two-stage decoding.  This section contains background information
 about data used in the experiment.
 
@@ -160,19 +170,21 @@ about data used in the experiment.
 \includegraphics{../figures/hiv_M1strom}
 \end{center}
 \caption[Phylogenetic tree of the HIV-M1 group]{Phylogenetic tree of the HIV-M1
-group of genomes with branch of HIV-O group generated by phyml \cite{Guidon2003}
-from database distributed with jpHMM \cite{Schultz2006}. Figure was originally
-used in \cite{Nanasi2010mgr}. The lengths of the branches corresponds to the
+group of genomes with outgroup sequences from the of HIV-O group generated by phyml \cite{Guidon2003}
+from the database distributed with jpHMM \cite{Schultz2006}. Figure was originally
+used in \cite{Nanasi2010mgr}. The lengths of the branches correspond to 
 evolution distances.  }\label{app:figure:phil}
 \end{figure}
 
-RNA of HIV virus is sequence roughly $9000$ bases long. Mutation rate of an HIV
-virus is high\cite{}, and additionally HIV virus is categorized into several
-\firstUseOf{subtypes}\cite{} based on sequence similarity. Phylogenetic tree of
-subtypes is show in figure \ref{app:figure:phil}.  Subtypes A and F are further
-divided into \firstUseOf{sub-subtypes} A1, A2 and F1, F2.  Due to high sequence
-similarity, subtypes B and D are sometimes recognized as sub-subtypes of subtype
-BD \cite{}.
+\todo{TU SOM}
+The genome of the HIV virus is an RNA sequence roughly $9000$ bases long.
+Mutation rate of the HIV virus is high\cite{}, and additionally HIV virus is
+categorized into several \firstUseOf{subtypes}\cite{} based on sequence
+similarity. Phylogenetic tree of subtypes is show in figure
+\ref{app:figure:phil}.  Subtypes A and F are further divided into
+\firstUseOf{sub-subtypes} A1, A2 and F1, F2.  Due to high sequence similarity,
+subtypes B and D are sometimes recognized as sub-subtypes of subtype BD
+\cite{}.
 
 Additionally to high mutation rate, \firstUseOf{recombination} occurs in
 evolution of HIV virus \cite{}. When recombination occurs, resulting virus is
@@ -205,14 +217,14 @@ is how the recombination are modeled.
 \includegraphics[width=10cm]{../figures/profile_hmm}
 \end{center}
 \caption[Profile HMM]{Example of profile HMM if length $6$. Shaded states are
-silent, the leftmost shaded state is init state. End state is the rightmost
+silent, the leftmost shaded state is init state. Final state is the rightmost
 shaded state. Figure is from \cite{Nanasi2010mgr}.}\label{FIGURE:PROFILEHMM}
 \end{figure}
 
 Profile HMMs are HMMs with special topology used for matching certain
 motifs\cite{Durbin1998}. Profile HMM of length $n$ It consists of match states
 $M_1,M_2,\dots, M_n$, insert states $I_0, I_1, \dots, I_n$, silent delete states
-$D_1, D_2,\dots, D_n$ and silent init state and silent end state. All states are
+$D_1, D_2,\dots, D_n$ and silent init state and silent final state. All states are
 connected by transitions as in the figure \ref{FIGURE:PROFILEHMM}. Motif is
 represented by chain of match states, each with it's own emission distribution.
 Insert states models (short) insertions into the motif. Delete state allows to
@@ -224,7 +236,7 @@ contains gaps above some threshold are usually omitted \cite{Durbin1998}.
 Jumping HMMs are built upon profile HMMs. We start with alignment of all HIV
 sequences and construct profile HMM for each subtype or sub-subtype (it depends
 whether we want to distinguish between sub-subtypes). We then add global init
-state and global end state to connect profiles in parallel.  Column numbers of
+state and global final state to connect profiles in parallel.  Column numbers of
 each match, insert, and delete states are preserved, so we know the
 corresponding column for each states. Additional transitions between different
 profiles are added to model recombinations: These "jump" transitions are added
