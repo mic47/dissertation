@@ -5,3 +5,4 @@ $M[i,j]$->Element $M[i,j]$...
 figure->Figure
 ->hidden Markov models
 Baum Welsch->Baum Welch
+et. al -> et al.

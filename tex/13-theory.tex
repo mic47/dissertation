@@ -20,12 +20,6 @@ structure of footprint, and therefore rapid change of types as in Figure
 \ref{FIGURE:HERD_BAD} is not possible (unless the footprint contains a large
 number of recombinations).
 
-%Footprint is not the only way how to restrict search space for the second stage
-%of the algorithm. Alternatively, we also explore fixing the set of states or
-%labels that can be used in the final alignment. In such case, in the first stage
-%we search for a set of labels with maximal probability (in practice we could
-%also choose different criteria to select such set). 
-%In informal and more general way, 
 More generally, in the first stage we search for the best guide, which 
 is a general constraint on the allowed annotation, for example in the form
 of footprint or a set of labels. In the second stage, we find optimal
@@ -176,7 +170,6 @@ used in \cite{Nanasi2010mgr}. The lengths of the branches correspond to
 evolution distances.  }\label{app:figure:phil}
 \end{figure}
 
-\todo{TU SOM}
 The genome of the HIV virus is an RNA sequence roughly $9000$ bases long.
 Mutation rate of the HIV virus is high\cite{}, and additionally HIV virus is
 categorized into several \firstUseOf{subtypes}\cite{} based on sequence
@@ -187,100 +180,105 @@ subtypes B and D are sometimes recognized as sub-subtypes of subtype BD
 \cite{}.
 
 Additionally to high mutation rate, \firstUseOf{recombination} occurs in
-evolution of HIV virus \cite{}. When recombination occurs, resulting virus is
-mosaic combination of two source viruses: recombination of source viruses $v_1$
-and $v_2$ is a virus which parts contain sequences from both $v_1$ and $v_2$.  The
-position of parts of sequences are retained, so the parts from some region of
-recombinant virus is always from the same region in the source virus.
-There can be multiple recombination points within same virus and since
+evolution of HIV virus \cite{}. Recombination of two source viruses $v_1$
+and $v_2$ is a mosaic virus which contains parts from both $v_1$ and $v_2$.  The
+relative position of individual parts is retained, so each region of the
+recombinant virus originates from the corresponding region in the source virus.
+There can be multiple recombination points within the same virus, and since
 recombination can occur between two recombinants, there can be multiple source
 subtypes or sub-subtypes in one recombinant. 
 
-Given a recombinant sequence $X$, goal of recombination detection is to label
-each base $x$ of sequence $X$ with the subtype from which $x$ originates.  Set
-of annotation symbols therefore contain all subtypes/sub-subtypes of HIV virus.
-In following text we will use term \firstUseOf{segment}, which is maximal
-single-colored consecutive subsequence of annotation.
+Given a recombinant sequence $X$, the goal of recombination detection is to
+label each base $x$ of sequence $X$ with the subtype from which $x$ originates.
+The input sequence does not have to contain recombination. In such case the
+annotation of the sequence contain only single subtype. The set of annotation
+symbols therefore contains all subtypes/sub-subtypes of the HIV virus. 
 
-\subsection{Methods}
+\subsection{Model}
 \label{HERD:METHODS}
-To detect detect recombinations, we have previously used Highest Expected Reward
-Decoding \cite{Nanasi2010mgr, Nanasi2010} with same HMM as {\it Schultz et al.
-(2006)}\nocite{Schultz2006} used with the Viterbi algorithm. This model and also
-their program is called \abbreviation{jumping HMM}{jpHMM} and it a set of
-\abbreviation{profile Hidden Markov Models}{profile HMMs}\cite{Durbin1998}
-connected with transitions allowing to "jump" between different profiles which
-is how the recombination are modeled.
+In our experiments, we use \abbreviation{jumping HMM}{jpHMM}  developed for
+recombination detection  by {\it Schultz et al. (2006)}. The main building
+block of the jpHMM are ptofile Hidden Markov Models (profile HMMs).
 
 \begin{figure}
 \begin{center}
 \includegraphics[width=10cm]{../figures/profile_hmm}
 \end{center}
-\caption[Profile HMM]{Example of profile HMM if length $6$. Shaded states are
-silent, the leftmost shaded state is init state. Final state is the rightmost
-shaded state. Figure is from \cite{Nanasi2010mgr}.}\label{FIGURE:PROFILEHMM}
+\caption[Profile HMM]{Example of a profile HMM of length $6$. Shaded states are
+silent. The leftmost shaded state is the init state, the rightmost
+shaded state is the final state. Figure is from \cite{Nanasi2010mgr}.}\label{FIGURE:PROFILEHMM}
 \end{figure}
 
-Profile HMMs are HMMs with special topology used for matching certain
-motifs\cite{Durbin1998}. Profile HMM of length $n$ It consists of match states
+Profile HMMs are HMMs with a special topology used for matching certain
+motifs\cite{Durbin1998}. Profile HMM of length $n$ consists of match states
 $M_1,M_2,\dots, M_n$, insert states $I_0, I_1, \dots, I_n$, silent delete states
 $D_1, D_2,\dots, D_n$ and silent init state and silent final state. All states are
-connected by transitions as in the figure \ref{FIGURE:PROFILEHMM}. Motif is
-represented by chain of match states, each with it's own emission distribution.
-Insert states models (short) insertions into the motif. Delete state allows to
-skip some parts of the motif. Profile HMMs can be obtained from alignments of
-similar sequences and match states would represent the columns of the alignment.
-Not all of the columns correspond to match states, columns that
+connected by transitions as in the figure \ref{FIGURE:PROFILEHMM}. A motif is
+represented by the chain of match states, each with its own emission distribution.
+Insert states model (short) insertions between positions of the motif. Delete states allow to
+skip some parts of the motif. A profile HMM can be obtained from an alignment of
+similar sequences; match states then represent columns of the alignment.
+Not all of the columns correspond to match states; columns that
 contains gaps above some threshold are usually omitted \cite{Durbin1998}. 
 
-Jumping HMMs are built upon profile HMMs. We start with alignment of all HIV
-sequences and construct profile HMM for each subtype or sub-subtype (it depends
-whether we want to distinguish between sub-subtypes). We then add global init
-state and global final state to connect profiles in parallel.  Column numbers of
-each match, insert, and delete states are preserved, so we know the
-corresponding column for each states. Additional transitions between different
-profiles are added to model recombinations: These "jump" transitions are added
-so that they end in the states that corresponds to the nearest following column
-of original alignment. Jump from column $c_1$ in subtype $A$ to column $c_2>c_1$
-in subtype $B$ is allowed if and only if there is not state in profile of $A$ or
-$B$ corresponding to column between $c_1$ and $c_2$. Simplified topology of
-jpHMM is in figure \ref{app:fig:jpHMM}. More details can be found in
-\cite{Schultz2006, Nanasi2010mgr, Nanasi2010}.
+Jumping HMMs are built upon profile HMMs \cite{Schultz2006}. We start with an
+alignment of all HIV sequences and construct a profile HMM for each subtype or
+sub-subtype (it depends on whether we want to distinguish between
+sub-subtypes).  We then add global init state and global final state to connect
+profiles in parallel.  Column numbers of each match, insert, and delete states
+are preserved, so we know the corresponding column for all submodels.
+Transitions between different profiles are added to model recombinations: These
+"jump" transitions always end in the state that corresponds to the nearest
+column of the original alignment following their source column. Jump from
+column $c_1$ in subtype $A$ to column $c_2>c_1$ in subtype $B$ is allowed if
+and only if there are no states in the profiles of $A$ or $B$ corresponding to columns
+between $c_1$ and $c_2$. A simplified topology of a jpHMM is in figure
+\ref{app:fig:jpHMM}. More details can be found in \cite{Schultz2006}.
 
 \begin{figure}
 \begin{center}
 \includegraphics[width=10cm]{../figures/jumping_hmm}
 \end{center}
-\caption[Jumping HMM]{The simplified structure of jpHMM. Insert and delete state
+\caption[Jumping HMM]{The simplified structure of a jpHMM. Insert and delete states
 are omitted from the figure for readability. Picture is taken from our previous
 work \cite{Nanasi2010mgr}}\label{app:fig:jpHMM}
 \end{figure}
 
-We denote HERD's gain function, described in section \ref{SECTION:HERD}, as
-$f_{HERD}$.  Details of algorithm that optimizes this gain function can be found
-in \cite{Nanasi2010, Nanasi2010mgr}. In this text we describe modification to
-this algorithm so that it can cope with guides. We use the footprint and the
-annotation set as a guide functions. In case of footprint we use the natural way
-to define guide relation, however in case of the annotation set we use guide
-relation $\hat{R}_S$ defined as follows: \[(\Lambda, r)\in
-\hat{R}_S\Leftrightarrow R(\Lambda)\subseteq r\]
+\subsection{Algorithms}
 
-Original HERD algorithm can be decomposed into two
-phases. In the first phase, it constructs \firstUseOf{annotation graph}.
-Annotation graph is graph in which each path from the start vertex to the end
-vertex represents annotation. Length of such path equals to the expected gain of
-corresponding annotation. The longest path in annotation graph therefore
+In this section we describe the HERD algorithms and its modification to use
+footprint and the annotation set as the guides.  We denote HERD's gain
+function, described in section \ref{SECTION:HERD}, as $f_{HERD}$.  Details of
+the algorithm that optimizes this gain function can be found in
+\cite{Nanasi2010, Nanasi2010mgr}. We use the footprint and the annotation set
+as a guide functions. In case of footprint, we use the natural way to define
+guide relation, however in case of the annotation set we use guide relation
+$\hat{R}_S$ defined as follows: \[(\Lambda, r)\in \hat{R}_S\Leftrightarrow
+R(\Lambda)\subseteq r\] The reason for using this guide relation is that it
+allows us to use simpler and faster optimization algorithm. This is not a
+problem because HERD have problem with detecting additional wrong subtypes, not
+missing the correct one.  In our tests it never occurs that the resulting
+annotation had different set than the most probable set from the first stage of
+the algorithm.  In the following text, we will use the term
+\firstUseOf{segment}, which is the maximal single-colored consecutive
+subsequence of annotation.
+
+The original HERD algorithm can be decomposed into two phases. In the first
+phase, it constructs an \firstUseOf{annotation graph}.  An annotation graph is
+a graph in which each path from the start vertex to the end vertex represents
+an annotation. The length of such a path equals to the expected gain of the
+corresponding annotation. The longest path in the annotation graph therefore
 corresponds to the annotation with the highest expected gain. Annotation graph
-is directed and acyclic and it's structure is described in figure
-\ref{HERD:figure:annotation_graph}.  The second phase consists from finding the
-longest path in this graph and converting it to the annotation. Since annotation
-graph is directed and acyclic, it is possible to find such path in polynomial
-time \cite{Nanasi2010mgr}.
+is directed and acyclic and its structure is described in Figure
+\ref{HERD:figure:annotation_graph}. In the second phase we find the longest
+path in this graph and convert it to the annotation. Since the annotation graph
+is directed and acyclic, it is possible to find such a path in polynomial time
+\cite{Nanasi2010mgr}.
 
 To add guides, we need to change the second phase of the algorithm. We will be
 searching for an annotation restricted to the guide with the highest expected
-gain. If guide function is annotation set,  we simply remove vertices with
-colors that are not in annotation set from the annotation graph and use original
+gain. If the guide function is an annotation set,  we simply remove vertices with
+colors that are not in annotation set from the annotation graph and use the original
 algorithm described in \cite{Nanasi2010mgr}. Since trimming the annotation graph
 can be done trivially in linear time, this does not change the computational
 complexity of the HERD algorithm.
@@ -289,69 +287,73 @@ complexity of the HERD algorithm.
 \begin{center}
 \includegraphics{../figures/herd_graph}
 \end{center} 
-\caption[Annotation graph]{Part of a path in an annotation graph with
+\caption[Annotation graph]{Part of a path in an annotation graph with the
 corresponding annotation. A node with color $c$ and caption $(b,w)$ represents
 the vertex $(b,c,w)$ of the graph. The dashed lines connect each vertex to its
-corresponding feature. $(b, c, w)$ corresponds to the beginning of $c$-colored
-annotation segment starting at position $b$. End of such segment is determined
-by the following vertex in path, therefore each edge in the graph correspond to
-possible annotation segment. Length of an edge is the expected gain of
-corresponding annotation segment. If $w$ is less than maximal window width $W$,
-which is parameter of HERD algorithm, the edges from such vertex are allowed
-only to vertices of form $(b+w, *, *)$ where $*$ can be any valid value. If
-$w=W$, then following edges are of form $(b+W+k, *, *)$ where $k\leq0$.  Figure is
-from our previous work \cite{Nanasi2010mgr}}\label{HERD:figure:annotation_graph} 
+corresponding segment. $(b, c, w)$ corresponds to the beginning of $c$-colored
+annotation segment starting at position $b$. End of the segment is determined
+by the following vertex in the path; therefore each edge in the graph
+corresponds to a possible annotation segment. The length of an edge is the
+expected gain of the corresponding annotation segment. If $w$ is less than
+maximal window width $W$, which is a parameter of the HERD algorithm, the edges
+from such vertex are allowed only to vertices of the form $(b+w, *, *)$ where
+$*$ can be any valid value. If $w=W$, then outgoing edges are of the form
+$(b+W+k, *, *)$ where $k\leq0$.  Figure is from our previous work
+\cite{Nanasi2010mgr}}\label{HERD:figure:annotation_graph} 
 \end{figure}
 
-Using the footprint as guide requires more changes to the algorithm then just
-remove vertices with colors that are not in footprint. To find the longest path,
-we have to alter dynamic programming formula for computing the longest path.
-We order vertices of annotation graph topologically from start to end vertex
-into sequence $v_0, v_2, \dots v_{n-1}$ where $n$ is the number of vertices in
-the annotation graph, $v_0$ is the init vertex and $v_{n-1}$ is the end vertex.
-This will be the order in which the dynamic programming equations will be
-computed.
-Let $f=f_0f_2\dots f_{k-1}$ be the footprint we use as a guide and $V[i, j]$ be the length
-of the longest path ending in $v_i$ that have footprint $f[:j]$.  Therefore the
-length of the longest path with footprint $f$ is $V[n - 1, k]$. If $E$ is the set of
-all edges and $C(v_i, v_j)$ is the weight of an edge $(v_i, v_j)$, then $V[i,
-j]$ can be computed by following equations: 
-\begin{align} V[0, 0] &= 0 \\ V[0, j] &= -\infty, 0< j \leq k \\ V[i, j] &=
-\max_{i', (v_{i'}, v_i)\in E} \begin{cases} C(v_i', v_i) + V[i', j]& \text{if
-$\lambda(v_i) == \lambda(v_{i'})$}\\ C(v_i', v_i) + V[i', j-1]& \text{if
-$\lambda(v_i) \not= \lambda(v_{i'})$ and $\lambda(v_{i'})=f_{j-1}$}\\ 0 &
-\text{otherwise} \end{cases} \end{align}
+Using the footprint as a guide requires more changes to the algorithm then just
+removing vertices with colors that are not in the footprint; we also alter the
+dynamic programming formula for computing the longest path.  We order vertices
+of the annotation graph topologically from start to end vertex into sequence
+$v_0, v_2, \dots v_{n-1}$ where $n$ is the number of vertices in the annotation
+graph, $v_0$ is the init vertex and $v_{n-1}$ is the end vertex.  This will be
+the order in which the dynamic programming equations will be computed.  Let
+$f=f_0f_2\dots f_{k-1}$ be the footprint we use as a guide and $V[i, j]$ be the
+length of the longest path ending in $v_i$ that has footprint $f[:j]$.
+Therefore the length of the longest path with footprint $f$ is $V[n - 1, k]$.
+If $E$ is the set of all edges and $C(v_i, v_j)$ is the weight of an edge
+$(v_i, v_j)$, then $V[i, j]$ can be computed by following equations: 
+\begin{align} 
+V[0, 0] &= 0 \\ V[0, j] &= -\infty, 0< j \leq k \\
+V[i, j] &= \max_{i', (v_{i'}, v_i)\in E} 
+\begin{cases} 
+C(v_i', v_i) + V[i', j]& \text{if $\lambda(v_i) == \lambda(v_{i'})$}\\
+C(v_i', v_i) + V[i', j-1]& \text{if $\lambda(v_i) \not= \lambda(v_{i'})$ and $\lambda(v_{i'})=f_{j-1}$}\\
+0 & \text{otherwise} 
+\end{cases} 
+\end{align}
 
 Note that since we have ordered vertices topologically, to compute $V[i, j]$ we
 use only values of $V[i', j']$ where $i'< i, j'\leq j$. Therefore we can compute
-$V$ with $i$ in increasing order. The longest path can be computed using
+$V$ in increasing order of $i$. The longest path can be computed using
 back-tracing as in section \ref{SECTION:NEEDLE}. The time and memory complexity 
-of this part of the algorithm increased by the factor of $k$. Therefore the time
-complexity increases to $O(mWC|E|+mkC^2W^2)$ where $C$ is the number of colors
-(labels), $W$ is the window size, $m$ is the length of the sequence and $|E|$ is
-the number of transitions in HMM.  Space requirements increased to
-$O(\sqrt{m}Cn+WCnk+mkC^2)$. Implementation details of other parts of an
-algorithm can be found in \cite{Nanasi2010mgr}.
+of this part of the algorithm increased by the factor of $k$. Therefore the
+time complexity increases to $O(mWC|E|+mkC^2W^2)$ where $C$ is the number of
+colors (labels), $W$ is the window size, $m$ is the length of the sequence and
+$|E|$ is the number of transitions in the HMM.  Space requirements increased to
+$O(\sqrt{m}Cn+WCnk+mkC^2)$. However, in practice guide contains only a small
+number of colors and as a result, graph is much smaller then in the unguided
+version. Implementation details of other parts of an algorithm can be found in
+\cite{Nanasi2010mgr}.
 
-\subsection{Data \& results}
-We created artificial dataset of recombinant HIV sequences and run HERD with two
-guide functions: annotation set and footprint. HERD was run with default
-parameters, $\gamma=0.2, W=10$. Model was trained using jpHMM program and
-alignment of HIV sequences distributed with jpHMM \cite{Schultz2006}.  $10\%$ of
-sequences from this alignment were removed from training data and were used for
-evaluation. We refer to alignment distributed with jpHMM as \firstUseOf{source
-alignment}.
+\subsection{Data and results}
+We created an artificial dataset of recombinant HIV sequences and run HERD with
+two guide functions: annotation set and footprint. HERD was run with default
+parameters, $\gamma=0.2, W=10$. The model was trained using jpHMM program on
+the alignment of HIV sequences distributed with jpHMM \cite{Schultz2006}. We
+removed $10\%$ of sequences from this alignment before training data and used
+them for evaluation. We refer to the alignment distributed with jpHMM as the
+\firstUseOf{source alignment}.
 
-These artificial sequences were generated by alternating segments of two real
-sequences from different subtypes. Data were generated from pairwise alignment
-of original sequences: if segment $x$ of sequence $X$ follows segment $y$ of
-sequence $Y$, then $y$ is immediately after $x$ in the pairwise alignment. We
-did experiments with two types of segment lengths: either $200-300$ (short) or
-$950-1050$ (long) with additional $0-750$ and $0-500$ bases for the first and
-for the last segment respectively. Length of each segment was drawn from uniform
-distribution.  Pairwise alignments were obtained from source alignment of HIV
-sequences.
+Artificial testing sequences were generated by alternating segments of two real
+sequences from different subtypes.  These alternating segments were selected
+from an alignment of original sequences. We did experiments with two types of
+segment lengths: either $200-300$ (short) or $950-1050$ (long) with additional
+$0-750$ and $0-500$ bases for the first and for the last segment respectively.
+The Length of each segment was drawn from the uniform distribution.
 
+\todo{TU SOM}
 \todo{Tieto experimenty by som radsej zbehol este raz}
 Apart from two different recombination length, we also evaluated algorithm of
 recombinants of sequences from same subtypes but different sub-subtypes, which
