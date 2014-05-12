@@ -760,7 +760,6 @@ n^n$, we can store $D(m,j)$ in $O(k \mbox{polylog}(k))$ bits.
 Therefore computing the desired values $n_k$ and $M_{n_k}$ 
 can be done in polynomial time. \qed
 \end{proof}
-\todo{TU SOM}
 %By using the same reduction as in Theorem \ref{thm:sets}, we can
 %also prove NP-hardness of the following variant of the problem, in
 %which we restrict the size of the set of states $S$. 
@@ -789,36 +788,36 @@ and a subset of state space $S$, the problem of deciding if
 $\Pr\left(s(\pi)=S, X\mid H, n\right)$ is non-zero is NP-complete.
 \end{theorem}
 
-\begin{proof} Proof is reduction to problem of finding Hamiltonian path.
+\begin{proof} The proof is a reduction from the problem of finding Hamiltonian path.
 
-\begin{definition}\label{GraphHMM}
-Let $G=(V,E)$ be an undirected graph (without self-loops). 
-Then the \emph{graph HMM} $H_G$ is defined as follows:
-\begin{itemize}[itemsep=-1mm]
-\item Its set of states is $V\cup \{\psi\}$, where $\psi\notin V$ is a
-   new state called the error state.
-\item Its emission alphabet is $\{0,1\}$.
-\ item Each state $v\in V$ has initial probability $I_{v} = 1/|V|$, the
-error state has initial probability $I_{\psi}=0$.
-\item Each state $v\in V$ emits 0 with probability 1, the error state emits 1 
-with probability 1.
-\item Transitions with non-zero probability between states $u,v\in V$
-  correspond to edges in $E$:
-$$a_{u,v}=\begin{cases}
-\frac1{|V|} & \{u,v\}\in E\\
-0 & \text{otherwise}
-\end{cases}$$
-\item For $u\in V$, we also have $a_{u,\psi}=1-\sum_{v\in V}a_{u,v}$
-and $a_{\psi,u}=0$. The error state has a self-transition with 
-probability 1: $a_{\psi,\psi}=1$.
-\end{itemize}
-\end{definition}
-
-The error state $\psi$ is added to the HMM so that all non-zero
-transitions between states in $V$ have the same probability. Any state
-path $\pi$ containing only states from $V$ connected by transitions
-with non-zero probability has the same probability of generating
-sequence $X=0^n$: $\Pr(\pi, X=0^n|H_G,n) = |V|^{-n}$.
+%\begin{definition}\label{GraphHMM}
+%Let $G=(V,E)$ be an undirected graph (without self-loops). 
+%Then the \emph{graph HMM} $H_G$ is defined as follows:
+%\begin{itemize}[itemsep=-1mm]
+%\item Its set of states is $V\cup \{\psi\}$, where $\psi\notin V$ is a
+%   new state called the error state.
+%\item Its emission alphabet is $\{0,1\}$.
+%\ item Each state $v\in V$ has initial probability $I_{v} = 1/|V|$, the
+%error state has initial probability $I_{\psi}=0$.
+%\item Each state $v\in V$ emits 0 with probability 1, the error state emits 1 
+%with probability 1.
+%\item Transitions with non-zero probability between states $u,v\in V$
+%  correspond to edges in $E$:
+%$$a_{u,v}=\begin{cases}
+%\frac1{|V|} & \{u,v\}\in E\\
+%0 & \text{otherwise}
+%\end{cases}$$
+%\item For $u\in V$, we also have $a_{u,\psi}=1-\sum_{v\in V}a_{u,v}$
+%and $a_{\psi,u}=0$. The error state has a self-transition with 
+%probability 1: $a_{\psi,\psi}=1$.
+%\end{itemize}
+%\end{definition}
+%
+%The error state $\psi$ is added to the HMM so that all non-zero
+%transitions between states in $V$ have the same probability. Any state
+%path $\pi$ containing only states from $V$ connected by transitions
+%with non-zero probability has the same probability of generating
+%sequence $X=0^n$: $\Pr(\pi, X=0^n|H_G,n) = |V|^{-n}$.
 %Such paths correspond to walks in graph $G$.
 
 Let $G=(V,E)$ be a graph  
@@ -831,6 +830,7 @@ It is easy to see that $\Pr\left(s(\pi)=V,X \mid H_G, |X|
 \right)>0$ if and only if $G$ contains a Hamiltonian path. \qed
 \end{proof}
 
+\todo{Theorem}
 The most probable set problem is
 fixed-parameter tractable with respect to the size of the HMM. Given
 an HMM with $m$ states and a sequence of length $n$, we can find the
@@ -856,20 +856,24 @@ I_{v}e(v,X[1])& i=1,S=\{v\}\\
 0 & \mbox{otherwise}
 \end{cases}$$
 \fi
+\todo{Ako najdem vysledok?, velkost cislel?  -- ze vieme tieto cisla reprezentovat v tozumnom tvare Pozri koniec 5.6, trosku zdovodni}
 \section{The Most Probable State Restriction}
 
 \label{sec:restriction}
 
+In the most probable restriction problem, given HMM we want to decide if there
+exists such subset of the set of states, that have size $k$ and probability at
+least $p$. We prove that this problem is NP-complete.
 
-\begin{definition*}[The most probable restriction problem]
-Given an HMM $H$, sequence $X$, integer $k$ and number $p\in[0,1]$, decide if
-there exists a subset of states $S$ of size $k$, such that
-$\prob{S(\pi)\subseteq S, X\mid H} \geq p$.  
-\end{definition*}
+%\begin{definition*}[The most probable restriction problem]
+%Given an HMM $H$, sequence $X$, integer $k$ and number $p\in[0,1]$, decide if
+%there exists a subset of states $S$ of size $k$, such that
+%$\prob{S(\pi)\subseteq S, X\mid H} \geq p$.  
+%\end{definition*}
 
-In this section we prove that the most probable restriction problem is
-NP-complete.
-\begin{proof}
+%In this section we prove that the most probable restriction problem is
+%NP-complete.
+\begin{proof}(Theorem \ref{THEOREM::NPREST})
 We will prove NP-hardness by a reduction from 3-SAT. Consider an
 instance of 3-SAT with the set of variables $U=\{u_1,u_2,\dots,u_n\}$
 and the set of clauses $C=\{c_1,c_2,\dots,c_m\}$. 
@@ -892,13 +896,21 @@ $X$ has probability $(2n|\Sigma|)^{-|X|}$; we set threshold $p$ to
 this value. Each 
 variable $u_i$ in the first part of $X$ 
 can be generated only by states $u_i$ and
-$\bar{u_i}$; therefore one of these states needs to be in the
-path. The first portion of the path thus traverses $k$ 
+$\bar{u_i}$; therefore at least one of these states needs to be in the
+path. The first portion of the path thus traverses $k$ (equals to $n$) 
 different states; only these states can be used to emit the second part of the
-sequence. 
-The set of states used by a state path with
-non-zero probability therefore corresponds to a satisfying assignment
-in a straightforward way. 
+sequence. Since each of $u_i$, where $1\leq i\leq n$ has to be generated,
+exactly one of the states $u_i$, $\bar{u_i}$ will be in the state path.
+Therefore the set of states used by a state path corresponds to assignment of
+variables.  If this assignment is satisfying, it is possible to generate the
+rest of the sequence: $c_1c_2\dots c_m$, and the probability of such state path
+will be non-zero. If the assignment is not satisfying, there exists clause
+$c_j$ that cannot be generated states were used in the first part of the
+sequence (and it is not possible to add additional state into the state set)
+and therefore any state path using this set of states will have zero
+probability. Therefore if there is a state path that generates $X$ with
+non-zero probability (or probability at least $p$), where is an satisfying
+assignment for the instance of the SAT problem.
 
 Note that given a restriction $S$, we can easily verify if its
 probability is at least $p$ by a variant of the Forward algorithm
@@ -906,11 +918,14 @@ in which we allow only states in $S$. Therefore the problem is in NP.
 \qed
 \end{proof}
 
+\todo{Fixed parameter? (Sum results from dyn prog for set)}
 
 \section{The Most probable footprint}
 \label{sec:footprint}
 
-
+In this section we show proof of the most probable footprint problem is NP-hard. 
+Given HMM $H$, sequence $X$ and the probability $p$, goal is to decide if there exists
+a footprint $F$ with the probability at least $p$.\todo{Ako je to s tymto problemom a labelingom?}
 \begin{figure*}
 \centerline{\includegraphics[scale=0.68]{../figures/jcss/cliquehmm.pdf}}
 \caption[HMM for which footprint is NP-hard to optimize]{\label{fig:footprint_hmm} The HMM from the proof of Theorem
@@ -922,13 +937,13 @@ in which we allow only states in $S$. Therefore the problem is in NP.
   the same probability.}
 \end{figure*}
 
-\begin{definition*}[The most probable footprint problem]
- Given an HMM $H$, sequence $X$
-of length $n$ and a number $p\in [0,1]$, decide if there exists a footprint $F$
-such that $\prob{f(\pi) = S, X\mid H}\geq p$
-\end{definition*}
+%\begin{definition*}[The most probable footprint problem]
+% Given an HMM $H$, sequence $X$
+%of length $n$ and a number $p\in [0,1]$, decide if there exists a footprint $F$
+%such that $\prob{f(\pi) = S, X\mid H}\geq p$
+%\end{definition*}
 
-\begin{proof}
+\begin{proof}(Theorem \ref{THEOREM::NPFOOT})
 We will prove NP-hardness by a reduction from the maximum clique problem
 using the HMM in Figure 
 \ref{fig:footprint_hmm} with eight states and
@@ -952,7 +967,7 @@ structure \emph{covers} the block $X_i$.  Note that state $E$ is never used in
 generating $X$, its role is to ensure that the probability of
 self-transition is the same in states $S$ and $T$.
 All state paths that can generate $X$ have the same
-probability $q = \Pr(\pi,X\mid H,|X|) = 2^{-2n^2-2n}3^{-n-1}7^{-2n^2-n+1}$.
+probability $q = \Pr(\pi,X\mid H) = 2^{-2n^2-2n}3^{-n-1}7^{-2n^2-n+1}$.
 
 %celkovo 2n^2+3n+2 symbolov
 %1/2 zacni v S
@@ -972,7 +987,7 @@ Every footprint that can generate $X$ has the following structure:
 $F=SS'\#c_1\#c_2\#\dots\#c_n\#T'T$, where $c_i\in\{0,1\}$. 
 The probability of footprint $F$ is $qk$, where $k$ is the number of its runs.
 Also note that every run of $F$ covers a different $X_i$, because once $X_i$
-is known, the whole path is uniquely determined. 
+and $F$ are fixed, the whole path is uniquely determined. 
 
 We will now prove that the graph $G$ has a clique of size at least $k$
 if and only if there is a footprint for sequence $X$ with
@@ -991,7 +1006,7 @@ $F$ has at least $k$ runs.
 Conversely, let $F$ be a footprint with probability at least $qk>0$
 and thus with at least $k$ runs. We will construct a clique of size at
 least $k$ as follows. Let $R$ be the set of all vertices $i$ such that
-$f$ has a run that covers $X_i$. Clearly the size of $R$ is at least
+$F$ has a run that covers $X_i$. Clearly the size of $R$ is at least
 $k$.  Since $F$ has non-zero probability, it has the form
 $SS'\#c_1\#c_2\dots\#c_n\#T'T$ for $c_i\in \{0,1\}$. For all $i\in R$,
 $c_i=1$ because the $i$-th block has $b_{i,i}=1$. Therefore for all
@@ -1013,19 +1028,20 @@ rounding in polynomial number of bits. \qed
 \end{proof}
 
 \subsection{The Most Probable Set Problem}
-In this section, we show alternative proof of NP-hardness of the most
-probable set problem. We show how to modify proof of theorem \ref{THEOREM::NPFOOT}
-to obtain proof of theorem \ref{THEOREM::NPSET}.
+\todo{TU SOM}
+In this section, we show an alternative proof of NP-hardness of the most
+probable set problem. We show how to modify the proof of theorem \ref{THEOREM::NPFOOT}
+to obtain a proof of theorem \ref{THEOREM::NPSET}.
 
-\begin{definition*}[The most probable set problem] Given an HMM $H$, sequence $X$ of
-length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
-such that $\prob{S(\pi) = S, X\mid H} \geq p$.
-\end{definition*}
+%\begin{definition*}[The most probable set problem] Given an HMM $H$, sequence $X$ of
+%length $n$ and a number $p\in [0,1]$, decide if there exists a set of states $S$
+%such that $\prob{S(\pi) = S, X\mid H} \geq p$.
+%\end{definition*}
 
 \begin{figure*}
 \centerline{\includegraphics[scale=0.68]{../figures/jcss/expandedcliquehmm.pdf}}
 \caption[HMM for which set is NP-hard to optimize]{The HMM from the proof of Theorem
-  \ref{THEOREM::NPSET}. States are shown as circles; under each we
+  \ref{THEOREM::NPSET} for $n=3$. States are shown as circles; next to each we
   list the set of symbols that the state emits with non-zero
   probability. Each of these symbols is emitted with probability
   $1/k$, where $k$ is the size of the set. The HMM always starts in
@@ -1033,44 +1049,46 @@ such that $\prob{S(\pi) = S, X\mid H} \geq p$.
   the same probability.}\label{fig:set_hmm2}
 \end{figure*}
 
-\begin{proof}
-Let $G=(V,E)$ be an undirected graph with $n$ vertices as in proof of theorem
-\ref{THEOREM::NPFOOT}. Note that $V = \{1, 2, \dots, n\}$. $G$ will be encoded in
-sequence $X$ as in proof if theorem \ref{THEOREM::NPFOOT}, but without $\#$ symbols.
+\begin{proof}(Theorem \ref{THEOREM::NPSET})
+Let $G=(V,E)$ be an undirected graph with $n$ vertices as in the proof of theorem
+\ref{THEOREM::NPFOOT}. Note that $V = \{1, 2, \dots, n\}$. Graph $G$ will be encoded in
+sequence $X$ as in the proof of theorem \ref{THEOREM::NPFOOT}, but without $\#$ symbols.
 Let $X_i$ be the block that represents vertex $i$. Then $X=SX_1\dots X_nT$.
 
-Instead of using one fixed HMM, we expand middle part of the model so that it
+Instead of using one fixed HMM, we expand the middle part of the model so that it
 generates blocks of length $n+2$ ($n$ vertices and $S', T'$ states). We remove
-state $\#$ and expand states $0$ and $1$ into $n$ versions of state $0$ and $1$
+state $\#$ and expand states $0$ and $1$ into $n$ copies 
 denoted $0_v$ and $1_v$ for $v \in V$.  Transitions are from $S'$ to $0_1$ and
 $1_1$, from $0_n$ and $1_n$ to $T'$ and for all $i<n$ from $c_i$ to $d_{i+1}$
 for $c,d\in \{0, 1\}$ as in figure  \ref{fig:set_hmm2}. 
 
 
-State paths that generate $X$ have a similar structure as in proof of theorem
-\ref{THEOREM::NPFOOT}. State $S$ generate the first symbol $S$, some initial blocks,
-then one block $X_i$ is generated by some of the states $S', T', 0_v, 1_v, v\in
-V$.  Rest of the sequence is generated by terminal state $T$.  Construction of
-HMM and sequence $X$ guarantees that for all $v\in V$ exactly one of $0_v, 1_v$
-is in the state path. Note that the set of states that is used in such state
-path have exactly $n+4$ elements. We say that a state path with this structure
+State paths that generate $X$ have a similar structure as in the proof of theorem
+\ref{THEOREM::NPFOOT}. State $S$ generate the first symbol $S$, and some initial blocks.
+One block $X_i$ is generated by some of the states $S', T', 0_v, 1_v, v\in
+V$.  Rest of the sequence is generated by the terminal state $T$.  Construction of
+the HMM and sequence $X$ guarantees that for all $v\in V$ exactly one of $0_v, 1_v$
+is in the state path. 
+%Note that the set of states used in such a state
+%path has exactly $n+4$ elements. 
+We say that a state path with this structure
 \emph{covers} block $X_i$. All state paths that can generate $X$ have the same
-probability $q = \Pr(\pi, X\mid H, |X|) = 2^{-n^2-3n+1}6^{-n^2 - n}$.
+probability $q = \Pr(\pi, X\mid H) = 2^{-n^2-3n+1}6^{-n^2 - n}$.
 
 We say that a state path $\pi$ is a \emph{run} of set $D$, if $\pi$ can generate
 $X$ and $s(\pi) = D$. The probability of set $D$ is $qk$, where $k$ is the
-number of runs of $D$. Every run of $S$ covers a different block, since once the
+number of runs of $D$. Every run of $D$ covers a different block, since once the
 block is known, the path is uniquely determined.
 
 We will now prove that the graph $G$ has a clique of size at least $k$ if and
 only if there is a set of states for sequence $X$ with probability at least
 $qk$.  First, let $R$ be a clique in $G$ of size at least $k>0$.  Consider the
 set $D=\left\{S,S',{c_1},{c_2},\dots,{c_n},T',T\right\}$ where $c_i=1_i$ if
-$i\in R$ and $c_i=0_i$ otherwise. For any $i\in R$, there is a run $\pi_i$ of
+$i\in R$ and $c_i=0_i$ otherwise. For any $i\in R$, there is a run of
 $D$ that covers $X_i$. This run will use state $1_j$ for generating each
 $b_{i,j}$ such that $j\in R$ and thus both $b_{i,j}\in \{?,1\}$ and $c_j=1_j$.
-For $j\notin R$ we have $b_{i,j}=0$ and $c_j=0_j$, thus they will use state
-$0_j$ in $\pi$. Since there is a different run for every $i\in R$, set $D$ has
+For $j\notin R$ we have $b_{i,j}=0$ and $c_j=0_j$, thus the run will use state
+$0_j$. Since there is a different run for every $i\in R$, set $D$ has
 at least $k$ runs.
 
 Conversely, let $D$ be a set of states with probability at least $qk>0$
@@ -1088,3 +1106,4 @@ clique of size at least $k$ if and only if sequence $X$ has a
 set of states with probability at least $qk$. This completes our reduction.\qed
 \end{proof}
 
+\todo{Zabudol si tuto verziu dokazu pre restriction}
