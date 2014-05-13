@@ -1,17 +1,72 @@
 \chapter{Introduction}
 
+\begin{reformulate*}
+Co vlastne chcem povedat
+\begin{itemize}[itemsep=-1mm]
+\item Chcem mat uvod ako aj pre niekoho kto nerozumie nicomu z biologie
+\item ako aj pre niekoho kto nerozumie vela z informatiky
+\item Uvod do zakladnych veci, ako dna, sekvencia, baza, mozno evolucia
+\item Co vlastne v tejto praci je -- co sme spravili, co sme vylepsili a podobne
+\item Ako vyzera struktura prace
+\item Oznacenia?
+\end{itemize}
+\end{reformulate*}
 
-In this work we will focus on computational methods for comparative analysis and
-annotation of biological sequences. We will review known models and algorithms
-and propose new methods that will produce alignments and annotations with higher
-quality. Since new technologies are giving us the ability to produce more and
-more data, the automated analysis of such data is necessary and therefore it is
-important to develop such tools.
+In this thesis we focus on the computational methods for comparative analysis
+and annotation of biological sequences. We propose new methods that produce
+alignments and annotations with higher quality. We also study the computational
+complexity of the decoding algorithms and give proofs of NP-hardness for some
+decoding methods. 
 
-By biological sequences we mean either DNA/RNA sequences, which are finite
-sequences over the alphabet $\{A,C,G,T/U\}$ ($T$ is in DNA, $U$ in RNA) or
-protein sequences which are sequences over the alphabet of $20$ amino acids.
-Later in this chapter we will discuss the relationship between these sequences.
+New technologies are giving us the ability to produce more and more data, the
+automated analysis of such data is necessary and therefore it is important to
+develop such tools. We will study both sequence annotation problem and the
+sequence alignment problems. \todo{BLABLABLA}
+
+Now we try to explain the sequence annotation and the sequence alignment from
+the computational scientists perspective. We work with generative probabilistic
+models, the \abbreviation{hidden Markov Models}{HMM} and their variants. In
+general, HMMs are state machines that generates sequence (string) along the
+sequence of states (called state path) that was used for generating the
+sequence. Since HMM is an probabilistic model, it also defines the probability
+of the sequences and the state paths. The state path contain the information
+about the structure of the generated sequence. In practice we are given the
+generated sequence and the state path is hidden. In sequence annotation, we
+group the states of HMM into several classes (called labels, or colors) and the
+state path into sequence of labels abstracting from the specific details of the
+generation process. Advantage of using the probabilistic models is that apart
+from the distribution of the sequences and state paths, we also obtain the
+distribution of the annotations. The goal of the decoding algorithm is to
+reverse the generation process and obtain the original state path or at least
+the annotation. 
+
+When using HMMs for annotation of the biological sequences, we construct HMM in
+a way, that the structure of states corresponds to the biological features we
+are interested in (feature is usually the biological function of the sequence).
+Then we use the decoding algorithm to obtain the state path or an annotation in
+such a way, that the result is as close as possible to the true state path or
+an annotation. Traditionally used decoding algorithm is the Viterbi algorithm
+\cite{}, but other optimization criteria can be used to obtain more
+accurate\footnote{Where an accuracy is a some measure that depends on the
+application domain.} results \cite{}. In Chapter \ref{} we will study the
+computational complexity of some decoding criteria and show NP-hardness for
+obtaining the optimal alignments using these criteria. Namely we study the most
+probable footprint problem, the problem of the most probable set problem and
+the most probable restriction problem. All these problems are parts of the
+decoding criteria for the HMMs.
+
+In the sequence alignment problem, our goal is to compare the biological
+sequence in meaningful way. This is usually done by constructing the sequence
+alignment, which is the representation of the comparison of two sequences;
+sequence alignment is obtained by adding gap symbols ($-$) into the sequences
+so that they have the same length and that the related parts of the input
+sequences are in the same positions, or if sequences are in put into the
+matrix, the related sequences should be in the same column. The simplest
+approximation of the relatedness is the sequence similarity. Therefore the
+basic methods for finding the alignments are based on the extension of the edit
+distance. These scoring schemes 
+
+
 Both problems studied in this proposal, annotation and alignment of biological
 sequences, can be addressed by variants of \abbreviation{hidden Markov
 models}{HMMs}.  Hidden Markov models are generative probabilistic models which
@@ -54,34 +109,6 @@ goal is to study decoding methods and models that are used for sequence
 alignment in order to create software that will produce alignments with high
 quality.
 
-\section{Structure}
-
-The structure of this document is following. In the rest of this chapter we
-describe necessary biological terms and define several notation used throughout
-the text.
-
-In the second chapter we will discuss the sequence alignment problem and methods
-that create sequence alignments without using pair hidden Markov models. We
-describe basic scoring schemes, algorithms that search for alignments with high
-scores and several approaches for improving the computational complexity of such
-algorithms.
-
-The third chapter describes hidden Markov models. We define HMMs and review
-basic algorithms for decoding. We then discuss the highest expected gain
-framework which is a generalization of the well-known decoding algorithms.  We
-also define several variants of HMMs: generalized hidden Markov models,
-high-order HMMs, pair hidden Markov models and their combinations. In the last
-part of the chapter we discuss several algorithmic improvements of standard
-decoding algorithms.
-
-The fourth chapter is dedicated to alignment methods  using pair hidden Markov
-models and their variants and also to other applications of pHMMs. We review
-several pairwise aligners and comparative gene finders and also results
-concerning the quality and biases in the alignments.
-
-The fifth chapter contains our PhD project with the proposed directions for our
-research. We want to focus on the improvements and the analysis of the decoding
-algorithms and their application to the sequence alignments. 
 
 \section{Biological Introduction}
 
@@ -90,6 +117,13 @@ algorithms and their application to the sequence alignments.
 %DNA,RNA,protein, amino-acid, residue, base, gene -- exon, conod, start codon,
 %stop codon, cDNA, intron, splice site, donor, acceptor, intergenic region,
 %homolog,
+
+
+By biological sequences we mean either DNA/RNA sequences, which are finite
+sequences over the alphabet $\{A,C,G,T/U\}$ ($T$ is in DNA, $U$ in RNA) or
+protein sequences which are sequences over the alphabet of $20$ amino acids.
+Later in this chapter we will discuss the relationship between these sequences.
+
 
 In this section we review several biological terms that will be needed. More
 information about DNA, proteins and genes can be found in
@@ -130,6 +164,34 @@ An intron begins with 5' splice site (also called donor site),  and ends with 3'
 splice site (or acceptor site).  Acceptor and donor sites are sequence motifs of
 fixed length \cite{Pairagon2009,UnderstandingBioinformatics}.
 
+\section{Structure}
+
+The structure of this document is following. In the rest of this chapter we
+describe necessary biological terms and define several notation used throughout
+the text.
+
+In the second chapter we will discuss the sequence alignment problem and methods
+that create sequence alignments without using pair hidden Markov models. We
+describe basic scoring schemes, algorithms that search for alignments with high
+scores and several approaches for improving the computational complexity of such
+algorithms.
+
+The third chapter describes hidden Markov models. We define HMMs and review
+basic algorithms for decoding. We then discuss the highest expected gain
+framework which is a generalization of the well-known decoding algorithms.  We
+also define several variants of HMMs: generalized hidden Markov models,
+high-order HMMs, pair hidden Markov models and their combinations. In the last
+part of the chapter we discuss several algorithmic improvements of standard
+decoding algorithms.
+
+The fourth chapter is dedicated to alignment methods  using pair hidden Markov
+models and their variants and also to other applications of pHMMs. We review
+several pairwise aligners and comparative gene finders and also results
+concerning the quality and biases in the alignments.
+
+The fifth chapter contains our PhD project with the proposed directions for our
+research. We want to focus on the improvements and the analysis of the decoding
+algorithms and their application to the sequence alignments. 
 
 \section{Notations}
 
