@@ -314,14 +314,13 @@ probability: the distribution of the bases in DNA. Emission state of the state
 $R_l$ was derived using Jukes-Cantor model with parameter $t$, where the
 emission $X[i]$ evolved from $X[i-l]$ over time $t$.
 
-\section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
-In this section we describe models that we have used in our methods. We
-describe model in an dual way; as an generalized pHMM and as an equivalent
-non-generalized pHMM (emissions length are at most $1$ in both sequences).  By
+\section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS} In
+this section we describe models that we have used in our methods. We describe
+model in an dual way; as an generalized pHMM and as an equivalent
+non-generalized pHMM (emissions length are at most $1$ in both sequences). By
 equivalency we mean that the distribution of generated alignments and
 annotations (with certain annotation function) are same, but clearly the
-distribution of state paths will be different due to different sets of
-states.
+distribution of state paths will be different due to different sets of states.
 
 Generalized model is obtained by taking simple 3-state pHMM model from section
 \ref{SECTION:ALIGNWITHPHMM} and adding single generalized pair state $R$,
