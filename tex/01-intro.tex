@@ -56,13 +56,45 @@ the most probable restriction problem. All these problems are parts of the
 decoding criteria for the HMMs.
 
 In the sequence alignment problem, our goal is to compare the biological
-sequence in meaningful way. This is usually done by constructing the sequence
-alignment, which is the representation of the comparison of two sequences;
-sequence alignment is obtained by adding gap symbols ($-$) into the sequences
-so that they have the same length and that the related parts of the input
-sequences are in the same positions, or if sequences are in put into the
-matrix, the related sequences should be in the same column. The simplest
-approximation of the relatedness is the sequence similarity. Therefore the
+sequence and find related parts of the sequences (what doest the term related
+sequences means will be explained in Section \ref{}). This is usually done by
+constructing the sequence alignment, which is the representation of the
+comparison of two sequences; sequence alignment is obtained by adding gap
+symbols ($-$) into the sequences so that they have the same length and that the
+related parts of the sequences are in the same positions. The simplest
+approximation of the relatedness is the sequence identity. We could add 
+the gap symbols into sequence in order to maximize the number of matching positions.
+For example for sequences $X=ACGTTG$ and $Y=AGTTAAA$, we can have $4$ matching positions (or columns):
+\begin{verbatim}
+X: ACGTTG--
+Y: A-GTTAAA
+\end{verbatim}
+This was the first example of the sequence alignment with the simple scoring
+scheme: the number of matching columns. In practice, scoring schemes for
+alignment are 
+
+This is very very simplified model and does not reflect the 
+\begin{reformulate*}
+vieme dat pomlcky tak, aby sme maximalizovali pocet zhod na rovnakom mieste.
+Napriklad pre vstupne sekcencie....
+
+Rovnako vieme pouzit edit distance, pripadne skorovat substitucie rozne, a pridat aj medzery.
+Taketo skorovacie schemy sa pouzivaju a funguju prekvapujuco dobre, ale stale obsahuju 
+chyby lebo biologia je ovela komplikovanejsia. Tieto schemy vedia byt vyjadreme pomocou 
+pHMM, ktore generuju dvojice sekvencii (a zaroven zarvonanie) a pri dekodovani sa
+snazime tento proces reverznut. Avsak tieto casti nam umoznuju zakomponovat do
+modelu dalsie evolucne operacie, cim sa spresni zarovnanie.
+Rovnako mozeme vybrat vhodny dekodovaci algoritmus.
+
+V tejto praci sme sa zamerali na tandemove repeaty, ktorych je v DNA vela a sposobuju problemy pri zarovnavani.
+Navrhli sme model, ako aj dekodovacie ktoeria, ktore skvalitnili zarovnania.
+
+Bilogicke:
+Co je DNA, ako vyzera, co je evolucia -- ako to vyzera
+ake operacie sa tam zhruba deju, preco pouzivame taketo skorovacie schemy.
+Co su repeaty, geny a podobne.
+\end{reformulate*}
+Therefore the
 basic methods for finding the alignments are based on the extension of the edit
 distance. These scoring schemes 
 
