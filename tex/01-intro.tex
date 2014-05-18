@@ -147,28 +147,34 @@ the sequence similarity might be as low as for two random sequences.
 
 \section{Thesis outline}
 
-\todo{Sem chcem napisat ake budu nase prinosy}
-
-In the second chapter we survey the relevant literature and describe the
-necessary models and algorithm for sequence alignment and sequence annotation.
-We cover the hidden Markov models and their variants, various decoding
-algorithms used for sequence annotation, the sequence alignment problem and the
-pair hidden Markov models that are used for sequence alignment.  In the end of
-the second chapter we discuss algorithmic improvements to the discussed
-algorithms.
+In the second chapter we survey the relevant literature and describe the hidden
+Markov models with various variants and algorithms and uses in the sequence
+annotation. We cover the highest expected gain framework, which is used for
+formulation of decoding criteria. Then we describe sequence alignment problem
+and basic algorithms for sequence alignment. We show how the pair hidden Markov
+models can be used for sequence alignment and survey several uses of such
+models and decoding algorithms that were used for the sequence alignment.  The
+end of the chapter discussed algorithmic improvements to the decoding and
+training algorithms.
 
 The third and fourth chapters contains our results. In the third chapter we
-study the two-stage algorithms. We formalize the definition of such algorithms
-and show practical example of such decoding algorithm design. Then we study the
-computational complexity of three problems: the most probable set, the most
-probable footprint and the most probable restriction. We prove that the first
-problem is NP-hard and for the latter two we prove that they are NP-hard. \todo{
-+ experiment a co sme s nim mohli dosiahnut: ze two-stage nemusi byt len 
-optimalizacia, ale aj zrychlenie
-}
+study the two-stage algorithms, which are used to speed up HMM decoding. We
+formalize the definition of such algorithms and show practical example of such
+decoding algorithm design, and show that using two-stage decoding can improve
+the accuracy of a decoding algorithms. Then we study the computational
+complexity of three problems: the most probable set, the most probable
+footprint and the most probable restriction. We prove that the first problem is
+NP-hard and for the latter two we prove that they are NP-hard.
 
 In the fourth chapter we propose tractable method for aligning sequence with
-tandem repeats. We extend this notion to the most \todo{Co sme spravili}i
+tandem repeats. Tandem repeats consists from consecutive copies (not exact) of
+certain motif (sort genomic sequence). Tandem repeats causes problems with
+sequence alignments because it is hard to distinguish orthologous and
+paralogous repetitions. We extend traditional pHMM model for sequence alignment
+by additional states modeling tandem repeats. We also propose new decoding
+algorithms tailored to this model. We showed on the simulated data, that new
+model and decoding methods decreased the error rate and near the border of
+tandem repeats the error rate was decreased significantly.
 
 \section{Notation}
 
