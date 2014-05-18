@@ -1,16 +1,5 @@
 \chapter{Introduction}
 
-\begin{reformulate*}
-Co vlastne chcem povedat
-\begin{itemize}[itemsep=-1mm]
-\item Chcem mat uvod ako aj pre niekoho kto nerozumie nicomu z biologie
-\item ako aj pre niekoho kto nerozumie vela z informatiky
-\item Uvod do zakladnych veci, ako dna, sekvencia, baza, mozno evolucia
-\item Co vlastne v tejto praci je -- co sme spravili, co sme vylepsili a podobne
-\item Ako vyzera struktura prace
-\item Oznacenia?
-\end{itemize}
-\end{reformulate*}
 
 In this thesis we focus on the computational methods for comparative analysis
 and annotation of biological sequences. We propose new methods that produce
@@ -55,25 +44,45 @@ probable footprint problem, the problem of the most probable set problem and
 the most probable restriction problem. All these problems are parts of the
 decoding criteria for the HMMs.
 
-In the sequence alignment problem, our goal is to compare the biological
-sequence and find related parts of the sequences (what doest the term related
-sequences means will be explained in Section \ref{}). This is usually done by
-constructing the sequence alignment, which is the representation of the
-comparison of two sequences; sequence alignment is obtained by adding gap
-symbols ($-$) into the sequences so that they have the same length and that the
-related parts of the sequences are in the same positions. The simplest
-approximation of the relatedness is the sequence identity. We could add 
-the gap symbols into sequence in order to maximize the number of matching positions.
-For example for sequences $X=ACGTTG$ and $Y=AGTTAAA$, we can have $4$ matching positions (or columns):
-\begin{verbatim}
-X: ACGTTG--
-Y: A-GTTAAA
-\end{verbatim}
-This was the first example of the sequence alignment with the simple scoring
-scheme: the number of matching columns. In practice, scoring schemes for
-alignment are 
+The sequence alignment is the fundamental problem in the computational biology,
+and many methods, like comparative analysis methods relies on the sequence
+alignment and biases in the underlying alignment introduce artefacts in the
+results of these methods. In Chapter \ref{} we propose method for sequence
+alignment that reduces the error rate of the alignment over the traditional
+methods. In the sequence alignment problem, our goal is to compare the
+biological sequences and find related parts of the sequences (what doest the
+term related sequences means will be explained in Section \ref{}). This is
+usually done by constructing the sequence alignment, which is the
+representation of the comparison of two sequences; sequence alignment is
+obtained by adding gap symbols ($-$) into the sequences so that they have the
+same length and that the related parts of the sequences are in the same columns
+(if each sequence is in its own row). There are many ways to insert gaps into
+sequence to form alignment, and most of the alignments are not align related
+parts of the sequences together. To distinguish between them we use scoring
+schemes; the goal of a scoring scheme is to assign high score to biologically
+relevant alignments and low score to others. In this thesis we will consider
+scoring schemes defined using \abbreviation{pair hidden Markov models}{pHMM}.
+pHMM is generative probabilistic model that generate pairs of sequences along
+with their alignment (alignment is defined by a state path).  In chapter \ref{}
+we introduce model that incorporates the repetitive elements that are prevalent
+in the biological sequences (called tandem repeats), and propose several
+decoding methods to be used with this model. Our repeat-aware method reduce the
+error rate in the simulated experiments. \todo{Tento odstavec sa mi az tak
+nepaci}
 
-This is very very simplified model and does not reflect the 
+\begin{comment}
+\begin{reformulate*}
+Co vlastne chcem povedat
+\begin{itemize}[itemsep=-1mm]
+\item Chcem mat uvod ako aj pre niekoho kto nerozumie nicomu z biologie
+\item ako aj pre niekoho kto nerozumie vela z informatiky
+\item Uvod do zakladnych veci, ako dna, sekvencia, baza, mozno evolucia
+\item Co vlastne v tejto praci je -- co sme spravili, co sme vylepsili a podobne
+\item Ako vyzera struktura prace
+\item Oznacenia?
+\end{itemize}
+\end{reformulate*}
+
 \begin{reformulate*}
 vieme dat pomlcky tak, aby sme maximalizovali pocet zhod na rovnakom mieste.
 Napriklad pre vstupne sekcencie....
@@ -94,10 +103,6 @@ Co je DNA, ako vyzera, co je evolucia -- ako to vyzera
 ake operacie sa tam zhruba deju, preco pouzivame taketo skorovacie schemy.
 Co su repeaty, geny a podobne.
 \end{reformulate*}
-Therefore the
-basic methods for finding the alignments are based on the extension of the edit
-distance. These scoring schemes 
-
 
 Both problems studied in this proposal, annotation and alignment of biological
 sequences, can be addressed by variants of \abbreviation{hidden Markov
@@ -141,7 +146,7 @@ goal is to study decoding methods and models that are used for sequence
 alignment in order to create software that will produce alignments with high
 quality.
 
-
+\end{comment}
 \section{Biological Introduction}
 
 %\todo{zmen nazov kapitoly}
@@ -149,83 +154,84 @@ quality.
 %DNA,RNA,protein, amino-acid, residue, base, gene -- exon, conod, start codon,
 %stop codon, cDNA, intron, splice site, donor, acceptor, intergenic region,
 %homolog,
-
-
-By biological sequences we mean either DNA/RNA sequences, which are finite
-sequences over the alphabet $\{A,C,G,T/U\}$ ($T$ is in DNA, $U$ in RNA) or
-protein sequences which are sequences over the alphabet of $20$ amino acids.
-Later in this chapter we will discuss the relationship between these sequences.
-
-
 In this section we review several biological terms that will be needed. More
 information about DNA, proteins and genes can be found in
-\cite{BiologyForDummies,UnderstandingBioinformatics}.  Every cell of living
+\cite{BiologyForDummies, UnderstandingBioinformatics}.  Every cell of living
 organisms contains one or several \firstUseOf{DNA} molecules. DNA is a double
 stranded molecule, consisting of two long sequences of \firstUseOf{nucleotides}
 (nucleotides are also referred to as bases or \firstUseOf{residues}). There are
 four types of nucleotides in DNA: adenosine, cytosine, guanine and thymine
 represented by letters $A,C,G$ and $T$ respectively. In RNA nucleotide $T$ is
 replaced with uracil, denoted by $U$. The strands in DNA are complementary. The
-nucleotides at the same position in two strands are connected by hydrogen bonds
-and are complementary: $A$ is always connected with $T$ and $C$ is always
-connected with $G$. Therefore we can represent DNA by a sequence over alphabet
-$\{A,C,G,T\}$. The complementary strand can be easily computed.
+nucleotides at the same position in the two strands are connected by hydrogen
+bonds and are complementary: $A$ is always connected with $T$ and $C$ is always
+connected with $G$. Therefore we can represent DNA molecule by a sequence over
+alphabet $\{A,C,G,T\}$ since the complementary strand can be easily computed.
 
 DNA encodes \firstUseOf{proteins}. Proteins play an important role in cell
-biology since  they regulates many processes in the cell and are catalysts to
+biology since  they regulate many processes in the cell and are catalysts to
 many chemical reactions. Proteins are sequences of \firstUseOf{amino acid}
 molecules. There are $20$ amino acids that can be encoded in DNA. Parts of DNA
-that encode proteins are called \firstUseOf{genes} (gene is ``substring'' of DNA
-that will be translated into one protein).
+that encode proteins are called \firstUseOf{genes} (gene is ``substring'' of
+DNA that will be translated into one protein). We refer to the DNA molecule/sequence of
+the organism as to its \firstUseOf{genome}.
 
-Every gene consists of two types of sequences: exons which encode amino-acids,
-and introns are removed before translation (some genes do no have any introns).
-At first, double stranded DNA is copied or transcribed into single stranded RNA
-called mRNA. Then, the introns are spliced out of mRNA and exons are merged into
-one sequence: spliced mRNA. This sequence is then translated into a sequence of
-amino-acids (protein). Each amino acid is encoded by a triplet of nucleotides
-called \firstUseOf{codon}. Amino acids have multiple representations: different
-codons can encode the same amino acid. Since codons are always triplets, the
-length of coding region in the  spliced mRNA is multiple of three. However, the
-length of individual exons does not have to be multiple of three since introns
-can be located inside codons.  The coding sequence of a gene begins with a start
-codon (sequence $ATG$) and the last codon of a gene is called stop codon
-(sequences $TAG,TAA$ or $TGA$).
+\todo{evolucia a ako to suvisi s operaciami a zarovnaniami}
+According to the evolution theory, currently living organisms evolved from
+single common ancestor through small changes in the genome of the organisms.
+There are many types of changes, from the small scales like substitutions
+(change of the nucleotide at some position), insertions and deletions of
+sequences from and to the genomic sequence. Other changes includes duplications
+(subsequence is copied into different part of the genome), inversions (the
+subsequence is inverted), and even large genome rearrangements (the large
+subsequences of the genome change their position within genome). The speciation
+is event, when the new species is created. This happens mostly due to physical
+separation of populations of same organism, and each population evolve
+differently. We can represent the evolution of species using a binary tree.
+Each leaf represent current organism, each internal vertex represents
+speciation event, and root represents the common ancestor of all organisms in
+the tree. The branch lengths usually corresponds to the amount of changes in
+the genome, or to the time. 
 
-An intron begins with 5' splice site (also called donor site),  and ends with 3'
-splice site (or acceptor site).  Acceptor and donor sites are sequence motifs of
-fixed length \cite{Pairagon2009,UnderstandingBioinformatics}.
+We say that two parts of the biological sequences are \firstUseOf{homologous},
+if they originates from the same sequence in the common ancestor of those
+sequences. We distinguish between two types of a homologs: orthologs and
+paralogs. The orthologs are two different sequences that evolved from the
+common ancestor sequence by speciation event. The paralogs are two different
+sequences that evolved from the common ancestor using by duplication event
+within same organisms. In the sequence alignment problem we search for the
+homologous parts of the sequences: we want to align sequences in a way that
+homologous parts are together.
+\todo{Nieco o identite a tak}
 
-\section{Structure}
+In the sequence alignment problem, we want to search for the related parts of the different sequences.
 
-The structure of this document is following. In the rest of this chapter we
-describe necessary biological terms and define several notation used throughout
-the text.
+\section{Thesis outline}
 
-In the second chapter we will discuss the sequence alignment problem and methods
-that create sequence alignments without using pair hidden Markov models. We
-describe basic scoring schemes, algorithms that search for alignments with high
-scores and several approaches for improving the computational complexity of such
+\todo{Sem chcem napisat ake budu nase prinosy}
+
+In the second chapter we survey the relevant literature and describe the
+necessary models and algorithm for sequence alignment and sequence annotation.
+We cover the hidden Markov models and their variants, various decoding
+algorithms used for sequence annotation, the sequence alignment problem and the
+pair hidden Markov models that are used for sequence alignment.  In the end of
+the second chapter we discuss algorithmic improvements to the discussed
 algorithms.
 
-The third chapter describes hidden Markov models. We define HMMs and review
-basic algorithms for decoding. We then discuss the highest expected gain
-framework which is a generalization of the well-known decoding algorithms.  We
-also define several variants of HMMs: generalized hidden Markov models,
-high-order HMMs, pair hidden Markov models and their combinations. In the last
-part of the chapter we discuss several algorithmic improvements of standard
-decoding algorithms.
+The third and fourth chapters contains our results. In the third chapter we
+study the two-stage algorithms. We formalize the definition of such algorithms
+and show practical example of such decoding algorithm design. Then we study the
+computational complexity of three problems: the most probable set, the most
+probable footprint and the most probable restriction. We prove that the first
+problem is NP-hard and for the latter two we prove that they are NP-hard. \todo{
++ experiment a co sme s nim mohli dosiahnut: ze two-stage nemusi byt len 
+optimalizacia, ale aj zrychlenie
+}
 
-The fourth chapter is dedicated to alignment methods  using pair hidden Markov
-models and their variants and also to other applications of pHMMs. We review
-several pairwise aligners and comparative gene finders and also results
-concerning the quality and biases in the alignments.
+In the fourth chapter we propose tractable method for aligning sequence with
+tandem repeats. We extend this notion to the most \todo{Co sme spravili}i
 
-The fifth chapter contains our PhD project with the proposed directions for our
-research. We want to focus on the improvements and the analysis of the decoding
-algorithms and their application to the sequence alignments. 
-
-\section{Notations}
+\section{Notation}
 
 In this section we summarize notation used in the following
 chapters.

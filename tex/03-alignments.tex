@@ -503,6 +503,28 @@ function in $O(|X||Y|)$ time. Therefore the time complexity of the PD and MPD is
 $O(|X||Y|k^2)$ \cite{Lunter2008}. 
 
 \subsection{Pair Hidden Markov Models with Gene Structures}
+\correction{
+Every gene consists of two types of sequences: exons which encode amino-acids,
+and introns are removed before translation (some genes do no have any introns).
+At first, double stranded DNA is copied or transcribed into single stranded RNA
+called mRNA. Then, the introns are spliced out of mRNA and exons are merged
+into one sequence: spliced mRNA. This sequence is then translated into a
+sequence of amino-acids (protein). Each amino acid is encoded by a triplet of
+nucleotides called {codon}. Amino acids have multiple
+representations: different codons can encode the same amino acid. Since codons
+are always triplets, the length of coding region in the  spliced mRNA is
+multiple of three. However, the length of individual exons does not have to be
+multiple of three since introns can be located inside codons.  The coding
+sequence of a gene begins with a start codon (sequence $ATG$) and the last
+codon of a gene is called stop codon (sequences $TAG,TAA$ or $TGA$). 
+}{toto presun na kratke miesto a skrat}
+
+\correction{
+An intron begins with 5' splice site (also called donor site),  and ends with 3'
+splice site (or acceptor site).  Acceptor and donor sites are sequence motifs of
+}{toto presun na kratke miesto a skrat}
+fixed length \cite{Pairagon2009,UnderstandingBioinformatics}.
+
 
 In this section we describe several pair hidden Markov models (or generalized
 pair hidden Markov models) with gene structures incorporated into their
