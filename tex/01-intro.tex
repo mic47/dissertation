@@ -52,7 +52,7 @@ most probable footprint problem, the problem of the most probable set problem
 and the most probable restriction problem. These problems can be used as an
 first stage in two-stage algorithms.
 
-The other problem we study, the sequence alignment is the fundamental problem
+The other problem we study, the sequence alignment, is the fundamental problem
 in the computational biology, and many methods, like comparative analysis
 methods relies on the sequence alignment. Since biases in the underlying
 alignment introduce artefacts in the results of these methods, there is need to
@@ -67,8 +67,8 @@ sequence to form alignment, and most of the alignments are not align related
 parts of the sequences together. To choose the biologically correct alignment,
 the scoring schemes are used; the goal of a scoring scheme is to assign high
 score to the correct alignment and low score to incorrect. In practice the
-scoring schemes are similar to the edit distance with custom scoring matrix
-for matches, mismatches, and gap symbols. 
+scoring schemes are similar to the edit distance with custom scoring matrix for
+matches, mismatches, and gap symbols. 
 
 Scoring schemes can be also defined using \abbreviation{pair hidden Markov
 models}{pHMM}.  pHMM is generative probabilistic model that generate pairs of
@@ -81,63 +81,69 @@ rate in the simulated experiments.
 
 \section{Biological Introduction}\label{SECTION:BIOINTRO}
 
-%\todo{zmen nazov kapitoly}
-
-%DNA,RNA,protein, amino-acid, residue, base, gene -- exon, conod, start codon,
-%stop codon, cDNA, intron, splice site, donor, acceptor, intergenic region,
-%homolog,
 In this section we review several biological terms that will be needed. More
 information about DNA, proteins and genes can be found in
-\cite{BiologyForDummies, UnderstandingBioinformatics}.  Every cell of living
+\cite{BiologyForDummies, UnderstandingBioinformatics}. Every cell of living
 organisms contains one or several \firstUseOf{DNA} molecules. DNA is a double
-stranded molecule, consisting of two long sequences of \firstUseOf{nucleotides}
-(nucleotides are also referred to as bases or \firstUseOf{residues}). There are
-four types of nucleotides in DNA: adenosine, cytosine, guanine and thymine
-represented by letters $A,C,G$ and $T$ respectively. In RNA nucleotide $T$ is
-replaced with uracil, denoted by $U$. The strands in DNA are complementary. The
-nucleotides at the same position in the two strands are connected by hydrogen
-bonds and are complementary: $A$ is always connected with $T$ and $C$ is always
-connected with $G$. Therefore we can represent DNA molecule by a sequence over
-alphabet $\{A,C,G,T\}$ since the complementary strand can be easily computed.
+stranded molecule consisting of two long sequences (strands) of
+\firstUseOf{nucleotides} (nucleotides are also referred to as bases or
+\firstUseOf{residues}). There are four types of nucleotides in DNA: adenosine,
+cytosine, guanine, and thymine represented by letters $A,C,G$ and $T$
+respectively. In RNA nucleotide $T$ is replaced with uracil, denoted by $U$.
+The strands in DNA are complementary. The nucleotides at the same position in
+the two strands are connected by hydrogen bonds and are complementary: $A$ is
+always connected with $T$ and $C$ is always connected with $G$. Therefore we
+can represent DNA molecule by a sequence over alphabet $\{A,C,G,T\}$ since the
+complementary strand can be easily computed.
 
 DNA encodes \firstUseOf{proteins}. Proteins play an important role in cell
 biology since  they regulate many processes in the cell and are catalysts to
 many chemical reactions. Proteins are sequences of \firstUseOf{amino acid}
 molecules. There are $20$ amino acids that can be encoded in DNA. Parts of DNA
 that encode proteins are called \firstUseOf{genes} (gene is ``substring'' of
-DNA that will be translated into one protein). We refer to the DNA molecule/sequence of
-the organism as to its \firstUseOf{genome}.
+DNA that will be translated into one protein). We refer to the DNA
+molecule/sequence of the organism as to its \firstUseOf{genome}.
 
-\todo{evolucia a ako to suvisi s operaciami a zarovnaniami}
-According to the evolution theory, currently living organisms evolved from
-single common ancestor through small changes in the genome of the organisms.
-There are many types of changes, from the small scales like substitutions
-(change of the nucleotide at some position), insertions and deletions of
-sequences from and to the genomic sequence. Other changes includes duplications
-(subsequence is copied into different part of the genome), inversions (the
-subsequence is inverted), and even large genome rearrangements (the large
-subsequences of the genome change their position within genome). The speciation
-is event, when the new species is created. This happens mostly due to physical
-separation of populations of same organism, and each population evolve
-differently. We can represent the evolution of species using a binary tree.
-Each leaf represent current organism, each internal vertex represents
+The sequence of DNA, RNA and protein molecule is called the primary structure.
+There are also the secondary and ternary structures, which corresponds to two
+and three dimensional positions of particular sequence symbols. In this thesis
+we will consider only the primary structure of the biological sequences and we
+will ignore the way these molecules are folded in space.
+
+The rational behind sequence alignment to represent the evolution of two
+sequences; according to the evolution theory, currently living organisms
+evolved from single common ancestor through small changes in the genome of the
+organisms. There are many types of changes, from the small scales like
+substitutions (change of the nucleotide at some position, also called
+mutations), insertions and deletions of sequences from and to the genomic
+sequence. Other changes includes duplications (subsequence is copied into
+different part of the genome), inversions (the subsequence is inverted), and
+even large genome rearrangements (the large subsequences of the genome change
+their position within genome). 
+
+The speciation is event, when the new species is created. This happens mostly
+due to physical separation of populations of the same organism, and each
+population evolve differently to the point, that the state that they form
+different species. We can represent the evolution of species using a binary
+tree. Each leaf represent current organism, each internal vertex represents
 speciation event, and root represents the common ancestor of all organisms in
 the tree. The branch lengths usually corresponds to the amount of changes in
 the genome, or to the time. 
 
-We say that two parts of the biological sequences are \firstUseOf{homologous},
-if they originates from the same sequence in the common ancestor of those
-sequences. We distinguish between two types of a homologs: orthologs and
-paralogs. The orthologs are two different sequences that evolved from the
-common ancestor sequence by speciation event. The paralogs are two different
-sequences that evolved from the common ancestor by duplication event within
-same organisms. We want to distinguish between homologous and non-homologous
-parts of the sequences. When aligning two related sequences (they share common
-ancestor), we want to align homologous parts of the sequences (specifically, we
-are interested in orthologs). The homologous sequences has higher sequence
-similarity similarity than non-homologous sequences, although if the
-evolutionary distance (time, number of mutations) is too high, the sequence
-similarity might be as low as for two random sequences.
+We say that two parts of the biological sequences $X$ and $Y$ are
+\firstUseOf{homologous}, if they originates from the same sequence in the
+common ancestor $A$ of $X$ and $Y$. We distinguish between two types of a
+homologs: orthologs and paralogs. The orthologs are two different sequences
+that evolved from the common ancestor sequence by speciation event. The
+paralogs are two different sequences that evolved by duplication event within
+same organism ($X$ or $Y$). We want to distinguish between homologous and
+non-homologous parts of the sequences. When aligning two related sequences
+(they share common ancestor), we want to align homologous parts of the
+sequences (specifically, we are interested in orthologs). The homologous
+sequences has higher sequence similarity than non-homologous sequences,
+although if the evolutionary distance (time, number of mutations) is too high,
+the sequence similarity might be as low as for two random sequences.
+
 
 \section{Thesis outline}
 
