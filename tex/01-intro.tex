@@ -1,74 +1,84 @@
 \chapter{Introduction}
 
+New sequencing technologies are producing more and more biological data (mostly
+the genomic sequences) and therefore the automated analysis of such data is
+necessary and it is important to developing such tools. In this thesis we focus
+on the computational methods for comparative analysis and annotation of
+biological sequences. We propose new methods for sequence annotation and
+sequence alignment. We also study the computational complexity of various
+algorithms for hidden Markov models and give proofs of NP-hardness for some of
+them.
 
-In this thesis we focus on the computational methods for comparative analysis
-and annotation of biological sequences. We propose new methods that produce
-alignments and annotations with higher quality. We also study the computational
-complexity of the decoding algorithms and give proofs of NP-hardness for some
-decoding methods. 
+\section{Introduction for Computer Scientist}
 
-New technologies are giving us the ability to produce more and more data, the
-automated analysis of such data is necessary and therefore it is important to
-develop such tools. We will study both sequence annotation problem and the
-sequence alignment problems. \todo{BLABLABLA}
-
-Now we try to explain the sequence annotation and the sequence alignment from
-the computational scientists perspective. We work with generative probabilistic
+We try to explain the sequence annotation and the sequence alignment from the
+computational scientist perspective. We work with generative probabilistic
 models, the \abbreviation{hidden Markov Models}{HMM} and their variants. In
 general, HMMs are state machines that generates sequence (string) along the
 sequence of states (called state path) that was used for generating the
 sequence. Since HMM is an probabilistic model, it also defines the probability
 of the sequences and the state paths. The state path contain the information
 about the structure of the generated sequence. In practice we are given the
-generated sequence and the state path is hidden. In sequence annotation, we
-group the states of HMM into several classes (called labels, or colors) and the
-state path into sequence of labels abstracting from the specific details of the
-generation process. Advantage of using the probabilistic models is that apart
-from the distribution of the sequences and state paths, we also obtain the
-distribution of the annotations. The goal of the decoding algorithm is to
-reverse the generation process and obtain the original state path or at least
-the annotation. 
+generated sequence and the state path is hidden. The goal of the decoding
+algorithm is to reverse the generation process and obtain the original state
+path or at least its approximation.
+
+In the sequence annotation, we group the states of HMM into several classes
+(called labels, or colors) and the state path into sequence of labels,
+abstracting from the specific details of the generation process.  Advantage of
+using a probabilistic model is that apart from the distribution of the
+sequences and state paths, we also obtain the distribution of the annotations.
+Decoding algorithm can also recover only an annotation, marginalizing the state
+paths with the same annotation.
 
 When using HMMs for annotation of the biological sequences, we construct HMM in
 a way, that the structure of states corresponds to the biological features we
 are interested in (feature is usually the biological function of the sequence).
-Then we use the decoding algorithm to obtain the state path or an annotation in
-such a way, that the result is as close as possible to the true state path or
-an annotation. Traditionally used decoding algorithm is the Viterbi algorithm
-\cite{}, but other optimization criteria can be used to obtain more
+One feature can be encoded in several states, and in such case might want to
+label such states with the same label (they belong to same class).  Then we use
+the decoding algorithm to obtain the state path or an annotation in such a way,
+that the result is as close as possible to the true state path or an
+annotation. Traditionally used decoding algorithm is the Viterbi algorithm
+\cite{Durbin1998}, but other optimization criteria can be used to obtain more
 accurate\footnote{Where an accuracy is a some measure that depends on the
-application domain.} results \cite{}. In Chapter \ref{} we will study the
-computational complexity of some decoding criteria and show NP-hardness for
-obtaining the optimal alignments using these criteria. Namely we study the most
-probable footprint problem, the problem of the most probable set problem and
-the most probable restriction problem. All these problems are parts of the
-decoding criteria for the HMMs.
+application domain.} results \cite{Brown2010, Gross2007, Nanasi2010,
+Truszkowski2011}. In Chapter \ref{CHAPTER:TWOSTAGE} we study the special type
+of decoding algorithms: two stage algorithms. We show that using two-stage
+algorithms can improve the results of decoding algorithms (as far we know, such
+algorithms are usually used for reducing the running time). We also study the
+computational complexity of some decoding criteria and show NP-hardness results
+for obtaining the optimal alignments using these criteria. Namely we study the
+most probable footprint problem, the problem of the most probable set problem
+and the most probable restriction problem. These problems can be used as an
+first stage in two-stage algorithms.
 
-The sequence alignment is the fundamental problem in the computational biology,
-and many methods, like comparative analysis methods relies on the sequence
-alignment and biases in the underlying alignment introduce artefacts in the
-results of these methods. In Chapter \ref{} we propose method for sequence
-alignment that reduces the error rate of the alignment over the traditional
-methods. In the sequence alignment problem, our goal is to compare the
-biological sequences and find related parts of the sequences (what doest the
-term related sequences means will be explained in Section \ref{}). This is
-usually done by constructing the sequence alignment, which is the
-representation of the comparison of two sequences; sequence alignment is
-obtained by adding gap symbols ($-$) into the sequences so that they have the
-same length and that the related parts of the sequences are in the same columns
-(if each sequence is in its own row). There are many ways to insert gaps into
+The other problem we study, the sequence alignment is the fundamental problem
+in the computational biology, and many methods, like comparative analysis
+methods relies on the sequence alignment. Since biases in the underlying
+alignment introduce artefacts in the results of these methods, there is need to
+develop algorithms for producing sequence alignment with as low error rate as
+possible. Alignment is data structure that represents biological comparison of
+two or more sequences. Sequence alignment is obtained by adding gap symbols
+($-$) into the sequences so that they have the same length and form
+2-dimensional array or a matrix, where each sequence is in its own row.  Goal
+is to put homologous (for now it means related, or just similar) parts of the
+sequences into the same columns. There are many ways to insert gaps into
 sequence to form alignment, and most of the alignments are not align related
-parts of the sequences together. To distinguish between them we use scoring
-schemes; the goal of a scoring scheme is to assign high score to biologically
-relevant alignments and low score to others. In this thesis we will consider
-scoring schemes defined using \abbreviation{pair hidden Markov models}{pHMM}.
-pHMM is generative probabilistic model that generate pairs of sequences along
-with their alignment (alignment is defined by a state path).  In chapter \ref{}
-we introduce model that incorporates the repetitive elements that are prevalent
-in the biological sequences (called tandem repeats), and propose several
-decoding methods to be used with this model. Our repeat-aware method reduce the
-error rate in the simulated experiments. \todo{Tento odstavec sa mi az tak
-nepaci}
+parts of the sequences together. To choose the biologically correct alignment,
+the scoring schemes are used; the goal of a scoring scheme is to assign high
+score to the correct alignment and low score to incorrect. In practice the
+scoring schemes are similar to the edit distance with custom scoring matrix
+for matches, mismatches, and gap symbols. 
+
+Scoring schemes can be also defined using \abbreviation{pair hidden Markov
+models}{pHMM}.  pHMM is generative probabilistic model that generate pairs of
+sequences along with their alignment (alignment is defined by a state path).
+This model is the extension of HMM. In chapter \ref{CHAPTER:REP} we introduce
+model that incorporates the repetitive elements that are prevalent in the
+biological sequences (called tandem repeats), and propose several decoding
+methods to be used with this model. Our repeat-aware method reduces the error
+rate in the simulated experiments. 
+
 
 \begin{comment}
 \begin{reformulate*}
@@ -147,7 +157,7 @@ alignment in order to create software that will produce alignments with high
 quality.
 
 \end{comment}
-\section{Biological Introduction}
+\section{Biological Introduction}\label{SECTION:BIOINTRO}
 
 %\todo{zmen nazov kapitoly}
 
@@ -198,13 +208,14 @@ if they originates from the same sequence in the common ancestor of those
 sequences. We distinguish between two types of a homologs: orthologs and
 paralogs. The orthologs are two different sequences that evolved from the
 common ancestor sequence by speciation event. The paralogs are two different
-sequences that evolved from the common ancestor using by duplication event
-within same organisms. In the sequence alignment problem we search for the
-homologous parts of the sequences: we want to align sequences in a way that
-homologous parts are together.
-\todo{Nieco o identite a tak}
-
-In the sequence alignment problem, we want to search for the related parts of the different sequences.
+sequences that evolved from the common ancestor by duplication event within
+same organisms. We want to distinguish between homologous and non-homologous
+parts of the sequences. When aligning two related sequences (they share common
+ancestor), we want to align homologous parts of the sequences (specifically, we
+are interested in orthologs). The homologous sequences has higher sequence
+similarity similarity than non-homologous sequences, although if the
+evolutionary distance (time, number of mutations) is too high, the sequence
+similarity might be as low as for two random sequences.
 
 \section{Thesis outline}
 
