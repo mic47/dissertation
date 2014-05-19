@@ -29,15 +29,15 @@ restriction.
 
 There are still some open problems left. The most probable footprint is a
 special case of the most probable ball problem (with the border shift sum
-distance, where $d$ is the threshold) which was studied by Brown and
+distance, where $r$ is the radius) which was studied by Brown and
 Truszkowski \cite{Brown2010}, and we described it in Section
-\ref{SECTION:DISTANTMEASURES}.  This problem is NP-hard even for $d=0$
+\ref{SECTION:DISTANTMEASURES}.  This problem is NP-hard even for $r=0$
 \cite{Brown2010}, if multiple states can have same label. Additionally, if
-$d\leq n$, where $n$ is the length of the input sequence, the most probable
+$r\leq n$, where $n$ is the length of the input sequence, the most probable
 ball problem is equivalent to the most probable footprint problem. Our result
 imply that the most probable ball problem is NP-hard even if all states have
 unique label. It is still open problem, if the most probable ball problem is
-NP-hard for $d<n$ and HMMs with the identity function as an annotation
+NP-hard for $r<n$ and HMMs with the identity function as an annotation
 function. 
 
 From the practical point of view, two-stage algorithms algorithms could by used

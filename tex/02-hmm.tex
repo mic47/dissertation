@@ -217,8 +217,6 @@ Time complexity of the Viterbi algorithm is $O(nm^2)$ or $O(n(m+t))$ for sparse
 transition matrices ($m$ is the number of states and $t$ is the number of
 transitions).
 
-\subsubsection{Implementation of the }
-
 \subsection{The Forward-Backward Algorithm and  the Posterior Decoding}
 
 The \firstUseOf{Posterior decoding} is another commonly used decoding method
@@ -263,10 +261,10 @@ while $F[i,v]$ depends on the previous positions in sequence $X$. Another
 difference is that $B[i,v]$ does include emission of $X[i]$ while $F[i,v]$ does.
 
 We can compute values of $F[i,v]$ and $B[i,v]$ and find the posterior decoding
-in $O(n(m+t))$ time and $O(nm)$ memory.  Advantage of posterior decoding is
+in $O(n(m+t))$ time and $O(nm)$ memory.  Advantage of the posterior decoding is
 that it uses information from many slightly suboptimal state paths as opposed
-to Viterbi decoding, which uses only one state path. One drawback is that it
-can reconstruct inadmissible state path. Example is given below.
+to the Viterbi decoding, which uses only one state path. One drawback is that
+it can reconstruct inadmissible state path. Example is given below.
 
 
 
@@ -331,7 +329,9 @@ label if it is not part of a gene \cite{GeneWise2004, Brejova2005, Burge1997,
 Alexanderson2004}. Additionally, we want to label sequence according to the
 internal structure of a gene: gene starts with promoter followed by
 transcription start site and ends with transcription stop site. Between
-transcription sites are alternating exons and introns \cite{TODO}. 
+transcription sites are alternating exons and introns \cite{GeneWise2004,
+Brejova2005, Burge1997, Alexanderson2004} (exons encodes proteins, introns are
+cut out before translation of the exons to protein). 
 
 
 \paragraph{Transmembrane proteins:} Some proteins in cells pass through a membrane
@@ -482,7 +482,7 @@ annotation that corresponds to more than one state path.
 
 Note that from the probabilistic nature of the HMMs, the most probable
 annotation does not have to be the best approximation of the correct annotation.
-We will discuss alternative decoding criteria in section \ref{TODO}.
+We will discuss alternative decoding criteria in section \ref{SECTION:HEG}.
 \nocite{Brown2010,Gross2007,Nanasi2010,Truszkowski2011}.
 
 
@@ -638,7 +638,7 @@ F$.
 
 Advantage of start and final states is, that it is trivial to compose model
 together.  For example to chain two model, we just merge start state of one
-state with final state of other state.
+model with final state of other model.
 
 \subsubsection{High Order HMMs}
 
@@ -1024,6 +1024,9 @@ f_d(\Lambda,\Lambda') =
 As distance $d$, they have considered Hamming distance, Border shift distance
 and Border shift sum distance \cite{Brown2010}.  If we set $r=0$ then $f_d$ is
 same as $f_A$ and therefore finding annotation that maximize $f_d$ is NP-hard.
+Additionally, if $r\geq n$ then the problem is equivalent to finding the most
+probable footprint, and finding the most probable footprint is NP-hard, which
+we show in the Chapter \ref{CHAPTER:TWOSTAGE}.
 
 Maximizing $f_d$ is NP-hard but finding the  annotation with footprint $F$ and
 maximal expected gain can be done in polynomial time \cite{Brown2010}. Therefore
