@@ -7,7 +7,7 @@ contributions.
 
 The Chapter \ref{CHAPTER:TWOSTAGE} considers two-stage decodings. In two stage
 decoding we at first compute the guide and then find an annotation optimizing
-gain function $f$ using guide as an restriction. Guides can be used to decrease
+gain function using guide as an restriction. Guides can be used to decrease
 running time, but we have shown experiment where guides can be parts of the
 decoding criteria and increase accuracy\todo{Ale iba ak naozaj spravime tie
 experimenty}. Then we focus on the computational problems of computing guides.
@@ -25,12 +25,46 @@ reduced to this problem). We showed the constant-sized HMM for which finding
 the most probable footprint is NP-hard even if we use the identity function as
 a labeling function. We also show how to alter the proof of the most probable
 footprint to the proofs of the most probable set and the most probable
-restriction. There are remaining questions regarding this problems\todo{Ake su
-otvorene otazky}
+restriction. 
 
-In Chapter \ref{CHAPTER:TWOSTAGE} we study the sequence alignment problem.
+There are still some open problems left. The most probable footprint is a
+special case of the most probable ball problem (with the border shift sum
+distance, where $d$ is the threshold) which was studied by Brown and
+Truszkowski \cite{Brown2010}, and we described it in Section
+\ref{SECTION:DISTANTMEASURES}.  This problem is NP-hard even for $d=0$
+\cite{Brown2010}, if multiple states can have same label. Additionally, if
+$d\leq n$, where $n$ is the length of the input sequence, the most probable
+ball problem is equivalent to the most probable footprint problem. Our result
+imply that the most probable ball problem is NP-hard even if all states have
+unique label. It is still open problem, if the most probable ball problem is
+NP-hard for $d<n$ and HMMs with the identity function as an annotation
+function. 
 
-\ref{CHAPTER:REP}
+From the practical point of view, two-stage algorithms algorithms could by used
+for pair hidden Markov models, or on different application domains; for example
+the gene-finding.
+
+In Chapter \ref{CHAPTER:TWOSTAGE} we study the sequence alignment problem. We
+propose the new SFF model that incorporates tandem repeats, which are prevalent
+in the genomic sequences. In addition to the new model, we explored additional
+decoding criteria, the block Viterbi algorithm and the block posterior
+decoding, which treats tandem repeats a blocks. On the simulated data, the SFF
+model alone decreased the error rate by at least $15\%$ when comparing to
+standard three-state model with the Viterbi algorithm. The decrease in the
+error rate was was concentrated near repetitive intervals. 
+
+There are several possible directions for further research. For example we can
+use sunflower model equivalent to the sunflower model with the silent cycle,
+leading into more symmetrical model. Additionally, our model does not take into
+account dependencies between repetitions and therefore tandem repeats in
+different sequences are independent (apart from using same motif). Same
+improvement could be done into the TTP model, which is based on TANTAN model.
+Other improvement can be incorporating additional submodels modeling other
+features, for example gene structures. Finally, we can extend this method to
+align multiple sequences. From the practical point of view, our software needs
+to be optimized, so it can be used on genomic sequences of arbitrary length.
+
+\begin{comment}
 \begin{reformulate*}
 Kapitola 3 -- ukazali sme ze two-stage vie pomoct v presnosti, 
 daju sa skumat dalsie uplatnenia na ine domeny, a vhodne guide funkcie.
@@ -45,4 +79,5 @@ repeticii. Ma zmysel kombinovat (z praktickeho hladicka) dalsie sumbodely s
 repeatovym, kedze su tie modely nezavisle.
 
 \end{reformulate*}
+\end{comment}
 \label{LastPage}
