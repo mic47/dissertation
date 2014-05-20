@@ -76,8 +76,7 @@ most of the methods can be extended also to local alignments.
 
 In this section we will review basic methods for constructing alignments. We
 will discuss basic scoring schemes and algorithms that find optimal alignment
-under these schemes. In this thesis we cover mostly probabilistic methods,
-which are in section \ref{TODO} and chapter \ref{TODO}.
+under these schemes. In this thesis we cover mostly probabilistic methods.
 
 \subsection{Scoring Schemes}
 
@@ -95,7 +94,6 @@ that depends on the length of the gap (the number of consecutive dashes). Score
 of an entire alignment is the sum of the scores of all ungapped columns plus the
 sum of the scores of all gaps.
 
-\todo{Nejake referencie}
 In particular
 we will assume that all sequences are from a finite alphabet $\Sigma$. For DNA,
 $\Sigma=\{A,C,G,T\}$, for proteins $\Sigma$ contains $20$ codes of amino acids.
@@ -106,7 +104,7 @@ penalty and $d$ is the gap extension penalty. Both are usually negative, since w
 want alignments that contains many columns with same or similar symbols. With
 positive gap penalty there will be tendency towards alignments with many gaps
 which reduce the number of aligned residues.  We call this gap scoring scheme an
-affine gap model. 
+affine gap model \cite{Durbin1998}. 
 
 Matrices and gap penalties used as scoring schemes are usually derived from
 frequencies of the substitutions and indels of real alignments. Example of such
@@ -217,16 +215,16 @@ $i$ and $i-1$. Therefore if we want to know just the score of the optimal
 alignment,
 we can compute it in $O(m+n)$ memory: after computing of row $i$, we can discard
 row $i-1$. However if we want find the optimal alignment, we have to keep matrix
-$M$ in the memory or use one of the techniques that are described in section 
-\ref{TODO: Aj tak sa to presunie}.
+$M$ in the memory or use one of the techniques that are described in Section 
+\ref{SECTION:ALGORITHMICIMPROVEMENTS}.
 
 \section{Sequence Alignments with Pair HMM}\label{SECTION:ALIGNWITHPHMM}
 
 In this section we describe \abbreviation{pair hidden Markov models}{pHMM},
 which are commonly used for studying relationships between different sequences,
-relation between Needleman-Wunsh and pHMM, three existing decoding methods for
-decoding pHMMs, and several examples of pHMM that were used for sequence
-alignments. 
+relation between Needleman-Wunsh and pHMM, three standard decoding methods for
+decoding pHMMs, and survey of literature for examples of using pHMM for
+sequence alignments. 
 
 \subsection{Pair Hidden Markov Models}\label{SECTION:PAIRHMM}
 
@@ -276,7 +274,6 @@ and $Y$ we can assign a state from $\pi$ that generated that symbol.  However,
 given only two sequences $X$ and $Y$ and no state path, it is not possible to
 determine which symbols of the two sequences were generated together.
 
-\todo{koniec feedbacku}
 
 \begin{definition}
 Let $\pi=\pi_0\dots\pi_l$ be a state path. Then the \firstUseOf{cumulative duration
@@ -503,73 +500,52 @@ function in $O(|X||Y|)$ time. Therefore the time complexity of the PD and MPD is
 $O(|X||Y|k^2)$ \cite{Lunter2008}. 
 
 \subsection{Pair Hidden Markov Models with Gene Structures}
-\correction{
-Every gene consists of two types of sequences: exons which encode amino-acids,
-and introns are removed before translation (some genes do no have any introns).
-At first, double stranded DNA is copied or transcribed into single stranded RNA
-called mRNA. Then, the introns are spliced out of mRNA and exons are merged
-into one sequence: spliced mRNA. This sequence is then translated into a
-sequence of amino-acids (protein). Each amino acid is encoded by a triplet of
-nucleotides called {codon}. Amino acids have multiple
-representations: different codons can encode the same amino acid. Since codons
-are always triplets, the length of coding region in the  spliced mRNA is
-multiple of three. However, the length of individual exons does not have to be
-multiple of three since introns can be located inside codons.  The coding
-sequence of a gene begins with a start codon (sequence $ATG$) and the last
-codon of a gene is called stop codon (sequences $TAG,TAA$ or $TGA$). 
-}{toto presun na kratke miesto a skrat}
-
-\correction{
-An intron begins with 5' splice site (also called donor site),  and ends with 3'
-splice site (or acceptor site).  Acceptor and donor sites are sequence motifs of
-}{toto presun na kratke miesto a skrat}
-fixed length \cite{Pairagon2009,UnderstandingBioinformatics}.
-
 
 In this section we describe several pair hidden Markov models (or generalized
 pair hidden Markov models) with gene structures incorporated into their
-topology. These models were used either to align coding DNA or proteins
-to a genome or to find genes.
+topology. These models were used either to align coding DNA or proteins to a
+genome or to find genes. Every gene consists of two types of sequences: exons
+which encode amino-acids, and introns, which are removed before translation
+(some genes do no have any introns). The total length of remaining exons have
+to be multiple of three; each triplet of nucleotides is called codon and it
+encodes one of $20$ amino-acids. However, the length of individual exons is not
+necessary the multiple of three. The coding sequence of a gene begins with a
+start codon (sequence $ATG$) and the last codon of a gene is called stop codon
+(sequences $TAG,TAA$ or $TGA$).  An intron begins with 5' splice site (also
+called donor site),  and ends with 3' splice site (or acceptor site).  Acceptor
+and donor sites are sequence motifs of fixed length
+\cite{Pairagon2009,UnderstandingBioinformatics}.
 
-
-First we introduce several comparative gene finders. Comparative gene finders
+We introduce several comparative gene finders. Comparative gene finders
 use evidence from two organisms to find genes. They use pHMM to simultaneously
-align and annotate  two sequences. The advantage finding genes in two
-organisms simultaneously is that we can use the evidence from two related
-organisms to detect genes that are in both organisms.
+align and annotate  two sequences. The advantage finding genes in two organisms
+simultaneously is that we can use the evidence from two related organisms to
+detect genes that are in both organisms.
 
-\subsubsection{DoubleScan}
-Meyer {\it et al. (2002)} developed comparative gene finder DoubleScan.
-Generally, DoubleScan has three types of states: {\it match} states, which
-generate same number of symbols in both sequences;   {\it emit} states, which
-generate sequences only in one sequence and silent states.  
-
-The basic structure of DoubleScan's GpHMM consists of three types of
-substructures: substructures that emits exons, substructure that emits introns
-and substructure that generate intergenic regions. Each structure has three
-copies in the model: one for match states and two for emit states. Exon
-substructure is a single state emitting codons (triplets that will be translated
-into amino acids).  There is one additional intron substructure connected to
-states that generate intergenic regions. This additional intron substructure is
-in the model to avoid detecting of pseudogenes. The GpHMM has $54$ states.
+\paragraph{}
+Meyer {\it et al. (2002)} developed comparative gene finder \firstUseOf{DoubleScan}.
+Generally, DoubleScan has GpHMM with $54$ states with following substructures: 
+substructure that emits exons, substructure that emits introns
+and substructure that generate intergenic regions. Each substructure has three
+copies in the model: one for emitting in both sequences, and one for emitting in one sequence.
 \nocite{Meyer2002}
 
-Emission probabilities of the {\it match exon} state were estimated from
-relative frequencies in the training set with Dirichlet priors
-\cite{Meyer2002,Durbin1998}.  Emission probabilities of other states were
-generated  by marginalizing emissions of the match exon state. Transition
-probabilities from the initial state were uniform, transition probabilities for
-splice sites were estimated by splice site predictor. Other transitions were
-observed from training data and tuned by hand.
+Decoding method of DoubleScan is the Viterbi algorithms, with stepping stone
+algorithm (from Section \ref{SECTION:SSA}). They use BLASTN \cite{Altschul1990}
+for computing initial seed of local alignments. They restrict the Viterbi
+algorithm to follow the alignments in the subset allowing tolerance 15 bases
+\cite{Meyer2002}.
 
-DoubleScan uses the Viterbi algorithm as a decoding method.  To reduce the
-running time of the Viterbi algorithm they use stepping-stone algorithm: first
-they run BLASTN to find local alignments. Then DoubleScan chooses a consistent
-subset of alignments by the greedy method described in section
-\ref{SECTION:SSA}. They restrict the Viterbi algorithm to follow the alignments
-in the subset allowing tolerance 15 bases.
-
-\subsubsection{SLAM} 
+\paragraph{}
+\firstUseOf{SLAM} \cite{SLAM2003}  is a comparative gene finder based on a
+generalized pair hidden Markov model \cite{Alexanderson2004} with some states
+being also high-order states (with dependence on previous emissions). It
+predicts gene structures for a pair of related eukaryotic organisms. SLAM's
+decoding method is the Viterbi algorithm.  To reduce the running time of the VA
+align sequences within $3$ bases around alignment obtained by AVID global
+alignment tool \cite{Bray2003}. 
+Topology of the model can be found in figure
+\ref{FIGURE:SLAM}.
 
 \begin{figure}
 \begin{center}
@@ -577,113 +553,56 @@ in the subset allowing tolerance 15 bases.
 \end{center}
 \caption[HMM topology of SLAM's GpHMM]{
 Topology of GpHMM used by SLAM (states for genes on reverse strand are omitted).
-Gray states have geometric distribution (modeled with self-loops which are
-omitted in the figure). Emissions of shaded states are modeled by the basic
+Gray states has self-loops, which are omitted from the Figure.
+Emissions of shaded states are modeled by the basic
 three state pHMM. White states represent exons. Each has associated a duration
-distribution and emissions are also modeled by three-state pHMM using $5$-th
-order states that emit whole codons at once.  Since introns can be inside a
+distribution and emissions are  modeled by three-state pHMM using $5$-th
+order states that emit whole codons at once. Since introns can be inside a
 codon, the model contains an exon state for every possible interruption:
 $E_{i,j},0\leq i,j<3$ is an exon that begins with end of the interrupted codon of
 length $((3-i)\mod 3)$ and ends with the start of a codon of length $j$. $I$
-stands for start codon and $F$ stand for stop codon: states
-$E_{I,\cdot},E_{\cdot,F}$ and $E_{I,F}$ model exons adjacent to the beginning
-and the end of a gene.  $Intron_i$ models intron that interrupted codon at the
-$i$-th position ($0$ means that intron is not interrupting any codon).
+stands for start codon and $F$ stand for stop codon.  $Intron_i$ models intron interrupting codon at the
+$i$-th position.
 }\label{FIGURE:SLAM} \end{figure}
 
-SLAM \cite{SLAM2003}  is a comparative gene finder based on a generalized pair
-hidden Markov model \cite{Alexanderson2004} with some states being also
-high-order states (with dependence on previous emissions).  It predicts gene
-structures for a pair of related eukaryotic organisms. SLAM's decoding method is
-the Viterbi algorithm. 
+\paragraph{} \firstUseOf{TWAIN} is comparative gene-finder based on GpHMM and
+uses intereresting decoding algorithm \cite{Majoros2005}: at first it
+independently annotates input sequences using gene-finder TIGRscan
+\cite{Majoros2004} finding signals (splice sites, start/stop codons, \dots) and
+creating two parse graphs (one for each sequence): signals form vertices
+(corresponds to a state of the GpHMM), two signals are connected with an edge
+if one can follow other, the probability of an edge is determined by the
+probability of the most probable state path between those two states in the
+TIGRscan's HMM.
 
-Unlike DoubleScan, SLAM defines a true GpHMM because state durations are not
-constant, but are sampled from some distribution (however, distribution they
-used is not specified). Topology of the model can be found in figure
-\ref{FIGURE:SLAM}.  Emission probabilities of pairs of codons were assigned from
-a codon-based PAM matrix.
+TWAIN then creates graph $G$ by cartesian product of two parse graphs, omitting
+the vertices corresponding to pairs of different signals. Each node in the
+graph corresponds to a state of the GpHMM and a cell in the dynamic programming
+matrix of the Viterbi algorithm.  Edges between cells correspond to an
+alignment generated by a single state from GpHMM.  The Viterbi algorithm is
+computed only on cells corresponding to graph $G$ which significantly reduces
+running time \cite{Majoros2005}.
 
-
-To reduce the running time of the algorithm first they  align the input
-sequences using AVID global alignment tool \cite{Bray2003}. They restrict the
-Viterbi algorithm so, that each base matched in the anchor alignment can be
-realigned in an interval of size $3$.
-
-\subsubsection{TWAIN}
-
-TWAIN is another approach to use GpHMM to find genes \cite{Majoros2005} and is
-interesting because of its decoding algorithm. Twain GpHMM has two types of
-states: the states with fixed durations (which emit sequences of fixed length)
-and the states with variable duration lengths which are associated with some
-distribution.  The states with fixed durations corresponds to specific
-signals, such as splice sites, start/stop codons, and so on.
-Additionally, the states with variable duration are not connected with each
-other; the transitions from/to such states are only to/from states with fixed
-duration lengths. Therefore if we know the positions of all signals in the
-sequence, we know that sequences between signals were generated by one state.
-This can be exploited in the following way.
-
-TWAIN at first annotates input sequences using gene-finder TIGRscan
-\cite{Majoros2004} (each sequence is annotated independently) which finds
-signals in the sequences and creates a parse graph: vertices of the parse graph are
-the signals in the sequence (each signal corresponds to a state of the GpHMM).  Two
-signals are connected with an edge if in the genome one signal can follow another:
-for example a start codon can be followed by a stop codon or a donor site.
-Therefore start codons are connected with following stop codons and
-donor sites. Each edge is scored by the probability of the most probable state
-path between those two states in the TIGRscan's HMM. To reduce the size of the
-graph, some edges are omitted by heuristic.
-
-TWAIN creates graph $G$ by cartesian product of two parse graphs and omits the
-vertices that corresponds to pairs of different signals since they are unlikely
-to be seen in the alignments. Each node in the graph corresponds to some state $s$
-of the GpHMM and cell $c$ in the dynamic programming matrix of the Viterbi
-algorithm.   Edges between cells $c_1,c_2$ correspond to alignments
-generated by a single state from GpHMM (since states for $c_1$ and $c_2$ are
-connected through generalized states).  The Viterbi algorithm is computed only
-on cells corresponding to graph $G$ which significantly reduces running time
-\cite{Majoros2005}.
-
-
-\subsubsection{GeneWise}
-
-GeneWise predict genes by aligning a protein  to similar gene structures in DNA
-\cite{GeneWise2004}. Instead of pHMM defined as in section \ref{SECTION:PAIRHMM}
-it uses probabilistic transducers. Probabilistic transducers are very similar to
-pHMM. They are both probabilistic finite state machines, but unlike pHMMs which
-generate two sequences, probabilistic transducers transform one sequence into
-the other sequence.  The second difference is that transducers have emissions
-associated with transitions, not with states.  Therefore transducer emission of
-the form $e_{u\to v,(x,y)}=p$ means that during transition $u\to v$ symbol $x$
-is read from the input sequence and symbol $y$ is written to the output with
-probability $p$ ($x$ or $y$ might also be the gap symbol).  While pHMMs defines
-distribution $\prob{X,Y\mid H}$, probabilistic transducers define distribution
-$\prob{X\mid Y,H}$, the probability that sequence $Y$ will be transformed to
-sequence $X$.
-
-Advantage of transducers over the pHMM is that we can easily compose multiple
-transducers together, while maintaining probabilistic interpretation of the
-resulting model.  Composition of two transducers $A$ and $B$ is transducer $C$
-that transforms sequence $X$ to some sequence $Y$ using transducer $A$ and then
-transforms $Y$ to sequence $Z$ using transducer $B$. 
+\paragraph{}
+\firstUseOf{GeneWise} predict genes by aligning a protein  to similar gene
+structures in DNA \cite{GeneWise2004}. It uses probabilistic transducers
+instead of pHMM.  Both transducers and pHMM are probabilistic finite state
+machines, but probabilistic transducers transform one sequence into the other
+sequence.  It is easy to compose transducers, while maintaining probabilistic
+interpretation of the resulting model. Composition of two transducers $A$ and
+$B$ is transducer $C$ that that on the input sequence applies transducer $A$
+and then transducer $B$.
 
 GeneWise model was created by composition of a gene prediction model $S$ which
 translates genomic sequence to protein sequence and a protein homology model $T$
 which maps protein sequence to a homologous protein sequence.
 
 Gene prediction model $S$ consists of a single exon state which translates
-series of codons into amino-acids. It has three submodels for modeling introns,
-each consisting of $3$ states representing  splice sites, poly-pyrimidine tract
-and central intron section (those $3$ states are associated with $4$
-transitions, each transition emit one feature). 
-
+series of codons into amino-acids, and three submodels for modeling introns.
 Protein homology model $T$ is a simple pHMM from figure \ref{FIGURE:SIMPLEPHMM}
-defined over protein alphabet.  The composition of the models $T$ and $S$ has
-$30$ states. Authors removed unnecessary states to reduce the number of states
-and transitions \cite{GeneWise2004}.
+defined over protein alphabet \cite{GeneWise2004}.
 
-
-\subsubsection{Pairagon}
+\paragraph{}
 
 \begin{figure}
 \begin{center}
@@ -696,33 +615,31 @@ Shaded states corresponds to exons: $M$ emits
 aligned pairs of symbols, $I_c$ is insertion in the cDNA and $I_g$ is
 insertion in the genome. States $I^1_c,I^1_g,I^2_c$ and $I^2_g$ corresponds to
 unaligned parts of the DNA and cDNA in the beginning and the end of the
-sequences. States $D,In,B,BA,A$ correspond to intron structure and stand for 
-Donor, Intron, Branch, Branch Acceptor and Acceptor respectively.
-Donor site emits $8$ symbols and acceptor site emits $6$ symbols.
+sequences. States $D, In, B, BA, A$ correspond to intron structure:
+Donor, Intron, Branch, Branch Acceptor, and Acceptor.
 }\label{FIGURE:PAIRAGON}
 \end{figure}
 
 
-The aim of Pairagon is to find local alignments of \abbreviation{complementary
-DNA}{cDNA} and genome \cite{Pairagon2009}. By aligning experimentally obtained
+The aim of \firstUseOf{Pairagon} is to find local alignments of \abbreviation{complementary
+DNA}{cDNA} and genome \cite{Pairagon2009}, By aligning experimentally obtained
 cDNA sequences to the genome we are able to confirm intron and exon structures
 of genes.  Pairagon's HMM model consists of a simple pair HMM submodel, which
 aligns cDNA to DNA and a $5$-state submodel for intron structures. The whole
 topology is in figure \ref{FIGURE:PAIRAGON}. 
 
+\begin{comment}
 Model was trained using iterative maximum likelihood approach.  Initial
 parameters were trained on the alignments from the \abbreviation{Mammalian Gene
 Collection}{MGC}. In this phase, the parameters for intron submodel were set by
 hand. The model was then used to align more MGC sequences. Final parameters were
 estimated from the new alignments.
+\end{comment}
 
 Decoding was done by the Viterbi algorithm. Runtime of the algorithm was
-improved by the stepping-stone algorithm described in section \ref{SECTION:SSA}
+improved by the stepping-stone algorithm described in Section \ref{SECTION:SSA}
 and memory requirements were improved using the Treeterbi algorithm
-\cite{Keibler2007}, which is similar to the On-line Viterbi algorithm discussed
-in section \ref{SECTION:ONLINEVITERBI}.
-
-\subsection{Alex Hudek -- dizertacka}
+\cite{Keibler2007}, which is similar to the On-line Viterbi algorithm \cite{Sramek2007}.
 
 \subsection{Non-Geometric Indel Models}
 In the simple pHMM described in figure \ref{FIGURE:SIMPLEPHMM}, gap length has
@@ -739,13 +656,12 @@ and $g=\log(e_{M,I})+\log(1-e_{I,I})-d$ we see that this is exactly affine gap
 penalty. Therefore we can say that affine gap penalties correspond to geometric
 distribution of indel lengths.
 
-As we mentioned in chapter \ref{CHAPTER:ALIGNMENT}, using non-affine gap model
-can improve alignment quality.  Problem with geometric distribution (or affine
-gap penalties) it that they are not realistic \cite{Cartwright2009,Lunter2008}.
-Therefore some other distribution might be more appropriate, for example zeta
-distribution \cite{Cartwright2009}, or combination of several geometric
-distributions to approximate the distribution of gap length
-\cite{Gill2004,Gill2006}.
+Using non-affine gap model can improve alignment quality.  Problem with
+geometric distribution (or affine gap penalties) it that they are not realistic
+\cite{Cartwright2009,Lunter2008}.  Therefore some other distribution might be
+more appropriate, for example zeta distribution \cite{Cartwright2009}, or
+combination of several geometric distributions to approximate the distribution
+of gap length \cite{Gill2004,Gill2006}.
 
 GpHMM allow us to use arbitrary duration distributions.  On the other hand,
 GpHMM are much slower to decode.  One way of incorporating a different gap
@@ -834,7 +750,6 @@ Different rates of evolution were also used  in the whole genome aligner GRAPe
 evolution rate and two component geometric mixture model for indels and one with
 the lower evolution rate and geometric distribution of indel lengths. GRAPe uses
 the Posterior decoding as a decoding method.
-
 
 \subsection{Biases In Alignments}
 \label{SECTION:BIASES}
@@ -936,7 +851,7 @@ This will be discussed in the next chapter.
 
 
 
-\section{Algorithmic improvements}
+\section{Algorithmic improvements}\label{SECTION:ALGORITHMICIMPROVEMENTS}
 
 Needleman-Wunsch algorithm and decoding algorithm for HMMs and pHMMs uses
 dynamic programming. In this section we review several algorithmic improvements
@@ -1012,7 +927,7 @@ aligned in some anchor, then $X_i$ can be aligned to positions from $j-\tau$ to
 $j+\tau$ in the global alignment\footnote{Or aligned to a gap in that region.}
 for some user defined constant $\tau$. Similarly, $Y_j$ can be aligned to
 positions from $i-\tau$ to $i+\tau$. This technique is also called \firstUseOf{banding},
-and it is often used. We used this technique in chapter \ref{TODO}.
+and it is often used. We used this technique in chapter \ref{CHAPTER:REP}.
 
 \subsection{Reducing memory complexity}
 One general technique to reduce the memory requirements of dynamic programing
@@ -1098,94 +1013,47 @@ once and therefore the time complexity is $O(n(m+t))$.
 
 \subsection{Exploiting Sequence Repetition}
 
-This technique reduce time complexity of alignment algorithm to $O(n^2/\log n)$
-This idea combines LZ78 factorization \cite{Lempel1976} and
-$O(A+B)$ algorithm for computing row minima/maxima in totally a monotone matrix of
-size $A\times B$ \cite{Aggarwal1987}. We will discuss only two main ideas behind
-this algorithm. 
-%This technique is the extension of the four-russian trick to
-%unrestricted cost matrices. Four-russian trick use clever precomputation to
-%speed up sequence alignment \cite{GusfieldBook}
+There are two similar techniques to accelerate sequence alignment. Both divides
+the dynamic programming matrix into blocks (square of rectangle submatrices).
+Each block has input and output cells. Input cells are in the left and bottom
+border of the submatrix and output cells are in the top and right border of the
+submatrix (if the computation is performed in top-right order). Each submatrix
+transforms the input cells into output cells (the computation of dynamic
+programming). It is possible to use either compression or pre-computation to
+compute alignment in time proportional to the total length of the borders of
+the blocks instead of the total size of the block (block of size $t\times u$
+has border length $O(t+u)$ and size $O(tu)$).
 
-\subsubsection{Totally Monotone Matrices}
-\todo{Vyrazne skratit + spomenut 4 rusov ako originalnu techniku. + este by sa oplatilo spomenut tie rozne gap funkcie, aspon citacie na ne by to bolo treba}
+The first such technique is called Four-Russian technique \cite{Arlazaroff1970,
+GusfieldBook} and can be used for computing edit distance or sequence alignment
+with some restriction of the scoring matrix. It divides the dynamic programming
+matrix into equally sized blocks and pre-computes the output cells for all
+possible input cells and all possible blocks (the differences between values of
+the input cells are small, so all possible inputs can be enumerated). By
+setting the block size to the $O(\log(n))$, the total running time of the
+algorithm is $O(n^2/log(n)^2)$ in the unit-cost model \cite{GusfieldBook}.
 
-\begin{definition}\cite{Crochemore2002}
-A Matrix $M$ of size $n\times m$ is \firstUseOf{totally monotone} (with concave condition),
-if and only if for all $0\leq i,j< n, 0\leq k<l<m$ the following condition holds:
-if $M[i,k]\leq M[j,k]$ then $M[i,l]\leq M[j,l]$.
-\end{definition}
+Instead of dividing matrix into equally sized submatrices, we can run LZ78
+factorization \cite{Lempel1976} on both sequences.  LZ78 factorization is
+compression technique which divide sequence into sequence of $O(n/log(n))$
+segments, where each segment $s$ has predecessor segment $s_p$, where $s=s_pc$,
+$c$ is a single character. We can use these segments to construct blocks. Each
+of such blocks has three predecessors blocks that are obtained by using
+predecessor segments \cite{Crochemore2002}. Crochemore {\it et al.} developed
+technique to compute the values of the output cells from the predecessor blocks
+and input cells in $O(b)$ time where $b$ is the total border length of the
+block. It utilizes the $O(A+B)$ algorithm for computing row minima/maxima in
+totally a monotone matrix of size $A\times B$ \cite{Aggarwal1987}.  The total
+time complexity of this algorithm is $O(n^2/\log n)$ time
+\cite{Crochemore2002}.
 
-If $M$ is totally monotone, then we can compute maximum of every row 
-in $O(n+m)$ time by SMAWK algorithm \cite{Aggarwal1987} (This problem is called
-\firstUseOf{row maxima}).
-
-\begin{definition}\cite{Crochemore2002}
-Let $M$ be a matrix and $M'$ be its
-submatrix. \firstUseOf{Input border} $I_{M'}$ of $M'$ is the left column and top
-row of $M'$ and \firstUseOf{output border} $O_{M'}$ of $M'$ is the right column and
-bottom row of $M'$. Elements of $I_{M'}$ are ordered in clockwise direction
-and elements of $O_{M'}$ are ordered in counter-clockwise direction.
-\end{definition}
-
-Intuition behind input and output border is following. If we look on the
-computation of alignment algorithm inside submatrix $M'$, input border is input
-to this computation and output border is output of this computation.
-
-\begin{definition}\cite{Crochemore2002}
-Let $M'$ be submatrix of $M$, $I_{M'}=\{i_0,i_1,\dots,i_{k-1}\}$ be its input
-border, and $O_{M'}=\{o_0,o_1,\dots,o_{l-1}\}$ be its output border. Then
-matrices
-$DIST$ and $OUT$ of size $k\times l$ are defined in following way:
-$DIST[a,b]$ is the cost of optimal alignment from cell $i_a$ to cell $o_b$.
-$OUT[a,b]=i_a+DIST[a,b]$.
-\end{definition}
-
-Clearly, $o_b=\max_{0\leq a < k}OUT[a,b]$. Therefore by computing row maxima in
-matrix $OUT$, we can compute values of output borders. Matrices $DIST$ and $OUT$
-are totally monotone \cite{Crochemore2002}.  If we have matrices $DIST$ and
-$OUT$ in advance and $M'$ is of size $m'\times n'$ then we can compute values of
-output border in time $O(n'+m')$ by the SMAWK algorithm.
-
-Now we show how to divide matrix $M$ into several submatrices so that
-it is possible to efficiently represent matrices $DIST$ and $OUT$.
-
-
-\subsubsection{LZ78 factorization}
-
-LZ78 is a compression algorithm that uses a dynamic dictionary, which is being built
-while the sequence is compressed \cite{Lempel1976}. The way how it parses the sequence
-can be used to accelerate dynamic programming \cite{Crochemore2002,Weimann2009}. 
-LZ78 factorization divides
-sequence $S$ into $k$ strings $S_0,\dots,S_{k-1}$, where $S_0S_2\dots S_{k-1}=S$ and
-for every index  $i,0< i <k$ there is index $0\leq j<i$ such that $S_j$ is
-prefix of $S_i$ of size $|S_i|-1$. We will call $S_j$ to be a
-\firstUseOf{predecessor} of $S_i$.  We have guarantee that the number of strings
-$k$ is in  $O(\frac{n}{\log n})$ where $n$ is the length of $S$
-\cite{Lempel1976}. 
-
-To align sequences $X$ and $Y$, we factorize them into sequences of strings
-$\{X_i\}_{0\leq i < k_x}$ and $\{Y_i\}_{0\leq i<k_y}$.  Every pair $(X_i,Y_j)$
-defines a rectangular submatrix $B_{i,j}$ of $M$.  All $B_{i,j}$ are
-disjoint and all blocks cover matrix $M$. We say that block $B_{k,l}$ is
-a predecessor of block $B_{i,j}$ if one of the following conditions is true:
-
-
-\begin{itemize}[itemsep=-1mm]
-\item $X_k$ is predecessor of $X_i$ and $l=j$
-\item $k=i$ and $Y_l$ is predecessor of $Y_j$
-\item $X_k$ is predecessor of $X_i$ and $Y_l$ is predecessor of $Y_j$
-\end{itemize}
-
-Note that every block has $0,1$ or $3$ predecessors. Only block
-$B_{0,0}$ has $0$ predecessors and only blocks $B_{i,0}$ and $B_{0,i}$
-($i>0$) have only $1$ predecessor.  
-
-{\it Crochemore et al.} described a data structure that represents $DIST$ and $OUT$
-matrices for  \nocite{Crochemore2002} individual blocks $B_{i,j}$. Structures
-for $B_{i,j}$ can be
-computed from $DISTS$ and $OUT$ matrices of theirs predecessors in time
-$O(|X_i|+|Y_j|)$. Details of this algorithm can be found in
-\cite{Crochemore2002}. Time complexity of this algorithm is proportional to the
-sum of the sizes of all blocks, which is $O(n^2/\log n)$ where $n$ is the length
-of the longer sequence.
+Similar idea was also used for accelerating dynamic programming for decoding
+and training of HMMs \cite{Weimann2009}. The computation of the Forward
+algorithm can be decomposed as an series of matrix multiplication. Using LZ78
+factorization, we can divide this into multiplication of $n/\log(n)$, where
+multiplication of matrices in each block is done in $O(m^3)$ where $m$ is the
+number of states of HMM. Using this, we can compute the Forward algorithm in
+$O(nm^3/log(n))$ time which lead to $O(\log(n)/m)$ speed-up \cite{Weimann2009}.
+Similarly, it is possible to use this technique to the Viterbi algorithm. In
+this case we replace summation with maximum in the matrix multiplication
+operation \cite{Weimann2009}.
