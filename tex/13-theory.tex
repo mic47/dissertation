@@ -20,12 +20,15 @@ structure of footprint, and therefore rapid change of types as in Figure
 \ref{FIGURE:HERD_BAD} is not possible (unless the footprint contains a large
 number of recombinations).
 
-More generally, in the first stage we search for the best guide, which 
-is a general constraint on the allowed annotation, for example in the form
-of footprint or a set of labels. In the second stage, we find optimal
-annotation using the selected guide.
-\todo{Brona: Pridaj zmienku o Jakubovom clanku, kde to robili a zhrnutie nasich
-vysledkov (experimenty, np-tazkost, formalizovanie problemu -> z konca 5.1}
+More generally, in the first stage we search for the best guide, which is a
+general constraint on the allowed annotation, for example in the form of
+footprint or a set of labels. In the second stage, we find optimal annotation
+using the selected guide.  \todo{Brona: Pridaj zmienku o Jakubovom clanku, kde
+to robili a zhrnutie nasich vysledkov (experimenty, np-tazkost, formalizovanie
+problemu -> z konca 5.1} In this chapter, we will focus mainly on the
+complexity of the first step: finding the most probable guide. Complexity of
+the second step, namely finding the annotation with highest expected gain
+without guides we studied in \cite{Nanasi2010, Nanasi2010mgr}. 
 
 At first we give formal definition of the two-stage algorithm. Then we show
 experiment illustrating effects of the two-stage decoding on the HIV
@@ -122,11 +125,7 @@ r = \arg\max_{r'\in W}\prob{r'\mid H, X}
 \end{definition}
 
 Finding the most probable guide can be decoupled from finding the
-annotation with highest expected reward. In this chapter, we will focus
-mainly on the complexity of the first step: finding the most
-probable guide. Complexity of the second step, namely finding the annotation
-with highest expected gain without guides we studied in \cite{Nanasi2010mgr,
-Nanasi2010}. Implementing search with guides is straightforward, and we will
+annotation with highest expected reward. Implementing search with guides is straightforward, and we will
 discuss it later.
 
 Note that we could use a different method to select guide $r$. While it is
@@ -510,12 +509,19 @@ such that $\prob{f(\pi) = F, X\mid H}\geq p$.
 \end{definition}
 
 \begin{theorem}
-The most probable footprint problem is NP-complete.
+The most probable footprint problem is NP-complete even if a labeling function is the identity function.
 \label{THEOREM::NPFOOT}
 \end{theorem}
-\todo{States alebo labels? Pre labels trivialne redukcia z most probable labeling}
-First we show combinatorial proof of theorem \ref{THEOREM::NPSET}. Then we
-show proof of theorem \ref{THEOREM::NPREST}. Finally we show proof of theorem
+Note that if we allow labeling function to be arbitrary, we can reduce the most
+probable annotation problem to the most probable footprint problem, we only
+need to make sure that it is not possible to have two consecutive states with
+same label in possible state path. It can be done by adding states with new
+label in the middle of the transitions, that generates new symbol and adding
+such symbols between symbols of the input sequence. In such case, the most
+probable annotation and the most probable footprint will be identical.
+
+First we show combinatorial proof of theorem \ref{THEOREM::NPSET}. Then we show
+proof of theorem \ref{THEOREM::NPREST}. Finally we show proof of theorem
 \ref{THEOREM::NPFOOT} by showing $8$-state HMM for which is NP hard to find the
 most probable footprint and then we extend this proof to theorem
 \ref{THEOREM::NPSET} again. 
@@ -529,11 +535,10 @@ most probable footprint and then we extend this proof to theorem
 %\end{definition*}
 
 In this section, we prove NP-hardness of the most probable set problem, theorem
-(\ref{THEOREM::NPSET}).
+\ref{THEOREM::NPSET}.
 
-\todo{Vloz sem definiciu max clique, alebo aspon cituj}
 We will use a reduction from the maximum clique
-problem.  Given a graph $G=(V,E)$ and a clique
+problem \cite{Garey1990}.  Given a graph $G=(V,E)$ and a clique
 size $k$, we first choose a suitable threshold $k'\ge k$, as
 detailed below, and construct a graph $G'=(V',E')$ such that $G'$ has
 a clique of size $k'$ if and only if $G$ has a clique of size
@@ -760,22 +765,6 @@ n^n$, we can store $D(m,j)$ in $O(k \mbox{polylog}(k))$ bits.
 Therefore computing the desired values $n_k$ and $M_{n_k}$ 
 can be done in polynomial time. \qed
 \end{proof}
-%By using the same reduction as in Theorem \ref{thm:sets}, we can
-%also prove NP-hardness of the following variant of the problem, in
-%which we restrict the size of the set of states $S$. 
-
-%\begin{corollary}
-%The following problem is NP-hard:
-%Given is an HMM $H$, sequence
-%$X$ of length $n$, integer $k$ and a number $p\in [0,1]$ and the task to
-%decide if there exists a set of states $S$ of size exactly $k$ 
-%such that $\Pr\left(s(\pi)=S, X\mid H, n \right)\geq p$.
-%\end{corollary}
-
-%We can easily see that the existence of a clique
-%of size $k$ in $G$ leads to the existence of the desired set of states
-%$S$ of size exactly $k'$, and by following the reasoning from the
-%proof, we can also prove that the converse is true.
 
 Note that it is not clear if the most probable set of states problem is in
 NP. In particular, given a set of states $S$, it is NP-hard to find out if its
@@ -790,73 +779,54 @@ $\Pr\left(s(\pi)=S, X\mid H, n\right)$ is non-zero is NP-complete.
 
 \begin{proof} The proof is a reduction from the problem of finding Hamiltonian path.
 
-%\begin{definition}\label{GraphHMM}
-%Let $G=(V,E)$ be an undirected graph (without self-loops). 
-%Then the \emph{graph HMM} $H_G$ is defined as follows:
-%\begin{itemize}[itemsep=-1mm]
-%\item Its set of states is $V\cup \{\psi\}$, where $\psi\notin V$ is a
-%   new state called the error state.
-%\item Its emission alphabet is $\{0,1\}$.
-%\ item Each state $v\in V$ has initial probability $I_{v} = 1/|V|$, the
-%error state has initial probability $I_{\psi}=0$.
-%\item Each state $v\in V$ emits 0 with probability 1, the error state emits 1 
-%with probability 1.
-%\item Transitions with non-zero probability between states $u,v\in V$
-%  correspond to edges in $E$:
-%$$a_{u,v}=\begin{cases}
-%\frac1{|V|} & \{u,v\}\in E\\
-%0 & \text{otherwise}
-%\end{cases}$$
-%\item For $u\in V$, we also have $a_{u,\psi}=1-\sum_{v\in V}a_{u,v}$
-%and $a_{\psi,u}=0$. The error state has a self-transition with 
-%probability 1: $a_{\psi,\psi}=1$.
-%\end{itemize}
-%\end{definition}
-%
-%The error state $\psi$ is added to the HMM so that all non-zero
-%transitions between states in $V$ have the same probability. Any state
-%path $\pi$ containing only states from $V$ connected by transitions
-%with non-zero probability has the same probability of generating
-%sequence $X=0^n$: $\Pr(\pi, X=0^n|H_G,n) = |V|^{-n}$.
-%Such paths correspond to walks in graph $G$.
 
 Let $G=(V,E)$ be a graph  
 and $H_G$ be the corresponding graph HMM as
 in Definition \ref{GraphHMM}. Let $X=0^{|V|}$.  
-%Any state path
-%that can generate $X$ and contains all vertices from $V$ contains each
-%vertex exactly once.  
 It is easy to see that $\Pr\left(s(\pi)=V,X \mid H_G, |X|
 \right)>0$ if and only if $G$ contains a Hamiltonian path. \qed
 \end{proof}
 
-\todo{Theorem}
-The most probable set problem is
-fixed-parameter tractable with respect to the size of the HMM. Given
-an HMM with $m$ states and a sequence of length $n$, we can find the
-most probable set of states in time $O(2^m m^2 n)$ by a dynamic
-programming algorithm similar to the Forward algorithm.
-We define $F[i,S,v]$ to be the sum of probabilities of all
-states paths $\pi$ of length $i$ such that $s(\pi)=S$, $\pi$ ends in
-state $v$ and generates the first $i$ characters of sequence $X$.
-To compute $F[n,S,v]$, we use the following equation:
-\ifx\settwocolumn\undefined
-$$F[i,S,v] = \begin{cases}
+\begin{theorem} \label{THEOREM::SETFIXEDTRACT}
+The most probable set problem is fixed-parameter tractable. There is an
+algorithm with time complexity $O(2^mm^2n)$ where $m$ is the number of states
+of the HMM and $n$ is the length of the input sequence. 
+\end{theorem}
+
+\begin{proof}
+%The most probable set problem is
+%fixed-parameter tractable with respect to the size of the HMM. Given
+%an HMM with $m$ states and a sequence of length $n$, 
+Let $V$ be the set of states of the HMM, and $X$ the input sequence of length
+$n$.  We can find the most probable set of states in time $O(2^m m^2 n)$ by a
+dynamic programming algorithm similar to the Forward algorithm.  We define
+$F[i,S,v]$ to be the sum of probabilities of all states paths $\pi$ of length
+$i$ such that $s(\pi)=S$, $\pi$ ends in state $v$ and generates the first $i$
+characters of sequence $X$.  The probability of a set $S$ is the of all state
+paths that generated $X$ with state set $S$:
+\begin{equation}
+\prob{S\mid X} = \sum_{v\in V} F[n, S, v]
+\end{equation}
+We can find the most probable state set by enumerating all sets and choosing
+the one with the highest probability.  To compute $F[n,S,v]$, we use the
+following equation:
+\begin{equation}
+F[i,S,v] = \begin{cases}
 I_{v}e(v,X[1])& i=1,S=\{v\}\\ 
 \displaystyle \sum_{u\to v}a_{u,v}e(v,X[i])\left(F[i-1,S\backslash\{v\},u]
 + F[i-1,S,u]\right) & i>1, v\in S\\
 0 & \mbox{otherwise}
-\end{cases}$$
-\else
-$$F[i,S,v] = \begin{cases}
-I_{v}e(v,X[1])& i=1,S=\{v\}\\ 
-\displaystyle \sum_{u\to v}a_{u,v}e(v,X[i])\\\hspace{5mm}\left(F[i-1,S\backslash\{v\},u]\right.
-\\\hspace{5mm}\left.
-+ F[i-1,S,u]\right) & i>1, v\in S\\
-0 & \mbox{otherwise}
-\end{cases}$$
-\fi
-\todo{Ako najdem vysledok?, velkost cislel?  -- ze vieme tieto cisla reprezentovat v tozumnom tvare Pozri koniec 5.6, trosku zdovodni}
+\end{cases}
+\end{equation}
+Computing $F$ can be done in $O(2^mm^2n)$ time assuming that manipulation with
+the numeric representation of probabilities is in constant time. Otherwise, if
+the parameters of the HMM are rational numbers, all quati Assuming that the
+parameters of HMM are rational numbers, we can represent all quantities with
+the polynomial number of bits and the resulting time complexity will be higher
+by a polynomial factor.
+\qed
+\end{proof}
+
 \section{The Most Probable State Restriction}
 
 \label{sec:restriction}
@@ -865,14 +835,6 @@ In the most probable restriction problem, given HMM we want to decide if there
 exists such subset of the set of states, that have size $k$ and probability at
 least $p$. We prove that this problem is NP-complete.
 
-%\begin{definition*}[The most probable restriction problem]
-%Given an HMM $H$, sequence $X$, integer $k$ and number $p\in[0,1]$, decide if
-%there exists a subset of states $S$ of size $k$, such that
-%$\prob{S(\pi)\subseteq S, X\mid H} \geq p$.  
-%\end{definition*}
-
-%In this section we prove that the most probable restriction problem is
-%NP-complete.
 \begin{proof}(Theorem \ref{THEOREM::NPREST})
 We will prove NP-hardness by a reduction from 3-SAT. Consider an
 instance of 3-SAT with the set of variables $U=\{u_1,u_2,\dots,u_n\}$
@@ -918,7 +880,20 @@ in which we allow only states in $S$. Therefore the problem is in NP.
 \qed
 \end{proof}
 
-\todo{Fixed parameter? (Sum results from dyn prog for set)}
+\begin{theorem}
+The most probable restriction is fixed parameter tractable.
+\end{theorem}
+\begin{proof}
+We can use the same algorithm as in the proof of the theorem
+\ref{THEOREM::SETFIXEDTRACT}, with the difference that in the end we enumerate
+only a sets of size at most $k$. During the computation we use only subsets of
+states with size at most $k$ and therefore the time complexity is 
+\begin{equation}
+O\left(\sum_{l=0}^k{m\choose l}m^2n\right)
+\end{equation}
+where $m$ is the number of states, $n$ is the length of the
+sequence and $k$ is the size of the restriction.
+\end{proof}
 
 \section{The Most probable footprint}
 \label{sec:footprint}
