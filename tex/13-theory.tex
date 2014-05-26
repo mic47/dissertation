@@ -23,17 +23,21 @@ number of recombinations).
 More generally, in the first stage we search for the best guide, which is a
 general constraint on the allowed annotation, for example in the form of
 footprint or a set of labels. In the second stage, we find optimal annotation
-using the selected guide.  \todo{Brona: Pridaj zmienku o Jakubovom clanku, kde
-to robili a zhrnutie nasich vysledkov (experimenty, np-tazkost, formalizovanie
-problemu -> z konca 5.1} In this chapter, we will focus mainly on the
-complexity of the first step: finding the most probable guide. Complexity of
-the second step, namely finding the annotation with highest expected gain
-without guides we studied in \cite{Nanasi2010, Nanasi2010mgr}. 
+using the selected guide. Example of such algorithm for the most probable ball
+problem \cite{Brown2010, Truszkowski2011} discussed in Section
+\ref{SECTION:DISTANTMEASURES}. In this this algorithm, two-stage were motivated
+by the computational complexity, since optimizing the border shift distance is
+NP-hard \cite{Brown2010}. Our motivation to use two-stage algorithm is to
+improve their accuracy and decrease the amount of some systematic errors. 
 
-At first we give formal definition of the two-stage algorithm. Then we show
-experiment illustrating effects of the two-stage decoding on the HIV
-recombination detection problem. Further in this chapter we prove that finding
-the most probable guide is for certain guide functions NP-hard.
+In this chapter, we will focus mainly on the complexity of the first step:
+finding the most probable guide. Complexity of the second step, namely finding
+the annotation with highest expected gain without guides we studied in
+\cite{Nanasi2010, Nanasi2010mgr}.  At first we give formal definition of the
+two-stage algorithm. Then we show experiment illustrating effects of the
+two-stage decoding on the HIV recombination detection problem. Further in this
+chapter we prove that finding the most probable guide is for certain guide
+functions NP-hard.
 
 
 \begin{figure}
@@ -153,8 +157,6 @@ Example of both type of
 errors are illustrated in Figure \ref{FIGURE:HERD_BAD}.
 
 \subsection{Application Domain}
-% Az na citacie, toto sa da povazovat za viac menej hotove
-\todo{pridaj citacie}
 We use the problem of recombination detection in HIV virus for the demonstration of
 usefulness of two-stage decoding.  This section contains background information
 about data used in the experiment.
@@ -171,16 +173,16 @@ evolution distances.  }\label{app:figure:phil}
 \end{figure}
 
 The genome of the HIV virus is an RNA sequence roughly $9000$ bases long.
-Mutation rate of the HIV virus is high\cite{}, and additionally HIV virus is
-categorized into several \firstUseOf{subtypes}\cite{} based on sequence
+Mutation rate of the HIV virus is high \cite{Schultz2006}, and additionally HIV virus is
+categorized into several \firstUseOf{subtypes} \cite{Robertson2000} based on sequence
 similarity. Phylogenetic tree of subtypes is show in figure
 \ref{app:figure:phil}.  Subtypes A and F are further divided into
 \firstUseOf{sub-subtypes} A1, A2 and F1, F2.  Due to high sequence similarity,
 subtypes B and D are sometimes recognized as sub-subtypes of subtype BD
-\cite{}.
+\cite{Robertson2000}.
 
 Additionally to high mutation rate, \firstUseOf{recombination} occurs in
-evolution of HIV virus \cite{}. Recombination of two source viruses $v_1$
+evolution of HIV virus \cite{Robertson2000}. Recombination of two source viruses $v_1$
 and $v_2$ is a mosaic virus which contains parts from both $v_1$ and $v_2$.  The
 relative position of individual parts is retained, so each region of the
 recombinant virus originates from the corresponding region in the source virus.
@@ -210,7 +212,7 @@ shaded state is the final state. Figure is from \cite{Nanasi2010mgr}.}\label{FIG
 \end{figure}
 
 Profile HMMs are HMMs with a special topology used for matching certain
-motifs\cite{Durbin1998}. Profile HMM of length $n$ consists of match states
+motifs \cite{Durbin1998}. Profile HMM of length $n$ consists of match states
 $M_1,M_2,\dots, M_n$, insert states $I_0, I_1, \dots, I_n$, silent delete states
 $D_1, D_2,\dots, D_n$ and silent init state and silent final state. All states are
 connected by transitions as in the figure \ref{FIGURE:PROFILEHMM}. A motif is
@@ -246,10 +248,11 @@ work \cite{Nanasi2010mgr}}\label{app:fig:jpHMM}
 
 \subsection{Algorithms}
 
-In this section we describe the HERD algorithms and its modification to use
-footprint and the annotation set as the guides.  We denote HERD's gain
-function, described in section \ref{SECTION:HERD}, as $f_{HERD}$.  Details of
-the algorithm that optimizes this gain function can be found in
+In this section we describe the HERD algorithm and how to modify the Viterbi
+algorithm and the HERD to use footprint and the annotation set as the guides.
+We denote HERD's gain function, described in section \ref{SECTION:HERD}, as
+$f_{HERD}$ (note that the gain function of the Viterbi algorithm is $f_V$).
+Details of the algorithm that optimizes this gain function can be found in
 \cite{Nanasi2010, Nanasi2010mgr}. We use the footprint and the annotation set
 as a guide functions. In case of footprint, we use the natural way to define
 guide relation, however in case of the annotation set we use guide relation
@@ -318,7 +321,7 @@ $(v_i, v_j)$, then $V[i, j]$ can be computed by following equations:
 V[0, 0] &= 0 \\ V[0, j] &= -\infty, 0< j \leq k \\
 V[i, j] &= \max_{i', (v_{i'}, v_i)\in E} 
 \begin{cases} 
-C(v_i', v_i) + V[i', j]& \text{if $\lambda(v_i) == \lambda(v_{i'})$}\\
+C(v_i', v_i) + V[i', j]& \text{if $\lambda(v_i) = \lambda(v_{i'})$}\\
 C(v_i', v_i) + V[i', j-1]& \text{if $\lambda(v_i) \not= \lambda(v_{i'})$ and $\lambda(v_{i'})=f_{j-1}$}\\
 0 & \text{otherwise} 
 \end{cases} 
@@ -346,14 +349,40 @@ frequent footprint of sampled paths. For using the set as a guide, we have chose
 the set of labels used in the footprint guide, since these sets were almost
 always correct. 
 
+Altering the Viterbi algorithm to use set as an restriction is as simple as for
+the HERD; we only need to to ignore states that are not in the guide set. We
+can do it by removing state that are not in the guide set from the HMM without
+normalizing the transition probabilities. 
+
+For optimizing the Viterbi algorithm with footprint $f$ as an guide can be done
+by computing following equations:
+\begin{align}
+V[0,v, 0] &= I_{v}e_{v,X_0}, \lambda(v) = f_0\\
+V[0,v, 0] &= 0, \lambda(v) \not= f_0\\
+V[0,v, l] &= 0, l>0  \\
+V[i,v, l] &= \max_{u\in V}\begin{cases}
+V[i-1,u, l]a_{u,v}e_{v,X_i}& 
+\text{if $\lambda(v) =\lambda(u)$}\\
+V[i-1,u, l - 1]a_{u,v}e_{v,X_i} &
+\text{if $\lambda(u) = f_{l-1}$ and $\lambda(v) = f_{l}$}\\
+0 & \text{otherwise}
+\end{cases}\\
+\end{align}
+where $v\in V,0<i<n$. Computation of back-links $B[i, v, l]$ are analogous to
+the computation of $V[i, v, l]$ as in the Viterbi algorithm. Note that these
+equations are the original Viterbi equations from Section \ref{SECTION:VITERBI}
+with additional dimension: the position $l$ in the footprint. The time
+complexity of this algorithm is $O(nm^2k)$, where $k$ is the length of the
+footprint. This algorithm is $k$ times slower than the Viterbi algorithm.
+
 \subsection{Data and results}
-We created an artificial dataset of recombinant HIV sequences and run HERD with
-two guide functions: annotation set and footprint. HERD was run with default
-parameters, $\gamma=0.2, W=10$. The model was trained using jpHMM program on
-the alignment of HIV sequences distributed with jpHMM \cite{Schultz2006}. We
-removed $10\%$ of sequences from this alignment before training data and used
-them for evaluation. We refer to the alignment distributed with jpHMM as the
-\firstUseOf{source alignment}.
+We created an artificial dataset of recombinant HIV sequences and run HERD and
+the Viterbi algorithm (VA) with two guide functions: annotation set and
+footprint. HERD was run with default parameters, $\gamma=0.2, W=10$. The model
+was trained using jpHMM program on the alignment of HIV sequences distributed
+with jpHMM \cite{Schultz2006}. We removed $10\%$ of sequences from this
+alignment before training data and used them for evaluation. We refer to the
+alignment distributed with jpHMM as the \firstUseOf{source alignment}.
 
 Artificial testing sequences were generated by alternating segments of two real
 sequences from different subtypes.  These alternating segments were selected
@@ -366,9 +395,8 @@ Apart from two different recombination length, we also evaluated algorithm of
 recombinants of sequences from same subtypes but different sub-subtypes, which
 gave us $4$ different data sets. For all datasets we generated $150$
 recombinants of two sequences. For subtypes we use subtypes A, BD, C, F, G. For
-sub-subtypes we . For sub-subtypes we have used sub-subtype pairs A1-A2, B-D and
-F1-F2.
-\todo{Tieto experimenty by som radsej zbehol este raz}
+sub-subtypes we have used sub-subtype pairs A1-A2, B-D and F1-F2. \todo{Tieto
+experimenty by som radsej zbehol este raz}
 
 To measure accuracy of the algorithms and amount of systematic errors, we use
 the following metrics.
@@ -399,10 +427,10 @@ Aim of measures $1-3$ is to quantify the performance of the algorithm in terms
 of ability to correctly predict the correct annotation. Measures $4-7$ quantify
 the amount of previously mentioned systematic errors in the predicted annotation.
 
-We use three versions of HERD in our experiments: original version of HERD,
-version with annotation set as a guide denoted by S-HERD and version using
-footprint as a guide denoted by F-HERD. The results of experiments are in the
-table \ref{HERD:EXPTABLE}. 
+We use three versions of HERD and VA in our experiments: original algorithm,
+version with annotation set as a guide denoted by S-HERD (S-Viterbi) and
+version using footprint as a guide denoted by F-HERD (F-Viterbi). The results
+of experiments are in the table \ref{HERD:EXPTABLE}. 
 
 \begin{table*}
 \begin{center}
@@ -451,23 +479,24 @@ In general, we expect short recombination length to be harder than long
 recombination length and distinguishing between sub-subtypes to be harder than
 distinguishing between subtypes. Both of these expectations were observed in
 the results. In all experiments on recombinants with long recombination length,
-F-HERD outperformed HERD in all metrics, especially with the metrics $4-7$:
-fraction of correct footprint was increased from $76.67\%$ to $100\%$ in case of
-subtypes and from $21.33\%$ to $98\%$ in case of sub-subtypes. However on
-recombinants with short recombination length, used footprints were wrong most
-of the time and in the sub-subtypes dataset all of the algorithms predict zero
-correct footprints.  In fact, accuracy of F-HERD decreased in all metrics
-except for annotation set specificity and sensitivity\todo{Vieme overit ze
-zvolene footprinty maju nizsiu pravdepodobnost nez skutocne?}. This and
-increase in footprint distance suggest the problem might be cause by heuristic
-methods for finding the best footprint and that improvements in these methods
-are needed.
+footprint algorithms outperformed their non-guided versions in all metrics,
+especially with the metrics $4-7$: for HERD, the fraction of correct footprint was increased
+from $76.67\%$ to $100\%$ in case of subtypes and from $21.33\%$ to $98\%$ in
+case of sub-subtypes (similarly for VA). However on recombinants with short
+recombination length, used footprints were wrong most of the time and in the
+sub-subtypes dataset all of the algorithms predict zero correct footprints.  In
+fact, accuracy of F-HERD and F-Viterbi decreased in all metrics except for
+annotation set specificity and sensitivity\todo{Vieme overit ze zvolene
+footprinty maju nizsiu pravdepodobnost nez skutocne? -- overuje sa}. This and increase in
+footprint distance suggest the problem might be cause by heuristic methods for
+finding the best footprint and that improvements in these methods are needed.
 
 
-S-HERD performs slightly worse than F-HERD on the data sets with long
-recombination lengths, but the metrics were still significantly better than
-unguided HERD algorithm.  Additionally, using S-HERD with short recombination
-length was not performing worse than HERD; their accuracy was similar.
+Methods with set as an guide performs slightly worse than footprint based
+methods on the data sets with long recombination lengths, but the metrics were
+still significantly better than unguided HERD algorithm.  Additionally, using
+set as an guide for short recombination length was not performing worse than
+original algorithm; accuracy was similar.
 
 \section{Computational complexity problems}
 

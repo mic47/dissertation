@@ -9,23 +9,22 @@ The Chapter \ref{CHAPTER:TWOSTAGE} considers two-stage decodings. In two stage
 decoding we at first compute the guide and then find an annotation optimizing
 gain function using guide as an restriction. Guides can be used to decrease
 running time, but we have shown experiment where guides can be parts of the
-decoding criteria and increase accuracy\todo{Ale iba ak naozaj spravime tie
-experimenty}. Then we focus on the computational problems of computing guides.
-We gave the combinatorial proof that the most probable set problem is NP-hard.
-We also show that this problem is fixed-parameter tractable when the fixed
-parameter is the number of states of HMM It is not clear, if the most probable
-set problem is in NP, since deciding is the probability of the set is non-zero
-is NP-complete. Then we show reduction from 3-SAT to the most probable
-restriction problem proving that this problem is NP-complete. Similarly to the
-most probable set problem, this problem is also fixed-parameter tractable.
-Finally, we focus on the most probable footprint problem. We proved that this
-problem is NP-complete even if a labeling function is the identity function
-(without this constraint, the most probable annotation problem can be trivially
-reduced to this problem). We showed the constant-sized HMM for which finding
-the most probable footprint is NP-hard even if we use the identity function as
-a labeling function. We also show how to alter the proof of the most probable
-footprint to the proofs of the most probable set and the most probable
-restriction. 
+decoding criteria and improve accuracy. Then we focus on the computational
+problems of computing guides.  We gave the combinatorial proof that the most
+probable set problem is NP-hard.  We also show that this problem is
+fixed-parameter tractable when the fixed parameter is the number of states of
+HMM It is not clear, if the most probable set problem is in NP, since deciding
+is the probability of the set is non-zero is NP-complete. Then we show
+reduction from 3-SAT to the most probable restriction problem proving that this
+problem is NP-complete. Similarly to the most probable set problem, this
+problem is also fixed-parameter tractable.  Finally, we focus on the most
+probable footprint problem. We proved that this problem is NP-complete even if
+a labeling function is the identity function (without this constraint, the most
+probable annotation problem can be trivially reduced to this problem). We
+showed the constant-sized HMM for which finding the most probable footprint is
+NP-hard even if we use the identity function as a labeling function. We also
+show how to alter the proof of the most probable footprint to the proofs of the
+most probable set and the most probable restriction. 
 
 There are still some open problems left. The most probable footprint is a
 special case of the most probable ball problem (with the border shift sum
@@ -64,20 +63,4 @@ features, for example gene structures. Finally, we can extend this method to
 align multiple sequences. From the practical point of view, our software needs
 to be optimized, so it can be used on genomic sequences of arbitrary length.
 
-\begin{comment}
-\begin{reformulate*}
-Kapitola 3 -- ukazali sme ze two-stage vie pomoct v presnosti, 
-daju sa skumat dalsie uplatnenia na ine domeny, a vhodne guide funkcie.
-
-Ako by sa vysledky dali rozsirit na parove modely, vie mi to ze mam 2 pasky v niecom pomoct? kosntantne modely  apodobne? Mozu tam byt nejake aproximacne algoritmy s dobrym pomerom?, pripadne vedia guided
-algorititmy pomoct aj pri parovych HMM? 
-
-Kapitola 4: Ukazali sme taky a taky model a algoritmus, daval take a take vysledky  Dal by sa pouzit model s cyklom
-stavov, bol by viac symetricky. Dali by sa pridat dalsie submodely (hladanie
-genov). Da sa viac rozvinut TANTAN model, pripadne modelovat evoluciu
-repeticii. Ma zmysel kombinovat (z praktickeho hladicka) dalsie sumbodely s
-repeatovym, kedze su tie modely nezavisle.
-
-\end{reformulate*}
-\end{comment}
 \label{LastPage}
