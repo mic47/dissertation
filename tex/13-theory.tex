@@ -32,7 +32,7 @@ without guides we studied in \cite{Nanasi2010, Nanasi2010mgr}.
 
 At first we give formal definition of the two-stage algorithm. Then we show
 experiment illustrating effects of the two-stage decoding on the HIV
-recombination detection problem.  Further in this chapter we prove that finding
+recombination detection problem. Further in this chapter we prove that finding
 the most probable guide is for certain guide functions NP-hard.
 
 
@@ -198,7 +198,7 @@ symbols therefore contains all subtypes/sub-subtypes of the HIV virus.
 \label{HERD:METHODS}
 In our experiments, we use \abbreviation{jumping HMM}{jpHMM}  developed for
 recombination detection  by {\it Schultz et al. (2006)}. The main building
-block of the jpHMM are ptofile Hidden Markov Models (profile HMMs).
+block of the jpHMM are profile Hidden Markov Models (profile HMMs).
 
 \begin{figure}
 \begin{center}
@@ -385,8 +385,8 @@ segments out of the number of segments in the correct annotation.
 \item {\bf \%correct footprints}: Percentage of correctly predicted footprints.
 
 \item {\bf Footprint distance}: Edit distance of predicted footprint and
-correct footprint normalized by the sum of the lengths of the correct footprint
-and the predicted (averaged over all samples). \todo{Asi by som to normalizoval lepsie}
+correct footprint normalized by the length of the correct footprint
+(averaged over all samples).
 
 \item {\bf Set specificity}: Percentage of the number of correctly predicted label
 types out of the total size of predicted label set.
@@ -406,32 +406,42 @@ table \ref{HERD:EXPTABLE}.
 
 \begin{table*}
 \begin{center}
-\begin{tabular}{cccccccc}\hline
+\begin{tabular}{cccccccc}
 &{\bf \%id}&\bf segment&\bf segment&\bf \%correct&\bf footprint&\bf set&\bf  set\\ 
 &&\bf sp.& \bf sn.& \bf footprints&\bf distance&\bf    sp.&\bf  sn.\\ 
 \hline
 \hline
-\multicolumn{8}{l}{\bf subtypes, short recombination length}\\
-HERD   &88.09& 65.59& {\bf 67.71}& 30.67& {\bf 0.0376}& 56.7&{\bf 100}\\
-S-HERD &{\bf 88.55}& {\bf 68.17}& {\bf 67.71}& {\bf 37.33}& 0.0380& {\bf 99.3}&{\bf 100}\\
-F-HERD &84.71& 65.02& 58.19& 2.67& 0.0928& {\bf 99.3}&{\bf 100}\\\hline
-\multicolumn{8}{l}{\bf sub-subtypes, short recombination length}\\
-HERD   &{\bf 72.72}& 32.79& {\bf 27.56}& {\bf 0.0}&    {\bf 0.2083}& 19.3&{\bf 100}\\
-S-HERD &72.33&{\bf 35.77}& 26.59& {\bf 0.0}&    0.2656& {\bf 100}&{\bf 100}\\
-F-HERD &68.05&30.65& 16.97& {\bf 0.0}&    0.3228& {\bf 100}&{\bf 100}\\\hline
-\multicolumn{8}{l}{\bf subtypes, long recombination length}\\
-HERD   &93.86& 50.20& 61.82& 76.67& 0.0246& 77.3&{\bf 100}\\
-S-HERD &94.12& 53.46& 63.68& 98.67& 0.0015&   {\bf 100}&{\bf 100}\\
-F-HERD &{\bf 94.19}& {\bf 53.57}& {\bf 63.83}& {\bf 100}&    {\bf 0.0}&
-{\bf 100}&{\bf 100}\\\hline
-\multicolumn{8}{l}{\bf sub-subtypes, long recombination length}\\
-HERD   &84.10& 19.87& 25.63& 21.33& 0.1491& 29.3&{\bf 100}\\
-S-HERD &83.90& 24.87& 28.55& 47.97& 0.0524& {\bf 98.6}&{\bf 100}\\
-F-HERD &{\bf 85.03}& {\bf 26.65}& {\bf 30.24}& {\bf 98.0}&   {\bf 0.0018}& {\bf
-98.6}&{\bf 100}\\
+\multicolumn{8}{l}{\bf subtypes, short recombination length}\\\hline
+HERD     &88.09     & 65.59     &\bf 67.71  & 30.67     &     0.0728    & 56.67      &\bf 100.0  \\
+S-HERD   &\bf 88.55 & \bf 68.17 &\bf 67.71  & \bf 37.33 & \bf 0.0699    & \bf 99.33  &\bf 100.0  \\
+F-HERD   &84.71     & 65.02     & 58.19     & 2.67      &     0.1653    & \bf 99.33  &\bf 100.0  \\\hline
+Viterbi  &     86.33&     62.73 &    61.31  &     19.33 &     0.1097    &     68.67 &\bf 100.0  \\
+S-Viterbi& \bf 87.01&\bf  64.33 &\bf 62.12  &  \bf 26.0 & \bf 0.100.08    & \bf 99.33 &\bf 100.0  \\
+F-Viterbi&     84.75&     61.99 &    55.57  &      2.67 &     0.1653    & \bf 99.33 &\bf 100.0  \\\hline\hline
+\multicolumn{8}{l}{\bf sub-subtypes, short recombination length}\\\hline
+HERD     &\bf 72.72 & 32.79     & \bf 27.56 & \bf 0.0   & \bf 0.3416    & 19.33     &\bf 100.0  \\
+S-HERD   &72.33     &\bf 35.77  & 26.59     & \bf 0.0   &     0.3937    & \bf 100.0   &\bf 100.0  \\
+F-HERD   &68.05     &30.65      & 16.97     & \bf 0.0   &     0.4777    & \bf 100.0   &\bf 100.0  \\\hline
+Viterbi  &     69.34&     30.54 &     21.04 & \bf   0.0 &     0.4729    &      32.0 & 99.33   \\
+S-Viterbi&\bf  70.21& \bf 32.28 & \bf 21.37 & \bf  0.0  & \bf 0.4715    & \bf 100.0   & 99.33   \\
+F-Viterbi&     67.91&     26.18 &     14.67 & \bf  0.0  &     0.4777    & \bf 100.0   & \bf 100.0 \\\hline\hline
+\multicolumn{8}{l}{\bf subtypes, long recombination length}\\\hline
+HERD     &93.86     & 50.20     & 61.82     & 76.67     &     0.0579    & 77.33     &\bf 100.0  \\
+S-HERD   &94.12     & 53.46     & 63.68     & 98.67     &     0.0030    &   \bf 100.0 &\bf 100.0  \\
+F-HERD   &\bf 94.19 & \bf 53.57 & \bf 63.83 & \bf 100.0   & \bf    0.0    & \bf 100.0   &\bf 100.0  \\\hline
+Viterbi  &     93.82&     49.09 &     59.40 &     86.67 &     0.0230    &     86.67 &\bf 100.0  \\
+S-Viterbi&     93.96&     50.24 &     60.10 &      98.0 &     0.0046    & \bf 100.0.0 &\bf 100.0  \\
+F-Viterbi& \bf 93.99& \bf 50.61 & \bf 60.33 & \bf 100.0 & \bf    0.0    & \bf 100.0.0 &\bf 100.0  \\\hline\hline
+\multicolumn{8}{l}{\bf sub-subtypes, long recombination length}\\\hline
+HERD     &84.10     & 19.87     & 25.63     & 21.33     &     0.4089    & 29.33     &\bf 100.0  \\
+S-HERD   &83.90     & 24.87     & 28.55     & 47.97     &     0.1026    &     98.65 &\bf 100.0  \\
+F-HERD   &\bf 85.03 & \bf 26.65 & \bf 30.24 & \bf 98.0  & \bf 0.0038    & \bf 98.67 &\bf 100.0  \\\hline
+Viterbi  &     84.75&     22.46 &     26.18 &    40.0   &     0.1520    &     56.67 &\bf 100.0  \\
+S-Viterbi&     85.23&\bf  24.61 & \bf 27.70 &    64.0   &     0.0654    & \bf 98.67 &\bf 100.0  \\
+F-Viterbi&\bf  85.39&     24.57 & \bf 27.70 &\bf 98.0   & \bf 0.0038    & \bf 98.67 &\bf 100.0  \\
 \end{tabular}
 \end{center}
-\caption[Results of F/S-HERD on artificial recombinants.]{Results of experiments
+\caption[Accuracy of decodings with fixed footprint/set.]{Results of experiments
 on four data sets. Note that larger values are better for all columns  except
 {\it footprint distance} column where a lower value is better. The best value out of
 each column is shown in bold.}\label{HERD:EXPTABLE}
@@ -489,11 +499,11 @@ might be interested in maximizing
 \]
 However, this probability is trivially maximized by the set of all labels. To
 get a meaningful problem definition, we can restrict the size of the annotation
-set to be $k$:
+set to be $l$:
 
 \begin{definition}[The most probable restriction problem]
-Given an HMM $H$, sequence $X$, integer $k$ and number $p\in[0,1]$, decide if
-there exists a subset of states $S$ of size $k$, such that
+Given an HMM $H$, sequence $X$, integer $l$ and number $p\in[0,1]$, decide if
+there exists a subset of states $S$ of size $l$, such that
 $\prob{S(\pi)\subseteq S, X\mid H} \geq p$.
 \end{definition}
 
@@ -524,7 +534,7 @@ First we show combinatorial proof of theorem \ref{THEOREM::NPSET}. Then we show
 proof of theorem \ref{THEOREM::NPREST}. Finally we show proof of theorem
 \ref{THEOREM::NPFOOT} by showing $8$-state HMM for which is NP hard to find the
 most probable footprint and then we extend this proof to theorem
-\ref{THEOREM::NPSET} again. 
+prove theorems \ref{THEOREM::NPSET} and \ref{THEOREM::NPREST}.
 
 \section{The Most Probable Set Problem}
 \label{sec:set}
@@ -832,7 +842,7 @@ by a polynomial factor.
 \label{sec:restriction}
 
 In the most probable restriction problem, given HMM we want to decide if there
-exists such subset of the set of states, that have size $k$ and probability at
+exists such subset of the set of states, that have size $l$ and probability at
 least $p$. We prove that this problem is NP-complete.
 
 \begin{proof}(Theorem \ref{THEOREM::NPREST})
@@ -852,14 +862,14 @@ it also generates the error symbol
 with probability $1-\sum_{x\in C\cup U}e(v,x)$. 
 
 We also create string $X=u_1u_2\dots
-u_nc_1c_2\dots c_m$ and set the size of the restriction $k$ to equal
+u_nc_1c_2\dots c_m$ and set the size of the restriction $l$ to equal
 the number of variables $n$. Every state path $\pi$ that can generate
 $X$ has probability $(2n|\Sigma|)^{-|X|}$; we set threshold $p$ to
 this value. Each 
 variable $u_i$ in the first part of $X$ 
 can be generated only by states $u_i$ and
 $\bar{u_i}$; therefore at least one of these states needs to be in the
-path. The first portion of the path thus traverses $k$ (equals to $n$) 
+path. The first portion of the path thus traverses $l$ (equals to $n$) 
 different states; only these states can be used to emit the second part of the
 sequence. Since each of $u_i$, where $1\leq i\leq n$ has to be generated,
 exactly one of the states $u_i$, $\bar{u_i}$ will be in the state path.
@@ -885,22 +895,25 @@ The most probable restriction is fixed parameter tractable.
 \end{theorem}
 \begin{proof}
 We can use the same algorithm as in the proof of the theorem
-\ref{THEOREM::SETFIXEDTRACT}, with the difference that in the end we enumerate
-only a sets of size at most $k$. During the computation we use only subsets of
-states with size at most $k$ and therefore the time complexity is 
+\ref{THEOREM::SETFIXEDTRACT}, with the difference that we compute the
+probability of only for sets of size at most $l$. During the computation we use
+only subsets of states with size at most $l$ and therefore the time complexity
+is 
 \begin{equation}
-O\left(\sum_{l=0}^k{m\choose l}m^2n\right)
+O\left(\sum_{l=0}^l{m\choose k}m^2n\right)
 \end{equation}
-where $m$ is the number of states, $n$ is the length of the
-sequence and $k$ is the size of the restriction.
+where $m$ is the number of states, $n$ is the length of the sequence and $l$ is
+the size of the restriction.
 \end{proof}
 
 \section{The Most probable footprint}
 \label{sec:footprint}
 
-In this section we show proof of the most probable footprint problem is NP-hard. 
-Given HMM $H$, sequence $X$ and the probability $p$, goal is to decide if there exists
-a footprint $F$ with the probability at least $p$.\todo{Ako je to s tymto problemom a labelingom?}
+In this section we show proof of the most probable footprint problem is
+NP-hard.  Given HMM $H$, sequence $X$ and the probability $p$, goal is to
+decide if there exists a footprint $F$ with the probability at least $p$. We
+show result for constant-sized HMM and the identity function as an labeling
+function (proof for arbitrary labeling function is trivial).
 \begin{figure*}
 \centerline{\includegraphics[scale=0.68]{../figures/jcss/cliquehmm.pdf}}
 \caption[HMM for which footprint is NP-hard to optimize]{\label{fig:footprint_hmm} The HMM from the proof of Theorem
@@ -922,7 +935,7 @@ a footprint $F$ with the probability at least $p$.\todo{Ako je to s tymto proble
 We will prove NP-hardness by a reduction from the maximum clique problem
 using the HMM in Figure 
 \ref{fig:footprint_hmm} with eight states and
-alphabet $\Sigma=\{S,S',T,T',\#,0,1,?\}$. 
+alphabet $\Sigma=\{S, S', T, T', \#, 0,$ $1, ?\}$. 
 
 %Popis zakodovania grafu
 Let $G=(V,E)$ be an undirected graph with $n$ vertices $V=\{1,2,\dots,n\}$. We
@@ -959,7 +972,7 @@ probability $q = \Pr(\pi,X\mid H) = 2^{-2n^2-2n}3^{-n-1}7^{-2n^2-n+1}$.
 We say that a state path $\pi$ is a \emph{run} of footprint $F$, if
 $\pi$ can generate $X$, and $f(\pi)=F$.
 Every footprint that can generate $X$ has the following structure:
-$F=SS'\#c_1\#c_2\#\dots\#c_n\#T'T$, where $c_i\in\{0,1\}$. 
+$F=SS'\#c_1\#c_2\#\dots\#$ $c_n\#T'T$, where $c_i\in\{0,1\}$. 
 The probability of footprint $F$ is $qk$, where $k$ is the number of its runs.
 Also note that every run of $F$ covers a different $X_i$, because once $X_i$
 and $F$ are fixed, the whole path is uniquely determined. 
@@ -1002,8 +1015,7 @@ are given as rational numbers, we can compute all quantities without
 rounding in polynomial number of bits. \qed
 \end{proof}
 
-\subsection{The Most Probable Set Problem}
-\todo{TU SOM}
+\subsection{The Most Probable Set Problem}\label{SECTION:NPSETALT}
 In this section, we show an alternative proof of NP-hardness of the most
 probable set problem. We show how to modify the proof of theorem \ref{THEOREM::NPFOOT}
 to obtain a proof of theorem \ref{THEOREM::NPSET}.
@@ -1063,7 +1075,7 @@ $i\in R$ and $c_i=0_i$ otherwise. For any $i\in R$, there is a run of
 $D$ that covers $X_i$. This run will use state $1_j$ for generating each
 $b_{i,j}$ such that $j\in R$ and thus both $b_{i,j}\in \{?,1\}$ and $c_j=1_j$.
 For $j\notin R$ we have $b_{i,j}=0$ and $c_j=0_j$, thus the run will use state
-$0_j$. Since there is a different run for every $i\in R$, set $D$ has
+$0_j$. Since there  is a different run for every $i\in R$, set $D$ has
 at least $k$ runs.
 
 Conversely, let $D$ be a set of states with probability at least $qk>0$
@@ -1080,5 +1092,15 @@ polynomial time sequence $X$ and threshold $qk$ such that $G$ has a
 clique of size at least $k$ if and only if sequence $X$ has a
 set of states with probability at least $qk$. This completes our reduction.\qed
 \end{proof}
+\subsection{The most probable restriction}
+Finally, we show that the proof from the previous section is also proving NP-hardness of
+the most probable restriction problem (Theorem \ref{THEOREM::NPREST}).
 
-\todo{Zabudol si tuto verziu dokazu pre restriction}
+\begin{proof}(Theorem \ref{THEOREM::NPREST})
+Consider the proof of Theorem \ref{THEOREM::NPSET} from Section
+\ref{SECTION:NPSETALT}.
+Any set for for sequence $X$ that have nonzero probability on sequences that
+encodes graph with $n$ vertices have size $n + 4$. Therefore if we set $l = n +
+4$ ($l$ is the restriction parameter), the proof of theorem
+\ref{THEOREM::NPSET} is also a proof of this theorem.  \qed
+\end{proof}
