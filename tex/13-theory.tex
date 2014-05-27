@@ -480,17 +480,24 @@ recombination length and distinguishing between sub-subtypes to be harder than
 distinguishing between subtypes. Both of these expectations were observed in
 the results. In all experiments on recombinants with long recombination length,
 footprint algorithms outperformed their non-guided versions in all metrics,
-especially with the metrics $4-7$: for HERD, the fraction of correct footprint was increased
-from $76.67\%$ to $100\%$ in case of subtypes and from $21.33\%$ to $98\%$ in
-case of sub-subtypes (similarly for VA). However on recombinants with short
-recombination length, used footprints were wrong most of the time and in the
-sub-subtypes dataset all of the algorithms predict zero correct footprints.  In
-fact, accuracy of F-HERD and F-Viterbi decreased in all metrics except for
-annotation set specificity and sensitivity\todo{Vieme overit ze zvolene
-footprinty maju nizsiu pravdepodobnost nez skutocne? -- overuje sa}. This and increase in
+especially with the metrics $4-7$: for HERD, the fraction of correct footprint
+was increased from $76.67\%$ to $100\%$ in case of subtypes and from $21.33\%$
+to $98\%$ in case of sub-subtypes (similarly for VA). However on recombinants
+with short recombination length, used footprints were wrong most of the time
+and in the sub-subtypes dataset all of the algorithms predict zero correct
+footprints.  In fact, accuracy of F-HERD and F-Viterbi decreased in all metrics
+except for annotation set specificity and sensitivity. This and increase in
 footprint distance suggest the problem might be cause by heuristic methods for
-finding the best footprint and that improvements in these methods are needed.
-
+finding the best footprint and that improvements in these methods are needed;
+to check this, we computed the probability of predicted and correct footprints.
+For short recombination length and sub-subtypes, $88.67\%$ of predicted
+footprints have lower probability than the correct footprint, $2.67\%$ have the
+same probability and $8.67\%$ have higher probability than the correct
+footprint.  For the same recombination length and subtypes, $60.67\%$ of the
+predicted footprints have lower probability and $39.33\%$ have higher
+probability than the correct footprint.  For the long recombination lengths,
+footprints which were not correctly predicted have higher probability than the
+correct footprint.
 
 Methods with set as an guide performs slightly worse than footprint based
 methods on the data sets with long recombination lengths, but the metrics were
