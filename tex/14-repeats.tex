@@ -1,117 +1,128 @@
 \chapter{Alignment with Tandem Repeats} \label{CHAPTER:REP}
-\firstUseOf{Tandem repeat} is a region in the genomic sequence that contain two
-or more consecutive repetitions of some \firstUseOf{motif}, which is a short
-genomic sequence. Instances of motif in tandem repeat are called
-\firstUseOf{repetitions}.  Tandem repeats, like other sequences, undergo
-evolution and therefore events like mutations, insertions, and deletions
-occurs in the individual repetitions.  Therefore individual repetitions are only an approximate copies of a motif.
-More than $2\%$ of the human genome is covered by short
-tandem repeats, and they occurs in many genes and regulatory regions
-\cite{Gemayel2010}. Additionally, recent short insertions in human genome are
-mostly caused by tandem duplication \cite{Messer2007}. Most of the tandem
-repeats evolved using tandem segmental duplications, which means that tandem
-repeat was created using several duplication events. The consequence is that
-the homologous tandem repeats in two related sequences can contain variable
-number of copies of the original motif. Note that it is highly likely that none
-of the repetition is exact copy of original motif.
+\todo{Prikla. Bud tu alebo do celkoveho intra}
+
+A \firstUseOf{Tandem repeat} is a region in the genomic sequence that contains
+two or more consecutive repetitions of some \firstUseOf{motif}, which is a
+short genomic sequence. The instances of the motif in a tandem repeat are
+called \firstUseOf{repetitions}.  Tandem repeats, like other sequences, undergo
+evolution, and therefore events like mutations, insertions, and deletions
+occurs in the individual repetitions.  Therefore individual repetitions are
+only approximate copies of a motif.  More than $2\%$ of the human genome is
+covered by short tandem repeats, and they occur in many genes and regulatory
+regions \cite{Gemayel2010}. Additionally, recent short insertions in the human
+genome are mostly caused by tandem duplication \cite{Messer2007}. Most of the
+tandem repeats have evolved by tandem segmental duplications, which means that
+a tandem repeat was created by several successive duplication events. The
+consequence is that the homologous tandem repeats in two related sequences can
+contain a different number of copies of the original motif. Note that it is
+possible that none of the current repetition is the exact copy of the original
+motif.
 
 Aligning homologous tandem repeats is hard, because it is not clear which
-copies of tandem repeat are orthologous (created by speciation, not duplication
-within same genome) and which are paralogous (created by duplication event in
-only one sequence). Tandem repeats does not only affect quality of alignment
-within them, but error spread into adjacent columns of an alignment as we show
-in Section \ref{SECTION:REPSIMRESULTS}, Figure \ref{FIGURE:SFF_GRAPHS}.  These
+repetitions are orthologous (which originate in the same ancestral repetition).
+Tandem repeats do not only affect quality of alignment within them, but the
+error can spread into adjacent columns of an alignment, as we show in Section
+\ref{SECTION:REPSIMRESULTS}, Figure \ref{FIGURE:SFF_GRAPHS}.  These
 inaccuracies can spread further and cause artifacts in the results of
-comparative genomic methods that uses sequence alignments.
+comparative genomic methods that use sequence alignments.
 
-In this chapter we introduce tractable model that explicitly accounts for
+In this chapter, we introduce a tractable model that explicitly accounts for
 tandem repeats. We use the maximum expected gain framework to explore several
-decoding criteria for our model. We evaluate our model using simulated data. 
+decoding criteria for our model. We evaluate our model using simulated data.
+Evaluating model on real data is hard, because we do not know the correct
+annotation of the real DNA sequences and we have to use indirect methods for
+evaluation. We do not present such comparison in this thesis, but such
+comparison can be found in \cite{Nanasi2014}.
 
-\section{Methods for Aligning Tandem Repeats}\label{SECTION:REPALNMETHODS}
+\section{Related work}\label{SECTION:REPALNMETHODS}
 
-Alignment with tandem duplications were first studied by Benson
-\cite{Benson1997}, who proposed extension of the Needleman-Wunsch algorithm. In
-their scoring scheme, they scored duplications as an separate event. Each
-duplication was penalized by the duplication initiation cost, the duplication extension
-costs for each copy and Needleman-Wunsch like scoring scheme to score original
-string with its repetitions. Time complexity of his algorithm was $O(n^4)$ and
-Benson proposed heuristic algorithm to compute alignment in reasonable time.
-Additional work was done by alternative incorporation of tandem duplication
-(and other operations) into the scoring schemes \cite{Sammeth2006, Berard2006,
-Freschi2012}, or using lossy compression scheme that collapsed tandem repeats,
-then aligned compressed sequences \cite{Freschi2012}.
+\todo{vysvetli jasnejsie. Naskor problem, potom alg, k algoritmu netreba
+detaily, len zlozitost} Alignment methods that take into consideration tandem
+duplications were first studied by Benson \cite{Benson1997}, who proposed
+extension of the Needleman-Wunsch algorithm. In their scoring scheme, they
+scored duplications as a separate event. Each duplication was penalized by the
+duplication initiation cost, the duplication extension costs for each
+repetition and Needleman-Wunsch like scoring scheme to score original string
+with its repetitions. Time complexity of this algorithm is $O(n^4)$, and Benson
+also proposed a heuristic algorithm to compute the alignment in a reasonable
+time.  Several variants of this problem were also studied \cite{Sammeth2006,
+Berard2006, Freschi2012}\todo{Pripadne spomen v com sa lisia}. It is also
+possible to use a lossy compression scheme to collapse tandem repeats, and then
+align compressed sequences \cite{Freschi2012}.
 
-Traditional approach to deal with tandem repeats is to mask tandem repeats in
-both sequences and then aligned masked sequences by some alignment algorithm.
-Masking is replacing low complexity regions (e.g. tandem repeats) either with
+A Traditional approach to deal with tandem repeats is to mask them in both
+sequences and then align masked sequences by some alignment algorithm.  Masking
+means replacing tandem repeats and other low complexity regions either with
 lower-case letters (soft-masking) or with N symbols (hard-masking, N represents
-any base). Masking is done by method for finding tandem repeats, such as
+any base). Masking is done by some method for finding tandem repeats, such as
 \abbreviation{Tandem Repeat Finder}{TRF} \cite{Benson1999}, TANTAN
 \cite{Frith2011}, mreps \cite{Kolpakov2003}, or ATRhunter \cite{Wexler2005}. 
 
-Methods mentioned above were not probabilistic methods. The first probabilistic
-method specifically targeting tandem repeats was introduced by Hickey and
-Blanchette \cite{Hickey2011}.  They developed context-sensitive model based on
-pair Tree-Adjoining grammars.  Their model does not explicitly model arbitrary
-number of copies of repetitive region, it focused on short context sensitive
-indels caused by tandem duplications, because majority ($90\%$
-\cite{Hickey2011}) of short indels are caused by tandem duplication. Time
-complexity for their decoding algorithm was $O(n^2L^2)$, where $n$ is the
-length of the sequences and $L$ is the maximal length of context sensitive
-indels.
+Methods mentioned above were not based on probabilistic models. The first
+probabilistic method specifically targeting tandem repeats was introduced by
+Hickey and Blanchette \cite{Hickey2011}.  They developed a context-sensitive
+model based on pair Tree-Adjoining grammars.  Their model does not explicitly
+model an arbitrary number of repeats; it focuses on short context-sensitive
+indels caused by tandem duplications, because majority of short indels are
+caused by tandem duplication ($90\%$ \cite{Hickey2011}). The time complexity of
+their decoding algorithm is $O(n^2L^2)$, where $n$ is the length of the
+sequences and $L$ is the maximal length of context sensitive indels.\todo{mozno
+trochu napi co ich model robi (nie presne ako)}
 
-Another, not entirely probabilistic method was developed by Kováč {\it et. al
-(2012)}\nocite{Kovac2012}. Aim of the method was to align repetitive motif
-inside some protein families (for example zinc finger proteins), which are
-similar to the tandem repeats. Their method focused on correctly aligning
-individual occurrences of the motifs. They combined profile HMM and pair HMM,
-and developed new decoding algorithm similar to the Viterbi algorithm. Despite
-usage of probabilistic models, their method was not a probabilistic model. 
+Another, partially probabilistic method was developed by Kováč {\it et al.
+(2012)}\nocite{Kovac2012}. The aim of the method was to align repetitive motifs
+occuring in some protein families (for example zinc finger proteins), which are
+similar to tandem repeats in DNA. Their method focused on correctly aligning
+individual occurrences of the motifs. They combined a profile HMM of the motif
+and a pair HMM, and developed a new decoding algorithm similar to the Viterbi
+algorithm. Despite the use of probabilistic models, their method was not a
+probabilistic model, because scores from different models were combined in an
+ad-hoc manner. 
 
-Hudek \cite{Hudek2010} developed algorithm that is mixture of the Viterbi and
-posterior decoding. The goal of the algorithm was to reduce the misalignments
-due to short tandem repeats with the consensus length $1$, for example $AA$
-in the first sequence and $AAAAAAAAA$ in the second sequence. Algorithm
-developed by Hudek was considering all possible alignments of $u$ and $v$ in
-the final alignment. Algorithms goal was to segment alignment into blocks, such
-that each block contain gaps only in one sequence. They developed pHMM model
+Hudek \cite{Hudek2010} developed an algorithm which combines of the Viterbi and
+posterior decoding. The goal of the algorithm was to reduce misalignments due
+to short tandem repeats with the motif length $1$, for example $AA$ in the
+first sequence and $AAAAAAAAA$ in the second sequence. The algorithm developed
+by Hudek considers all possible alignments of $u$ and $v$\todo{co su u a v} in
+the final alignment. The algorithm segments the alignment into blocks, such
+that each block contain gaps in only one sequence. They developed pHMM model
 that defines probability distribution over all possible segmentation of
 alignments of input sequences and give the algorithm that finds the most
 probable segmentation.  Unlike Viterbi algorithm, their algorithm considers all
-possible alignments within each segment.
+possible alignments within each segment.\todo{strasny chaos}
 
-\section{Models and Methods Searching Tandem Repeats}
-
-In this section we describe methods and models we used for improving
-performance of our methods or as a parts of larger model for aligning sequences
-with tandem repeats. 
+\section{Finding Tandem Repeats}
+Although our main goal is to align sequences with tandem repeats, our model
+will feature submodels that can be used to find the repeats in a single
+sequence. In this section, we describe our repeat submodel and repeat model
+from the TANTAN repeat finder \cite{Frith2011}. We start by describing
+non-probabilistic approach to finding repeats, which we also use in the
+preprocessing phase of our method.
 
 \subsection{Tandem Repeat Finder}
 
-Probably the most popular method for searching for tandem repeats is to use TRF
-\cite{Benson1999}.  Tandem repeat finder find the position of tandem repeats
-(referred as an \firstUseOf{interval}), consensus sequence (the approximation
-of original motif), alignment of the consensus sequence and the input sequence,
-and various other information about repeats.
+Probably the most popular method for finding tandem repeats is the Tandem
+Repeat Finder (TRF) \cite{Benson1999}.  Tandem repeat finder finds the position
+of a tandem repeat (referred as an \firstUseOf{interval}), consensus sequence
+(an approximation of the original motif), alignment of the consensus sequence
+and the input sequence, and various other information about each repeat.
 
-Method consists from two components: detection and analysis. Detection
+The method consists of two components: detection and analysis. The detection
 component tries to find a set of candidate tandem repeats by analyzing the
-differences in the positions of matching $k$-tuples (subsequence of the input
-sequence of length $k$). It uses several statistical criteria to detect repeats
-and distinguish between tandem repeats and non-tandem repeats
-\cite{Benson1999}.
+distances between occurrences of the same $k$-tuple (substring of length $k$).
+It uses several statistical criteria to detect repeats and distinguish between
+tandem repeats and non-tandem repeats \cite{Benson1999}.
 
-Analysis component aligns candidate consensus using wraparound dynamic
+The analysis component aligns a candidate consensus using wraparound dynamic
 programming \cite{Myers1989} with the surrounding sequence. If the alignment is
-not successful (candidate consensus has to be aligned at least $2$ times to be
+not successful (candidate consensus has to be aligned at least twice to be
 successful), candidate repeat is discarded. Otherwise, the final consensus
 sequence is computed from the alignment along with other statistics about
 tandem repeat.
 
-Tandem repeats found by TRF can be redundant.  They can overlap, have slightly
-different consensuses, the consensuses can be shifted cyclically, and can have
-different lengths, as in following example:
+Tandem repeats found by the TRF are often redundant.  They can overlap, have slightly
+different consensus motifs, the motifs can be shifted cyclically, and can have
+different lengths, as in the following example:
 
 \begin{verbatim}
 Sequence  X:        CACCGCCACCACCGTAG
@@ -120,36 +131,35 @@ Consensus AAC:       ACCACCACCACC      4 repetitions
 consensus CAC:      CACCACCACCACC      4.3 repetitions
 \end{verbatim}
 
-The sequence $X$ contain tandem repeat and there are three possible consensus
+The sequence $X$ contains a tandem repeat and there are three consensus
 sequences with different number of repetitions. Note that the repetition of the
 consensus can be incomplete; as with the $CAC$ consensus where we have $4.3$
-($0.3$ stands for the last $C$ in the repetitive sequence). This is important
-to know, because we will use the TRF to find the set candidate tandem repeats
-of input sequences, not as the definitive list of repetitive regions.
-
-Note that the purpose of this example to illustrate redundancy of TRF output.
-If we ran TRF on sequence $X$, the output would be only repeat with $CAC$ as an
-consensus.
+repetitions ($0.3$ stands for the last $C$ in the repetitive sequence).  Note
+that the purpose of this example to illustrate possible redundancies in the TRF
+output.  If we actually run TRF on sequence $X$, the output would be only the
+repeat with consensus $CAC$.
 
 \subsection{Sunflower Model}\label{SECTION:SUNFLOWERMODEL}
-\firstUseOf{Sunflower model} is HMM that models tandem repeat of one
-previously specified motif $C=c_0\dots c_{k-1}$. We developed it as a part of
-our model for aligning sequences with tandem repeats in
-section\ref{SECTION:REPMODELS}, but it can be also used as an simple tool for
-searching for tandem repeats and we used it to improve the candidate set
-(described in Section \ref{SECTION:REPOPT}) of tandem repeats from the TRF
-program.
+The \firstUseOf{sunflower model} is an HMM that represents tandem repetious of
+one previously specified motif $C=c_0\dots c_{k-1}$. We have developed this
+model as a part of our model for aligning sequences with tandem repeats, which
+we describe in section \ref{SECTION:REPMODELS}, but it can be also used as a
+simple tool for finding tandem repeats and we use it to improve a candidate set
+of tandem repeats initially constructed by the TRF program (see Section
+\ref{SECTION:REPOPT}).
 
-Sunflower is an extension of the profile HMM described in Section \ref{HERD:METHODS}
-in Figure \ref{FIGURE:PROFILEHMM} (page \pageref{FIGURE:PROFILEHMM}). Sunflower
-model is a circular version of the profile HMM where match states represent the
-motif $C$. This model assumes that repetitions evolved from motif $C$
-independently of each other. One can think about it as that at single point of
-time, motif $C$ was copied several times forming tandem repeat, which then
-undergo through simple evolution events: substitutions, deletions and
-insertions. This does not accurately reflect the evolution history of tandem
-repeat, but trying to model such evolution would lead to much more complicated
-model.
+The sunflower model is an extension of the profile HMM described in Section
+\ref{HERD:METHODS} (see Figure \ref{FIGURE:PROFILEHMM} on page
+\pageref{FIGURE:PROFILEHMM}). In particular, the sunflower model is a circular
+version of the profile HMM with match states representing motif $C$. This model
+implicitly assumes that repetitions evolved from motif $C$ independently of
+each other, as of at single point of time, motif $C$ was copied several times
+forming tandem repeat, which then underwent several simple evolution events (
+substitutions, deletions and insertions). This does not accurately reflect a
+typical evolution history of a tandem repeat, where individual repetitions
+arise over time from existing copies which could differ from the original
+consensus $C$. However, trying to model such evolution would lead to a much
+more complicated model.
 
 \begin{figure}
 \begin{center}
@@ -170,88 +180,85 @@ model.}
 \label{FIGURE:SUNFLOWERMODEL}
 \end{figure}
 
-To model this process, we start with the profile HMM with motif $C$ and
-circularize it: It contains states $M_0,\dots, M_{k-1}, I_{0}, \dots, I_{k-1}$
+Our model contains typical profile HMM states $M_0,\dots, M_{k-1}, I_{0}, \dots, I_{k-1}$
 and $D_{0}, \dots, D_{k-1}$. The transitions between the states are similar to
 profile HMM:  $M_{i}\to M_{i\oplus 1}, M_i\to I_i, M_i\to D_{i\oplus 1}, I_i\to
 I_i, I_i\to M_{i\oplus 1}, I_i\to D_{i\oplus 1}, D_{i}\to D_{i \oplus 1},
 D_{i}\to M_{i\oplus 1}, D_{i}\to I_i$ for all $0\leq i < k$, where $\oplus$ is
-$+$ modulo $k$ (as opposed to the profile HMM). As in the profile HMM, $D_i$ states
-are silent. Additionally we add silent start state $s$ and silent final state
+$+$ modulo $k$. As in the profile HMM, states $D_i$
+are silent. We add silent start state $s$ and silent final state
 $e$ with transitions $s\to M_0, s\to D_0, D_{k-1}\to e, M_{k-1}\to e$ and
-transition $s\to e$ to model empty tandem repeat.  Whole model topology is in
+transition $s\to e$ to model empty tandem repeats. The whole model topology is shown in
 Figure \ref{SUBFIGURE:SUNFLOWERSILENTCYCLE}.
 
-The problem is that the cyclic profile contains cycle of silent states, which
-causes problems with training and decoding algorithm, which was mentioned in
-Section \ref{SECTION:SILENT}. Removing these states would lead to additional
-$\theta(k^2)$ edges, or we would have to sacrifice the ability to delete arbitrary
-(in cyclic sense) parts of motif. Therefore we have decided to remove
-transition between delete states $D_{k-1}$ and $D_0$. To compensate to the lost
-possibility of deleting arbitrary part of tandem repeat, we add additional
-chain of delete states $D'_0, \dots, D'_{k-2}$ that are accessible only from
-state $D_{k-1}$ by transition $D_{k-1}\to D'_0$, and their outgoing transitions
-are similar to delete state transitions: $D'_{i}\to M_{i+1}, D'_{i}\to I_i$ for
-$0\leq i\leq k-2$ and $D'_{i} \to D'_{i+1}$ for $0\leq i < k-2$. The full model
-is in Figure \ref{SUBFIGURE:SUNFLOWER}. We call this model the
-\firstUseOf{Sunflower} model.
+The problem is that the cyclic profile contains a cycle of silent states, which
+causes problems with training and decoding algorithm (see Section
+\ref{SECTION:SILENT}. Removing these states would lead to additional
+$\theta(k^2)$ edges. Therefore, we have decided to remove
+the transition between delete states $D_{k-1}$ and $D_0$. To compensate for the lost
+possibility of deleting an arbitrary part of the tandem repeat, we add an
+additional chain of delete states $D'_0, \dots, D'_{k-2}$, which are accessible
+only from state $D_{k-1}$ by transition $D_{k-1}\to D'_0$, and their outgoing
+transitions are similar to delete state transitions: $D'_{i}\to M_{i+1},
+D'_{i}\to I_i$ for $0\leq i\leq k-2$ and $D'_{i} \to D'_{i+1}$ for $0\leq i <
+k-2$. Note that $D'_{k-2}$ is connected only to $M_{k-1}$ to avoid passing a
+full circle by delete states. The full model is in Figure
+\ref{SUBFIGURE:SUNFLOWER}. We call this model the \firstUseOf{Sunflower} model.
 
 This model has $4k+1$ states and $12k+1$ transitions, out of which $2k+1$
-states are silent.  Since alphabet size is $4$, there are $14k+2$ parameters to
-train for a motif $C$ (including emissions of insert and match states). Models
-with such a large number of parameters are hard to train, so we reduced the
-number of parameters. We tied similar transitions, so that they have the same
-probability.  We ended with the set of parameters $p_{ab}$ where $a,b\in \{m,
-i, d, \cdot\}$, where $m$ stands for any match state, $i$ stands for any insert
-state, $d$ states for any delete state (from both chains), and $\cdot$ is
-either start or final state. Therefore the probability of transition from match
-state to delete state is $p_{md}$ and probability of transition from insert
-state to final state is $p_{i\cdot}$.  Probabilities were set in a way, that
-$\sum_{b\in\{m,i,d\} p_{ab}}=1$ for all possible $a$.  Therefore, transitions
-from states $M_{k-1}, D_{k-1}$ and $D'_{k-1}$ does not sum to $1$, because they
-are either missing one transition or having one additional transition. For
-those states the probability of transitions were normalized in order to form a
-probability distribution. 
+states are silent. There are $14k+2$ parameters to train for a motif $C$
+(including emissions of insert and match states over the alphabet if size $4$).
+Models with such a large number of parameters are hard to train, so we reduced
+the number of parameters as follows. First, we tied similar transitions, so
+that they have the same probability.  We used the set of parameters $p_{ab}$
+where $a,b\in \{m, i, d, \cdot\}$, where $m$ stands for any match state, $i$
+stands for any insert state, $d$ states for any delete state (from both
+chains), and $\cdot$ is either start or final state. Therefore the probability
+of transition from match state to delete state is $p_{md}$ and probability of
+transition from insert state to final state is $p_{i\cdot}$.  Probabilities
+were set so that $\sum_{b\in\{m,i,d\} p_{ab}}=1$ for all possible $a$.
+Therefore, transitions from states $M_{k-1}, D_{k-1}$ and $D'_{k-1}$ do not sum
+to $1$, because they are either missing one transition or having one additional
+transition. For those states, the probability of transitions were normalized in
+order to form a probability distribution. 
 
-Emission parameters were reduced in following way: all insert states share
-the same emission distribution. For the emission distribution of match state $M_i$ we
-assumed that base $c_i$ from the motif evolved over evolutionary time $t$
-according to Jukes-Cantor model. Jukes-Cantor model is a theoretical model of evolution
-that assumes constant rate of evolution. Under this model base $B_1$ evolved
-over time $t$ to different base $B_2$  with probability $1/4(1-\exp(-4t/3))$.
-The probability that $B_1$ after time $t$ will be still (or again) $B_1$  is
-$1/4(1+3\exp(-4t/3))$ \cite{Durbin1998}. Time $t$ was same for all match
-states. Therefore emissions of all states has only $4$ parameters ($1$ for
-match states and $3$ for insert states).
+To reduce the number of emission parameters, all insert states share the same
+emission distribution. For the emission distribution of match state $M_i$ we
+assumed that the consensus base $c_i$ from the motif evolved over evolutionary
+time $t$ according to Jukes-Cantor model\footnote{ The parameter $t$ of
+Jukes-Cantor model is not time as measured by years, but rather a branch length
+in an evolutionary tree obtained by multiplying of substitution rate and time.
+More details can be found in \cite{Durbin1998}.  }. Jukes-Cantor model is a
+theoretical model of evolution that assumes constant rate of evolution. Under
+this model base $B_1$ evolved over time $t$ to different base $B_2$  with
+probability $1/4(1-\exp(-4t/3))$.  The probability that $B_1$ after time $t$
+will be still (or again) $B_1$  is $1/4(1+3\exp(-4t/3))$ \cite{Durbin1998}.
+Time $t$ was the same for all match states. Therefore emissions of all states
+are specified using only $4$ parameters ($1$ for match states and $3$ for
+insert states).
 
-\begin{note}
-In Jukes-Cantor model, the parameter $t$ is not time as measured by
-seconds/years. It is a branch length in evolutionary tree and it is
-multiplication of substitution rate and time. We used this small inaccuracy to
-simplify explanation.  More details can be found in \cite{Durbin1998}.
-\end{note}
-
-Sunflower model models only tandem repeats and it is not directly usable for
-finding tandem repeats. To do so, it is necessary to add state $B$ that models
-non-repetitive part of the sequence. Let $S_C$ be the Sunflower for motif  $C$.
-We add the transitions from $B$ to the start state of $S_C$ and from the final
-state of $S_C$ to the state $B$. The probability of transition from the state
-$B$ to the submodel $S_C$ is $p_r$, the probability of repeat starting at
-particular position in the sequence. Probability of transition from final state
-of $S_C$ to $B$ is $1$.  There is also transition $B\to B$ with probability
-$1-p_r$. We used the Viterbi algorithm with this model to find all occurrences
-of tandem repeat with motif $C$. However, with this model we can search only
-for specific motif. We call this method of finding tandem repeats the
-\abbreviation{Sunflower repeat finder}{SRF}.
+To use the sunflower model models for finding tandem repeats, we have to add
+state $B$ that models non-repetitive part of the sequence. Let $S_C$ be the
+sunflower model for motif $C$. We add the transitions from $B$ to the start
+state of $S_C$ and from the final state of $S_C$ to the state $B$. The
+probability of transition from the state $B$ to the submodel $S_C$ is $p_r$,
+the probability of repeat starting at particular position in the sequence.
+Probability of transition from final state of $S_C$ to $B$ is $1$.  There is
+also transition $B\to B$ with probability $1-p_r$. We can use the Viterbi
+algorithm with this model to find all occurrences of tandem a repeat with motif
+$C$. However, with this model we can search only for a specific motif. We call
+this method of finding tandem repeats the \abbreviation{Sunflower repeat
+finder}{SRF}.
 
 \subsection{TANTAN}\label{SECTION:TANTAN}
 
-\firstUseOf{TANTAN} is a high-order HMM aimed for finding tandem repeat developed
-by Frith \cite{Frith2011}. Unlike Sunflower model, TANTAN models tandem repeats
-with an arbitrary motif. Its only restriction is the maximal length of the motif
-$K$. In this section we describe the core of the model; the part that models
-tandem repeats. This core can be transformed to the model usable for search by
-same method as we described for Sunflower model.
+\firstUseOf{TANTAN} is a high-order HMM aimed at finding tandem repeat
+developed by Frith \cite{Frith2011}. Unlike the Sunflower model, TANTAN models
+tandem repeats with an arbitrary motif. Its only restriction is the maximal
+length of the motif $K$. In this section, we describe the core of the model;
+the part that models tandem repeats. This core can be transformed to the model
+usable for search by adding a background state $B$ as we described for the
+Sunflower model.
 
 \begin{figure}
 \begin{center}
@@ -269,44 +276,45 @@ same method as we described for Sunflower model.
 \end{subfigure}%
 \end{center}
 \caption{Three variants of the core of the TANTAN model. Gray states are
-silent. The first one is simplified model, only with repeat states. The second
+silent. The first one is a simplified model, only containing repeat states. The second
 was used by Frith \cite{Frith2011}, allowing insertions and deletions.  The last one
-is our extension with additional prefix states $P_1, \dots P_5$ that models
+is our extension with additional prefix states $P_1, \dots P_K$ which model
 the first repetition.}\label{FIGURE:TANTAN}
 \end{figure}
 
 The principal idea is to use the state of order $l$ to model a repeat with
 motif length $l$. TANTANs high order states uses less information than standard
-high order states.  Standard high order state of order $l$ depends on
-subsequence $X[i-l:i]$ where $X[i]$ is the symbol that is being emitted.
-TANTANs states of order $l$ depends only on the symbol $X[i-l]$. Model consists
-from $K$ high-order states $R_l$, $1\leq l\leq K$ called repeat states, where
-state $R_l$ is of order $l$. Emission of state $R_l$ is set in such a way, that
-state emits the same symbol as $X[i-l]$ with high probability. By adding
-transition $R_l\to R_l$ we obtain HMM modeling tandem repeats without indels
-with motif length $l$. By connecting states $R_1,\dots, R_K$ to single start
-and final state as shown in Figure \ref{FIGURE:TANTAN:SIMPLE}, we obtain HMM
-that models repeats with the motif lengths $1$ through $K$.
+high order states. Emission of symbol $X[i]$ in a standard state of order $l$
+depends on subsequence $X[i-l:i]$.  Emission in TANTANs states of order $l$
+depends only on the symbol $X[i-l]$. The model consists of $K$ high-order
+states $R_l$, $1\leq l\leq K$ called repeat states, where state $R_l$ is of
+order $l$. Emission of state $R_l$ is set so that the state emits the same
+symbol as $X[i-l]$ with a high probability. By adding transition $R_l\to R_l$
+we obtain an HMM modeling tandem repeats without indels with a motif of length
+$l$. By connecting states $R_1,\dots, R_K$ to a single start and final state as
+shown in Figure \ref{FIGURE:TANTAN:SIMPLE}, we obtain an HMM that models
+repeats with the motif lengths $1$ through $K$.
 
-This simplified model does not allow insertions and deletions in the
-repetition.  Idels are handled similarly to the profile HMMs, by adding insert
-states $I_1,\dots, I_{K-1}$ and silent delete states $D_1, \dots, D_{K-1}$
-connected as in the Figure \ref{FIGURE:TANTAN:INDEL}. There are however
-significant difference from the profile HMM.  In profile HMM, delete states
-were used to skip at least one match state, while in TANTAN delete state is
-used move to state with lower order. Additionally, insert states moves in
-opposite direction, using insert state causes increase of the order of the
+This simplified model does not allow insertions and deletions in repetitions.
+Indels are handled similarly to a profile HMMs, by adding insert states
+$I_1,\dots, I_{K-1}$ and silent delete states $D_1, \dots, D_{K-1}$ connected
+as in the Figure \ref{FIGURE:TANTAN:INDEL}. There are however significant
+differences from profile HMMs.  In a profile HMM, delete states are used to
+skip at least one match state, while in TANTAN a delete state is used move to a
+state with a lower order. Conversely, insert states allows us to move in the
+opposite direction; using insert state causes an increase of the order of the
 repeat state.  It is also possible to move from the insert state $I_{j}$ to the
-insert state $I_{j+1}$ which is not possible in the profile HMM.
+insert state $I_{j+1}$, which is not possible in a profile HMM.
 
 One disadvantage of the TANTAN model is that it does not model the first
 occurrence of the motif sequence, since repeat states model only the
-repetitions of the sequence. This caused problems when we wanted to incorporate
-TANTAN as a submodel for aligning sequences. Therefore we have added additional
-chain of prefix states $P_1,\dots, P_K$ modeling the first repetition. Transitions
-from the start state are now only to the final state (modeling empty sequence) and
-the state $P_1$. State $P_l, 1\leq l\leq K$ has transitions to the final state,
-repeat state $R_l$ and the state $P_{l+1}$, if such state exists.
+subsequence repetitions of the sequence. This caused problems when we wanted to
+incorporate TANTAN as a submodel for aligning sequences. Therefore we have
+added an additional chain of prefix states $P_1,\dots, P_K$ modeling the first
+repetition. Transitions from the start state are now only to the final state
+(modeling an empty sequence) and the state $P_1$. State $P_l, 1\leq l\leq K$
+has transitions to the final state, repeat state $R_l$ and the state $P_{l+1}$,
+if such a state exists.
 
 %Emisie a sme hotovy
 We set emission distribution of the insert and prefix states to the background
@@ -314,104 +322,116 @@ probability: the distribution of the bases in DNA. Emission state of the state
 $R_l$ was derived using Jukes-Cantor model with parameter $t$, where the
 emission $X[i]$ evolved from $X[i-l]$ over time $t$.
 
-\section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS} In
-this section we describe models that we have used in our methods. We describe
-model in an dual way; as an generalized pHMM and as an equivalent
-non-generalized pHMM (emissions length are at most $1$ in both sequences). By
-equivalency we mean that the distribution of generated alignments and
-annotations (with certain annotation function) are same, but clearly the
+\todo{Napis nieco o predpokladoch tohto modelu, porovnas so Sunflower}
+
+\section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
+
+In this section we describe models that we have designed and used in our
+methods. We describe the model in an dual way; as a generalized pHMM and as an
+equivalent non-generalized pHMM (emissions length is at most $1$ in both
+sequences). The distribution of generated alignments and annotations (with
+certain annotation functions) are same in both models, but clearly the
 distribution of state paths will be different due to different sets of states.
 
-Generalized model is obtained by taking simple 3-state pHMM model from section
-\ref{SECTION:ALIGNWITHPHMM} and adding single generalized pair state $R$,
+The generalized model is obtained by taking the simple 3-state pHMM model from section
+\ref{SECTION:ALIGNWITHPHMM} and adding a single generalized pair state $R$,
 called the \firstUseOf{repeat state}, which in a single step generates tandem
-repeats in both sequences. The state $R$ can in theory generate arbitrary long
-sequences and it does not produce an alignment of tandem repeats during
-decoding. Its task is to filter out tandem repeats of alignment, so that they
-do not cause biases in the parts of an alignment emitted by other states (match
-and indel states). We align homologous tandem repeats later in the
-post-processing step. The overall topology of GpHMM is illustrated in the
-Figure \ref{FIGURE:REPEAT_GENERAL}.
+repeats in both sequences. \reformulate{State $R$ can in theory generate
+arbitrary long sequences which does not produce an alignment of tandem repeats
+during decoding. Its task is to filter out tandem repeats of alignment, so that
+they do not cause biases in the parts of an alignment emitted by other states
+(match and indel states). We align homologous tandem repeats later in a
+post-processing step.}{trochu tu miesas generovanie a decoding. mozno by som
+toto presunula dalej, ked bude jasnejsie ako model vyzera. Skus na s 86} The
+overall topology of GpHMM is illustrated in the Figure
+\ref{FIGURE:REPEAT_GENERAL}.
 
-To made this model more flexible, the emission distribution of the state $R$ is
+To made this model more flexible, the emission distribution of state $R$ is
 defined by an additional pHMM. Since the repetitions in the tandem repeat are
 very similar to each other, we did not try to model the evolution of repetitive
-parts of the sequences. We assumed that repeats generated by one emission of
-the state $R$ from single motif and then evolved independently. Model was
+parts of the sequences. We assumed that repeat evolved from the original motif
+by one event, and then repetitions evolved independently. The goal of state $R$
+is to model such evolution in single generalized emission. Model was
 constructed from the Sunflower models. Let $C$ be the set of all motifs that
 can occur in the alignment. For each motif $c\in C$ we created sunflowers
-$S_c^X$ and $S_c^Y$.  Sunflower $S_c^X$ is pairwise sunflower model with motif
-$c$ that generates symbols only in sequence $X$, $S_c^Y$ is analogous.  We
-connect $S_c^Y$ and $S_c^X$ by transition from the final state of $S_c^X$ to
-the start state of $S_c^Y$ with probability $1$ and thus getting model $H_c$
-that generates repeats in both sequences. We connected models $H_c$ for $c\in
-C$ in parallel by single start and single end state as in the Figure
-\ref{FIGURE:REPEAT_GENERAL}. The probability of the transition from the start
-state to the start state of model $H_c$ was determined from the distribution of
-motifs $\prob{c}$. Note that the size of this model is determined mostly by the
-total length of all motifs and therefore this model can be very large, even
-infinite if we consider all possible sequences as an possible motif for a
-tandem repeat.  To keep the model size small, we computed a set of candidate
-motifs $C$ and use it for construction of model. More details are in the
-section \ref{SECTION:REPOPT}. We call this generalized model the
-\abbreviation{sunflower field}{SFF} model.
+$S_c^X$ and $S_c^Y$.  Sunflower $S_c^X$ is the sunflower model with motif $c$
+which generates symbols only in sequence $X$; $S_c^Y$ generates symbols in $Y$.
+We connect $S_c^Y$ and $S_c^X$ by a transition from the final state of $S_c^X$
+to the start state of $S_c^Y$ with probability $1$ and thus getting model $H_c$
+that generates repeats in both sequences. We connected models $H_c$ for all
+$c\in C$ in parallel by a single start state and a single final state as in
+Figure \ref{FIGURE:REPEAT_GENERAL}. The probability of the transition from the
+start state of $R$ to the start state of model $H_c$ was proportional to the
+distribution of motifs $\prob{c}$. Note that the size of this model is
+determined mostly by the total length of all motifs, and therefore this model
+can be very large, even infinite if we consider all possible sequences as
+possible motifs for tandem repeats.  To keep the model size reasonable, we
+computed a set of candidate motifs $C$ and use it for construction of the
+model. More details are in section \ref{SECTION:REPOPT}. We call this
+generalized model the \abbreviation{sunflower field}{SFF} model.
 
 \begin{figure}
 \begin{center}
 \includegraphics[width=14cm]{../figures/PairRepeatHMMGeneral.pdf}
 \end{center}
 \caption[General topology of Repeat pHMM]{ 
-Topology of Repeat pHMM. We extended 3-state pHMM with one generalized states
-$R$, that in one emission generates tandem repeats in both sequences. The
-emission distribution of $R$ state is defined by another pHMM. Gray lines
-represents emissions: dashed lines corresponds to multiple emissions from same
-states, while full line represents one emission. Dotted black line represents
-connection to submodel that is used for generating tandem repeats.
+Topology of the Repeat pHMM. We extended the 3-state pHMM with one generalized
+state $R$, which in one emission generates tandem repeats in both sequences.
+The emission distribution of state $R$ is defined by another pHMM shown in a
+dotted box (*). Bellow the model we show an example of emitted alignments.
+Dashed gray lines corresponds to multiple emissions from the same states, while
+the full line represents one emission from a generalized state. 
 
-Black states in submodel on the right are silent start and end states. Spirals
-represents submodels generating tandem repeat in one sequence. They are in
-pairs of two identical models, one for generating tandem repeat in one
-sequence, other for generating tandem repeat in other sequence. There are
-multiple pairs of submodels, each for modeling different motif.
+(*) Black states in this submodel silent start and final states. Spirals
+represents sunflower submodels. They are in
+pairs of two identical models $S_c^X$ and $S_c^Y$, one for generating tandem repeat in one
+sequence, other for generating tandem repeat in the other sequence. There are
+multiple pairs of submodels, each for modeling different motif $c$.
  }\label{FIGURE:REPEAT_GENERAL} 
 \end{figure}
 
-We also experimented with using TANTAN-like model for defining emissions
-distribution of the state $R$. We used TANTAN model with the prefix states from
+We also experimented with using a TANTAN-like model for defining emissions
+distribution of state $R$. We used the TANTAN model with the prefix states from
 Section \ref{SECTION:TANTAN}. Similarly as with the sunflower model, we created two
 copies of TANTAN, each generating repeats in only one sequence and connect them
 together exactly as we would connect the sunflower models. Since TANTAN model does
-not rely on a motif, it is not necessary to create more copies of TANTAN HMM and
+not rely on a motif, it is not necessary to create more copies of the TANTAN HMM and
 its general topology looks like SFF's with only one motif.  Since TANTAN is
-a high order HMM, resulting model is high order and generalized pair HMM. We
-refer to this model as \abbreviation{TANTAN pHMM}{TTP}. Advantage of this model
-over SFF is in it's size, since TTP will have in practice less states than SFF.
-However, TTP models evolution of repetitions differently, since each repetition
-is created from previous repetition and tandem repeats in sequences $X$ and $Y$
-are independent of each other; there is no penalty for having different motifs.
+a high order HMM, the resulting model is a high order and generalized pair HMM.
+We refer to this model as \abbreviation{TANTAN pHMM}{TTP}. The advantage of
+this model over SFF is in it's size, since TTP will have in practice fewer
+states than SFF. \todo{Povedz ze pri jednom zalezi od max dlzky, kym druhy od
+suctu dlzok konsenzov} However, TTP models evolution of repetitions
+differently, since each repetition is created from the previous repetition and
+tandem repeats in sequences $X$ and $Y$ are independent of each other; there is
+no penalty for them having different motifs.\todo{Nejaka dalsia diskusia o vlastnostiach modelov? Napri ** zo strany 84 a *** zo strany 87}
 
-SFF and TTP are defined as an $4$ state hight order GpHMM.  In general, using
-generalized models increase the time complexity of decoding algorithms
+Both SFF and TTP are defined as $4$ state high order GpHMMs.  In general, using
+generalized models increases the time complexity of decoding algorithms
 quadratically. Therefore we also used expanded versions of the models: we
-replaced generalized state $R$ with model defining emissions of $R$ (referred
-as a submodel). All transitions entering into $R$ were replaced with the
-transition to the start state of the submodel, and all outgoing transitions
-from $R$ were replaced by transitions starting in final state of the submodel.
-Distributions of alignments generated by this pHMM has not changed.
-Additionally, the distribution of an annotation of an alignment did not
-changed, if we use following annotation functions: For original GpHMM we use
-identity function as a labeling function $\Lambda_{ID}$. For expanded model we
-use function $\Lambda_R$, which label all states from submodel by label $R$,
-and labels for other states is same as for GpHMM. 
+replaced the generalized state $R$ with the pHMM submodel defining emissions of
+$R$. All transitions entering into $R$ were replaced by transitions to the
+start state of the submodel, and all outgoing transitions from $R$ were
+replaced by transitions starting in the final state of the submodel. This
+transformation does not change the distribution of alignments generated by the
+model.  Additionally, the distribution of alignment annotations does not
+change, if we use the following annotation functions. \reformulate{For the
+original GpHMM we can use the identity function as a labeling function
+$\Lambda_{ID}$. For expanded model we then use function $\Lambda_R$, which
+labels all states from submodel by label $R$ and other states by the same label
+as in GpHMM. }{Toto nesedi s definiciou anotovaneho zarovnania na str 88,
+radsej zmaz}
 
 \paragraph{Parameter estimation:}
-We used $310,091$ consensuses found by the TRF program on the human chromozome
-15 and its orthologous sequences in the dog genome as motifs for building SFF.
-The probability of choosing particular motif was the observed frequency of the
-motif in the TRF output. In practice, we limit the Sunflower submodels only to
-those which was found by the TRF in the input sequence.  Additionally, if the
-input sequence contain motif that is not in the predefined set, we add it to
-the model with the probability of the least occurring motif in the model.
+In our experiments, we have used $310,091$ consensuse sequences found by the
+TRF program on the human chromozome 15 and its orthologous sequences in the dog
+genome as motifs for building SFF.  The probability of choosing a particular
+motif is the observed frequency of the motif in the TRF output. \reformulate{In
+practice, we limit the Sunflower submodels only to those which was found by the
+TRF in the input sequence.  Additionally, if the input sequence contain motif
+that is not in the predefined set, we add it to the model with the probability
+of the least occurring motif in the model.}{Mas v 4.5, tento text nie je prilis
+jasny}
 
 We set the parameters of the Sunflower submodel manually: the insert and delete
 rates were set to $0.005$, the match states allows mutations from motif
@@ -419,86 +439,98 @@ sequence according to the Jukes-Cantor model with parameter $t=0.05$. The
 emission of the insert states were set according to the frequency of the bases
 in the input human-dog alignment.  Parameters of the TANTAN submodel were
 estimated by the Baum-Welch algorithm \cite{Durbin1998} on 500 repeats sampled
-from SFF.
+from the SFF model.
 
+\todo{Dva odstavce dole: preco tu? ***}
 The size of the TTP model depends on the length of the longest possible motif,
-which we to to the $50$ bases. The size of the SFF model depends of the total
-length of all motifs used. Therefore SFF can be exponentially larger than TTP
-model. SFF model models assumes that repetitions were developed independently,
-while the TTP model assumes that repetition evolves from the previous
-occurrence of the repetition. Additionally, there is no dependence of tandem
-repeats between sequence for TTP model.
+which we set to $50$ bases. The size of the SFF model depends on the total
+length of all motifs used. Therefore the SFF model can be exponentially larger than the TTP
+model. The SFF model assumes that repetitions accumulated mutations
+independently, while the TTP model assumes that each repetition evolve from the
+previous occurrence of the repetition. Additionally, there is no dependence of
+tandem repeats between the two sequences in the TTP model, while in the SFF
+mode they use the same consensus.
 
 Tandem repeats at orthologous positions in two species may share common
 ancestor and therefore share part of their evolutionary history. However, it is
 possible that they were consequently modified by additional evolution events
-after speciation (including more tandem duplications). In our model we ignore
-such a complex evolution of repetitions, because it would lead to very complex
+after speciation (including more tandem duplications). In our model, we ignore
+such complex evolution of repetitions, because it would lead to very complex
 model and increase the difficulty in decoding and training. Kováč {\it et. al}
-developed method with limited dependence by adding repeat submodels emitting
+developed a method with limited dependence by adding repeat submodels emitting
 copies in the two sequences at same time \cite{Kovac2012}.
 
+\todo{Ako si nastavil parametre 3-stavoveho model a pr. predchodu do R}
+
 \section{Decoding methods}\label{SECTION:REPDECODING}
+
+\todo{Preco sme to robili? Nejaky uvod? Mic: asi by som chcel spomenut luntera,
+kde som to popisoval, ako aj nasu pracu a inych, ta preto sme chceli pouzit aj
+rozne dekodovacie sposoby}
+
 In this section we describe several optimization criteria that we used with
-3-state model, SFF model and TTP model: the \abbreviation{Viterbi
+the 3-state model, the SFF model and the TTP model: the \abbreviation{Viterbi
 algorithm}{VA}, the \abbreviation{posterior decoding}{PD}, the
 \abbreviation{marginalized posterior decoding}{MPD}, the \abbreviation{block
 Viterbi algorithm}{BVA} and the \abbreviation{block posterior decoding}{BPD}.
-The first three methods are used with the non-generalized models, the latter
-two methods (block methods) are used with generalized version of the model. We
-have already described first three algorithms in Section
-\ref{SECTION:ALNDECODING}.  We introduce the highest expected gain framework
-for pair HMM and formulate all algorithms using gain functions.
+The first three methods are used with the non-generalized versions of the models, the latter
+two methods (block methods) are used with GpHMMs. We
+have already described the first three algorithms in Section
+\ref{SECTION:ALNDECODING}. Here we introduce the highest expected gain framework
+for pair HMMs and formulate all algorithms using gain functions.
 
-In Section \ref{SECTION:HEG} we defined gain functions as the functions of two
-annotation. For pair HMMs we define gain function as an function of annotated
-alignment: alignment columns along with annotation symbols. This is necessary
-because we use generalized models, and therefore annotation symbols does not
-uniquely determine alignment (there can be multiple alignments with the same
-annotation).
+In Section \ref{SECTION:HEG} we defined a gain function as a functions of two
+annotations. For pair HMMs we define a gain function as a function of two
+annotated alignments consisting of alignment columns along with annotation
+symbols. This is necessary, because we use generalized models, and therefore
+annotation symbols do not uniquely determine the alignment (there can be
+multiple alignments with the same annotation).
 
-We represent an annotated alignments using indices to
-sequences and annotation symbols. In the case of generalized models, which can
-generate more than one column, only the first column will contain state, other
-columns will contain symbol $\varnothing$. Formally, \firstUseOf{annotated
+We represent columns of an annotated alignment using indices to sequences and annotation
+symbols. In the case of generalized models, which can generate more than one
+column in one step, only the first column will contain annotation symbol, other
+columns will contain symbol $\varnothing$. Formally, an \firstUseOf{annotated
 alignment} of length $t$ of sequences $X=x_0x_1\dots x_{n-1}$ and
-$Y=y_0y_2\dots y_{m-1}$ is represented as sequence of tuples $(u_0, a_0, b_0),
-\dots, (u_{t-1}, a_{t-1}, b_{t-1})$ where $a_i\in \{0, \dots, {n-1}\}\cup\{-_0,
-\dots, -_n\}$ and $b_i \in \{0, \dots, m-1\}\cup\{-_0, \dots, -_m\}$, and $u_i$
-is either annotation symbol or symbol $\varnothing$. Number $i$ represents
-$i$-th symbol in corresponding input sequence and $-_i$ represents gap in the
-sequence before position $i$ (if $i$ is the length of the sequence, it
-represents the gap at the end of the sequence). For example $(I_X, 47, -_{42})$
-means that $x_{47}$ is aligned to a gap that is between $y_{41}$ and $y_{42}$
-and that this column has annotation $I_X$. Naturally, indices in $a_i$ and
-$b_i$ have to be non-decreasing order, each non-dashed symbol have to be in the
-corresponding sequence in alignment exactly once. Additionally, $a_0$ has to be
-$0$ or $-_{0}$, $a_t$ is $n$ or $-_m$. The constrains for $b$ are analogous.
-The first annotation symbol $u_0\not=\varnothing$ and if some $u_i$ is equal to
-$\varnothing$ then such column was emitted by same emission as previous column.
-If we use non-generalized model, the annotated alignment cannot contain symbol
+$Y=y_0y_2\dots y_{m-1}$ is represented as a sequence of tuples $(u_0, a_0,
+b_0), \dots, (u_{t-1}, a_{t-1}, b_{t-1})$ where $a_i\in \{0, \dots,
+{n-1}\}\cup\{-_0, \dots, -_n\}$ and $b_i \in \{0, \dots, m-1\}\cup\{-_0, \dots,
+-_m\}$, and $u_i$ is either an annotation symbol or symbol $\varnothing$.
+Number $i$ represents $i$-th symbol in the corresponding input sequence and
+$-_i$ represents a gap in the sequence before position $i$ (if $i$ is the
+length of the sequence, it represents the gap at the end of the sequence). For
+example $(I_X, 47, -_{42})$ means that $x_{47}$ is aligned to a gap that is
+between $y_{41}$ and $y_{42}$ and that this column has annotation $I_X$.
+Naturally, indices in $a_i$ and $b_i$ have to be in non-decreasing order, and
+each non-dashed symbol has to be in the corresponding sequence in the alignment
+exactly once. Additionally, $a_0$ has to be $0$ or $-_{0}$, $a_t$ is $n$ or
+$-_n$. The constrains for $b$ are analogous.  The first annotation symbol
+$u_0\not=\varnothing$ and if some $u_i$ is equal to $\varnothing$ then such a
+column was emitted by the same emission as the previous column.  If we use a
+non-generalized model, the annotated alignment cannot contain symbol
 $\varnothing$. The reason for using annotation symbol $\varnothing$ is that we
-will need to be able to distinguish between different generalized emissions. We
-can define the probability of an annotated alignment $\Lambda$ as the sum of
-the probabilities of the state paths that generate such an alignment and the
-state paths annotation is equal to the annotation from $\Lambda$. We denote
+need to distinguish between different generalized emissions. We can define the
+probability of an annotated alignment $\Lambda$ as the sum of the probabilities
+of the state paths that generate such an alignment and \reformulate{the state
+paths annotation is equal to the}{WTF?} annotation from $\Lambda$. We denote
 this probability as $\prob{\Lambda\mid X, Y}$. We will refer to triple $(u_i,
-a_i, v_i)$ as an \firstUseOf{annotated alignment column}.
+a_i, v_i)$ as an \firstUseOf{annotated alignment column}.\todo{Toto chces dat
+asi skor (asi mysli annotated alignment column}
 
 We are interested in the \firstUseOf{repeat annotation} with annotation
 function $\lambda_R$.  For generalized SFF and TTP (and 3-state pHMM),
-$\lambda_R$ is identify function. For non-generalized version, $\lambda_R(u)=R$
-for all states $u$ from submodel modeling tandem repeats.  The probability of a
-state path and annotation is defined exactly as for HMM that generates only one
-sequence.
+$\lambda_R$ is the identify function. For the non-generalized versions,
+$\lambda_R(u)=R$ for all states $u$ from the submodels modeling tandem repeats.
+The probability of a \reformulate{state path}{to si asi definoval?} and
+annotation is defined exactly as for HMMs that generate only one sequence.
 
-Similarly as with the regular HMMs, we can define gain functions for annotation
-alignment $G(\Lambda, \Lambda')$ that corresponds to ``similarity'' of two
-annotated alignments (Note that for HMMs, symbol $\Lambda$ represents
-annotation. With pHMM, we use this symbol for an annotated alignment).  Since pHMM
-define the probability distribution $\Lambda_T$ of the correct annotated
+Similarly as for the regular HMMs, we can define a gain function $G(\Lambda,
+\Lambda')$ that corresponds to ``similarity'' of two annotated alignments
+$\Lambda$ and $\Lambda'$. Note that for HMMs, symbol $\Lambda$ represents
+annotation; with pHMMs, we use this symbol for an annotated alignment.  Since a
+pHMM defines the probability distribution $\Lambda_T$ of the correct annotated
 alignments, we can define the expected gain of an annotated alignment given
 sequence $X$ and $Y$ and gain function $G$: 
+
 \begin{equation}
 E_{\Lambda_T\mid X, Y}\left[G(\Lambda_T, \Lambda)\right] = 
 \sum_{\Lambda_T}G(\Lambda_T, \Lambda)\prob{\Lambda_T\mid X, Y}
@@ -512,82 +544,86 @@ annotated alignment $\Lambda^*$ with the highest expected gain:
 E_{\Lambda_T\mid X, Y}\left[G(\Lambda_T, \Lambda)\right]
 \end{equation}
 
-Finally, we express optimization criteria of various decoding methods using
-highest expected gain framework.
+Finally, we express the optimization criteria of various decoding methods using
+the highest expected gain framework.
 
 \paragraph{The Viterbi algorithm and block Viterbi algorithm} Gain function for
-the Viterbi algorithm assigns $+1$ if the predicted annotated alignment is identical to true
-annotated alignment. Optimization algorithm for non-generalized model was
-described in the section \ref{SECTION:PAIRHMMVITERBI}. The time complexity is
-$O(nmE)$ where $E$ is the number of non-zero transitions in the model. We will
-discuss the time complexity for the generalized model in the end of this
-section.
+the Viterbi algorithm assigns $+1$ if the predicted annotated alignment is
+identical to the true annotated alignment. In both cases, the labeling function
+is the identity function. The optimization algorithm for a non-generalized
+model was described in section \ref{SECTION:PAIRHMMVITERBI}.  The time
+complexity is $O(nmE)$ where $E$ is the number of non-zero transitions in the
+model and $n$ and $m$ are lengths of the two seqeunces. We will discuss the
+time complexity for the generalized model at the end of this section.
 
-We make distinction between the VA and BVA when using SFF or TTP models. Using
-the VA on the expanded model is referred to as the VA. Using the VA on the
-generalized version of the model will be referred as the BVA. The difference
-between these two versions is that in the VA, we account for only one state
-path through the repeat submodel.  The BVA however sum all possible paths
-through the repeat submodel and therefore abstract from exact realization of
-the alignment of tandem repeats.
+We make a distinction between the VA and BVA when using the SFF or the TTP
+models. Using the VA on the expanded model is referred to as the VA. Using the
+VA on the generalized version of the model will be referred to as the BVA. The
+difference between these two versions is that in the VA, we account for only
+one state path through the repeat submodel.  The BVA however sums all possible
+paths through the repeat submodel, and therefore abstracts from the exact
+realization of the alignment of tandem repeats to their consensus.
 
 \paragraph{Posterior decoding}
 The Viterbi algorithm awards non-zero gain only if an annotated alignment is
-entirely correct. Gain function of the posterior decoding (which was defined
-in Section \ref{SECTION:ALNDECODING}) is more granular. It assigns $+1$ for
-every correctly predicted annotated alignment column. Annotated alignment
-column $(u_i, a_i, b_i)$ is correctly predicted if there is alignment column
-$(v, a_i, b_i)$ for arbitrary $v$ in the true annotated alignment (PD ignored
-labels). 
+entirely correct. The gain function of the posterior decoding is more granular.
+In the traditional version (discussed in Section \ref{SECTION:ALNDECODING}) it
+assigns $+1$ for every correctly predicted alignment column ignoring column
+labels. An annotated alignment column $(u_i, a_i, b_i)$ is correctly predicted
+if there is an alignment column $(v, a_i, b_i)$ for arbitrary $v$ in the true
+annotated alignment. 
 
-We will consider the stricter version of the PD by adding
-additional condition: the corresponding annotated alignment column in the
-correct annotated alignment has to be identical (also annotations has to be
-same).  This stricter condition is aimed for the expanded versions of SFF and
-TTP, since otherwise it would treat repeats as gaps despite having orthologs in
-the other sequence (our models treat such repeats independently and models them
-formally as gaps).  For the 3-state HMM, this stricter condition does not have
-effect. Note that we use this decoding only with expanded versions of SFF and
-TPP or with 3-state model. The running time of the PD is again
-$O(nmE)$.
+We will consider a stricter version of the PD in which the corresponding
+annotated alignment column in the correct annotated alignment has to be
+identical (annotations have to be same as well). This stricter condition is
+aimed for the expanded versions of SFF and TTP, since
+\reformulate{otherwise}{Co znamena otherwise? Toto cele nie je prilis jasne} it
+would treat repeats as gaps despite having orthologs in the other sequence (our
+models treat such repeats independently and models them formally as gaps).  For
+the 3-state HMM, this stricter condition is equivalent to the original version,
+because there is one-to-one correspondence between alignments and alignment
+annotation.  The running time of the PD is again $O(nmE)$.\todo{Rozdiely v
+algoritmoch}
 
 \paragraph{Marginalized posterior decoding}
 Marginalized posterior decoding is similar to the posterior decoding. The only
-difference is that gaps are identical despite their position in the sequence.
-Therefore we treat column $(u, i, -_j)$ to be same as $(u, i, -_k)$ (gaps in
-other sequence are treated symmetrically). The optimization of this gain
-function is almost identical to optimization of posterior decoding. The only
-difference is that after computation of the posterior probabilities, we replace
-probability $(u, i, -_j)$ with the sum of $(u, i, -_l)$ for all $l$. The
-algorithm has also time complexity $O(nmE)$.  As with PD, this
-decoding method is not used on the generalized models.
+difference is that gaps that differ only in their position in the sequence are
+considered identical.  Therefore we treat column $(u, i, -_j)$ to be same as
+$(u, i, -_k)$; gaps in the second sequence are treated symmetrically. The
+optimization of this gain function is almost identical to the optimization of
+posterior decoding. The only difference is that after computation of the
+posterior probabilities for all annotated columns, we replace probability $(u, i, -_j)$ with the sum of
+$(u, i, -_l)$ for all $l$. The algorithm has also time complexity $O(nmE)$.  As
+with PD, this decoding method is not used on the generalized models.
 
 \paragraph{Block posterior decoding}
-Block posterior decoding is based on the posterior decoding and aim for
-generalized models. BPD scores the emissions instead of the individual columns.
+Block posterior decoding is based on the posterior decoding and is aimed at 
+generalized models. BPD scores whole emissions instead of individual columns.
 The segment of an annotated alignment that was emitted by one emission is
-called a \firstUseOf{block}. In particular, the states $M$, $I_X$ and $I_Y$
-emits one-column blocks, state $R$ emits multicolumn blocks. Annotated
-alignment is divided into blocks using $\varnothing$ symbol and each block is
-scored individually.  One column of block $(u_i, a_i, b_i), u_i\in\{M, I_X,
-I_Y\}$ gets $+1$ if there is identical column in the true annotated alignment,
-otherwise gain for such block is $0$. Block of form $\Lambda_E=(u_i, a_i,
-b_i)(\varnothing, a_{i+1}, b_{i+1})\dots (\varnothing, a_{j}, b_{j})$ where
-$(j+1)$-th column does not contain $\varnothing$ (or there is no $(j+1)$-th
-column) gets score $+l$ if the block is correct. The gain $l$ is the number of
-emitted non-gap indices in the block. For example block $(R, 4,
--_5)(\varnothing, 5, -_5)(\varnothing, 6, 5)$ contain $4$ non-gap indices: $4,
-5, 6$ in the first sequence and $5$ in the second sequence.  The block is
-considered correct if exactly same regions in $X$ and $Y$ forms block with same
-annotation in the true annotated alignment.
+called a \firstUseOf{block}\todo{Volas to emission alebo block? Teda
+zadefinujem to, ale v buducnosti to moc nepouzivam}. In particular, the states
+$M$, $I_X$ and $I_Y$ emit one-column blocks, and state $R$ emits multicolumn
+blocks. An annotated alignment can be divided into blocks using $\varnothing$
+symbol, which mark continuation of a block.  The gain function scores each
+block individually. A one-column block $(u_i, a_i, b_i), u_i\in\{M, I_X, I_Y\}$
+gets score $+1$ if there is an identical column in the true annotated
+alignment; otherwise gain for such a block is $0$. A block of form
+$\Lambda_E=(u_i, a_i, b_i)(\varnothing, a_{i+1}, b_{i+1})\dots (\varnothing,
+a_{j}, b_{j})$ where $(j+1)$-th column does not contain $\varnothing$ (or there
+is no $(j+1)$-th column) gets score $+l$ if the block is correct. The gain $l$
+is the number of emitted non-gap indices in the block. For example block $(R,
+4, -_8)(\varnothing, 5, -_8)(\varnothing, 6, 8)$ contains $4$ non-gap indices:
+$4, 5, 6$ in the first sequence and $8$ in the second sequence.  The block is
+considered correct if exactly the same regions in $X$ and $Y$ form a block with
+the same annotation in the true annotated alignment.
 
 \begin{figure}
 \begin{center}
-\includegraphics[width=14cm]{../figures/BlockPosterior.pdf}
+\includegraphics[width=11cm]{../figures/BlockPosterior.pdf}
 \end{center}
 \caption[Block posterior decoding function]{ 
-Explanation of BPD gain function. Gray solid lines represents single
-emissions, dashed lines represents multiple emissions (each alignment column is
+An example of the BPD gain function. Gray solid boxes enclose single emissions,
+dashed boxes combine multiple emissions (each alignment column in such a box is
 one emission). Emission from repeat state have gain $+16$ because it emits $16$
 sequences in exactly same regions of the input sequences.  Other alignment
 columns get $+1$ only if there is same alignment column in the correct
@@ -596,99 +632,107 @@ alignment that was generated by same state.
 }\label{FIGURE:BLOCK_POSTERIOR} 
 \end{figure}
 
-The reason for using $+l$ instead of $+1$ is that otherwise decoding method
+The reason for using score $+l$ instead of $+1$ is that otherwise the decoding method
 would be biased towards short blocks. Instead of $l$, the number of emitted
 symbols, we could use the number of emitted columns. However we would then
 discriminate the submodels that would tried to align repeats (although we did
-not used such model). Example of this gain function in in the Figure
+not used such models). An example of this gain function in Figure
 \ref{FIGURE:BLOCK_POSTERIOR}.
 
 To optimize this gain function, we have to compute posterior probabilities for
-all emissions. In generalized pHMM, emission is given by two intervals; one in the
-sequence $X$ and one in the sequence $Y$. The number of possible emissions is
-$O(n^2m^2)$. The expected gain of the emission is the posterior probability
-multiplied by the number of emitted symbols. After computing expected gains of
-individual blocks we can compute the highest scoring annotated alignment in
-$O(n^2m^2)$ time.
+all potential emissions. In a generalized pHMM, each emission is given by a
+state and two intervals; one in sequence $X$ and one in sequence $Y$. In our
+models, only state $R$ is generalized and the overall number of states is
+constant. The number of possible emissions is therefore $O(n^2m^2)$. The
+expected gain of the emission is the posterior probability multiplied by the
+number of emitted symbols. After computing the expected gains of individual blocks,
+we can compute the highest scoring annotated alignment in $O(n^2m^2)$ time. \todo{Ako? aspon strucne}
 
 Let $E$ be the number of transitions in the repeat submodel. The naive
-computation of the expected gain for the pair of intervals of length $n'$ and
-$m'$ can be computed in $O(n'm'E)$ time by forward algorithm for generalized
-pair HMM, which would lead to $O(n^3m^3E)$ algorithm for computing posterior
-probabilities by forward-backward algorithm. By using proper preprocessing that
-can be done in $O((n^2+m^2)E)$ time, we can lower the time complexity of
-computing expected gain for an pairs of intervals to $O(k)$ where $k$ is the
-number of sunflower submodels (in case of TTP, $k=1$).
+\reformulate{computation}{detaily preco} of the expected gain for a pair of
+intervals of length $n'$ and $m'$ can be computed in $O(n'm'E)$ time by the
+forward algorithm for generalized pair HMMs, which would lead to $O(n^3m^3E)$
+algorithm for computing all posterior probabilities by forward-backward
+algorithm\todo{toto mam pocit ze ej aj tak zle}. We will show that by using
+proper preprocessing  we can lower the time complexity of computing the
+expected gain for a pair of intervals to $O(k)$ where $k$ is the number of
+sunflower submodels (in case of TTP, $k=1$).
 
-Let consider the repeat submodel $H$ with $k$ sunflower pairs $S^X_1, S^Y_1,
+Let us consider the repeat submodel $H$ with $k$ sunflower pairs $S^X_1, S^Y_1,
 \dots, S^X_k, S^Y_k$. Let $p_i$ be the probability of entering sunflower
 $S^X_i$.  The probability of transition from $S^X_i$ to $S^Y_i$ is $1$. We can
-write the probability of generating arbitrary pair of sequences $X'$ and $Y'$ by $H$ as
+write the probability of generating an arbitrary pair of sequences $X'$ and
+$Y'$ by $H$ as
+
 \begin{equation}
 \prob{X', Y'\mid H} = \sum_{i=1}^k p_i\prob{X'\mid S^X_i}\prob{Y'\mid S^Y_i}
 \end{equation}
+
 By pre-computing all of the terms $\prob{X'\mid S^X_i}$ and $\prob{Y'\mid
 S^Y_i}$, we can compute the posterior probability of the block in $O(k)$ time.
-Naive computation of all $\prob{X'\mid S^X_i}$ would take $O(n^3E)$ time, but
-this can be further improved. When computing $\prob{X'\mid S^X_i}$ using the
-forward algorithm, we can use the values from the forward table to compute the
-probability of emitting any prefix of $X'$ by looking at the forward
-probability of final state for the corresponding column. We need to run forward
-algorithm only for sequences $X[i:]$ for all $0\leq i< n$. The optimization for
-the other sequence is analogous. By using these techniques we can pre-compute
-the emission terms in $O((n^2+m^2)E)$ time. Therefore the overall time
-complexity of the BPD is $O(kn^2m^2 + (n^2+m^2)E)$. By
-same techniques we can optimize the BVA with same time
-complexity.
+Naive computation of probability $\prob{X'\mid S^X_i}$ for all intervals $X'$
+would take $O(n^3E)$ time, but this can be further improved. When computing
+$\prob{X'\mid S^X_i}$ using the forward algorithm, we can use the values from
+the forward table to compute the probability of emitting any prefix of $X'$ by
+looking at the forward probability of final state for the corresponding column.
+We thus need to run the forward algorithm only once for every suffix of $X$.
+The optimization for the other sequence is analogous. Using these techniques,
+we can pre-compute the emission terms in $O((n^2+m^2)E)$ time, and the overall
+time complexity of the BPD is $O(kn^2m^2 + (n^2+m^2)E)$. \reformulate{By same
+techniques we can optimize the BVA with same time complexity}{nejake detaily
+cim sa lisy}.
 
 \paragraph{Post-processing}
 The problem with the SFF and the TTP models is that they model repeat sequences
-independently and do not try to align tandem repeats at orthologous locations.
-Therefore we postprocess alignment using 3-state pHMM by realigning segments of
-alignments that are annotated as repeats. We also include adjacent gaps into
-this postprocess step.
+in the sequences $X$ and $Y$ independently and do not try to align tandem
+repeats at orthologous locations.  Therefore we postprocess the alignment using
+the 3-state pHMM by realigning segments of alignments that are annotated as
+repeats. We also include adjacent gaps into this postprocess step.
 
 \section{Optimizations}\label{SECTION:REPOPT}
 
-In this section we summarize additional techniques we have used to decrease the
+In this section, we summarize additional techniques we have used to decrease the
 running time of the decoding algorithms. The fastest decoding algorithms described
 above run in $O(nmE)$ time, which is still prohibitive for longer sequences.
-Additionally, block-based methods are even slower. We used following
+Additionally, block-based methods are even slower. We used the following
 optimizations:
-\begin{itemize}[itemsep=-1mm]
-\item We implemented standard technique of banding. We restrict the alignment
-to the window around the guide alignment, that can be obtained by faster but less
-precise alignment algorithms. We used Muscle \cite{Edgar2004} with default
-parameters to compute guide alignment. The final alignment methods were
-restricted to be within 30 bases from the guide alignment. This technique
-reduce the $O(nm)$ term from the time complexity to $O((n+m)d)$ where $d$ is
-the distance from the guided alignment.
 
-\item The size of the SFF model is enormous. It is not practical to use model
-with $310,091$ sunflower pairs. Therefore we used the TRF program
-\cite{Benson1999} to find the consensus motifs in the input alignment and used
-only those to build SFF model. Note that the transition probabilities to
-sunflower pairs were kept same as in the original model. In case that TRF did
-find consensus that was not in the original set of consensuses, we assign it
-the probability of the least occurring consensus from the original set. This
-technique was not applicable to TTP model.
+\paragraph{}
+We implemented a standard technique of banding (Section \ref{SECTION:SSA}). We
+first align input sequences using Muscle \cite{Edgar2004} with default
+parameters.  The final alignment methods were then restricted to be within 30
+bases from this guide alignment. This technique reduces the $O(nm)$ factor from
+the time complexity to $O((n+m)d)$ where $d$ is the maximum distance from the
+guide alignment.
 
-\item To further reduce running time of the BVA and BPD, we restrict the
-emissions of the state $R$ to specific intervals in both input sequences. At
-first, we found the candidate set of tandem repeat intervals for both input
-sequences $X$ and $Y$ independently. Let $T_X$ and $T_Y$ are the sets of
-candidate intervals (not necessarily disjoint) for sequences $X$ and $Y$
-respectively. We restrict emission of $R$ state only to the pairs of intervals
-$i_X, i_Y$ where $i_X$ and $i_Y$ have beginning and end within $10$ bases from
-some interval from $T_X$ and $T_Y$ respectively, or if one of $i_X$ or $i_Y$ is
-an empty interval (there can be a tandem repeat in only one sequence).  By this
-heuristic, $R$ state do emissions in at most $(400|T_X|+n)(400|T_Y|+m)$
-positions. We applied this method to both SFF and TPP models.
+\paragraph{}
+The size of the SFF model is enormous. It is not practical to use a model with
+$310,091$ sunflower pairs. Therefore we used the TRF program \cite{Benson1999}
+to find consensus motifs in the input alignment and used only those to build
+SFF model. Note that the transition probabilities to individual sunflower pairs
+were kept the same as in the original model. In case that TRF found a consensus
+that was not in the original set of consensus sequences used to build the SFF
+model, we assign it the probability of the least frequent consensus from the
+original set. This technique is not applicable to TTP model.
 
-We used following algorithm to select candidate intervals $T_X$ and $T_Y$:
+\paragraph{}
+To further reduce the running time of the block-based algorithms (BVA and BPD),
+we restrict the emissions of the state $R$ to specific intervals in both input
+sequences. First, we find the candidate set of tandem repeat intervals for
+each input sequence independently. Let $T_X$ and $T_Y$ are the
+sets of candidate intervals (not necessarily disjoint) for sequences $X$ and
+$Y$ respectively. We restrict emission of state $R$ only to the pairs of
+intervals $i_X, i_Y$ where $i_X$ and $i_Y$ have beginning and end within $10$
+bases from some interval from $T_X$ and $T_Y$ respectively, or if one of $i_X$
+or $i_Y$ is an empty interval (there can be a tandem repeat in only one
+sequence).  By this heuristic, state $R$ can have emissions in at most
+$(400|T_X|+n)(400|T_Y|+m)$ positions. We applied this method to both SFF and
+TPP models.
+
+We used the following algorithm to select candidate intervals $T_X$ and $T_Y$:
 \begin{enumerate}[itemsep=-1mm]
 \item Run the TRF program on the input sequences $X$ and $Y$. Obtain sets of
-intervals $T_X$ and $T_Y$ and lists of consensuses $C_X$ and $C_Y$.
+intervals $T_X$ and $T_Y$ and lists of consensus sequences $C_X$ and $C_Y$.
 
 \item For every consensus $c\in C_X\cup C_Y$, build the SRF model $S_c$
 (sunflower repeat finding model from Section \ref{SECTION:SUNFLOWERMODEL}). 
@@ -700,63 +744,66 @@ and $T_Y$.
 \end{enumerate}
 The reason for using this method instead of using only intervals from TRF is
 that running TRF on the input sequences independently can cause several
-problems. At first, if sequence $X$ contain three repetition of motif $m$ and
-sequence $Y$ contain only one, then TRF would return interval only for the
+problems. For example, if sequence $X$ contains three repetitions of motif $m$
+and sequence $Y$ contains only one, then the TRF would return interval only for
 sequence $X$. Additionally, consensus can be found in both sequences but can be
 rotated, and therefore intervals in both sequences would be shifted.
 
-\end{itemize}
 
 \section{Experiments}
+\todo{Dost hluba sekcie, daj to ako 2 subsections do experiments}
 
-This section summarizes the details of the simulation experiment and measures
-we were using for evaluation. At first, we estimated parameters of the model
+\todo{Poriadny uvod k experimentom,. Co ideme porovnavat s cim, a na akych datach. Preco a s nadhladom}
+
+At first, we estimated parameters of the model
 using annotated human-dog alignment by TRF program \cite{Benson1999}.
 Parameters for 3-state model, and 3-state submodel of SFF and transitions to
 the repeat state were therefore trained by supervised learning. Setting SFF and
 TTP parameters was discussed in the sections \ref{SECTION:SUNFLOWERMODEL} and
-\ref{SECTION:TANTAN}.
-
+\ref{SECTION:TANTAN}.\todo{tento odstavec Nejako pridaj do 4.2.2 a 4.2.3}
+\subsection{Simulated data}
 We sampled 200 test alignments each of length at least 200 bases from the SFF
-submodel with the condition, that the number of repetitions in the tandem
+submodel with the \reformulate{condition}{Ako sa realizovala tato [podmienka}, that the number of repetitions in the tandem
 repeat has to be at least three in both sequences. Reason for this is that
-otherwise we would have segments of alignments that are annotated as repeats,
-but in fact are not because it would contain only one copy of the motif. We
-refer to these alignments (along with sampled repeat annotation) as the correct
+otherwise we would have many segments of alignments that are annotated as repeats,
+but in fact contain only one copy of the motif. We
+refer to these alignments (along with the sampled repeat annotation) as the correct
 alignments and correct annotation (repeat intervals and consensuses).  The
 program Context \cite{Hickey2011} was trained of the 200 separate alignments
 sampled from the model. 
 
-
+\reformulate{
 We used the same model for evaluation of parameters. To evaluate the robustness
 of our method, we assess the effects of misspecification of the parameters by
 estimating model parameters from human-chicken alignment and perturbing model
-parameters (details are in the next section).
+parameters (details are in the next section).}{Daj to len na jedno miest (zrejme az tam dalej)}
 
-\paragraph{Measures:} The first measure we used was the error rate: the
-fraction of incorrectly predicted columns of an alignment. It was measured only
-on the alignment columns generated from non-repeats states during sampling.
-Reason for this is that SFF and TTP does not model alignment of repetitive
-regions.
+\paragraph{Accuracy measures} \todo{Uvod ze na porovnavanie spravnych zarovnani
+a predikcii pouzivame niekolko mier}The first measure we used was the error
+rate: the fraction of incorrectly predicted columns of an alignment. It was
+measured only on the alignment columns generated from non-repeat states during
+sampling, because SFF and TTP do not model alignment of
+repetitive regions.
 
-Additionally, we investigate the precision of predicting exact repeat block
+Additionally, we investigate the accuracy of predicting exact repeat block
 boundaries in alignments by measuring the number of correctly predicted repeat
-blocks; block is correctly predicted if it contain identical parts of sequences
-as the corresponding block in the correct alignment. We report the block
-sensitivity, which is the fraction of the number of correctly predicted blocks
-and the number of correct block, and block specificity, which is the fraction
-of the number of correctly predicted blocks and all predicted blocks. We also
-investigate the accuracy of prediction of repeat annotation for individual
-alignment columns; the repeat sensitivity and specificity.
+blocks; a block is correctly predicted if it contains identical parts of the
+sequences as the corresponding block in the correct alignment. We report the
+block sensitivity, which is the number of correctly predicted blocks divided by
+the number of all repeat blocks in the correct alignment, and block
+specificity, which is the the number of correctly predicted blocks divided by
+the number of all predicted blocks.  We also investigate the accuracy of
+prediction of repeat annotation for individual \reformulate{alignment
+columns}{je to na stlpce alebo bazy}; the repeat sensitivity and specificity.
 
-We also measured the relation of the error rate and the distance
+\reformulate{We also measured the relation of the error rate and the distance
 from the nearest repeat. Alignment column was considered as repeat if in the
 correct alignment at least one base of the column was annotated as an repeat.
 The distance is measured by the number of columns. This measure is important,
 because when the distance from the repeat is high, our model is identical to
 3-state pHMM and therefore the performance of both models should be similar in
 such regions. However, we do expect models incorporating repeats to be more
-precise in the regions near tandem repeats.
+precise in the regions near tandem repeats.}{presun k vysledkom}
 
 \section{Results of the Simulation Experiments}\label{SECTION:REPSIMRESULTS}
 

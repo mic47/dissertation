@@ -15,10 +15,10 @@ $F$. The footprint is what is left from labeling after removing consecutive
 identical labels. Formally it was defined in section
 \ref{SECTION:DISTANTMEASURES} by definition \ref{DEFINITION::FOOTPRINT}. In the
 second stage we find the annotation with footprint $F$ that maximizes the
-expected reward or some other criterion. The second stage is forced to keep the
-structure of footprint, and therefore rapid change of types as in Figure
-\ref{FIGURE:HERD_BAD} is not possible (unless the footprint contains a large
-number of recombinations).
+expected reward (or some other criterion). The second stage is forced to keep the
+structure of footprint, and therefore rapid changing of types as in Figure
+\ref{FIGURE:HERD_BAD} is not possible, unless the footprint contains a large
+number of recombinations. 
 
 More generally, in the first stage we search for the best guide, which is a
 general constraint on the allowed annotation, for example in the form of
@@ -340,14 +340,14 @@ number of colors and as a result, graph is much smaller then in the unguided
 version. Implementation details of other parts of an algorithm can be found in
 \cite{Nanasi2010mgr}.
 
-As we will show in this chapter, finding the most probable set or the most
-probable footprint are NP-hard problems.  Therefore we used heuristic algorithm
-implemented in the from program balls \cite{Brown2010}, which is also described
-in section \ref{SECTION:DISTANTMEASURES}. Note that the balls algorithm
-estimates the footprint by sampling state paths and selecting the most
-frequent footprint of sampled paths. For using the set as a guide, we have chosen
-the set of labels used in the footprint guide, since these sets were almost
-always correct. 
+As we will show in this chapter, finding the most probable set and the most
+probable footprint are NP-hard and NP-complete problems.  Therefore we used
+heuristic algorithm implemented in the from program balls \cite{Brown2010},
+which is also described in section \ref{SECTION:DISTANTMEASURES}. Note that the
+balls algorithm estimates the footprint by sampling state paths and selecting
+the most frequent footprint of sampled paths. For using the set as a guide, we
+have chosen the set of labels used in the footprint guide, since these sets
+were almost always correct. 
 
 Altering the Viterbi algorithm to use set as an restriction is as simple as for
 the HERD; we only need to to ignore states that are not in the guide set. We
