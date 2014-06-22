@@ -1,5 +1,4 @@
 \chapter{Alignment with Tandem Repeats} \label{CHAPTER:REP}
-\todo{Prikla. Bud tu alebo do celkoveho intra}
 
 A \firstUseOf{Tandem repeat} is a region in the genomic sequence that contains
 two or more consecutive repetitions of some \firstUseOf{motif}, which is a
@@ -16,7 +15,19 @@ a tandem repeat was created by several successive duplication events. The
 consequence is that the homologous tandem repeats in two related sequences can
 contain a different number of copies of the original motif. Note that it is
 possible that none of the current repetition is the exact copy of the original
-motif.
+motif. 
+\begin{example}
+Below is an example of a sequence with tandem repeat with motif $AT$ and $12$
+repetitions.  One repetition contains insertion (I in the annotation) and other
+repetition contain mutation (M in the annotation). The repetitions are
+annotated by alternating . and \_ characters.
+\begin{verbatim}
+Sequence:   ACGTCGATGCATATATATATATATAATATCTATATGAGCTGATGCTAGCTAC
+Annotation:           __..__..__..__I..__M.__..
+\end{verbatim}
+Note that while it is not clear to which repetition the insertion belongs, we
+do not find it important.
+\end{example}
 
 Aligning homologous tandem repeats is hard, because it is not clear which
 repetitions are orthologous (which originate in the same ancestral repetition).
@@ -46,7 +57,7 @@ repetition and Needleman-Wunsch like scoring scheme to score original string
 with its repetitions. Time complexity of this algorithm is $O(n^4)$, and Benson
 also proposed a heuristic algorithm to compute the alignment in a reasonable
 time.  Several variants of this problem were also studied \cite{Sammeth2006,
-Berard2006, Freschi2012}\todo{Pripadne spomen v com sa lisia}. It is also
+Berard2006}\todo{Pripadne spomen v com sa lisia}. It is also
 possible to use a lossy compression scheme to collapse tandem repeats, and then
 align compressed sequences \cite{Freschi2012}.
 
@@ -324,6 +335,14 @@ emission $X[i]$ evolved from $X[i-l]$ over time $t$.
 
 \todo{Napis nieco o predpokladoch tohto modelu, porovnas so Sunflower}
 
+At first, we estimated parameters of the model
+using annotated human-dog alignment by TRF program \cite{Benson1999}.
+Parameters for 3-state model, and 3-state submodel of SFF and transitions to
+the repeat state were therefore trained by supervised learning. Setting SFF and
+TTP parameters was discussed in the sections \ref{SECTION:SUNFLOWERMODEL} and
+\ref{SECTION:TANTAN}.\todo{tento odstavec Nejako pridaj do 4.2.2 a 4.2.3}
+
+
 \section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
 
 In this section we describe models that we have designed and used in our
@@ -336,13 +355,7 @@ distribution of state paths will be different due to different sets of states.
 The generalized model is obtained by taking the simple 3-state pHMM model from section
 \ref{SECTION:ALIGNWITHPHMM} and adding a single generalized pair state $R$,
 called the \firstUseOf{repeat state}, which in a single step generates tandem
-repeats in both sequences. \reformulate{State $R$ can in theory generate
-arbitrary long sequences which does not produce an alignment of tandem repeats
-during decoding. Its task is to filter out tandem repeats of alignment, so that
-they do not cause biases in the parts of an alignment emitted by other states
-(match and indel states). We align homologous tandem repeats later in a
-post-processing step.}{trochu tu miesas generovanie a decoding. mozno by som
-toto presunula dalej, ked bude jasnejsie ako model vyzera. Skus na s 86} The
+repeats in both sequences.  The
 overall topology of GpHMM is illustrated in the Figure
 \ref{FIGURE:REPEAT_GENERAL}.
 
@@ -378,16 +391,16 @@ generalized model the \abbreviation{sunflower field}{SFF} model.
 Topology of the Repeat pHMM. We extended the 3-state pHMM with one generalized
 state $R$, which in one emission generates tandem repeats in both sequences.
 The emission distribution of state $R$ is defined by another pHMM shown in a
-dotted box (*). Bellow the model we show an example of emitted alignments.
+dotted box~(*). Bellow the model we show an example of emitted alignments.
 Dashed gray lines corresponds to multiple emissions from the same states, while
 the full line represents one emission from a generalized state. 
 
 (*) Black states in this submodel silent start and final states. Spirals
-represents sunflower submodels. They are in
-pairs of two identical models $S_c^X$ and $S_c^Y$, one for generating tandem repeat in one
-sequence, other for generating tandem repeat in the other sequence. There are
-multiple pairs of submodels, each for modeling different motif $c$.
- }\label{FIGURE:REPEAT_GENERAL} 
+represents sunflower submodels. They are in pairs of two identical models
+$S_c^X$ and $S_c^Y$, one for generating tandem repeat in one sequence, other
+for generating tandem repeat in the other sequence. There are multiple pairs of
+submodels, each for modeling different motif $c$.
+}\label{FIGURE:REPEAT_GENERAL} 
 \end{figure}
 
 We also experimented with using a TANTAN-like model for defining emissions
@@ -400,46 +413,21 @@ its general topology looks like SFF's with only one motif.  Since TANTAN is
 a high order HMM, the resulting model is a high order and generalized pair HMM.
 We refer to this model as \abbreviation{TANTAN pHMM}{TTP}. The advantage of
 this model over SFF is in it's size, since TTP will have in practice fewer
-states than SFF. \todo{Povedz ze pri jednom zalezi od max dlzky, kym druhy od
-suctu dlzok konsenzov} However, TTP models evolution of repetitions
-differently, since each repetition is created from the previous repetition and
-tandem repeats in sequences $X$ and $Y$ are independent of each other; there is
-no penalty for them having different motifs.\todo{Nejaka dalsia diskusia o vlastnostiach modelov? Napri ** zo strany 84 a *** zo strany 87}
+states than SFF; the size of SFF model depends on the total length of all motif
+strings while the size of TTP model depends on the maximum motif length.
+However, TTP models evolution of repetitions differently, since each repetition
+is created from the previous repetition and tandem repeats in sequences $X$ and
+$Y$ are independent of each other; there is no penalty for them having
+different motifs.\todo{Nejaka dalsia diskusia o vlastnostiach modelov? Napri **
+zo strany 84 a *** zo strany 87}
 
-Both SFF and TTP are defined as $4$ state high order GpHMMs.  In general, using
-generalized models increases the time complexity of decoding algorithms
-quadratically. Therefore we also used expanded versions of the models: we
-replaced the generalized state $R$ with the pHMM submodel defining emissions of
-$R$. All transitions entering into $R$ were replaced by transitions to the
-start state of the submodel, and all outgoing transitions from $R$ were
-replaced by transitions starting in the final state of the submodel. This
-transformation does not change the distribution of alignments generated by the
-model.  Additionally, the distribution of alignment annotations does not
-change, if we use the following annotation functions. \reformulate{For the
-original GpHMM we can use the identity function as a labeling function
-$\Lambda_{ID}$. For expanded model we then use function $\Lambda_R$, which
-labels all states from submodel by label $R$ and other states by the same label
-as in GpHMM. }{Toto nesedi s definiciou anotovaneho zarovnania na str 88,
-radsej zmaz}
-
-\paragraph{Parameter estimation:}
-In our experiments, we have used $310,091$ consensuse sequences found by the
-TRF program on the human chromozome 15 and its orthologous sequences in the dog
-genome as motifs for building SFF.  The probability of choosing a particular
-motif is the observed frequency of the motif in the TRF output. \reformulate{In
-practice, we limit the Sunflower submodels only to those which was found by the
-TRF in the input sequence.  Additionally, if the input sequence contain motif
-that is not in the predefined set, we add it to the model with the probability
-of the least occurring motif in the model.}{Mas v 4.5, tento text nie je prilis
-jasny}
-
-We set the parameters of the Sunflower submodel manually: the insert and delete
-rates were set to $0.005$, the match states allows mutations from motif
-sequence according to the Jukes-Cantor model with parameter $t=0.05$. The
-emission of the insert states were set according to the frequency of the bases
-in the input human-dog alignment.  Parameters of the TANTAN submodel were
-estimated by the Baum-Welch algorithm \cite{Durbin1998} on 500 repeats sampled
-from the SFF model.
+\reformulate{State $R$ can in theory generate
+arbitrary long sequences which does not produce an alignment of tandem repeats
+during decoding. Its task is to filter out tandem repeats of alignment, so that
+they do not cause biases in the parts of an alignment emitted by other states
+(match and indel states). We align homologous tandem repeats later in a
+post-processing step.}{trochu tu miesas generovanie a decoding. mozno by som
+toto presunula dalej, ked bude jasnejsie ako model vyzera. Skus na s 86}
 
 \todo{Dva odstavce dole: preco tu? ***}
 The size of the TTP model depends on the length of the longest possible motif,
@@ -459,6 +447,41 @@ such complex evolution of repetitions, because it would lead to very complex
 model and increase the difficulty in decoding and training. Kováč {\it et. al}
 developed a method with limited dependence by adding repeat submodels emitting
 copies in the two sequences at same time \cite{Kovac2012}.
+
+
+
+Both SFF and TTP are defined as $4$ state high order GpHMMs.  In general, using
+generalized models increases the time complexity of decoding algorithms
+quadratically. Therefore we also used expanded versions of the models: we
+replaced the generalized state $R$ with the pHMM submodel defining emissions of
+$R$. All transitions entering into $R$ were replaced by transitions to the
+start state of the submodel, and all outgoing transitions from $R$ were
+replaced by transitions starting in the final state of the submodel. This
+transformation does not change the distribution of alignments generated by the
+model.  Additionally, the distribution of alignment annotations does not
+change, if we use the following annotation functions. 
+%\reformulate{For the
+%original GpHMM we can use the identity function as a labeling function
+%$\Lambda_{ID}$. For expanded model we then use function $\Lambda_R$, which
+%labels all states from submodel by label $R$ and other states by the same label
+%as in GpHMM. }{Toto nesedi s definiciou anotovaneho zarovnania na str 88,
+%radsej zmaz}
+
+\subsection{Parameter estimation}\label{SECTION:ALNPAREST}
+In our experiments, we have used $310,091$ consensus sequences found by the TRF
+program on the human chromozome 15 and its orthologous sequences in the dog
+genome as motifs for building SFF.  The probability of choosing a particular
+motif is the observed frequency of the motif in the TRF output. Since resulting
+model is large, we limit Sunflower submodels (see Section \ref{SECTION:REPOPT}.
+
+We set the parameters of the Sunflower submodel manually: the insert and delete
+rates were set to $0.005$, the match states allows mutations from motif
+sequence according to the Jukes-Cantor model with parameter $t=0.05$. The
+emission of the insert states were set according to the frequency of the bases
+in the input human-dog alignment.  Parameters of the TANTAN submodel were
+estimated by the Baum-Welch algorithm \cite{Durbin1998} on 500 repeats sampled
+from the SFF model.
+
 
 \todo{Ako si nastavil parametre 3-stavoveho model a pr. predchodu do R}
 
@@ -486,42 +509,38 @@ symbols. This is necessary, because we use generalized models, and therefore
 annotation symbols do not uniquely determine the alignment (there can be
 multiple alignments with the same annotation).
 
-We represent columns of an annotated alignment using indices to sequences and annotation
-symbols. In the case of generalized models, which can generate more than one
-column in one step, only the first column will contain annotation symbol, other
-columns will contain symbol $\varnothing$. Formally, an \firstUseOf{annotated
-alignment} of length $t$ of sequences $X=x_0x_1\dots x_{n-1}$ and
-$Y=y_0y_2\dots y_{m-1}$ is represented as a sequence of tuples $(u_0, a_0,
-b_0), \dots, (u_{t-1}, a_{t-1}, b_{t-1})$ where $a_i\in \{0, \dots,
+We represent columns of an annotated alignment using indices to sequences and
+annotation symbols. In the case of generalized models, which can generate more
+than one column in one step, only the first column will contain annotation
+symbol, other columns will contain symbol $\varnothing$. Formally, an
+\firstUseOf{annotated alignment} of length $t$ of sequences $X=x_0x_1\dots
+x_{n-1}$ and $Y=y_0y_2\dots y_{m-1}$ is represented as a sequence of tuples
+$(u_0, a_0, b_0), \dots, (u_{t-1}, a_{t-1}, b_{t-1})$ where $a_i\in \{0, \dots,
 {n-1}\}\cup\{-_0, \dots, -_n\}$ and $b_i \in \{0, \dots, m-1\}\cup\{-_0, \dots,
--_m\}$, and $u_i$ is either an annotation symbol or symbol $\varnothing$.
-Number $i$ represents $i$-th symbol in the corresponding input sequence and
-$-_i$ represents a gap in the sequence before position $i$ (if $i$ is the
-length of the sequence, it represents the gap at the end of the sequence). For
-example $(I_X, 47, -_{42})$ means that $x_{47}$ is aligned to a gap that is
-between $y_{41}$ and $y_{42}$ and that this column has annotation $I_X$.
-Naturally, indices in $a_i$ and $b_i$ have to be in non-decreasing order, and
-each non-dashed symbol has to be in the corresponding sequence in the alignment
-exactly once. Additionally, $a_0$ has to be $0$ or $-_{0}$, $a_t$ is $n$ or
-$-_n$. The constrains for $b$ are analogous.  The first annotation symbol
-$u_0\not=\varnothing$ and if some $u_i$ is equal to $\varnothing$ then such a
-column was emitted by the same emission as the previous column.  If we use a
-non-generalized model, the annotated alignment cannot contain symbol
+-_m\}$, and $u_i$ is either an annotation symbol or symbol $\varnothing$. We
+will refer to triple $(u_i, a_i, v_i)$ as an \firstUseOf{annotated alignment
+column}.  Number $i$ represents $i$-th symbol in the corresponding input
+sequence and $-_i$ represents a gap in the sequence before position $i$ (if $i$
+is the length of the sequence, it represents the gap at the end of the
+sequence). For example $(I_X, 47, -_{42})$ means that $x_{47}$ is aligned to a
+gap that is between $y_{41}$ and $y_{42}$ and that this column has annotation
+$I_X$.  Naturally, indices in $a_i$ and $b_i$ have to be in non-decreasing
+order, and each non-dashed symbol has to be in the corresponding sequence in
+the alignment exactly once. Additionally, $a_0$ has to be $0$ or $-_{0}$, $a_t$
+is $n$ or $-_n$. The constrains for $b$ are analogous.  The first annotation
+symbol $u_0\not=\varnothing$ and if some $u_i$ is equal to $\varnothing$ then
+such a column was emitted by the same emission as the previous column.  If we
+use a non-generalized model, the annotated alignment cannot contain symbol
 $\varnothing$. The reason for using annotation symbol $\varnothing$ is that we
-need to distinguish between different generalized emissions. We can define the
+need to distinguish between different generalized emissions.  We can define the
 probability of an annotated alignment $\Lambda$ as the sum of the probabilities
-of the state paths that generate such an alignment and \reformulate{the state
-paths annotation is equal to the}{WTF?} annotation from $\Lambda$. We denote
-this probability as $\prob{\Lambda\mid X, Y}$. We will refer to triple $(u_i,
-a_i, v_i)$ as an \firstUseOf{annotated alignment column}.\todo{Toto chces dat
-asi skor (asi mysli annotated alignment column}
+of the state paths that generate $\Lambda$. We denote this probability as
+$\prob{\Lambda\mid X, Y}$.
 
 We are interested in the \firstUseOf{repeat annotation} with annotation
 function $\lambda_R$.  For generalized SFF and TTP (and 3-state pHMM),
 $\lambda_R$ is the identify function. For the non-generalized versions,
 $\lambda_R(u)=R$ for all states $u$ from the submodels modeling tandem repeats.
-The probability of a \reformulate{state path}{to si asi definoval?} and
-annotation is defined exactly as for HMMs that generate only one sequence.
 
 Similarly as for the regular HMMs, we can define a gain function $G(\Lambda,
 \Lambda')$ that corresponds to ``similarity'' of two annotated alignments
@@ -550,17 +569,17 @@ the highest expected gain framework.
 \paragraph{The Viterbi algorithm and block Viterbi algorithm} Gain function for
 the Viterbi algorithm assigns $+1$ if the predicted annotated alignment is
 identical to the true annotated alignment. In both cases, the labeling function
-is the identity function. The optimization algorithm for a non-generalized
-model was described in section \ref{SECTION:PAIRHMMVITERBI}.  The time
-complexity is $O(nmE)$ where $E$ is the number of non-zero transitions in the
-model and $n$ and $m$ are lengths of the two seqeunces. We will discuss the
-time complexity for the generalized model at the end of this section.
+is the identity function. The optimization algorithms were described in
+sections \ref{SECTION:PAIRHMMVITERBI} and \ref{SECTION:GPHMM}. The time
+complexity of VA is $O(nmE)$ where $E$ is the number of non-zero transitions in
+the model and $n$ and $m$ are lengths of the two sequences. We will discuss the
+time complexity of BVA at the end of this section.
 
 We make a distinction between the VA and BVA when using the SFF or the TTP
 models. Using the VA on the expanded model is referred to as the VA. Using the
 VA on the generalized version of the model will be referred to as the BVA. The
 difference between these two versions is that in the VA, we account for only
-one state path through the repeat submodel.  The BVA however sums all possible
+one state path through the repeat submodel. The BVA however sums all possible
 paths through the repeat submodel, and therefore abstracts from the exact
 realization of the alignment of tandem repeats to their consensus.
 
@@ -576,14 +595,33 @@ annotated alignment.
 We will consider a stricter version of the PD in which the corresponding
 annotated alignment column in the correct annotated alignment has to be
 identical (annotations have to be same as well). This stricter condition is
-aimed for the expanded versions of SFF and TTP, since
-\reformulate{otherwise}{Co znamena otherwise? Toto cele nie je prilis jasne} it
-would treat repeats as gaps despite having orthologs in the other sequence (our
-models treat such repeats independently and models them formally as gaps).  For
-the 3-state HMM, this stricter condition is equivalent to the original version,
-because there is one-to-one correspondence between alignments and alignment
-annotation.  The running time of the PD is again $O(nmE)$.\todo{Rozdiely v
-algoritmoch}
+aimed for the expanded versions of SFF and TTP, since without this condition
+the PD would treat repeats as gaps despite having orthologs in the other
+sequence (our models treat such repeats independently and models them formally
+as gaps). For the 3-state HMM, this stricter condition is equivalent to the
+original version because each alignment column determine the used state.
+The running time of the PD is again $O(nmE)$. 
+
+The difference from the original PD is in the used recurrence. In stricter
+version we also keep the used label $c$ in the recurrence $M$. The
+interpretation of $M[i,j,a]$ if following.  The score of the best annotated
+alignment that aligning sequences $X[:i]$ and $Y[:j]$, where the last
+annotation symbol is $a$. The recurrence is following:
+\begin{align} 
+M[-1,i,a] &= 0, 0\leq i < m\\\
+M[i,-1,a] &= 0, 0< i < n\\
+M[i,j,a] &= \max_{b\in C}
+\begin{cases}
+ M[i-1,j-1,b]+\prob{(X[i],a, Y[j])}\\
+ M[i,j-1,b]+\prob{(-_{i},a, Y[j])}\\
+ M[i-1,j,b]+\prob{(X[i],a, -_{j})}
+\end{cases}, 0\leq i<n,0\leq j<m 
+\end{align}
+Where $C$ is the set of all annotation symbol and $\prob{A}$ is the posterior
+probability of the annotation alignment column $A$. The posterior probability
+of an annotated alignment column $A$ is the sum of the probabilities of all
+annotated alignments that contain $A$. It can be computed by the
+Forward-Backward algorithm.
 
 \paragraph{Marginalized posterior decoding}
 Marginalized posterior decoding is similar to the posterior decoding. The only
@@ -597,23 +635,22 @@ $(u, i, -_l)$ for all $l$. The algorithm has also time complexity $O(nmE)$.  As
 with PD, this decoding method is not used on the generalized models.
 
 \paragraph{Block posterior decoding}
-Block posterior decoding is based on the posterior decoding and is aimed at 
+Block posterior decoding is based on the posterior decoding and is aimed at
 generalized models. BPD scores whole emissions instead of individual columns.
 The segment of an annotated alignment that was emitted by one emission is
-called a \firstUseOf{block}\todo{Volas to emission alebo block? Teda
-zadefinujem to, ale v buducnosti to moc nepouzivam}. In particular, the states
-$M$, $I_X$ and $I_Y$ emit one-column blocks, and state $R$ emits multicolumn
-blocks. An annotated alignment can be divided into blocks using $\varnothing$
-symbol, which mark continuation of a block.  The gain function scores each
-block individually. A one-column block $(u_i, a_i, b_i), u_i\in\{M, I_X, I_Y\}$
-gets score $+1$ if there is an identical column in the true annotated
-alignment; otherwise gain for such a block is $0$. A block of form
-$\Lambda_E=(u_i, a_i, b_i)(\varnothing, a_{i+1}, b_{i+1})\dots (\varnothing,
-a_{j}, b_{j})$ where $(j+1)$-th column does not contain $\varnothing$ (or there
-is no $(j+1)$-th column) gets score $+l$ if the block is correct. The gain $l$
-is the number of emitted non-gap indices in the block. For example block $(R,
-4, -_8)(\varnothing, 5, -_8)(\varnothing, 6, 8)$ contains $4$ non-gap indices:
-$4, 5, 6$ in the first sequence and $8$ in the second sequence.  The block is
+called a \firstUseOf{block}. In particular, the states $M$, $I_X$ and $I_Y$
+emit one-column blocks, and state $R$ emits multicolumn blocks. An annotated
+alignment can be divided into blocks using $\varnothing$ symbol, which mark
+continuation of a block.  The gain function scores each block individually. A
+one-column block $(u_i, a_i, b_i), u_i\in\{M, I_X, I_Y\}$ gets score $+1$ if
+there is an identical column in the true annotated alignment; otherwise gain
+for such a block is $0$. A block of form $\Lambda_E=(u_i, a_i,
+b_i)(\varnothing, a_{i+1}, b_{i+1})\dots (\varnothing, a_{j}, b_{j})$ where
+$(j+1)$-th column does not contain $\varnothing$ (or there is no $(j+1)$-th
+column) gets score $+l$ if the block is correct. The gain $l$ is the number of
+emitted non-gap indices in the block. For example block $(R, 4,
+-_8)(\varnothing, 5, -_8)(\varnothing, 6, 8)$ contains $4$ non-gap indices: $4,
+5, 6$ in the first sequence and $8$ in the second sequence.  The block is
 considered correct if exactly the same regions in $X$ and $Y$ form a block with
 the same annotation in the true annotated alignment.
 
@@ -622,9 +659,9 @@ the same annotation in the true annotated alignment.
 \includegraphics[width=11cm]{../figures/BlockPosterior.pdf}
 \end{center}
 \caption[Block posterior decoding function]{ 
-An example of the BPD gain function. Gray solid boxes enclose single emissions,
-dashed boxes combine multiple emissions (each alignment column in such a box is
-one emission). Emission from repeat state have gain $+16$ because it emits $16$
+An example of the BPD gain function. Gray solid boxes enclose single blocks,
+dashed boxes combine multiple block (each alignment column in such a box is
+one block). Block from repeat state have gain $+16$ because it emits $16$
 sequences in exactly same regions of the input sequences.  Other alignment
 columns get $+1$ only if there is same alignment column in the correct
 alignment that was generated by same state.
@@ -640,23 +677,24 @@ not used such models). An example of this gain function in Figure
 \ref{FIGURE:BLOCK_POSTERIOR}.
 
 To optimize this gain function, we have to compute posterior probabilities for
-all potential emissions. In a generalized pHMM, each emission is given by a
-state and two intervals; one in sequence $X$ and one in sequence $Y$. In our
-models, only state $R$ is generalized and the overall number of states is
-constant. The number of possible emissions is therefore $O(n^2m^2)$. The
-expected gain of the emission is the posterior probability multiplied by the
-number of emitted symbols. After computing the expected gains of individual blocks,
-we can compute the highest scoring annotated alignment in $O(n^2m^2)$ time. \todo{Ako? aspon strucne}
+all potential blocks. This can be done by the Forward-backward algorithm. In
+a GpHMM, each block is given by a state and two intervals; one in
+sequence $X$ and one in sequence $Y$. In our models, only state $R$ is
+generalized and the overall number of states is constant. The number of
+possible blocks is therefore $O(n^2m^2)$. The expected gain of the block 
+is its posterior probability multiplied by the number of emitted symbols. After
+computing the expected gains of individual blocks, we can compute the highest
+scoring annotated alignment in $O(n^2m^2)$ time by the dynamic programming that
+is very similar to the Viterbi algorithm from section \ref{SECTION:GPHMM}, but
+with 
 
-Let $E$ be the number of transitions in the repeat submodel. The naive
-\reformulate{computation}{detaily preco} of the expected gain for a pair of
-intervals of length $n'$ and $m'$ can be computed in $O(n'm'E)$ time by the
-forward algorithm for generalized pair HMMs, which would lead to $O(n^3m^3E)$
-algorithm for computing all posterior probabilities by forward-backward
-algorithm\todo{toto mam pocit ze ej aj tak zle}. We will show that by using
-proper preprocessing  we can lower the time complexity of computing the
-expected gain for a pair of intervals to $O(k)$ where $k$ is the number of
-sunflower submodels (in case of TTP, $k=1$).
+If we use the Forward algorithm for pHMM for computation of the emissions of
+state $R$, then time complexity of the Forward-Backward algorithm (computation
+of the posterior probabilities of all blocks) would be in $O(n^3m^3E)$ time,
+where $E$ is the number of transitions in the repeat submodel; $O(nmE)$ term is
+computing the emission probability. With some pre-processing, we can lower the
+$O(nmE)$ term to $O(k)$ where $k$ in the number of sunflower pairs in the
+repeat submodel (in case of TTP, $k=1$).
 
 Let us consider the repeat submodel $H$ with $k$ sunflower pairs $S^X_1, S^Y_1,
 \dots, S^X_k, S^Y_k$. Let $p_i$ be the probability of entering sunflower
@@ -668,7 +706,7 @@ $Y'$ by $H$ as
 \prob{X', Y'\mid H} = \sum_{i=1}^k p_i\prob{X'\mid S^X_i}\prob{Y'\mid S^Y_i}
 \end{equation}
 
-By pre-computing all of the terms $\prob{X'\mid S^X_i}$ and $\prob{Y'\mid
+By pre-computing all of the emission terms $\prob{X'\mid S^X_i}$ and $\prob{Y'\mid
 S^Y_i}$, we can compute the posterior probability of the block in $O(k)$ time.
 Naive computation of probability $\prob{X'\mid S^X_i}$ for all intervals $X'$
 would take $O(n^3E)$ time, but this can be further improved. When computing
@@ -678,16 +716,39 @@ looking at the forward probability of final state for the corresponding column.
 We thus need to run the forward algorithm only once for every suffix of $X$.
 The optimization for the other sequence is analogous. Using these techniques,
 we can pre-compute the emission terms in $O((n^2+m^2)E)$ time, and the overall
-time complexity of the BPD is $O(kn^2m^2 + (n^2+m^2)E)$. \reformulate{By same
-techniques we can optimize the BVA with same time complexity}{nejake detaily
-cim sa lisy}.
+time complexity of computing the posterior probabilities of blocks is
+$O(kn^2m^2 + (n^2+m^2)E)$. 
+
+Once the posterior probabilities are computed, we find the best-scoring alignment 
+using similar dynamic programming as for the PD. The difference is that blocks
+now are longer than one column and therefore the recurrence uses   
+\begin{align} 
+M[-1,i,a] &= 0, 0\leq i < m\\\
+M[i,-1,a] &= 0, 0< i < n\\
+M[i,j,a] &= \max_{b\in C}
+ M[i-i',j-j',b]+\prob{(X[i':i],a, Y[j':j])}
+\end{align}
+where $0\leq i'\leq i<n,0\leq j'\leq j$ and $i-i'>0$ or $j-j'>0$ (at least one
+base was emitted).  The $\prob{(X[i':i],a, Y[j':j])}$ is the posterior
+probability of a block with label $a$ containing sequences $X[i':i]$ and
+$Y[j':j]$. The time complexity of this step is $O(n^2m^2)$ and therefore the
+overall time complexity of BPD is $O(kn^2m^2 + (n^2+m^2)E)$.\todo{Skontroluj ci
+to takto sedi s oznaceniami, alebo je to kravina} 
+
+We can use the same techniques to optimize the BVA; the most expensive step in
+the BVA is the computation of the block probabilities for state $R$, namely
+$e_{v,(X',Y')}$. We can use same trick to pre-compute all emission terms in
+$O((n^2+m^2))$ time, afterwards we can compute block probability in $O(k)$.
+The complexity of the Viterbi algorithm (see Section \ref{SECTION:GPHMM})
+will be $O(kn^2m^2)$ and the overall time complexity of BVA is $O(kn^2m^2 +
+(n^2+m^2)E)$. 
 
 \paragraph{Post-processing}
 The problem with the SFF and the TTP models is that they model repeat sequences
 in the sequences $X$ and $Y$ independently and do not try to align tandem
-repeats at orthologous locations.  Therefore we postprocess the alignment using
+repeats at orthologous locations.  Therefore we post-process the alignment using
 the 3-state pHMM by realigning segments of alignments that are annotated as
-repeats. We also include adjacent gaps into this postprocess step.
+repeats. We also include adjacent gaps into this post-process step.
 
 \section{Optimizations}\label{SECTION:REPOPT}
 
@@ -751,39 +812,42 @@ rotated, and therefore intervals in both sequences would be shifted.
 
 
 \section{Experiments}
-\todo{Dost hluba sekcie, daj to ako 2 subsections do experiments}
+In sections \ref{SECTION:REPMODELS} and \ref{SECTION:REPDECODING} we proposed
+new methods for aligning sequences that contain tandem repeats; SFF and TTP
+model.  We also described five decoding methods, out of which two are new (BVA
+and BPD). To show the usefulness of proposed methods, we investigate the
+effects of using these methods instead of standard methods for aligning
+sequences, which were described in Section \ref{SECTION:REPALNMETHODS}. We 
+evaluated these methods on the simulated data from the human-dog alignment. Our
+goal is to show that proposed models can improve the alignments containing
+tandem repeats, find limitations of these methods, and opportunity for further
+improvements.
 
-\todo{Poriadny uvod k experimentom,. Co ideme porovnavat s cim, a na akych datach. Preco a s nadhladom}
-
-At first, we estimated parameters of the model
-using annotated human-dog alignment by TRF program \cite{Benson1999}.
-Parameters for 3-state model, and 3-state submodel of SFF and transitions to
-the repeat state were therefore trained by supervised learning. Setting SFF and
-TTP parameters was discussed in the sections \ref{SECTION:SUNFLOWERMODEL} and
-\ref{SECTION:TANTAN}.\todo{tento odstavec Nejako pridaj do 4.2.2 a 4.2.3}
 \subsection{Simulated data}
-We sampled 200 test alignments each of length at least 200 bases from the SFF
-submodel with the \reformulate{condition}{Ako sa realizovala tato [podmienka}, that the number of repetitions in the tandem
-repeat has to be at least three in both sequences. Reason for this is that
-otherwise we would have many segments of alignments that are annotated as repeats,
-but in fact contain only one copy of the motif. We
-refer to these alignments (along with the sampled repeat annotation) as the correct
-alignments and correct annotation (repeat intervals and consensuses).  The
-program Context \cite{Hickey2011} was trained of the 200 separate alignments
-sampled from the model. 
+We trained the SFF model, the TTP model, and the 3-state HMM on the human-dog
+alignment as described in section \ref{SECTION:ALNPAREST}. Then we sampled 200
+test alignments each of length at least 200 bases from the SFF submodel with
+the condition, that the number of repetitions in the tandem repeat has to be at
+least three in both sequences; we were sampling emission from state $R$ until
+the condition was met.  Reason for this is that otherwise we would have many
+segments of alignments that are annotated as repeats, but in fact contain only
+one copy of the motif. We refer to these alignments (along with the sampled
+repeat annotation) as the correct alignments and correct annotation (repeat
+intervals and consensuses).  The program Context \cite{Hickey2011} was trained
+of the 200 separate alignments sampled from the model.
 
-\reformulate{
-We used the same model for evaluation of parameters. To evaluate the robustness
-of our method, we assess the effects of misspecification of the parameters by
-estimating model parameters from human-chicken alignment and perturbing model
-parameters (details are in the next section).}{Daj to len na jedno miest (zrejme az tam dalej)}
+\subsection{Accuracy measures}
+We use several measures to compare correct alignment and predicted alignments.
+It is important to use more measures for evaluating predicted alignment,
+because the measure determine the optimal gain function; when comparing using
+measure $\beta(\Lambda, \Lambda')$, we can alway search for an alignment that
+maximizes/minimizes the expected value of $\beta(\Lambda, \Lambda')$. This is
+not desirable unless we know what exact measure we want to optimize. 
 
-\paragraph{Accuracy measures} \todo{Uvod ze na porovnavanie spravnych zarovnani
-a predikcii pouzivame niekolko mier}The first measure we used was the error
-rate: the fraction of incorrectly predicted columns of an alignment. It was
-measured only on the alignment columns generated from non-repeat states during
-sampling, because SFF and TTP do not model alignment of
-repetitive regions.
+The first measure we used was the error rate; the fraction of incorrectly
+predicted columns of an alignment. It was measured only on the alignment
+columns generated from non-repeat states during sampling, because SFF and TTP
+do not model alignment of repetitive regions.
 
 Additionally, we investigate the accuracy of predicting exact repeat block
 boundaries in alignments by measuring the number of correctly predicted repeat
@@ -791,35 +855,33 @@ blocks; a block is correctly predicted if it contains identical parts of the
 sequences as the corresponding block in the correct alignment. We report the
 block sensitivity, which is the number of correctly predicted blocks divided by
 the number of all repeat blocks in the correct alignment, and block
-specificity, which is the the number of correctly predicted blocks divided by
+specificity, which is the number of correctly predicted blocks divided by
 the number of all predicted blocks.  We also investigate the accuracy of
-prediction of repeat annotation for individual \reformulate{alignment
-columns}{je to na stlpce alebo bazy}; the repeat sensitivity and specificity.
+prediction of repeat annotation for individual bases; the repeat sensitivity and specificity.
 
-\reformulate{We also measured the relation of the error rate and the distance
-from the nearest repeat. Alignment column was considered as repeat if in the
-correct alignment at least one base of the column was annotated as an repeat.
-The distance is measured by the number of columns. This measure is important,
-because when the distance from the repeat is high, our model is identical to
-3-state pHMM and therefore the performance of both models should be similar in
-such regions. However, we do expect models incorporating repeats to be more
-precise in the regions near tandem repeats.}{presun k vysledkom}
+\subsection{Results}\label{SECTION:REPSIMRESULTS}
+To measure the accuracy of the predicted alignment, and measure the effects of
+using different models and algorithms on the accuracy of predicted alignments,
+we did following experiments on the simulated data. At first we compare the
+accuracy of our SFF-based methods with standard alignment methods. Then we
+investigate the effect of using inaccurate intervals and motifs on the accuracy
+of the alignment. Afterwards we compare the SFF model with the TTP model. Then
+we tried to quantify the effect of misspecification of the model parameters,
+and various types of repeat masking. In the end we study the relation between
+the error rate and the distance from the nearest repeat, since we expect that
+the most significant improvement of our model will be near repeats, because
+outside of repeats, the SFF model is very similar to the 3-state model.
 
-\section{Results of the Simulation Experiments}\label{SECTION:REPSIMRESULTS}
-
-This section discuss the results of the simulation experiment. We split results
-of various version of algorithms into several tables. The results for SFF and
-TTP models are in the Table \ref{TABLE:SFFMAIN}. Table
-\ref{TABLE:SFFMAINORIGINAL} contain results for same algorithms, but with use
-of the correct intervals and motifs instead of of their approximations obtained
-by TRF program. Results for the non-SFF alignment programs and methods for
-aligning sequences with repeats is in the Table \ref{TABLE:SFFOTHER}. The
-effects of misspecification of mode parameters is in the Table
-\ref{TABLE:SFFMARGINALIZED} and the effects of different masking methods on
-posterior and Viterbi algorithm is in the table \ref{TABLE:SFF3STATEMASK}.
-Figure \ref{FIGURE:SFF_GRAPHS} compare the relation between the error rate and
-the distance from the repeat for studied methods. Following text contain the
-discussion of the results.
+We run algorithms described in section \ref{SECTION:ALNDECODING} with SFF model
+and compared it with standard alignment methods. The results are in the Table
+\ref{TABLE:SFFMAIN}. We choose the Viterbi algorithm with 3-state model as a
+baseline method. From standard methods, we also run the Muscle software
+\cite{Edgar2004}, the Context \cite{Hickey2011}, and the posterior decoding
+with and without hard-masking.  The hard-masking was done using the TRF
+program. None of the standard methods provides the repeat annotation and
+therefore we report only the alignment error. The only exception is the PD with
+masking, where we annotated predicted columns as repeats if at least one base
+in the column was masked.
 
 \def\M{$^\circ$} % mark by a star
 \def\MM{$^{\circ\circ\circ}$} % mark by two stars
@@ -841,65 +903,85 @@ Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \hline
 %\hline
 3-state VA (baseline)    & 4.78\% \\
+Context             & 5.98\% \\
+Muscle              & 5.62\% \\
+3-state PD   & \bf 4.41\% \\
+3-state masked PD\DD & 5.03\% & 99.23\% & 74.16\% & 7.66\% & 7.24\%\\
 \hline
 SFF MPD   & {\bf 3.37\%} & {\bf 95.97\%} & 97.78\% & {\bf 43.07\%} & 44.87\%\\
 SFF PD    & 3.53\% & 95.86\% & 97.87\% & 42.70\% & 47.37\%\\
 SFF BPD   & 3.51\% & 93.09\% & {\bf 98.07}\% & 36.50\% & 41.67\%\\
 SFF BVA   & 3.91\% & 93.26\% & 97.96\% & 35.77\% & 40.66\%\\
 SFF VA    & 4.04\% & 95.29\% & 97.85\% & 42.70\% & {\bf 48.95\%}\\
-TANTAN BPD& 5.05\% & 61.38\% & 97.48\% & 0.00\% & 0.00\%\\
-TANTAN BVA& 6.17\% & 67.86\% & 96.51\% & 0.00\% & 0.00\%\\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy of decoding methods on simulated data.}\label{TABLE:SFFMAIN}
+\caption{Accuracy of decoding methods on simulated data. \DD Columns with at
+    least one masked character are considered as repeats.
+}\label{TABLE:SFFMAIN}
 \end{table*}
 
-Since we run the decoding algorithms described in the section
-\ref{SECTION:REPDECODING} with various combination of additional information
-(i.e. repeat intervals and motifs), we use following symbols to
-distinguish them.
+In general, using SFF model decreased the alignment error rate by $15-30\%$
+compared to the baseline method (see table \ref{TABLE:SFFMAIN}). Other standard
+methods also had in general higher error rate than the SFF-based methods.  The
+high error rate of the Context program could be caused by insufficient training
+data or some software issues. We run muscle with default parameters and
+therefore its scoring scheme was not tailored to our method.  Higher error rate
+of PD with hard-masking might be caused by the insufficient accuracy of the
+tandem repeat annotation.
 
-\begin{itemize}[itemsep=-1mm]
+The $15\%$ decrease of the error rate was obtained by replacing the 3-state
+model with the Sunflower Field model, additional improvements was due to use of
+the different decoding algorithms, with the marginalized posterior decoding
+having the lowest error rate. The Viterbi based methods had consistently higher
+error rate than posterior based methods and the block-based versions of the
+algorithms decreased the error rate by at most $3.3\%$ compared to the
+non-block based methods. Surprisingly, block based methods had poorest
+performance in the block sensitivity and specificity and repeat sensitivity.
+These measures are closer to what block methods optimize, so we expected the
+opposite. Reason for this is perhaps due to the use of approximate {intervals
+obtained by TRF and SRF}. Note that while block-based methods use both
+predicted intervals and motifs due to their high running time, the remaining
+methods use only motifs. 
 
-\item[\M] method uses the correct motifs. 
+\begin{table*}
+\begin{center}
+\begin{tabular}{lr@{\quad}rr@{\quad}rr}
+\hline
+          & \CC{Alignment} & \multicolumn{2}{c}{Repeat} & 
+\multicolumn{2}{c}{Block}\\
+Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
+\hline
+\hline
+%\hline
+SFF MPD   & {\bf 3.37\%} & {\bf 95.97\%} & 97.78\% & {\bf 43.07\%} & 44.87\%\\
+SFF PD    & 3.53\% & 95.86\% & 97.87\% & 42.70\% & 47.37\%\\
+SFF BPD   & 3.51\% & 93.09\% & {\bf 98.07}\% & 36.50\% & 41.67\%\\
+SFF BVA   & 3.91\% & 93.26\% & 97.96\% & 35.77\% & 40.66\%\\
+SFF VA    & 4.04\% & 95.29\% & 97.85\% & 42.70\% & {\bf 48.95\%}\\
+\hline
+SFF MPD\M            & {\bf 3.02}\% & {\bf 98.93}\% & 99.64\% & 77.01\% & 76.17\% \\ 
+SFF PD\M             & 3.42\% & 98.84\% & 99.51\% & 75.91\% & 80.93\% \\
+SFF BPD\MM           & 3.21\% & 97.70\% & \bf 99.87\% & 80.66\% & {\bf 94.44}\% \\
+SFF BVA\MM           & 3.71\% & 98.12\% & 99.85\% & {\bf 81.75}\% & 92.18\% \\
+SFF VA\M             & 3.94\% & 98.54\% & 99.45\% & 75.55\% & 83.47\% \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Accuracy of decoding methods using real motif and/or real intervals on simulated data.
+\M method uses motifs from the correct repeat blocks.
+\MM method uses the correct motifs and intervals from the
+    correct repeat blocks.
+}\label{TABLE:SFFMAINORIGINAL}
+\end{table*}
 
-\item[\D] method uses intervals from the correct repeat blocks.
-
-\item[\MM] method uses the correct motifs and intervals from the
-correct repeat blocks.
-
-\item[\R] Parameters of the three-state submodel were estimated from
-human-chicken alignment. 
-
-\item[\RR] Parameters of SFF submodel were perturbed randomly.
-
-\item[\DD] Columns with at least one masked character are considered as
-repeats.
-
-\item[\S] Non-overlapping set of repeats from TRF output with maximal total
-score is used.
-
-\end{itemize}
-
-In general, using SFF model decreased the alignment error rate by $15-30\%$ as
-opposed to baseline method as can be seen in table \ref{TABLE:SFFMAIN}. The
-$15\%$ decrease was obtained by replacing 3-state model with the Sunflower Field
-model, other improvements were through using different decoding algorithms,
-with the marginalized posterior decoding having the lowest error rate. The
-Viterbi based methods had consistently higher error rate than posterior based
-methods and the block-based versions of the algorithms decreased the error rate
-by at most $3.3\%$ as opposed to non-block based methods. Surprisingly, block
-based methods had poorest performance in the block sensitivity and specificity
-and repeat sensitivity. These measures are closer to what block methods
-optimize, so we expected opposite. Reason for this is perhaps due to
-approximate {intervals and/or motifs obtained TRF and SRF}, since when running
-algorithms that uses correct intervals and motifs (see Table
-\ref{TABLE:SFFMAINORIGINAL}), their performance improved significantly.
-Results in Table \ref{TABLE:SFFMAINORIGINAL} helps us to quantify the effect of
-not using the exact repeat intervals and also can be used as an upper bounds
-for the performance of our models. There is clearly room for improvements of
-repeat intervals, we could perhaps try to use other programs that detect tandem
+Indeed when we replace predicted motifs and intervals with the correct ones,
+accuracy of block-based methods improved significantly (see Table
+\ref{TABLE:SFFMAINORIGINAL}). Results in Table \ref{TABLE:SFFMAINORIGINAL}
+helps us to quantify the effect of not using correct repeat intervals and thus
+can be seen as an upper bounds for the performance of our models achievable by
+improving repeat annotation. There is clearly room for improvements of repeat
+intervals; we could perhaps try to use other programs that detect tandem
 repeats, like ATRhunter \cite{Wexler2005} or mreps \cite{Kolpakov2003}.
 
 \begin{table*}
@@ -911,75 +993,45 @@ repeats, like ATRhunter \cite{Wexler2005} or mreps \cite{Kolpakov2003}.
 Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \hline
 \hline
-%\hline
-3-state VA (baseline)    & 4.78\% \\
-\hline
-SFF MPD\M            & {\bf 3.02}\% & {\bf 98.93}\% & 99.64\% & 77.01\% & 76.17\% \\ 
-SFF PD\M             & 3.42\% & 98.84\% & 99.51\% & 75.91\% & 80.93\% \\
-SFF BPD\MM           & 3.21\% & 97.70\% & 99.87\% & 80.66\% & {\bf 94.44}\% \\
-SFF BVA\MM           & 3.71\% & 98.12\% & 99.85\% & {\bf 81.75}\% & 92.18\% \\
-SFF VA\M             & 3.94\% & 98.54\% & 99.45\% & 75.55\% & 83.47\% \\
-TANTAN BPD\D         & 3.42\% & 60.45\% & {\bf 99.90}\% & 0.36\% & 0.46\% \\
-TANTAN BVA\D         & 3.83\% & 61.74\% & 99.88\% & 0.00\% & 0.00\% \\
-\hline
-\end{tabular}
-\end{center}
-\caption{Accuracy of decoding methods using real motif and/or real intervals on simulated data.}\label{TABLE:SFFMAINORIGINAL}
-\end{table*}
-
-Similar behaviour was obtained for TTP model; using the original intervals, TTP
-model has only slightly worse error rate than the SFF, which is expectable, since
-the data were generated from the SFF model. However, using TRF for intervals,
-TTP has significantly higher error rate, which means that TTP is even more
-sensitive to the intervals that are used. Also the high error rate and low
-repeat and block prediction performance could be caused by improperly treating
-the first repetition, because annotations of TTP methods almost always skip the
-first copy of repeat motif. Additionally, in TPP the motifs in tandem repeat
-are not dependent between sequences, which can be also source of higher error
-rate.  This could be improved by merging the chain of prefix states $P_1,
-\dots, P_K$ into chain of match states aligning the first repetition.
-
-Results of other alignment methods are in the Table \ref{TABLE:SFFOTHER}.
-Namely the Context program, Muscle, 3-state posterior algorithm and 3-state
-posterior algorithm with hard-masking. Apart from the 3-state posterior
-algorithm, all methods had higher error rate than the baseline method. The high
-error rate of the Context program could be caused by insufficient training data
-or some software issues. We run muscle with default parameters and therefore
-its scoring scheme was not tailored to our method. Using the hard-masking
-produced alignment with higher error rate. It might be cause by the
-insufficient accuracy of the tandem repeat annotation.
-
-\begin{table*}
-\begin{center}
-\begin{tabular}{lr@{\quad}rr@{\quad}rr}
-\hline
-          & \CC{Alignment} & \multicolumn{2}{c}{Repeat} & 
-\multicolumn{2}{c}{Block}\\
-Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
-\hline
-\hline
-%\hline
 3-state VA (baseline)    & {4.78}\% \\
 \hline
-Context             & 5.98\% \\
-Muscle              & 5.62\% \\
-3-state PD   & \bf 4.41\% \\
-3-state masked PD\DD & 5.03\% & 99.23\% & 74.16\% & 7.66\% & 7.24\%\\
+%\hline
+SFF BPD   & \bf 3.51\% & 93.09\% & {\bf 98.07}\% & \bf 36.50\% &\bf 41.67\%\\
+SFF BVA   & 3.91\% & \bf 93.26\% & 97.96\% & 35.77\% & 40.66\%\\
+TTP BPD& 5.05\% & 61.38\% & 97.48\% & 0.00\% & 0.00\%\\
+TTP BVA& 6.17\% & 67.86\% & 96.51\% & 0.00\% & 0.00\%\\
+\hline
+TTP BPD\D         & \bf 3.42\% & 60.45\% & {\bf 99.90}\% & \bf 0.36\% & \bf 0.46\% \\
+TTP BVA\D         & 3.83\% & \bf 61.74\% & 99.88\% & 0.00\% & 0.00\% \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy for standard algorithms and other tools on the simulated data.
-Most of the methods did not annotate the alignment with tandem repeats and
-therefore relating metrics are not available.
-}\label{TABLE:SFFOTHER}
+\caption{Accuracy of decoding methods using real motif and/or real intervals on simulated data.
+\D method uses intervals from the correct repeat blocks.
+}\label{TABLE:TANTANCOMP}
 \end{table*}
 
-Since we did use the same model for generating data and testing, we tried to
+The change from predicted to real intervals had even more pronounced effect on
+the TTP model (see Table \ref{TABLE:TANTANCOMP}); using the original intervals,
+the TTP model has only slightly worse error rate than the SFF, which is
+expectable, since the data were generated from the SFF model. However, using
+predicted intervals, TTP has a significantly higher error rate, which means
+that TTP is even more sensitive to the intervals that are used. The high error
+rate and low repeat and block prediction accuracy could be caused by improperly
+modeling the first repetition, because annotations of the TTP methods almost
+always skip the first copy of the repeat motif. Additionally, in TPP the motifs
+in tandem repeat are not dependent between sequences, which can  also increase
+error rate.  This could be improved by merging the separate chain of prefix
+states $P_1, \dots, P_K$ for sequences $X$ and $Y$ into a chain of match states
+aligning the first repetition.
+
+
+Since we use the same model for generating data and testing, we tried to
 quantify the effect of misspecification of the model parameters.  SFF model
 have two principal types of parameters; parameters of the 3-state HMM and
 parameters of the Sunflower model. We investigate the effect of
 {misspecification} for both types independently. For the parameters of 3-state
-model, we have estimate the parameters from human-chicken alignments instead of
+model, we have estimate the parameters from human-chicken alignment instead of
 human-dog alignment. For the second type, we have perturbed the each parameter
 of Sunflower model randomly by additive term from $0.02$ to $0.05$. On these
 models we run marginalized posterior decoding. Table
@@ -1009,17 +1061,22 @@ SFF MPD\M  & \bf 3.02\% & \bf 98.93\% & \bf 99.64\% &\bf 77.01\% &\bf 76.17\% \\
 \end{tabular}
 \end{center}
 \caption{Accuracy for marginalized posterior decoding with different models or real motifs.
-The best and the second best are bold.} \label{TABLE:SFFMARGINALIZED}
+The best and the second best are bold.
+\R Parameters of the three-state submodel were estimated from
+human-chicken alignment. 
+\RR Parameters of SFF submodel were perturbed randomly.
+} \label{TABLE:SFFMARGINALIZED}
 \end{table*}
 
-Table \ref{TABLE:SFF3STATEMASK} investigates the use of the different repeat
-finding methods for masking. We used the Sunflower model (modified for finding
-tandem repeats as described in section \ref{SECTION:SUNFLOWERMODEL}), TRF, and
-TRF with non-overlapping repeats (we select maximal scoring non-overlapping set
-of tandem repeats out of TRF output). We used hard-masking as described in
-section \ref{SECTION:REPALNMETHODS}. For decoding we used both the VA and the
-PD.  Apart from  using correct intervals, the best performing masking was used
-with non-overlapping repeats from TRF.
+We were also investigating the use of the different different repeat finding
+methods for masking (see Table \ref{TABLE:SFF3STATEMASK}. We use the Sunflower
+model (modified for finding tandem repeats as described in section
+\ref{SECTION:SUNFLOWERMODEL}), TRF, and TRF with non-overlapping repeats (we
+select maximal scoring non-overlapping set of tandem repeats out of TRF
+output). We used hard-masking as described in section
+\ref{SECTION:REPALNMETHODS}. For decoding we used both the VA and the PD.
+Apart from  using correct intervals, the best performing masking was used with
+non-overlapping repeats from TRF.
 
 \begin{table*}
 \begin{center}
@@ -1045,15 +1102,28 @@ Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy of decoding method using simple 3-state HMM and hard-masking. The best and the second best are bold. }\label{TABLE:SFF3STATEMASK}
+\caption{Accuracy of decoding method using simple 3-state HMM and hard-masking.
+    The best and the second best are bold.  \DD Columns with at least one
+    masked character are considered as repeats.
+    \MM method uses the correct motifs and intervals from the correct
+repeat blocks.  \S Non-overlapping set of repeats from TRF output with maximal
+total score is used. 
+}\label{TABLE:SFF3STATEMASK} 
 \end{table*}
 
-Finally, we investigate the relation between the error rate and the distance
-from the nearest repeat. Figure \ref{FIGURE:SFF_GRAPHS} contains graphs for
-this metric for various combination of parameters. In general, all algorithms
-have highest error rate near boundaries of the repeat, with the error rate lowering
-with the distance from the repeat. Most methods reach the baseline error rate
-within distance $10$ bases of the repeat border.
+In the last experiment, we investigate the relation between the error rate and
+the distance from the nearest repeat.  An alignment column was considered as a
+repeat if in the correct alignment at least one base of the column was
+annotated as a repeat.  The distance from the repeat is measured by the number
+of columns. This measure is important, because when the distance from the
+repeat is high, our model is almost identical to a 3-state pHMM, and therefore
+the performance of both models should be similar in such regions. However, we
+do expect models incorporating repeats to be more precise in the regions near
+tandem repeats.  Figure \ref{FIGURE:SFF_GRAPHS} contains graphs for this metric
+for various combination of parameters. In general, all algorithms have highest
+error rate near boundaries of the repeat, with the error rate lowering with the
+distance from the repeat. Most methods reach the baseline error rate within
+distance $10$ bases of the repeat border.
 
 \begin{figure}
 \begin{center}
@@ -1070,26 +1140,30 @@ within distance $10$ bases of the repeat border.
 \includegraphics[width=\textwidth]{../figures/error_graph_sffblock.pdf}
 \caption{Block decodings}\label{FIGURE:SFFBLOCKS}
 \end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=\textwidth]{../figures/error_graph_marginalized.pdf}
-\caption{Same method, different models}\label{FIGURE:SFFWEIRD}
-\end{subfigure}%
-
+%\begin{subfigure}{0.5\textwidth}
+%\includegraphics[width=\textwidth]{../figures/error_graph_marginalized.pdf}
+%\caption{Same method, different models}\label{FIGURE:SFFWEIRD}
+%\end{subfigure}%
 \begin{subfigure}{0.5\textwidth}
 \includegraphics[width=\textwidth]{../figures/error_graph_sffvstantan.pdf}
-\caption{Sunflower and TANTAN}\label{FIGURE:SFFTANTAN}
+\caption{SFF and TTP}\label{FIGURE:SFFTANTAN}
 \end{subfigure}%
-\begin{subfigure}{0.5\textwidth}
-\includegraphics[width=\textwidth]{../figures/error_graph_3statemasking.pdf}
-\caption{Different methods of masking}
-\end{subfigure}%
+%\begin{subfigure}{0.5\textwidth}
+%\includegraphics[width=\textwidth]{../figures/error_graph_3statemasking.pdf}
+%\caption{Different methods of masking}
+%\end{subfigure}%
 \caption{
 The relation between the error rate and the distance from the nearest repeat. On the Y
 axis is error rate of the algorithm; the number of incorrectly aligned columns.
 On the X axis is the distance from the nearest repeat. Baseline is the overall
 error rate, with no relation to the distance from the repeat border, for
 3-state model with the VA.
-}\label{FIGURE:SFF_GRAPHS} 
+\M method uses motifs from the correct repeat blocks.
+\D method uses intervals from the correct repeat blocks.
+\MM method uses the correct motifs and intervals from the
+    correct repeat blocks.
+\S Non-overlapping set of repeats from TRF output with maximal total
+    score is used.}\label{FIGURE:SFF_GRAPHS} 
 \end{center}
 \end{figure}
 
@@ -1098,11 +1172,10 @@ selection of decoding method can improve error rate near repeats, but most of
 the drop in the error rate was caused by using SFF model. As with other
 metrics, TTP with correct intervals performs similarly to SFF model, but TTPs
 error rate near repeats raises significantly where intervals were obtained from
-TRF (see Figure \ref{FIGURE:SFFTANTAN}). Using different  model did not have
-large effect also on the error rate as we can see in the Figure
-\ref{FIGURE:SFFWEIRD}. Figure \ref{FIGURE:SFFBLOCKS} demonstrates that for
-block methods, using block Viterbi double the error rate near repeat.
-
+TRF (see Figure \ref{FIGURE:SFFTANTAN}).  Figure \ref{FIGURE:SFFBLOCKS}
+demonstrates that for block methods, using block Viterbi double the error rate
+near repeat.  This confirms our expectation that the improvement of the SFF
+model is concentrated near tandem repeat borders.
 
 \begin{comment}
 \section{Possible Improvements}
