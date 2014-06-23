@@ -57,9 +57,9 @@ repetition and Needleman-Wunsch like scoring scheme to score original string
 with its repetitions. Time complexity of this algorithm is $O(n^4)$, and Benson
 also proposed a heuristic algorithm to compute the alignment in a reasonable
 time.  Several variants of this problem were also studied \cite{Sammeth2006,
-Berard2006}\todo{Pripadne spomen v com sa lisia}. It is also
-possible to use a lossy compression scheme to collapse tandem repeats, and then
-align compressed sequences \cite{Freschi2012}.
+Berard2006}\todo{Pripadne spomen v com sa lisia}. It is also possible to use a
+lossy compression scheme to collapse tandem repeats, and then align compressed
+sequences \cite{Freschi2012}.
 
 A Traditional approach to deal with tandem repeats is to mask them in both
 sequences and then align masked sequences by some alignment algorithm.  Masking
@@ -191,29 +191,29 @@ model.}
 \label{FIGURE:SUNFLOWERMODEL}
 \end{figure}
 
-Our model contains typical profile HMM states $M_0,\dots, M_{k-1}, I_{0}, \dots, I_{k-1}$
-and $D_{0}, \dots, D_{k-1}$. The transitions between the states are similar to
-profile HMM:  $M_{i}\to M_{i\oplus 1}, M_i\to I_i, M_i\to D_{i\oplus 1}, I_i\to
-I_i, I_i\to M_{i\oplus 1}, I_i\to D_{i\oplus 1}, D_{i}\to D_{i \oplus 1},
-D_{i}\to M_{i\oplus 1}, D_{i}\to I_i$ for all $0\leq i < k$, where $\oplus$ is
-$+$ modulo $k$. As in the profile HMM, states $D_i$
-are silent. We add silent start state $s$ and silent final state
-$e$ with transitions $s\to M_0, s\to D_0, D_{k-1}\to e, M_{k-1}\to e$ and
-transition $s\to e$ to model empty tandem repeats. The whole model topology is shown in
+Our model contains typical profile HMM states $M_0,\dots, M_{k-1}, I_{0},
+\dots, I_{k-1}$ and $D_{0}, \dots, D_{k-1}$. The transitions between the states
+are similar to profile HMM:  $M_{i}\to M_{i\oplus 1}, M_i\to I_i, M_i\to
+D_{i\oplus 1}, I_i\to I_i, I_i\to M_{i\oplus 1}, I_i\to D_{i\oplus 1}, D_{i}\to
+D_{i \oplus 1}, D_{i}\to M_{i\oplus 1}, D_{i}\to I_i$ for all $0\leq i < k$,
+where $\oplus$ is $+$ modulo $k$. As in the profile HMM, states $D_i$ are
+silent. We add silent start state $s$ and silent final state $e$ with
+transitions $s\to M_0, s\to D_0, D_{k-1}\to e, M_{k-1}\to e$ and transition
+$s\to e$ to model empty tandem repeats. The whole model topology is shown in
 Figure \ref{SUBFIGURE:SUNFLOWERSILENTCYCLE}.
 
 The problem is that the cyclic profile contains a cycle of silent states, which
 causes problems with training and decoding algorithm (see Section
 \ref{SECTION:SILENT}. Removing these states would lead to additional
-$\theta(k^2)$ edges. Therefore, we have decided to remove
-the transition between delete states $D_{k-1}$ and $D_0$. To compensate for the lost
+$\theta(k^2)$ edges. Therefore, we have decided to remove the transition
+between delete states $D_{k-1}$ and $D_0$. To compensate for the lost
 possibility of deleting an arbitrary part of the tandem repeat, we add an
 additional chain of delete states $D'_0, \dots, D'_{k-2}$, which are accessible
 only from state $D_{k-1}$ by transition $D_{k-1}\to D'_0$, and their outgoing
 transitions are similar to delete state transitions: $D'_{i}\to M_{i+1},
 D'_{i}\to I_i$ for $0\leq i\leq k-2$ and $D'_{i} \to D'_{i+1}$ for $0\leq i <
 k-2$. Note that $D'_{k-2}$ is connected only to $M_{k-1}$ to avoid passing a
-full circle by delete states. The full model is in Figure
+ full circle by delete states. The full model is in Figure
 \ref{SUBFIGURE:SUNFLOWER}. We call this model the \firstUseOf{Sunflower} model.
 
 This model has $4k+1$ states and $12k+1$ transitions, out of which $2k+1$
@@ -335,9 +335,9 @@ emission $X[i]$ evolved from $X[i-l]$ over time $t$.
 
 The TANTAN model evolution of repetitions differently than the Sunflower model.
 While the Sunflower model assumes that the repetitions evolved independently
-from the single common ancestral motif,  TANTAN assumes that each repetition evolves
-from the previous repetition. Therefore the mutations, insertions, and deletions
-carry over to the following repetition.
+from the single common ancestral motif,  TANTAN assumes that each repetition
+evolves from the previous repetition. Therefore the mutations, insertions, and
+deletions carry over to the following repetition.
 
 \section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
 
@@ -348,12 +348,11 @@ sequences). The distribution of generated alignments and annotations (with
 certain annotation functions) are same in both models, but clearly the
 distribution of state paths will be different due to different sets of states.
 
-The generalized model is obtained by taking the simple 3-state pHMM model from section
-\ref{SECTION:ALIGNWITHPHMM} and adding a single generalized pair state $R$,
-called the \firstUseOf{repeat state}, which in a single step generates tandem
-repeats in both sequences.  The
-overall topology of GpHMM is illustrated in the Figure
-\ref{FIGURE:REPEAT_GENERAL}.
+The generalized model is obtained by taking the simple 3-state pHMM model from
+section \ref{SECTION:ALIGNWITHPHMM} and adding a single generalized pair state
+$R$, called the \firstUseOf{repeat state}, which in a single step generates
+tandem repeats in both sequences.  The overall topology of GpHMM is illustrated
+in the Figure \ref{FIGURE:REPEAT_GENERAL}.
 
 To made this model more flexible, the emission distribution of state $R$ is
 defined by an additional pHMM. Since the repetitions in the tandem repeat are
@@ -409,11 +408,11 @@ submodels, each for modeling different motif $c$.
 
 We also experimented with using a TANTAN-like model for defining emissions
 distribution of state $R$. We used the TANTAN model with the prefix states from
-Section \ref{SECTION:TANTAN}. Similarly as with the sunflower model, we created two
-copies of TANTAN, each generating repeats in only one sequence and connect them
-together exactly as we would connect the sunflower models. Since TANTAN model
-does not rely on a motif, it is not necessary to create more copies of the
-TANTAN HMM and its general topology looks like SFF's with only one motif.
+Section \ref{SECTION:TANTAN}. Similarly as with the sunflower model, we created
+two copies of TANTAN, each generating repeats in only one sequence and connect
+them together exactly as we would connect the sunflower models. Since TANTAN
+model does not rely on a motif, it is not necessary to create more copies of
+the TANTAN HMM and its general topology looks like SFF's with only one motif.
 Since TANTAN is a high order HMM, the resulting model is a high order and
 generalized pair HMM.  We refer to this model as \abbreviation{TANTAN
 pHMM}{TTP}. The advantage of this model over SFF is in it's size, since TTP
@@ -477,20 +476,38 @@ the source alignment (see Section \ref{SECTION:HMMTRAINING}).
 
 \section{Decoding methods}\label{SECTION:REPDECODING}
 
-\todo{Preco sme to robili? Nejaky uvod? Mic: asi by som chcel spomenut luntera,
-kde som to popisoval, ako aj nasu pracu a inych, ta preto sme chceli pouzit aj
-rozne dekodovacie sposoby}
+The right selection of the decoding method can have significant effect on the
+quality\footnote{The term quality is intentionally loose.} of predictions of a
+method. In sections \ref{SECTION:SEQUENCEANNOTATION},
+\ref{SECTION:OTHERDECODING} and Chapter \ref{CHAPTER:TWOSTAGE}, we described
+several decoding algorithms whose aim was to increase the accuracy of the
+sequence annotation. Similarly, Lunter {\it et al. (2008)} studied the effect
+of different decoding algorithms on the quality of the constructed alignments
+(see Section \ref{SECTION:BIASES}) and showed that the Viterbi algorithm was
+not the best method for constructing sequence alignments. Therefore it is worth
+to consider domain-specific decoding methods for constructing alignments.
 
-In this section we describe several optimization criteria that we used with
-the 3-state model, the SFF model and the TTP model: the \abbreviation{Viterbi
+In this section we describe several optimization criteria that we used with the
+3-state model, the SFF model and the TTP model: the \abbreviation{Viterbi
 algorithm}{VA}, the \abbreviation{posterior decoding}{PD}, the
 \abbreviation{marginalized posterior decoding}{MPD}, the \abbreviation{block
 Viterbi algorithm}{BVA} and the \abbreviation{block posterior decoding}{BPD}.
-The first three methods are used with the non-generalized versions of the models, the latter
-two methods (block methods) are used with GpHMMs. We
-have already described the first three algorithms in Section
-\ref{SECTION:ALNDECODING}. Here we introduce the highest expected gain framework
-for pair HMMs and formulate all algorithms using gain functions.
+The first three methods are used with the non-generalized versions of the
+models, the latter two methods (block methods) are used with GpHMMs. We have
+already described the first three algorithms in Section
+\ref{SECTION:ALNDECODING}. While the first three methods are general purpose
+decoding methods of pair HMMs, we introduce BPD and BVA as an domain-specific
+decoding methods. Their goal is to remove tandem repeats out scope of the three
+state part of the SFF model.
+
+Before continuing, we make additional argument for the use of the
+domain-specific decoding methods instead of finding the most probable state
+path, the most probable annotation, or in case of the pHMM, the most probable
+annotation. When constructing the model, we do many simplifications of the
+biological processes. This is because because without these simplifications, we
+would end up with very large and impractical models. We can use the
+domain-specific decoding method as an compensation for such simplifications; we
+can practically move the complexity from the model into the decoding method.
 
 In Section \ref{SECTION:HEG} we defined a gain function as a functions of two
 annotations. For pair HMMs we define a gain function as a function of two
