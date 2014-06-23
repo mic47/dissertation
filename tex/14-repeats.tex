@@ -335,12 +335,12 @@ emission $X[i]$ evolved from $X[i-l]$ over time $t$.
 
 \todo{Napis nieco o predpokladoch tohto modelu, porovnas so Sunflower}
 
-At first, we estimated parameters of the model
-using annotated human-dog alignment by TRF program \cite{Benson1999}.
-Parameters for 3-state model, and 3-state submodel of SFF and transitions to
-the repeat state were therefore trained by supervised learning. Setting SFF and
-TTP parameters was discussed in the sections \ref{SECTION:SUNFLOWERMODEL} and
-\ref{SECTION:TANTAN}.\todo{tento odstavec Nejako pridaj do 4.2.2 a 4.2.3}
+At first, we estimated parameters of the model using annotated human-dog
+alignment by TRF program \cite{Benson1999}.  Parameters for 3-state model, and
+3-state submodel of SFF and transitions to the repeat state were therefore
+trained by supervised learning. Setting SFF and TTP parameters was discussed in
+the sections \ref{SECTION:SUNFLOWERMODEL} and \ref{SECTION:TANTAN}.\todo{tento
+odstavec Nejako pridaj do 4.2.2 a 4.2.3, asi nir, ale nezda sa mi to}
 
 
 \section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
@@ -383,6 +383,14 @@ computed a set of candidate motifs $C$ and use it for construction of the
 model. More details are in section \ref{SECTION:REPOPT}. We call this
 generalized model the \abbreviation{sunflower field}{SFF} model.
 
+Note that the state $R$ defined as above can generate arbitrary long sequences.
+Additionally, the Sunflowers are combined in a way, which does not produce an
+alignment of tandem repeats.  Its task is to filter  tandem repeats out of
+alignment, so that they do not cause biases in the parts of an alignment
+emitted by other states (match and indel states). Alignment of homologous
+tandem repeats is done lates in a post-processing step (see Section
+\ref{SECTION:ALNDECODING}).
+
 \begin{figure}
 \begin{center}
 \includegraphics[width=14cm]{../figures/PairRepeatHMMGeneral.pdf}
@@ -407,39 +415,25 @@ We also experimented with using a TANTAN-like model for defining emissions
 distribution of state $R$. We used the TANTAN model with the prefix states from
 Section \ref{SECTION:TANTAN}. Similarly as with the sunflower model, we created two
 copies of TANTAN, each generating repeats in only one sequence and connect them
-together exactly as we would connect the sunflower models. Since TANTAN model does
-not rely on a motif, it is not necessary to create more copies of the TANTAN HMM and
-its general topology looks like SFF's with only one motif.  Since TANTAN is
-a high order HMM, the resulting model is a high order and generalized pair HMM.
-We refer to this model as \abbreviation{TANTAN pHMM}{TTP}. The advantage of
-this model over SFF is in it's size, since TTP will have in practice fewer
-states than SFF; the size of SFF model depends on the total length of all motif
-strings while the size of TTP model depends on the maximum motif length.
-However, TTP models evolution of repetitions differently, since each repetition
-is created from the previous repetition and tandem repeats in sequences $X$ and
-$Y$ are independent of each other; there is no penalty for them having
-different motifs.\todo{Nejaka dalsia diskusia o vlastnostiach modelov? Napri **
-zo strany 84 a *** zo strany 87}
+together exactly as we would connect the sunflower models. Since TANTAN model
+does not rely on a motif, it is not necessary to create more copies of the
+TANTAN HMM and its general topology looks like SFF's with only one motif.
+Since TANTAN is a high order HMM, the resulting model is a high order and
+generalized pair HMM.  We refer to this model as \abbreviation{TANTAN
+pHMM}{TTP}. The advantage of this model over SFF is in it's size, since TTP
+will have in practice fewer states than SFF; the size of SFF model depends on
+the total length of all motif strings while the size of TTP model depends on
+the maximum motif length (we set this limit to $50$ bases).  Therefore the SFF
+model can be exponentially larger than the TTP.
 
-\reformulate{State $R$ can in theory generate
-arbitrary long sequences which does not produce an alignment of tandem repeats
-during decoding. Its task is to filter out tandem repeats of alignment, so that
-they do not cause biases in the parts of an alignment emitted by other states
-(match and indel states). We align homologous tandem repeats later in a
-post-processing step.}{trochu tu miesas generovanie a decoding. mozno by som
-toto presunula dalej, ked bude jasnejsie ako model vyzera. Skus na s 86}
-
-\todo{Dva odstavce dole: preco tu? ***}
-The size of the TTP model depends on the length of the longest possible motif,
-which we set to $50$ bases. The size of the SFF model depends on the total
-length of all motifs used. Therefore the SFF model can be exponentially larger than the TTP
-model. The SFF model assumes that repetitions accumulated mutations
+Another difference between the SFF and the TTP is in the assumed evolution
+model.  The SFF model assumes that repetitions accumulated mutations
 independently, while the TTP model assumes that each repetition evolve from the
-previous occurrence of the repetition. Additionally, there is no dependence of
-tandem repeats between the two sequences in the TTP model, while in the SFF
-mode they use the same consensus.
+previous occurrence of the repetition.  Additionally, there is no dependence of
+tandem repeats between the two sequences in the TTP model; there is no penalty
+for them having different motifs.
 
-Tandem repeats at orthologous positions in two species may share common
+In reality, tandem repeats at orthologous positions in two species share common
 ancestor and therefore share part of their evolutionary history. However, it is
 possible that they were consequently modified by additional evolution events
 after speciation (including more tandem duplications). In our model, we ignore
@@ -447,8 +441,6 @@ such complex evolution of repetitions, because it would lead to very complex
 model and increase the difficulty in decoding and training. Kováč {\it et. al}
 developed a method with limited dependence by adding repeat submodels emitting
 copies in the two sequences at same time \cite{Kovac2012}.
-
-
 
 Both SFF and TTP are defined as $4$ state high order GpHMMs.  In general, using
 generalized models increases the time complexity of decoding algorithms
@@ -458,14 +450,7 @@ $R$. All transitions entering into $R$ were replaced by transitions to the
 start state of the submodel, and all outgoing transitions from $R$ were
 replaced by transitions starting in the final state of the submodel. This
 transformation does not change the distribution of alignments generated by the
-model.  Additionally, the distribution of alignment annotations does not
-change, if we use the following annotation functions. 
-%\reformulate{For the
-%original GpHMM we can use the identity function as a labeling function
-%$\Lambda_{ID}$. For expanded model we then use function $\Lambda_R$, which
-%labels all states from submodel by label $R$ and other states by the same label
-%as in GpHMM. }{Toto nesedi s definiciou anotovaneho zarovnania na str 88,
-%radsej zmaz}
+model.  
 
 \subsection{Parameter estimation}\label{SECTION:ALNPAREST}
 In our experiments, we have used $310,091$ consensus sequences found by the TRF
