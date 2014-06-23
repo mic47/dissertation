@@ -47,19 +47,20 @@ comparison can be found in \cite{Nanasi2014}.
 
 \section{Related work}\label{SECTION:REPALNMETHODS}
 
-\todo{vysvetli jasnejsie. Naskor problem, potom alg, k algoritmu netreba
-detaily, len zlozitost} Alignment methods that take into consideration tandem
-duplications were first studied by Benson \cite{Benson1997}, who proposed
-extension of the Needleman-Wunsch algorithm. In their scoring scheme, they
-scored duplications as a separate event. Each duplication was penalized by the
-duplication initiation cost, the duplication extension costs for each
-repetition and Needleman-Wunsch like scoring scheme to score original string
-with its repetitions. Time complexity of this algorithm is $O(n^4)$, and Benson
-also proposed a heuristic algorithm to compute the alignment in a reasonable
-time.  Several variants of this problem were also studied \cite{Sammeth2006,
-Berard2006}\todo{Pripadne spomen v com sa lisia}. It is also possible to use a
-lossy compression scheme to collapse tandem repeats, and then align compressed
-sequences \cite{Freschi2012}.
+Alignment methods that take into consideration tandem duplications were first
+studied by Benson \cite{Benson1997}, who proposed extension of the
+Needleman-Wunsch algorithm. They extend scoring scheme by adding duplication
+event, which creates tandem repeat. Duplication consists from
+the duplication of the subsequence $U$ from one input sequence into multiple
+tandem copies of $U$ into the second sequence. The score of the duplication
+event was the sum of the duplication initiation cost, duplication extension
+cost (multiplied by the number of repetitions), and the maximum alignment score
+for aligning the sequence $U$ to its repetitions in the second sequence. Time
+complexity of this algorithm is $O(n^4)$, and Benson also proposed a heuristic
+algorithm to compute the alignment in a reasonable time.  Several variants of
+this problem were also studied in \cite{Sammeth2006, Berard2006}. Other
+possibility is to use a lossy compression scheme to collapse tandem repeats,
+and then align compressed sequences \cite{Freschi2012}.
 
 A Traditional approach to deal with tandem repeats is to mask them in both
 sequences and then align masked sequences by some alignment algorithm.  Masking
@@ -74,11 +75,11 @@ probabilistic method specifically targeting tandem repeats was introduced by
 Hickey and Blanchette \cite{Hickey2011}.  They developed a context-sensitive
 model based on pair Tree-Adjoining grammars.  Their model does not explicitly
 model an arbitrary number of repeats; it focuses on short context-sensitive
-indels caused by tandem duplications, because majority of short indels are
-caused by tandem duplication ($90\%$ \cite{Hickey2011}). The time complexity of
-their decoding algorithm is $O(n^2L^2)$, where $n$ is the length of the
-sequences and $L$ is the maximal length of context sensitive indels.\todo{mozno
-trochu napi co ich model robi (nie presne ako)}
+indels caused by tandem duplications. Each such context sensitive indel was
+modeled by assuming that the indel sequence and previous/following aligned pair
+of sequences evolved from single common ancestor. The time complexity of their
+decoding algorithm is $O(n^2L^2)$, where $n$ is the length of the sequences and
+$L$ is the maximal length of context sensitive indels.
 
 Another, partially probabilistic method was developed by Kováč {\it et al.
 (2012)}\nocite{Kovac2012}. The aim of the method was to align repetitive motifs
@@ -90,17 +91,24 @@ algorithm. Despite the use of probabilistic models, their method was not a
 probabilistic model, because scores from different models were combined in an
 ad-hoc manner. 
 
-Hudek \cite{Hudek2010} developed an algorithm which combines of the Viterbi and
-posterior decoding. The goal of the algorithm was to reduce misalignments due
+Hudek \cite{Hudek2010} developed an algorithm which combines the Viterbi and
+the Posterior decoding. The goal of the algorithm was to reduce misalignments due
 to short tandem repeats with the motif length $1$, for example $AA$ in the
-first sequence and $AAAAAAAAA$ in the second sequence. The algorithm developed
-by Hudek considers all possible alignments of $u$ and $v$\todo{co su u a v} in
-the final alignment. The algorithm segments the alignment into blocks, such
-that each block contain gaps in only one sequence. They developed pHMM model
-that defines probability distribution over all possible segmentation of
-alignments of input sequences and give the algorithm that finds the most
-probable segmentation.  Unlike Viterbi algorithm, their algorithm considers all
-possible alignments within each segment.\todo{strasny chaos}
+first sequence and $AAAAAAAAA$ in the second sequence. 
+The algorithm does not search for alignment, but for the most probable
+segmentation; alignment is divided into segments, such that each block contain
+gaps in only one sequence. Within one block, algorithm considers all possible
+evolutionary histories of such block; 
+the probability of the block is the sum
+of the probabilities of all alignments of sequences within block. The
+probability of the segmentation is the product of probabilities of all blocks
+along with transition probabilities between blocks. This was implemented using
+pHMM with two colors (each color for one segment) and the algorithm effectively
+search for the most probable annotation (segmentation). Authors give the
+algorithm for searching for the most probable segmentation in $O(n^4)$ time,
+where $n$ is the length of the sequences. Additionally, authors provide
+heuristic with time complexity $O(n^2k)$, where $k$ is the limit for the
+maximal block length.
 
 \section{Finding Tandem Repeats}
 Although our main goal is to align sequences with tandem repeats, our model
@@ -739,7 +747,8 @@ where $0\leq i'\leq i<n,0\leq j'\leq j$ and $i-i'>0$ or $j-j'>0$ (at least one
 base was emitted).  The $\prob{(X[i':i],a, Y[j':j])}$ is the posterior
 probability of a block with label $a$ containing sequences $X[i':i]$ and
 $Y[j':j]$. The time complexity of this step is $O(n^2m^2)$ and therefore the
-overall time complexity of BPD is $O(kn^2m^2 + (n^2+m^2)E)$.\todo{Skontroluj ci
+overall time complexity of BPD is $O(kn^2m^2 + (n^2+m^2)E)$.
+\todo{Skontroluj ci
 to takto sedi s oznaceniami, alebo je to kravina} 
 
 We can use the same techniques to optimize the BVA; the most expensive step in
