@@ -51,7 +51,7 @@ Alignment methods that take into consideration tandem duplications were first
 studied by Benson \cite{Benson1997}, who proposed extension of the
 Needleman-Wunsch algorithm. They extend scoring scheme by adding duplication
 event, which creates tandem repeat. Duplication consists from
-the duplication of the subsequence $U$ from one input sequence into multiple
+the duplication of the substring $U$ from one input sequence into multiple
 tandem copies of $U$ into the second sequence. The score of the duplication
 event was the sum of the duplication initiation cost, duplication extension
 cost (multiplied by the number of repetitions), and the maximum alignment score
@@ -327,7 +327,7 @@ insert state $I_{j+1}$, which is not possible in a profile HMM.
 
 One disadvantage of the TANTAN model is that it does not model the first
 occurrence of the motif sequence, since repeat states model only the
-subsequence repetitions of the sequence. This caused problems when we wanted to
+subsequent repetitions of the sequence. This caused problems when we wanted to
 incorporate TANTAN as a submodel for aligning sequences. Therefore we have
 added an additional chain of prefix states $P_1,\dots, P_K$ modeling the first
 repetition. Transitions from the start state are now only to the final state
