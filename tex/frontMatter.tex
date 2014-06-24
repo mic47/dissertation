@@ -36,7 +36,7 @@
 \hfill\mfplacedate
 \eject % EOP i
 
-\pagebreak
+%\pagebreak
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,9 +64,9 @@
 \vfill
 \noindent
 \mfplacedate \hfill {\large \mfauthor}\\
-\afterpage{\blankpage}
-\pagebreak 
-\fi
+%\afterpage{\blankpage}
+%\pagebreak 
+%\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%               THESIS ASSIGNMENT                          %%%%
@@ -112,11 +112,39 @@
 \listoftables
 \listoffigures
 
+ \chapter*{Abstrakt}
+
+\begin{tabular}{l l}
+Autor: & \mfauthor \\
+Názov: & \mftitlea \\
+       & \mftitleb \\
+Univerzita: & \mfuniversity\\
+Fakulta: & \mffaculty\\
+Pracovisko: & \mfdepartment\\
+Školiteľ: & \mfadvisor\\
+Počet strán: & \pageref{LastPage} \\
+Rok: & \mfyear
+\end{tabular}
+
+\bigskip
+
+\input ../tex/abstract.tex
+
+\medskip
+\noindent
+{\sc Keywords}: \mfkeywords
+\fi
+\ifx\draft\undefined
+\tableofcontents
+\listoftables
+\listoffigures
+
  \chapter*{Abstract}
 
 \begin{tabular}{l l}
 Author: & \mfauthor \\
-Title: & \mftitle \\
+Title: & \mftitlea \\
+       & \mftitleb \\
 University: & \mfuniversity\\
 Faculty: & \mffaculty\\
 Department: & \mfdepartment\\
