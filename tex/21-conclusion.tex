@@ -1,66 +1,81 @@
 \chapter{Conclusion}
 
-In this thesis we studied the use of the (pair) hidden Markov model for
-sequence annotation (Chapter \ref{CHAPTER:TWOSTAGE}) and sequence alignment
-(Chapter \ref{CHAPTER:REP}) and provide both theoretical and practical
+In this thesis we studied the use of hidden Markov models for sequence
+annotation and sequence alignment and provided both theoretical and practical
 contributions.
 
-The Chapter \ref{CHAPTER:TWOSTAGE} considers two-stage decodings. In two stage
-decoding we at first compute the guide and then find an annotation optimizing
-gain function using guide as an restriction. Guides can be used to decrease
-running time, but we have shown experiment where guides can be parts of the
-decoding criteria and improve accuracy. Then we focus on the computational
+Chapter \ref{CHAPTER:TWOSTAGE} considers two-stage decodings for sequence
+annotation. In a two stage decoding we at first compute the guide and then find
+an annotation optimizing gain function using the guide as an restriction. Guides
+can be used to decrease running time, but we have shown experimentally that
+guides can also improve the accuracy. Then we focus on the computational
 problems of computing guides.  We gave the combinatorial proof that the most
 probable set problem is NP-hard.  We also show that this problem is
 fixed-parameter tractable when the fixed parameter is the number of states of
-HMM It is not clear, if the most probable set problem is in NP, since deciding
-is the probability of the set is non-zero is NP-complete. Then we show
-reduction from 3-SAT to the most probable restriction problem proving that this
-problem is NP-complete. Similarly to the most probable set problem, this
-problem is also fixed-parameter tractable.  Finally, we focus on the most
-probable footprint problem. We proved that this problem is NP-complete even if
-a labeling function is the identity function (without this constraint, the most
-probable annotation problem can be trivially reduced to this problem). We
-showed the constant-sized HMM for which finding the most probable footprint is
-NP-hard even if we use the identity function as a labeling function. We also
-show how to alter the proof of the most probable footprint to the proofs of the
-most probable set and the most probable restriction. 
+the HMM It is not clear, if the most probable set problem is in NP. Then we
+show a reduction from 3-SAT to the most probable restriction problem proving
+that this problem is NP-complete. Similarly to the most probable set problem,
+this problem is also fixed-parameter tractable.  Finally, we focus on the most
+probable footprint problem.  We showed a constant-sized HMM for which finding
+the most probable footprint is NP-hard even if we use the identity function as
+a labeling function. We also show how to alter the proof of the most probable
+footprint to the proofs of the most probable set and the most probable
+restriction. 
 
 There are still some open problems left. The most probable footprint is a
 special case of the most probable ball problem (with the border shift sum
-distance, where $r$ is the radius) which was studied by Brown and
-Truszkowski \cite{Brown2010}, and we described it in Section
-\ref{SECTION:DISTANTMEASURES}.  This problem is NP-hard even for $r=0$
-\cite{Brown2010}, if multiple states can have same label. Additionally, if
-$r\leq n$, where $n$ is the length of the input sequence, the most probable
-ball problem is equivalent to the most probable footprint problem. Our result
-imply that the most probable ball problem is NP-hard even if all states have
-unique label. It is still open problem, if the most probable ball problem is
-NP-hard for $r<n$ and HMMs with the identity function as an annotation
-function. 
+distance, where $r$ is the radius) which was studied by Brown and Truszkowski
+\cite{Brown2010}; we described it in Section \ref{SECTION:DISTANTMEASURES}.
+This problem is NP-hard even for $r=0$ \cite{Brown2010}, if multiple states can
+have same label. Additionally, if $r\geq n$, where $n$ is the length of the
+input sequence, the most probable ball problem is equivalent to the most
+probable footprint problem. Our result imply that the most probable ball
+problem is NP-hard even if all states have unique label. It is still open
+problem, if the most probable ball problem is NP-hard for $r<n$ and HMMs with
+the identity function as an annotation function. 
 
-From the practical point of view, two-stage algorithms algorithms could by used
-for pair hidden Markov models, or on different application domains; for example
-the gene-finding.
+From the practical point of view, two-stage algorithms  could be used
+for pair hidden Markov models, or in different application domains; for example
+the gene finding.
 
-In Chapter \ref{CHAPTER:TWOSTAGE} we study the sequence alignment problem. We
-propose the new SFF model that incorporates tandem repeats, which are prevalent
-in the genomic sequences. In addition to the new model, we explored additional
-decoding criteria, the block Viterbi algorithm and the block posterior
-decoding, which treats tandem repeats a blocks. On the simulated data, the SFF
-model alone decreased the error rate by at least $15\%$ when comparing to
-standard three-state model with the Viterbi algorithm. The decrease in the
-error rate was was concentrated near repetitive intervals. 
+In Chapter \ref{CHAPTER:REP} we study the sequence alignment problem using pair
+HMMs. We propose the new SFF model that incorporates tandem repeats, which are
+prevalent in the genomic sequences. In addition to the new model, we explored
+additional decoding criteria, the block Viterbi algorithm and the block
+posterior decoding, which treat tandem repeats a blocks. On the simulated data,
+the SFF model alone decreased the error rate by at least $15\%$  compared to
+the standard three-state model with the Viterbi algorithm. The decrease in the
+error rate was  concentrated near repetitive intervals. 
 
-There are several possible directions for further research. For example we can
-use sunflower model equivalent to the sunflower model with the silent cycle,
-leading into more symmetrical model. Additionally, our model does not take into
-account dependencies between repetitions and therefore tandem repeats in
-different sequences are independent (apart from using same motif). Same
-improvement could be done into the TTP model, which is based on TANTAN model.
-Other improvement can be incorporating additional submodels modeling other
-features, for example gene structures. Finally, we can extend this method to
-align multiple sequences. From the practical point of view, our software needs
-to be optimized, so it can be used on genomic sequences of arbitrary length.
+There are several possible directions for further research. For example our
+model does not take into account dependencies between repetitions and therefore
+tandem repeats in different sequences are independent (apart from using same
+motif). We could model the evolution of repeats more realistically either in
+the SFF model or in the decoding algorithm.  Similar improvement can be done
+into the TTP model, which does not model the first repetition well and allows
+use of the different motifs in homologous repeats. This problem could be solved
+by modeling the first repetition as an pair profile HMM and other repetitions
+would be modeled by the TANTAN model.  Other improvement can be incorporating
+additional submodels modeling other features, for example gene structures. It
+might be interesting to study the ways of incorporating different, but
+overlapping features into the same model (for example the tandem repeats inside
+of gene structures).  Finally, we can extend this method to align multiple
+sequences. From the practical point of view, our software needs to be
+optimized, so it can be used on genomic sequences of arbitrary length.
 
+We studied the decoding algorithms in all chapters of this thesis.
+Traditionally, the selection of proper decoding method is underestimated
+problem and many applications simply choose the Viterbi algorithm. While it is
+true that for many applications the Viterbi algorithm is optimal,  our
+experience shows that choosing the proper decoding method can significantly
+improve the accuracy of a predicted annotations or an alignments. We believe
+that the selection of the decoding function should be a important part of
+designing method that uses probabilistic model, because domain-specific
+decoding algorithms can decrease some statistical biases and can be used as an
+compensation for simplifications done during designing of the HMM. Finally,
+there are many interesting computational problems that arises from the decoding
+algorithms, from the most probable annotation problem to the optimization of
+custom gain functions.
+
+\todo{odstavec nadhladu}
 \label{LastPage}
