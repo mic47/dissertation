@@ -294,7 +294,7 @@ Sunflower model.
 \caption{With first repetition}\label{FIGURE:TANTAN:INIT}
 \end{subfigure}%
 \end{center}
-\caption{Three variants of the core of the TANTAN model. Gray states are
+\caption[TANTAN model]{Three variants of the core of the TANTAN model. Gray states are
 silent. The first one is a simplified model, only containing repeat states. The second
 was used by Frith \cite{Frith2011}, allowing insertions and deletions.  The last one
 is our extension with additional prefix states $P_1, \dots P_K$ which model
@@ -932,7 +932,7 @@ SFF VA    & 4.04\% & 95.29\% & 97.85\% & 42.70\% & {\bf 48.95\%}\\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy of decoding methods on simulated data. \DD Columns with at
+\caption[Comparison of the SFF methods]{Accuracy of decoding methods on simulated data. \DD Columns with at
     least one masked character are considered as repeats.
 }\label{TABLE:SFFMAIN}
 \end{table*}
@@ -984,7 +984,7 @@ SFF VA\M             & 3.94\% & 98.54\% & 99.45\% & 75.55\% & 83.47\% \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy of decoding methods using real motif and/or real intervals on simulated data.
+\caption[Effect of using correct intervals]{Accuracy of decoding methods using real motif and/or real intervals on simulated data.
 \M method uses motifs from the correct repeat blocks.
 \MM method uses the correct motifs and intervals from the
     correct repeat blocks.
@@ -1022,7 +1022,7 @@ TTP BVA\D         & 3.83\% & \bf 61.74\% & 99.88\% & 0.00\% & 0.00\% \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy of decoding methods using real motif and/or real intervals on simulated data.
+\caption[Comparison of the TTP method]{Accuracy of decoding methods using real motif and/or real intervals on simulated data.
 \D method uses intervals from the correct repeat blocks.
 }\label{TABLE:TANTANCOMP}
 \end{table*}
@@ -1076,11 +1076,12 @@ SFF MPD\M  & \bf 3.02\% & \bf 98.93\% & \bf 99.64\% &\bf 77.01\% &\bf 76.17\% \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy for marginalized posterior decoding with different models or real motifs.
+\caption[Test of robustness of the model]{Accuracy for marginalized posterior decoding with different models or real motifs.
 The best and the second best are bold.
 \R Parameters of the three-state submodel were estimated from
 human-chicken alignment. 
 \RR Parameters of SFF submodel were perturbed randomly.
+\M method uses motifs from the correct repeat blocks.
 } \label{TABLE:SFFMARGINALIZED}
 \end{table*}
 
@@ -1118,7 +1119,7 @@ Algorithm & \CC{error} & \CC{sn.} & \CC{sp.} & \CC{sn.} & \CC{sp.} \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Accuracy of decoding method using simple 3-state HMM and hard-masking.
+\caption[Comparison of repeat-masking methods]{Accuracy of decoding method using simple 3-state HMM and hard-masking.
     The best and the second best are bold.  \DD Columns with at least one
     masked character are considered as repeats.
     \MM method uses the correct motifs and intervals from the correct
@@ -1168,7 +1169,7 @@ distance $10$ bases of the repeat border.
 %\includegraphics[width=\textwidth]{../figures/error_graph_3statemasking.pdf}
 %\caption{Different methods of masking}
 %\end{subfigure}%
-\caption{
+\caption[Relation between the error rate and distance from the repeat]{
 The relation between the error rate and the distance from the nearest repeat. On the Y
 axis is error rate of the algorithm; the number of incorrectly aligned columns.
 On the X axis is the distance from the nearest repeat. Baseline is the overall
