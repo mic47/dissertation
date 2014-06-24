@@ -1,1 +1,21 @@
-Slovensky abstract
+Zaoberáme sa dvomi dôležitými bioinformatickými problémami: anotácia sekvencií
+a zarovnávanie sekvencií. V práci používame skryté Markovove modely (HMM),
+dobre známe generatívne pravdepodobnostné modely.
+
+V prvej časti študujeme anotáciu sekvencií, konkrétne dvojstupňové algoritmy a
+výpočtové problémy ktoré s nimi súvisia. Ukážeme, že dvojstupňové algoritmy
+vedia byť použité na zlepšenie presnosti dekodovacích algoritmov a dokážeme
+NP-ťažkosť troch súvisiacich problémov: problém najpravdepodobnejšej množiny,
+problém najpravdepodobnejšej reštrikcie a problém najpravdepodobnejšej stopy.
+
+Druhá časť sa zaoberá zarovnávaním sekvencií ktoré obsahujú tandemové
+opakovania. Tandemové opakovania sú  opakujúce sa časti genomických sekvencií
+ktoré spôsobujú chyby v zarovnaniach. Aby sme vyriešili tento problém, vyvinuli
+sme nový HMM, ktorý modeluje zarovnania obsahujúce tandemové opakovania a
+skombinovali sme to s existujúcimi ako aj novými dekódovacími algoritmami. Náš
+prístup sme vyhodnotili experimentálne.
+
+V oboch problémoch sme používali dekódovacie algoritmy na zlepšenie presnosti
+predikcií z HMM. Dekódovacie algoritmy sú často podceňované  a väčšina vývoja
+ide do vytvárania HMM. Avšak správnym výberom dekódovacej metódy môžeme
+dosiahnuť významné zlepšenie predikcií.

@@ -4,20 +4,20 @@
 \ifx\draft\undefined
 \thispagestyle{empty}
 \noindent
-\begin{minipage}{0.20\textwidth}
-	\includegraphics[width=0.9\textwidth]{../figures/logouni}
-\end{minipage}
-\begin{minipage}{0.79\textwidth}
+%\begin{minipage}{0.20\textwidth}
+%	\includegraphics[width=0.9\textwidth]{../figures/logouni}
+%\end{minipage}
+%\begin{minipage}{0.79\textwidth}
 	\begin{center}
 		\sc \mfuniversity \\
 		\mffaculty \\
 		\mfdepartment  
 	\end{center}
-\end{minipage}
+%\end{minipage}
 \vfill
 \begin{center}
 	\begin{minipage}{0.8\textwidth}
-		\hrule
+		%\hrule
 		\bigskip\bigskip
 		\centerline{\LARGE\sc\mftitlea}
 		\centerline{\LARGE\sc\mftitleb}
@@ -27,28 +27,31 @@
 		\bigskip
 		\centerline{\large\sc\mfauthor}
 		\bigskip\bigskip
-		\hrule
+		%\hrule
 	\end{minipage}
 \end{center}
 \afterpage{\blankpage}
 \vfill
-{\bf Thesis advisor:} \mfadvisor
+{\bf Advisor:} \mfadvisor
 \hfill\mfplacedate
-\eject % EOP i
-
-%\pagebreak
+%\eject % EOP i
+\pagebreak
 \fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                  TITLE PAGE                               %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \ifx\draft\undefined
 \thispagestyle{empty}
+\begin{minipage}{0.20\textwidth}
+	\includegraphics[width=0.9\textwidth]{../figures/logouni}
+\end{minipage}
+\begin{minipage}{0.79\textwidth}
 \begin{center}
   \Large \sc \mfuniversity \\
   \mffaculty 
 \end{center}
+\end{minipage}
 \vspace{7cm}
 \begin{center}
   {\Huge \mftitle}\\
@@ -71,6 +74,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%               THESIS ASSIGNMENT                          %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includepdf{../figures/zadanie-sk.pdf}
 \includepdf{../figures/zadanie-en.pdf}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -108,52 +112,46 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \ifx\draft\undefined
-\tableofcontents
-\listoftables
-\listoffigures
 
  \chapter*{Abstrakt}
+%
+%\begin{tabular}{l l}
+%Autor: & \mfauthor \\
+%Názov: & \mftitlea \\
+%       & \mftitleb \\
+%Univerzita: & \mfuniversitysk\\
+%Fakulta: & \mffacultysk\\
+%Pracovisko: & \mfdepartmentsk\\
+%Školiteľ: & \mfadvisor\\
+%Počet strán: & \pageref{LastPage} \\
+%Rok: & \mfyear
+%\end{tabular}
+%
+%\bigskip
 
-\begin{tabular}{l l}
-Autor: & \mfauthor \\
-Názov: & \mftitlea \\
-       & \mftitleb \\
-Univerzita: & \mfuniversity\\
-Fakulta: & \mffaculty\\
-Pracovisko: & \mfdepartment\\
-Školiteľ: & \mfadvisor\\
-Počet strán: & \pageref{LastPage} \\
-Rok: & \mfyear
-\end{tabular}
-
-\bigskip
-
-\input ../tex/abstract.tex
+\input ../tex/abstrakt.tex
 
 \medskip
 \noindent
-{\sc Keywords}: \mfkeywords
-\fi
+{\sc Kľúčové slová}: \mfkeywords
+\f
 \ifx\draft\undefined
-\tableofcontents
-\listoftables
-\listoffigures
 
  \chapter*{Abstract}
 
-\begin{tabular}{l l}
-Author: & \mfauthor \\
-Title: & \mftitlea \\
-       & \mftitleb \\
-University: & \mfuniversity\\
-Faculty: & \mffaculty\\
-Department: & \mfdepartment\\
-Supervisor: & \mfadvisor\\
-Number of Pages: & \pageref{LastPage} \\
-Year: & \mfyear
-\end{tabular}
+%\begin{tabular}{l l}
+%Author: & \mfauthor \\
+%Title: & \mftitlea \\
+%       & \mftitleb \\
+%University: & \mfuniversity\\
+%Faculty: & \mffaculty\\
+%Department: & \mfdepartment\\
+%Supervisor: & \mfadvisor\\
+%Number of Pages: & \pageref{LastPage} \\
+%Year: & \mfyear
+%\end{tabular}
 
-\bigskip
+%\bigskip
 
 \input ../tex/abstract.tex
 
@@ -161,3 +159,8 @@ Year: & \mfyear
 \noindent
 {\sc Keywords}: \mfkeywords
 \fi
+
+
+\tableofcontents
+\listoftables
+\listoffigures

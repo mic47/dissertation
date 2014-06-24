@@ -1,19 +1,22 @@
-In this thesis we study the hidden Markov models (HMMs) and their applications
-to two important computations biology problems: the sequence annotation and the
-sequence alignment. The large part of this thesis consider the perspective of
-the decoding algorithm. In the sequence annotation problem, we studied special
-class of decoding algorithms, which is a technique that used to be used to
-improve the time complexity of decoding algorithms. We have demonstrated that
-this technique can be used to improve the accuracy of the predictions of the
-decoding algorithm. We study the computational complexity of such problems and
-prove that three problems are NP-hard or NP-complete: the most probable set
-problem, the most probable restriction problem and the most probable footprint
-problem.
+We study two important problems in computational biology: the sequence
+annotation and the sequence alignment. In the theses we use the hidden Markov
+models (HMMs), a well established generative probabilistic models.  
 
-Then? we studied the sequence alignment problem. We specialize on the problem
-of tandem repeats, which are hard to align and causes biases in the alignments
-which spreads further into the methods that use these alignments. We study the most probable 
-state method, that
-Nieco o anotaciach a teoretickych vysledkoch
+In the first part we study the sequence annotation problem, specifically the
+two-stage algorithms and the computational complexity of related problems. In
+particular, we demonstrate that two-stage algorithms can be used to increase
+accuracy of decoding algorithms, and we prove the NP-hardness for three related
+problems: the most probable set problem, the most probable restriction problem
+and the most probable footprint problem.
 
-Nieco o zarovnaniach a teoretickych vysledkoch
+Second part of the thesis focus on the alignment of sequences that contain
+tandem repeats. Tandem repeats are highly repetitive elements withing genomic
+sequences that causes biases in alignments. To address this issue, we introduce
+new HMM that models alignment containing tandem repeats, combine it with
+existing and new decoding algorithms, and evaluate our approach experimentally.
+
+In both problems, we use the decoding algorithms to improve accuracy of
+predictions from HMMs. Decoding algorithms are often underestimated and most of
+the development is focused on the structure of an HMM. However, proper
+selection of an decoding method can lead to significant improvements in the
+predictions.
