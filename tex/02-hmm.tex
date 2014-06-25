@@ -1,18 +1,18 @@
 \chapter{Hidden Markov Models and Their Decoding}
 \label{CHAPTER:BASICS}
 
-This chapter contains survey of the relevant literature and overview of methods
+This chapter contains a survey of the relevant literature and overview of methods
 and models that we will use in this thesis. We describe generative
-probabilistic models called hidden Markov models, their variants, and
-algorithms that are used with these models. We describe sequence
+probabilistic models called hidden Markov models (HMMs), their variants, and
+algorithms that are used with these models. We describe the problem of sequence
 alignment and several applications of hidden Markov models to sequence
 alignment and sequence annotation. In this thesis, we study hidden Markov
 models from two aspects: computational complexity of some HMM problems, and
-application of HMMs to sequence alignment problem.
+application of HMMs to sequence alignment.
 
 \section{Hidden Markov Models}
-\abbreviation{Hidden Markov Models}{HMM} are graphical probabilistic models
-commonly used for sequence annotation or sequence alignment. An HMM is a
+\abbreviation{Hidden Markov models}{HMM} are graphical probabilistic models
+commonly used in bioinformatics for sequence annotation or sequence alignment. An HMM is a
 probabilistic finite state machine that in every state emits one symbol. Later
 we will discuss variants of HMMs that emit more symbols or that emit
 symbols on multiple tapes. This section describes basic definitions
