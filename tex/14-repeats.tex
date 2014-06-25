@@ -1,10 +1,10 @@
 \chapter{Alignment with Tandem Repeats} \label{CHAPTER:REP}
 
-A \firstUseOf{Tandem repeat} is a region in the genomic sequence that contains
-two or more consecutive repetitions of some \firstUseOf{motif}, which is a
+A \firstUseOf{tandem repeat} is a region in a genomic sequence that contains
+two or more consecutive copies of some \firstUseOf{motif}, which is a
 short genomic sequence. The instances of the motif in a tandem repeat are
 called \firstUseOf{repetitions}.  Tandem repeats, like other sequences, undergo
-evolution, and therefore events like mutations, insertions, and deletions
+evolution, and  events like substitutions, insertions, and deletions
 occurs in the individual repetitions.  Therefore individual repetitions are
 only approximate copies of a motif.  More than $2\%$ of the human genome is
 covered by short tandem repeats, and they occur in many genes and regulatory
@@ -12,14 +12,14 @@ regions \cite{Gemayel2010}. Additionally, recent short insertions in the human
 genome are mostly caused by tandem duplication \cite{Messer2007}. Most of the
 tandem repeats have evolved by tandem segmental duplications, which means that
 a tandem repeat was created by several successive duplication events. The
-consequence is that the homologous tandem repeats in two related sequences can
+consequence is that the homologous tandem repeats in two related sequences may 
 contain a different number of copies of the original motif. Note that it is
 possible that none of the current repetition is the exact copy of the original
 motif. 
 \begin{example}
 Below is an example of a sequence with tandem repeat with motif $AT$ and $12$
-repetitions.  One repetition contains insertion (I in the annotation) and other
-repetition contain mutation (M in the annotation). The repetitions are
+repetitions.  One repetition contains insertion (I in the annotation) and another 
+repetition contains substitution (M in the annotation). The repetitions are
 annotated by alternating . and \_ characters.
 \begin{verbatim}
 Sequence:   ACGTCGATGCATATATATATATATAATATCTATATGAGCTGATGCTAGCTAC
@@ -39,26 +39,26 @@ comparative genomic methods that use sequence alignments.
 
 In this chapter, we introduce a tractable model that explicitly accounts for
 tandem repeats. We use the maximum expected gain framework to explore several
-decoding criteria for our model. We evaluate our model using simulated data.
+decoding criteria for our model. We evaluate our model with different decoding criteria using simulated data.
 
 \section{Related Work}\label{SECTION:REPALNMETHODS}
-
+ 
 Alignment methods that take into consideration tandem duplications were first
-studied by Benson \cite{Benson1997}, who proposed extension of the
-Needleman-Wunsch algorithm. They extend scoring scheme by adding duplication
-event, which creates tandem repeat. Duplication consists from
-the duplication of the substring $U$ from one input sequence into multiple
-tandem copies of $U$ into the second sequence. The score of the duplication
-event was the sum of the duplication initiation cost, duplication extension
+studied by Benson \cite{Benson1997}, who proposed an extension of the
+Needleman-Wunsch algorithm. They extend the scoring scheme by adding a duplication
+event, which creates a tandem repeat. A duplication consists of copying
+some substring $U$ in one input sequence into multiple
+tandem copies of $U$ in the second sequence. The score of the duplication
+event is the sum of the duplication initiation cost, duplication extension
 cost (multiplied by the number of repetitions), and the maximum alignment score
 for aligning the sequence $U$ to its repetitions in the second sequence. Time
 complexity of this algorithm is $O(n^4)$, and Benson also proposed a heuristic
 algorithm to compute the alignment in a reasonable time.  Several variants of
-this problem were also studied in \cite{Sammeth2006, Berard2006}. Other
+this problem were also studied \cite{Sammeth2006, Berard2006}. Another
 possibility is to use a lossy compression scheme to collapse tandem repeats,
 and then align compressed sequences \cite{Freschi2012}.
 
-A Traditional approach to deal with tandem repeats is to mask them in both
+A traditional approach to deal with tandem repeats is to mask them in both
 sequences and then align masked sequences by some alignment algorithm.  Masking
 means replacing tandem repeats and other low complexity regions either with
 lower-case letters (soft-masking) or with N symbols (hard-masking, N represents
@@ -66,7 +66,7 @@ any base). Masking is done by some method for finding tandem repeats, such as
 \abbreviation{Tandem Repeat Finder}{TRF} \cite{Benson1999}, TANTAN
 \cite{Frith2011}, mreps \cite{Kolpakov2003}, or ATRhunter \cite{Wexler2005}. 
 
-Methods mentioned above were not based on probabilistic models. The first
+Methods for aligning sequences with tandem repeats mentioned above were not based on probabilistic models. The first
 probabilistic method specifically targeting tandem repeats was introduced by
 Hickey and Blanchette \cite{Hickey2011}.  They developed a context-sensitive
 model based on pair Tree-Adjoining grammars.  Their model does not explicitly
@@ -340,7 +340,7 @@ emission $X[i]$ evolved from $X[i-l]$ over time $t$.
 The TANTAN model evolution of repetitions differently than the Sunflower model.
 While the Sunflower model assumes that the repetitions evolved independently
 from the single common ancestral motif,  TANTAN assumes that each repetition
-evolves from the previous repetition. Therefore the mutations, insertions, and
+evolves from the previous repetition. Therefore the substitutions, insertions, and
 deletions carry over to the following repetition.
 
 \section{Models for Aligning with Tandem Repeats}\label{SECTION:REPMODELS}
@@ -427,7 +427,7 @@ model can be exponentially larger than the TTP.
 
 Another difference between the SFF and the TTP is in the assumed evolution of
 orthologous tandem repeats.  The SFF model assumes that repetitions accumulated
-mutations independently, while the TTP model assumes that each repetition
+substitutions independently, while the TTP model assumes that each repetition
 evolve from the previous occurrence of the repetition. In the SFF model, we
 require that the tandem repeats in both sequences share motif, but there is no
 dependence between the two sequences in the TTP model; there is no penalty for
@@ -462,7 +462,7 @@ motif is the observed frequency of the motif in the TRF output. Since resulting
 model is large, we limit Sunflower submodels (see Section \ref{SECTION:REPOPT}.
 
 We set the parameters of the Sunflower submodel manually: the insert and delete
-rates were set to $0.005$, the match states allows mutations from motif
+rates were set to $0.005$, the match states allows substitutions in motif
 sequence according to the Jukes-Cantor model with parameter $t=0.05$. The
 emission of the insert states were set according to the frequency of the bases
 in the input human-dog alignment.  Parameters of the TANTAN submodel were
@@ -830,9 +830,10 @@ effects of using these methods instead of standard methods for aligning
 sequences, which were described in Section \ref{SECTION:REPALNMETHODS}. We 
 evaluated these methods on the simulated data generated from a model trained on the human-dog alignment. 
 Evaluating model on real data is hard, because we do not know the correct
-annotation of the real DNA sequences and we have to use indirect methods for
-evaluation. We do not present such comparison in this thesis, but such
-comparison can be found in \cite{Nanasi2014}.
+alignment of the real DNA sequences, and thus we have to use indirect methods for
+evaluation. We do not present such a comparison in this thesis, but  in \cite{Nanasi2014}
+we compare several methods on real data counting the number of genes that map
+through each alignment to the other genome to a plausible gene structure.
 
 
 \subsection{Simulated Data}
