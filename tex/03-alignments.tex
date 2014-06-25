@@ -585,7 +585,7 @@ algorithm to follow the alignments in the subset allowing tolerance 15 bases
 \firstUseOf{SLAM} \cite{SLAM2003}  is a comparative gene finder based on a
 generalized pair hidden Markov model \cite{Alexanderson2004} with some states
 being also high-order states (with dependence on previous emissions). It
-predicts gene structures for a pair of related eukaryotic organisms. SLAM's
+predicts gene structures for a pair of related eukaryotic organisms. SLAMs
 decoding method is the Viterbi algorithm.  To reduce the running time of the VA
 align sequences within $3$ bases around alignment obtained by AVID global
 alignment tool \cite{Bray2003}. 
@@ -596,7 +596,7 @@ Topology of the model can be found in figure
 \begin{center}
 \includegraphics{../figures/slam.pdf}
 \end{center}
-\caption[HMM topology of SLAM's GpHMM]{
+\caption[HMM topology of SLAMs GpHMM]{
 Topology of GpHMM used by SLAM (states for genes on reverse strand are omitted).
 Gray states has self-loops, which are omitted from the Figure.
 Emissions of shaded states are modeled by the basic
@@ -653,7 +653,7 @@ defined over protein alphabet \cite{GeneWise2004}.
 \begin{center}
 \includegraphics{../figures/pairagon.pdf}
 \end{center}
-\caption[Topology of Pairagon generalized pair hidden Markov model.]{
+\caption[Topology of Pairagons generalized pair hidden Markov model.]{
 Topology of Pairagon GpHMM. All states except states
 $D,B$ and $A$ have a self-transition.
 Shaded states corresponds to exons: $M$ emits
@@ -727,7 +727,7 @@ model.
 \begin{center}
 \includegraphics{../figures/twoComponentMixtureModel.pdf}
 \end{center}
-\caption[The example of an HMM modeling two component geometric distribution]{
+\caption[An HMM with two component geometric distribution]{
 Shaded state $M$ represents the match state and states $I_1$ and $I_2$
 represents indel states in the same sequence. Indel states for the other
 sequence are omitted.
