@@ -31,7 +31,7 @@ annotation and alignment. To avoid artefacts in the results of
 these downstream methods, there is need to develop algorithms for producing sequence
 annotation and alignment with as low error rate as possible.
 Tools for both
-sequence annotation and alignment are often base on hidden Markov models (HMMs)
+sequence annotation and alignment are often based on hidden Markov models (HMMs)
 \cite{Durbin1998,Alexanderson2004,Brejova2005, FEAST2011,Krogh2001,Majoros2005,
 Meyer2002,Nanasi2010,Pairagon2009, Schultz2006,Kovac2012,Pachter2002,
 Liu2010,Brown2010, Lunter2008}.  In this thesis we propose new techniques for
@@ -58,12 +58,12 @@ accurate results \cite{Brown2010, Gross2007, Nanasi2010, Truszkowski2011}. Note 
 accuracy measures may depend on the application domain.  In Chapter
 \ref{CHAPTER:TWOSTAGE} we study a special type of decoding algorithms: two-stage 
 algorithms. In the first stage, the algorithm infers important aspects of
-the annotation and in the second stage it fill in remaining details in a way
+the annotation and in the second stage it fills remaining details in a way
 consistent with the first-stage results.  We show that  two-stage
 algorithms can improve the accuracy of decoding (as far we know, such
 algorithms were previously used only for reducing the running time). We also
 study the computational complexity of several decoding criteria appropriate for
-the first stage and show NP-hardness results for obtaining the optimal
+the first stage and we show NP-hardness results for obtaining the optimal
 annotations using these criteria. Namely we study the most probable footprint
 problem, the most probable set problem and the most probable restriction
 problem. 
@@ -80,16 +80,16 @@ path).  This model is an extension of HMM.
 In the fourth chapter we propose a tractable method for aligning sequences with
 tandem repeats. A tandem repeat consists of consecutive copies (not exact) of a
 certain motif (short genomic sequence). Tandem repeats cause problems with
-sequence alignmentsm because it is hard to distinguish between individual copies of the motif.
+sequence alignments because it is hard to distinguish between individual copies of the motif.
 We extend a traditional pHMM model for sequence alignment by additional states
 modeling tandem repeats. We also propose new decoding algorithms tailored to
 this model. We show on simulated data that our new model and decoding methods
-decrease the error rate and with a particular increase of accuracy near the border of tandem repeats.
+decrease the error rate, and with a particular increase of accuracy near the border of tandem repeats.
 
 \section{Biological Background}\label{SECTION:BIOINTRO}
 
 In this section we review several biological terms that will be needed. More
-information about DNA, proteins and genes can be found in
+information about DNA, proteins, and genes can be found in
 \cite{BiologyForDummies, UnderstandingBioinformatics}. Practically every cell of living
 organisms contains one or several \firstUseOf{DNA} molecules. DNA is a double
 stranded molecule consisting of two long sequences (strands) of
@@ -123,7 +123,7 @@ regions  change their position within the genome).
 
 The speciation is an event, when a new species is created. This happens mostly
 due to physical separation of populations of the same species. Subsequently, each
-population evolves differently to the point that  they form
+population evolves differently to a point, that they form
 different species. We can represent the evolution of a set of species using a binary
 tree. Each leaf represents a current species, each internal vertex represents
 a speciation event, and the root represents the common ancestor of all species in
