@@ -3,7 +3,7 @@
 In this chapter we will study several decoding techniques, which are aimed to
 reduce systematic errors in sequence annotation.  We will illustrate our
 approach using the HIV recombination prediction domain, discussed in Section
-\ref{SECTION:HERD}. Here, the goal is to find out which parts of a recombinant
+\ref{SECTION:HERD}. Here, the goal is to determine which parts of a recombinant
 virus sequence originate in which subtype.  For this task, we have previously
 developed the HERD decoding method \cite{Nanasi2010, Nanasi2010mgr} (Section
 \ref{SECTION:HERD}) which performed better than the Viterbi algorithm. However,
@@ -11,7 +11,7 @@ in some cases the resulting annotation contains some systematic errors, for
 example frequent switching between different subtypes. One such example can be
 found in Figure \ref{FIGURE:HERD_BAD}. To mitigate such effects, one can use a
 two-stage decoding strategy. First we search for the most probable footprint
-$F$. The footprint is what is left from labeling after removing consecutive
+$F$. The footprint is what is left from labeling after keeping only one label from each group of consecutive
 identical labels. Formally it was defined in section
 \ref{SECTION:DISTANTMEASURES} by definition \ref{DEFINITION::FOOTPRINT}. In the
 second stage we find the annotation with footprint $F$ that maximizes the
@@ -22,19 +22,19 @@ number of recombinations.
 
 More generally, in the first stage we search for the best guide, which is a
 general constraint on the allowed annotation, for example in the form of
-footprint or a set of labels. In the second stage, we find optimal annotation
-using the selected guide. Example of such algorithm for the most probable ball
-problem \cite{Brown2010, Truszkowski2011} discussed in Section
-\ref{SECTION:DISTANTMEASURES}. In this this algorithm, two-stage were motivated
-by the computational complexity, since optimizing the border shift distance is
-NP-hard \cite{Brown2010}. Our motivation to use two-stage algorithm is to
-improve their accuracy and decrease the amount of some systematic errors. 
+footprint or a set of labels. In the second stage, we find the optimal annotation
+constrained by the selected guide. We discussed an example of such algorithm for the most probable ball
+problem \cite{Brown2010, Truszkowski2011} in Section
+\ref{SECTION:DISTANTMEASURES}. In this this algorithm, the two-stage approach was motivated
+by computational complexity, since optimizing the border shift distance is
+NP-hard \cite{Brown2010}. Our motivation to use the two-stage algorithms is to
+improve their accuracy and decrease the amount of systematic errors. 
 
-In this chapter, we will focus mainly on the complexity of the first step:
+In this chapter, we will focus mainly on the computational complexity of the first step:
 finding the most probable guide. Complexity of the second step, namely finding
 the annotation with highest expected gain without guides we studied in
-\cite{Nanasi2010, Nanasi2010mgr}.  At first we give formal definition of the
-two-stage algorithm. Then we show experiment illustrating effects of the
+\cite{Nanasi2010, Nanasi2010mgr}. Footprint and restriction guides can be easily incorporated to traditional decoding methods, but set guide will likely to lead to NP-hard problems. At first we give a formal definition of the
+two-stage algorithm. Then we show an experiment illustrating effects of the
 two-stage decoding on the HIV recombination detection problem. Further in this
 chapter we prove that finding the most probable guide is for certain guide
 functions NP-hard.
@@ -55,8 +55,8 @@ annotation without these errors.  }\label{FIGURE:HERD_BAD}
 \section{Formal Definition}
 In this section we will define two-stage decoding algorithms, and the
 generalization of the footprint function from the first stage, the guide
-function. Additionally to the footprint, we define additional guide called
-annotation set. Footprint was already defined in the definition
+function. Additionally to the footprint, we define a different guide function called
+annotation set. A footprint was already defined in definition
 \ref{DEFINITION::FOOTPRINT}, and we denote the footprint of annotation
 $\Lambda$ as $F(\Lambda)$. 
 
