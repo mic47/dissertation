@@ -112,7 +112,7 @@ matrices are PAM or BLOSUM matrices\cite{Durbin1998}. Additionally, scoring
 matrices can be also derived from theoretical models of evolution, one such
 example is Jukes-Cantor model\cite{Durbin1998}.
 
-\subsection{Needleman-Wunsch algorithm}
+\subsection{Needleman-Wunsch Algorithm}
 \label{SECTION:NEEDLE}
 
 
@@ -351,7 +351,7 @@ model $H$ is
 \end{definition}
 
 
-\subsection{Viterbi algorithm for pair HMM}
+\subsection{Viterbi Algorithm for Pair HMMs}
 \label{SECTION:PAIRHMMVITERBI}
 Algorithms operating over pHMMs are similar to those for the regular HMMs, but
 in general they have higher computational complexity because they combine
@@ -544,7 +544,7 @@ the alignment) is done exactly as in the Needleman-Wunsch algorithm (see
 Section \ref{SECTION:NEEDLE}). The time complexity of the PD and MPD is
 $O(|X||Y|k^2)$ \cite{Lunter2008}. 
 
-\subsection{Pair Hidden Markov Models with Gene Structures}
+\subsection{Pair Hidden Markov Models with Gene Structure}
 
 In this section we describe several pair hidden Markov models (or generalized
 pair hidden Markov models) with gene structures incorporated into their
@@ -897,7 +897,7 @@ This will be discussed in the next chapter.
 
 
 
-\section{Algorithmic improvements}\label{SECTION:ALGORITHMICIMPROVEMENTS}
+\section{Algorithmic Improvements}\label{SECTION:ALGORITHMICIMPROVEMENTS}
 
 Needleman-Wunsch algorithm and decoding algorithm for HMMs and pHMMs uses
 dynamic programming. In this section we review several algorithmic improvements
@@ -975,7 +975,7 @@ for some user defined constant $\tau$. Similarly, $Y_j$ can be aligned to
 positions from $i-\tau$ to $i+\tau$. This technique is also called \firstUseOf{banding},
 and it is often used. We used this technique in chapter \ref{CHAPTER:REP}.
 
-\subsection{Reducing memory complexity}
+\subsection{Reducing Memory Complexity}
 One general technique to reduce the memory requirements of dynamic programing
 is \firstUseOf{checkpointing} \cite{Grice1997}.
 

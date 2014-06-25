@@ -52,7 +52,7 @@ footprint (F-HERD) or to the specified set (S-HERD) provides an almost correct
 annotation without these errors.  }\label{FIGURE:HERD_BAD} 
 \end{figure}
 
-\section{Formal definition}
+\section{Formal Definition}
 In this section we will define two-stage decoding algorithms, and the
 generalization of the footprint function from the first stage, the guide
 function. Additionally to the footprint, we define additional guide called
@@ -375,7 +375,7 @@ with additional dimension: the position $l$ in the footprint. The time
 complexity of this algorithm is $O(nm^2k)$, where $k$ is the length of the
 footprint. This algorithm is $k$ times slower than the Viterbi algorithm.
 
-\subsection{Data and results}
+\subsection{Data and Results}
 We created an artificial dataset of recombinant HIV sequences and run HERD and
 the Viterbi algorithm (VA) with two guide functions: annotation set and
 footprint. HERD was run with default parameters, $\gamma=0.2, W=10$. The model
@@ -504,7 +504,7 @@ still significantly better than unguided HERD algorithm.  Additionally, using
 set as an guide for short recombination length was not performing worse than
 original algorithm; accuracy was similar.
 
-\section{Computational complexity problems}
+\section{Computational Complexity Problems}
 
 In the previous experiments, we demonstrated that the two-stage algorithm can
 be a useful technique to improve HMM decoding algorithm. In this and following
@@ -936,7 +936,7 @@ where $m$ is the number of states, $n$ is the length of the sequence and $l$ is
 the size of the restriction.
 \end{proof}
 
-\section{The Most probable footprint}
+\section{The Most Probable Footprint}
 \label{sec:footprint}
 
 In this section we show proof of the most probable footprint problem is
@@ -1122,7 +1122,7 @@ polynomial time sequence $X$ and threshold $qk$ such that $G$ has a
 clique of size at least $k$ if and only if sequence $X$ has a
 set of states with probability at least $qk$. This completes our reduction.\qed
 \end{proof}
-\subsection{The most probable restriction}
+\subsection{The Most Probable Restriction}
 Finally, we show that the proof from the previous section is also proving NP-hardness of
 the most probable restriction problem (Theorem \ref{THEOREM::NPREST}).
 
