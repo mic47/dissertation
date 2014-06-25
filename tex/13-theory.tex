@@ -395,8 +395,7 @@ Apart from two different recombination length, we also evaluated algorithm of
 recombinants of sequences from same subtypes but different sub-subtypes, which
 gave us $4$ different data sets. For all datasets we generated $150$
 recombinants of two sequences. For subtypes we use subtypes A, BD, C, F, G. For
-sub-subtypes we have used sub-subtype pairs A1-A2, B-D and F1-F2. \todo{Tieto
-experimenty by som radsej zbehol este raz}
+sub-subtypes we have used sub-subtype pairs A1-A2, B-D and F1-F2. 
 
 To measure accuracy of the algorithms and amount of systematic errors, we use
 the following metrics.
@@ -740,11 +739,6 @@ The following recurrence holds for $2\leq k\leq n$:
 $$D(n,k)=(k-1) D(n-1,k) + k D(n-1,k-1).$$
 In addition, $D(n,n)=n!$, $D(n,1) = 0$ for $n>1$, and $D(n,k) = 0$ for $k>n$.
 \end{lemma}
-
-\begin{reformulate*}
-Chcem sem este pridat text ako sa to podoba a suvisi s tymi eulerovymi vecami.
-Ale musim to znova najst.
-\end{reformulate*}
 
 \begin{proof}
 Clearly, $D(n,n)=n!$ since walks of length $n-1$ correspond to
