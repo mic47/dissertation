@@ -250,7 +250,7 @@ work \cite{Nanasi2010mgr}}\label{app:fig:jpHMM}
 
 In this section we describe the HERD algorithm and how to modify the Viterbi
 algorithm and the HERD to use footprint and the annotation set as the guides.
-We denote HERD's gain function, described in section \ref{SECTION:HERD}, as
+We denote HERDs gain function, described in section \ref{SECTION:HERD}, as
 $f_{HERD}$ (note that the gain function of the Viterbi algorithm is $f_V$).
 Details of the algorithm that optimizes this gain function can be found in
 \cite{Nanasi2010, Nanasi2010mgr}. We use the footprint and the annotation set
@@ -801,7 +801,7 @@ we also have $M_{n_k}\le \lceil k \ln k\rceil$.
 We can compute $n_k$ and $M_{n_k}$ by filling in table $D(m,j)$ for
 all values of $m$ and $j$ up to $\lceil k\ln k\rceil$ using the
 recurrence from Lemma \ref{RecurenceLemma}. Since $D(n,k)\leq k^n\leq
-n^n$, we can store $D(m,j)$ in $O(k \mbox{polylog}(k))$ bits.
+n^n$, we can store $D(m,j)$ in $O(k \cdot\mbox{polylog}(k))$ bits.
 Therefore computing the desired values $n_k$ and $M_{n_k}$ 
 can be done in polynomial time. \qed
 \end{proof}

@@ -857,44 +857,6 @@ g(\Lambda,\Lambda',i)=
 \end{cases}
 \end{equation}
 
-\begin{comment}
-From the linearity of the expectation we know that
-\[E_{\Lambda}[f(\Lambda,\Lambda)']=\sum_{i\in
-B_{\Lambda'}}E_{\Lambda}[g(\Lambda,\Lambda',i)]\] We call
-$E_{\Lambda}[g(\Lambda,\Lambda',i)]$ the expected gain of boundary $i$.
-
-Algorithm for finding annotation that maximizes the expected gain with function $f$
-is following. At first we compute the $P^i_{c_1,c_2}$, the probability that correct annotation
-has boundary between colors $c_1$ and $c_2$ is at position $i$. This can be
-computed by a variant of the Posterior decoding
-since 
-\[P_{c_1,c_2}^i=\prob{\Lambda_i=c_1,\Lambda_{i+1}=c_2\mid X,H}\]  
-  The expected gain of
-boundary at position $i$ between colors $c_1,c_2$  is 
-\[P^i_{c_1,c_2}-\gamma (1-P^i_{c_1,c_2})\]
-We denote this value by  $B^i_{c_1,c_2}$.
-
-After computing values $B^i_{c_1,c_2}$ we construct graph $G=(V,E)$ where
-\begin{align*}
-V&=\{v^i_{c_1,c_2}\mid 0\leq i<|X|,c_1,c_2\in C\}\cup\{s\}\\
-E&=\{(v^i_{c_1,c_2},v^j_{c_2,c_3})\mid 0\leq i<j< |X|, c_1,c_2,c_3\in C
-\}\cup\{(s,v^i_{c_1,c_2}\mid 0\leq i< |X|, c_1,c_2\in C\} 
-\end{align*}
-where $C$ is the set
-of labels. Weight of a edge $(u,v^i_{c_1,c_2})$ is $B^i_{c_1,c_2}$ for all $u\in
-V$. Each vertex corresponds to the boundary in the annotation and edges
-corresponds to the  block of consecutive labels with the same
-color.
-There is one to one correspondence between annotations of $X$ and paths in
-$G$ starting in $s$ (sequence of vertices corresponds to the sequence of
-boundaries which uniquely defines an annotation). Moreover weight of every path
-is the expected gain of
-the corresponding annotation. $G$ is acyclic and therefore we can find such path in
-polynomial time. This can be implemented in $O(|X||C|^2+|X|m^2)$ time and memory
-where $m$ is the number of states of HMM $H$. More details of implementation
-for HMMs can be found in
-\cite{Nanasi2010mgr}.
-\end{comment}
 Algorithm for optimizing this gain function is similar to the posterior
 decoding and details of implementation for HMMs can be found in
 \cite{Nanasi2010mgr}.  The time complexity of the algorithm is $O(nc^2+nm^2)$
