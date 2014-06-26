@@ -23,8 +23,8 @@ number of recombinations.
 More generally, in the first stage we search for the best guide, which is a
 general constraint on the allowed annotation, for example in the form of
 footprint or a set of labels. In the second stage, we find the optimal annotation
-constrained by the selected guide. We discussed an example of such algorithm for the most probable ball
-problem \cite{Brown2010, Truszkowski2011} in Section
+constrained by the selected guide. Example of such algorithm is the most probable ball
+problem \cite{Brown2010, Truszkowski2011} discussed in Section
 \ref{SECTION:DISTANTMEASURES}. In this this algorithm, the two-stage approach was motivated
 by computational complexity, since optimizing the border shift distance is
 NP-hard \cite{Brown2010}. Our motivation to use the two-stage algorithms is to
@@ -354,7 +354,7 @@ the HERD; we only need to to ignore states that are not in the guide set. We
 can do it by removing state that are not in the guide set from the HMM without
 normalizing the transition probabilities. 
 
-For optimizing the Viterbi algorithm with footprint $f$ as an guide can be done
+Optimizing the Viterbi algorithm with footprint $f$ as an guide can be done
 by computing following equations:
 \begin{align}
 V[0,v, 0] &= I_{v}e_{v,X_0}, \lambda(v) = f_0\\
@@ -412,7 +412,7 @@ segments out of the number of segments in the correct annotation.
 \item {\bf \%correct footprints}: Percentage of correctly predicted footprints.
 
 \item {\bf Footprint distance}: Edit distance of predicted footprint and
-correct footprint normalized by the length of the correct footprint
+the correct footprint normalized by the length of the correct footprint
 (averaged over all samples).
 
 \item {\bf Set specificity}: Percentage of the number of correctly predicted label
@@ -483,7 +483,7 @@ especially with the metrics $4-7$: for HERD, the fraction of correct footprint
 was increased from $76.67\%$ to $100\%$ in case of subtypes and from $21.33\%$
 to $98\%$ in case of sub-subtypes (similarly for VA). However on recombinants
 with short recombination length, used footprints were wrong most of the time
-and in the sub-subtypes dataset all of the algorithms predict zero correct
+and in the sub-subtypes dataset, all of the algorithms predict zero correct
 footprints.  In fact, accuracy of F-HERD and F-Viterbi decreased in all metrics
 except for annotation set specificity and sensitivity. This and increase in
 footprint distance suggest the problem might be cause by heuristic methods for
@@ -512,7 +512,7 @@ sections we will discuss theoretical aspects of defining guides and finding the
 most probable guides. In particular, we show that the following problems are
 NP-hard: \firstUseOf{the most probable set}, \firstUseOf{the most probable
 footprint}, and \firstUseOf{the most probable restriction}. The last problem is
-variant of the most probable set. In this section we define these problems and
+variant of the most probable set. In this section, we define these problems and
 state the main results. The following sections then discuss individual problems
 and prove the results.
 
@@ -568,7 +568,7 @@ probable annotation and the most probable footprint will be identical.
 First we show combinatorial proof of theorem \ref{THEOREM::NPSET}. Then we show
 proof of theorem \ref{THEOREM::NPREST}. Finally we show proof of theorem
 \ref{THEOREM::NPFOOT} by showing $8$-state HMM for which is NP hard to find the
-most probable footprint and then we extend this proof to theorem
+most probable footprint,  then we extend this proof to theorem
 prove theorems \ref{THEOREM::NPSET} and \ref{THEOREM::NPREST}.
 
 \section{The Most Probable Set Problem}
@@ -645,7 +645,7 @@ vertex from $S$ is used at least once.
 
 Let $Y(n, G)$ be the number of graph covering walks of length $n-1$. Since a walk
 of length $n - 1$ contains $n$ vertices, $Y(n, G)=0$ if $n<|V|$. We consider a
-special case of this formula for complete graphs: Let $K_k$ be
+special case of this formula for complete graphs: let $K_k$ be
 complete graph with $k$ vertices, then $D(n, k) = Y(n, K_k)$. The following claim
 clearly holds:
 
@@ -666,11 +666,11 @@ probability $p$ then there is clique of size $k$ in $G$", we need suitable choic
 of $n$ and $k'$. Table \ref{DNKTable} shows values of $D(n,k)$ for
 small values of $n$ and $k$. For a fixed length of walk $n$, the
 number of walks in $K_k$ initially grows with increasing $k$, as we
-have more choices which vertex to use next, but as $k$ approaches $n$,
-$D(n,k)$  may start to decrease, because the walks are more constrained by
+have more choices which vertex to use next. However, when $k$ approaches $n$,
+$D(n,k)$  starts to decrease, because the walks are more constrained by
 the requirement to cover every vertex. We are particularly interested in
 the value of $k$ where $D(n,k)$ achieves the maximum value for a fixed $n$. 
-In particular we use the following notation:
+In particular, we use the following notation:
 $$M_{n} = \min\left\{k ; D(n,k) = \max_{0\leq k'\leq
   n}D(n,k')\right\}$$
   
@@ -746,9 +746,9 @@ permutations of vertices.  If $n>1$ then $D(n,1)=0$, since $K_1$ does
 not contain any edges.  If $k>n$, $D(n,k)=0$ since a walk of length
 $n-1$ can pass through at most $n$ vertices.
 
-Now let $2\leq k\leq n$. Denote as $v(w)$ the number of different
+Now let $2\leq k\leq n$. Let $v(w)$ be the number of different
 vertices covered by walk $w$. Let $w$ be a walk of length $n-1$ with
-$v(w)=k$ and let $w'$ be a walk obtained by taking the first 
+$v(w)=k$, and let $w'$ be a walk obtained by taking the first 
 $n-1$ vertices of walk $w$. Then $v(w')$ is either $k$ or $k-1$. 
 
 Every walk $w'$ of length $n-2$ with $v(w')=k$ can be extended to a
@@ -757,7 +757,7 @@ of $w$ we can use any vertex except the last vertex of $w'$. Therefore
 there are $(k-1) D(n-1,k)$ different walks $w$ in $K_k$ with
 property $v(w')=k$.
 
-On the other hand if $v(w')=k-1$, we can create a walk $w''$ in
+On the other hand, if $v(w')=k-1$, we can create a walk $w''$ in
 $K_{k-1}$ by renumbering the vertices in $w'$ so that only numbers
 $\{1,\dots,k-1\}$ are used (if the vertex missing in $w'$ is $i$, we
 replace $j$ by $j-1$ for every vertex $j>i$).  The same
@@ -772,7 +772,7 @@ cases we get the desired recurrence.\qed
 \begin{proof}[Proof of Lemma \ref{LEMMA:DNKlemma}] 
 Assume that $k\ge 3$. Clearly, $D(n,k)\leq k(k-1)^{n-1}$, since
 $k(k-1)^{n-1}$ is the number of all walks of length $n-1$ in
-$K_k$. However, this number includes also walks avoiding some
+$K_k$. However, this number includes also walks that avoid some
 vertices. The number of such walks can be bounded from above by
 $k(k-1)(k-2)^{n-1}$ where we choose one of the $k$ vertices to avoid
 and then consider all possible walks on the remaining $k-1$
@@ -859,8 +859,7 @@ I_{v}e(v,X[1])& i=1,S=\{v\}\\
 \end{cases}
 \end{equation}
 Computing $F$ can be done in $O(2^mm^2n)$ time assuming that manipulation with
-the numeric representation of probabilities is in constant time. Otherwise, if
-the parameters of the HMM are rational numbers, all quati Assuming that the
+the numeric representation of probabilities is in constant time. Assuming that the
 parameters of HMM are rational numbers, we can represent all quantities with
 the polynomial number of bits and the resulting time complexity will be higher
 by a polynomial factor.
@@ -871,7 +870,7 @@ by a polynomial factor.
 
 \label{sec:restriction}
 
-In the most probable restriction problem, given HMM we want to decide if there
+The most probable restriction problem is following: given HMM, decide if there
 exists such subset of the set of states, that have size $l$ and probability at
 least $p$. We prove that this problem is NP-complete.
 
@@ -901,18 +900,17 @@ can be generated only by states $u_i$ and
 $\bar{u_i}$; therefore at least one of these states needs to be in the
 path. The first portion of the path thus traverses $l$ (equals to $n$) 
 different states; only these states can be used to emit the second part of the
-sequence. Since each of $u_i$, where $1\leq i\leq n$ has to be generated,
+sequence. Since each of $u_i$ ($1\leq i\leq n$) has to be generated,
 exactly one of the states $u_i$, $\bar{u_i}$ will be in the state path.
 Therefore the set of states used by a state path corresponds to assignment of
 variables.  If this assignment is satisfying, it is possible to generate the
-rest of the sequence: $c_1c_2\dots c_m$, and the probability of such state path
-will be non-zero. If the assignment is not satisfying, there exists clause
+rest of the sequence: $c_1c_2\dots c_m$, and state path is admissible.
+If the assignment is not satisfying, there exists clause
 $c_j$ that cannot be generated states were used in the first part of the
 sequence (and it is not possible to add additional state into the state set)
-and therefore any state path using this set of states will have zero
-probability. Therefore if there is a state path that generates $X$ with
-non-zero probability (or probability at least $p$), where is an satisfying
-assignment for the instance of the SAT problem.
+and therefore any state path using this set of states will be inadmissible.
+Therefore if there is admissible state path that generates $X$, then there is
+an satisfying assignment for the instance of the SAT problem.
 
 Note that given a restriction $S$, we can easily verify if its
 probability is at least $p$ by a variant of the Forward algorithm
@@ -939,7 +937,7 @@ the size of the restriction.
 \section{The Most Probable Footprint}
 \label{sec:footprint}
 
-In this section we show proof of the most probable footprint problem is
+In this section we show proof that the most probable footprint problem is
 NP-hard.  Given HMM $H$, sequence $X$ and the probability $p$, goal is to
 decide if there exists a footprint $F$ with the probability at least $p$. We
 show result for constant-sized HMM and the identity function as an labeling
@@ -977,10 +975,10 @@ concatenation of blocks for all vertices with additional first and last symbols:
 $X=SX_1X_2\dots X_nT$.
 
 All state paths that can generate $X$ have a similar structure. The first
-symbol $S$ and several initial blocks are generated in state $S$, one
-block, say $X_i$, is generated in states $S'$, $\#$, $0$, $1$, and
+symbol $S$ and several initial blocks are generated by state $S$, one
+block, say $X_i$, is generated by states $S'$, $\#$, $0$, $1$, and
 $T'$ and the rest of the sequence, including the final symbol $T$, is
-generated in state $T$. We will say that a state path with this
+generated by state $T$. We will say that a state path with this
 structure \emph{covers} the block $X_i$.  Note that state $E$ is never used in
 generating $X$, its role is to ensure that the probability of
 self-transition is the same in states $S$ and $T$.
@@ -1129,7 +1127,7 @@ the most probable restriction problem (Theorem \ref{THEOREM::NPREST}).
 \begin{proof}(Theorem \ref{THEOREM::NPREST})
 Consider the proof of Theorem \ref{THEOREM::NPSET} from Section
 \ref{SECTION:NPSETALT}.
-Any set for for sequence $X$ that have nonzero probability on sequences that
+Any set for for sequence $X$ that have non-zero probability on sequences that
 encodes graph with $n$ vertices have size $n + 4$. Therefore if we set $l = n +
 4$ ($l$ is the restriction parameter), the proof of theorem
 \ref{THEOREM::NPSET} is also a proof of this theorem.  \qed
