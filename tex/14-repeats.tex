@@ -55,7 +55,7 @@ for aligning the sequence $U$ to its repetitions in the second sequence. Time
 complexity of this algorithm is $O(n^4)$, and Benson also proposed a heuristic
 algorithm to compute the alignment in a reasonable time.  Several variants of
 this problem were also studied \cite{Sammeth2006, Berard2006}. Another
-possibility is to use a lossy compression scheme to collapse tandem repeats,
+approach to align sequences with tandem repeats is to use a lossy compression scheme to collapse tandem repeats,
 and then align compressed sequences \cite{Freschi2012}.
 
 A traditional approach to deal with tandem repeats is to mask them in both
@@ -142,7 +142,7 @@ different lengths, as in the following example:
 \begin{verbatim}
 Sequence  X:        CACCGCCACCACCGTAG
 Consensus ACCACC:    ACCACCACCACC      2 repetitions
-Consensus AAC:       ACCACCACCACC      4 repetitions
+Consensus ACC:       ACCACCACCACC      4 repetitions
 consensus CAC:      CACCACCACCACC      4.3 repetitions
 \end{verbatim}
 
@@ -169,8 +169,8 @@ The sunflower model is an extension of the profile HMM described in Section
 version of the profile HMM with match states representing motif $C$. This model
 implicitly assumes that repetitions evolved from motif $C$ independently of
 each other, as of at single point of time, motif $C$ was copied several times
-forming tandem repeat, which then underwent several simple evolution events (
-substitutions, deletions and insertions). This does not accurately reflect a
+forming tandem repeat, which then underwent several simple evolution events 
+(substitutions, deletions and insertions). This does not accurately reflect a
 typical evolution history of a tandem repeat, where individual repetitions
 arise over time from existing copies which could differ from the original
 consensus $C$. However, trying to model such evolution would lead to a much
@@ -196,7 +196,7 @@ model.}
 \end{figure}
 
 Our model contains typical profile HMM states $M_0,\dots, M_{k-1}, I_{0},
-\dots, I_{k-1}$ and $D_{0}, \dots, D_{k-1}$. The transitions between the states
+\dots, I_{k-1}$ and $D_{0}, \dots,$ $D_{k-1}$. The transitions between the states
 are similar to profile HMM:  $M_{i}\to M_{i\oplus 1}, M_i\to I_i, M_i\to
 D_{i\oplus 1}, I_i\to I_i, I_i\to M_{i\oplus 1}, I_i\to D_{i\oplus 1}, D_{i}\to
 D_{i \oplus 1}, D_{i}\to M_{i\oplus 1}, D_{i}\to I_i$ for all $0\leq i < k$,
@@ -208,7 +208,7 @@ Figure \ref{SUBFIGURE:SUNFLOWERSILENTCYCLE}.
 
 The problem is that the cyclic profile contains a cycle of silent states, which
 causes problems with training and decoding algorithm (see Section
-\ref{SECTION:SILENT}. Removing these states would lead to additional
+\ref{SECTION:SILENT}). Removing these states would lead to additional
 $\theta(k^2)$ edges. Therefore, we have decided to remove the transition
 between delete states $D_{k-1}$ and $D_0$. To compensate for the lost
 possibility of deleting an arbitrary part of the tandem repeat, we add an
@@ -238,7 +238,7 @@ transition. For those states, the probability of transitions were normalized in
 order to form a probability distribution. 
 
 To reduce the number of emission parameters, all insert states share the same
-emission distribution. For the emission distribution of match state $M_i$ we
+emission distribution. For the emission distribution of match state $M_i$, we
 assumed that the consensus base $c_i$ from the motif evolved over evolutionary
 time $t$ according to Jukes-Cantor model\footnote{ The parameter $t$ of
 Jukes-Cantor model is not time as measured by years, but rather a branch length
@@ -402,7 +402,7 @@ dotted box~(*). Bellow the model we show an example of emitted alignments.
 Dashed gray lines corresponds to multiple emissions from the same states, while
 the full line represents one emission from a generalized state. 
 
-(*) Black states in this submodel silent start and final states. Spirals
+(*) Black states in this submodel are silent start state and final state. Spirals
 represents sunflower submodels. They are in pairs of two identical models
 $S_c^X$ and $S_c^Y$, one for generating tandem repeat in one sequence, other
 for generating tandem repeat in the other sequence. There are multiple pairs of
@@ -507,7 +507,7 @@ state part of the SFF model.
 Before continuing, we make additional argument for the use of the
 domain-specific decoding methods instead of finding the most probable state
 path, the most probable annotation, or in case of the pHMM, the most probable
-annotation. When constructing the model, we do many simplifications of the
+alignment. When constructing the model, we do many simplifications of the
 biological processes. This is because because without these simplifications, we
 would end up with very large and impractical models. We can use the
 domain-specific decoding method as an compensation for such simplifications; we
@@ -628,7 +628,7 @@ M[i,j,a] &= \max_{b\in C}
  M[i-1,j,b]+\prob{(X[i],a, -_{j})}
 \end{cases}, 0\leq i<n,0\leq j<m 
 \end{align}
-Where $C$ is the set of all annotation symbol and $\prob{A}$ is the posterior
+$C$ is the set of all annotation symbol and $\prob{A}$ is the posterior
 probability of the annotation alignment column $A$. The posterior probability
 of an annotated alignment column $A$ is the sum of the probabilities of all
 annotated alignments that contain $A$. It can be computed by the
@@ -695,9 +695,8 @@ generalized and the overall number of states is constant. The number of
 possible blocks is therefore $O(n^2m^2)$. The expected gain of the block 
 is its posterior probability multiplied by the number of emitted symbols. After
 computing the expected gains of individual blocks, we can compute the highest
-scoring annotated alignment in $O(n^2m^2)$ time by the dynamic programming that
-is very similar to the Viterbi algorithm from section \ref{SECTION:GPHMM}, but
-with 
+scoring annotated alignment in $O(n^2m^2)$ time by the dynamic programming will
+be described in the end of this section.
 
 If we use the Forward algorithm for pHMM for computation of the emissions of
 state $R$, then time complexity of the Forward-Backward algorithm (computation
@@ -806,7 +805,7 @@ We used the following algorithm to select candidate intervals $T_X$ and $T_Y$:
 intervals $T_X$ and $T_Y$ and lists of consensus sequences $C_X$ and $C_Y$.
 
 \item For every consensus $c\in C_X\cup C_Y$, build the SRF model $S_c$
-(sunflower repeat finding model from Section \ref{SECTION:SUNFLOWERMODEL}). 
+(Sunflower repeat finding model from Section \ref{SECTION:SUNFLOWERMODEL}). 
 
 \item Each model $S_c$ is run on the sequences $X$ and $Y$ using the Viterbi
 algorithm. All found repeat intervals are added into corresponding sets $T_X$
@@ -1097,7 +1096,7 @@ model (modified for finding tandem repeats as described in section
 select maximal scoring non-overlapping set of tandem repeats out of TRF
 output). We used hard-masking as described in section
 \ref{SECTION:REPALNMETHODS}. For decoding we used both the VA and the PD with the 3-state model.
-Apart from  masking the correct intervals, the best performing masking where 
+Apart from masking the correct intervals, the best performing masking was one where we masked 
 non-overlapping repeats from TRF.
 
 \begin{table*}
