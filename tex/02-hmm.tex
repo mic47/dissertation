@@ -14,7 +14,7 @@ application of HMMs to sequence alignment.
 \abbreviation{Hidden Markov models}{HMM} are graphical probabilistic models
 commonly used in bioinformatics for sequence annotation or sequence alignment. An HMM is a
 probabilistic finite state machine that in every state emits one symbol. Later
-we will discuss variants of HMMs that emit more symbols or that emit
+we will discuss variants of HMMs that emit more than one symbol, or that emit
 symbols on multiple tapes. This section describes basic definitions
 and algorithms that are used with HMMs.
 
@@ -244,7 +244,7 @@ B[i, v] =
 					\sum_{\pi\in V^{n-i},\pi_0=v}
 					\prod_{j=1}^{n-i-1} e_{\pi_j,X_{i+j}}a_{\pi_{j-1},\pi_j}
 \end{equation}
-
+Note that the $B[i, v]$ is the backward version of the Forward equations.
 We can compute 
 these values using  the Backward algorithm, which is very similar to the Forward
 algorithm. 
@@ -261,7 +261,7 @@ The cell $B[i,v]$ depends on the next positions in sequence $X$,
 while $F[i,v]$ depends on the previous positions in sequence $X$. Another
 difference is that $B[i,v]$ does include emission of $X[i]$ while $F[i,v]$ does.
 
-We can compute values of $F[i,v]$ and $B[i,v]$ and find the posterior decoding
+We can compute values of $F[i,v]$ and $B[i,v]$ and find the state path 
 in $O(n(m+t))$ time and $O(nm)$ memory.  Advantage of the posterior decoding is
 that it uses information from many slightly suboptimal state paths as opposed
 to the Viterbi decoding, which uses only one state path. One drawback is that
@@ -323,7 +323,7 @@ decoded state path. Now we give several examples of bioinformatics problems
 where HMMs were previously used. 
 
 \paragraph{Gene finding:} Parts of DNA sequences that are in cells translated
-into proteins are called genes.  In gene finding we want to assign to every
+into proteins are called genes.  In gene finding, we want to assign to every
 symbol of the input sequence a gene label if it is inside a gene or a different
 label if it is not part of a gene \cite{GeneWise2004, Brejova2005, Burge1997,
 Alexanderson2004}. Additionally, we want to label sequence according to the
@@ -336,8 +336,8 @@ cut out before translation of the exons to protein).
 
 \paragraph{Transmembrane proteins:} Some proteins in cells pass through a membrane
 from one side to the another (usually they pass through the membrane several times).  In
-transmembrane protein prediction we want to assign labels to the symbols of the input
-protein sequence to distinguish the parts of the sequence that are on one side of the
+transmembrane protein prediction, we want to assign labels to the symbols of the input
+protein sequence to distinguish the parts of the sequence, that are on one side of the
 membrane from the parts that are on the other side of membrane or inside the membrane
 \cite{Brown2010}.
 
@@ -355,7 +355,7 @@ assign one label to every symbol of the input sequence. We do it by assigning
 one label to every state of an HMM.
 To predict the annotation of the input sequence $X$, we can  find the
 most probable state path that could generate $X$ and  annotate each symbol of
-the sequence $X$ according to the label assigned to the state that generated that
+the sequence $X$ according to the label assigned to the state, that generated that
 symbol. We can formalize it in the following definition.
 
 \begin{definition}\label{DEFINITION:ANNOTATION}
@@ -428,7 +428,7 @@ This theorem was proved in 2002 by Lyngsø {\it et al.} and proof can be found i
 For input graph with $n$ vertices they construct an HMM $H$ with $O(n^2)$ states and
 sequence $X$ of the length $n$. The most probable annotation of $X$ could be
 converted into maximum clique of input graph. 
-Their result was later strengthened in a sense that the problen is hard even for some constant-sized HMMs \cite{Brejova2007mpa}.
+Their result was later strengthened by Brejová {\it et al.} in a sense that the problem is hard even for some constant-sized HMMs \cite{Brejova2007mpa}.
 
 \begin{theorem}
 There exists an HMM such that it is NP-hard to find the most probable annotation
@@ -439,7 +439,7 @@ Same paper also contain polynomial Viterbi-like algorithm (Extended Viterbi
 Algorithm) that finds most probable annotation for special classes of HMMs. 
 
 Traditional way to find sequence annotation is to use Viterbi algorithm: given
-sequence $X$, we find the most probable state path $\pi$ and then compute
+sequence $X$, we find the most probable state path $\pi$, and then compute
 $\lambda(\pi)$. If the  coloring function $\lambda$ is the identity function,
 this will find the most probable annotation. In general, the Viterbi
 algorithm is not even a good approximation of the most probable annotation as
@@ -516,8 +516,8 @@ estimated to zero. To avoid this behavior, we can use pseudo-counts
 events $x$ that we expect to have non-zero probability.
 
 \subsubsection{Training with Missing Data} 
-In case that some data are missing (for example a part
-of the state path or part of the sequence) we treat the missing data as random
+In case that parts of the data are missing (for example a part
+of the state path or part of the sequence) we treat the missing data as a random
 variables. We can use the following algorithm. 
 \begin{enumerate}[itemsep=-1mm]
 \item  Set the initial parameters $\theta_0$. Let $i=0$
@@ -541,8 +541,7 @@ for the missing data and new model is estimated from this data.
 This approach is called the Viterbi training.  While the Viterbi training does
 not have to converge to local maxima, it is faster in practice
 \cite{Durbin1998}.  In practice we can use the Viterbi training for the
-estimation of good starting parameters for the Baum-Welsch training. This
-approach was used in \cite{FEAST2011}.
+estimation of good starting parameters for the Baum-Welsch training \cite{FEAST2011}.
 
 \subsection{Variants of Hidden Markov Models}
 
@@ -638,7 +637,9 @@ F$.
 
 Advantage of start and final states is, that it is trivial to compose model
 together.  For example to chain two model, we just merge start state of one
-model with final state of other model.
+model with final states of other model. For the purpose of model composition,
+it is a good practice if all models have single start state and single final 
+state.
 
 \subsubsection{High Order HMMs}
 
@@ -707,17 +708,13 @@ Forward algorithm run in $O(n^2m^2)$ time.
 
 \section{Other Decoding Methods for HMMs}\label{SECTION:OTHERDECODING}
 In the previous sections we have described two decoding algorithms: the Viterbi algorithm
-that finds the most probable state path  and the Posterior decoding that for
+that finds the most probable state path, and the Posterior decoding that for
 every symbol of the sequence assigns the state that generated such symbol with
 maximum probability. 
 We have shown that in some cases these algorithms can recover bad
 annotation. However, maximizing the most probable annotation is NP-hard and
 therefore it is not tractable. Additionally, the most probable annotation does
 not necessary have to be the best approximation of the true annotation.
-
-In this section we will describe highest expected gain decoding framework,
-describe already discussed algorithm within this framework and show several
-other decoding methods developed in recent years.
 
 \subsection{Highest Expected Gain}
 
@@ -753,7 +750,7 @@ We will use term gain function instead of annotation/path gain function if it is
 clear from the context.
 
 Machine learning literature often uses a related term of loss function
-\cite{Lember2010}. Lower loss mean more similar annotations, that is higher gain. Instead
+\cite{Lember2010}. Lower loss mean more similar annotations. Therefore instead
 of maximizing the expected gain we can therefore equivalently minimize the expected
 loss.
 \end{note}
@@ -775,7 +772,7 @@ E_{\pi_X\mid X,H}[f(\pi_X,\pi)] =
 
 
 Once we have HMM $H$, gain function $f$ and the observed sequence $X$,
-we are trying to find the annotation/state path maximizing the expected gain. 
+we try to find the annotation/state path maximizing the expected gain. 
 \begin{equation}
 \Lambda = \arg\max_{\Lambda}E_{\Lambda_X\mid
 X,H}\left[f\left(\Lambda_x,\Lambda\right)\right]
@@ -797,7 +794,7 @@ f_A(\Lambda,\Lambda') = \begin{cases}
 \end{cases}
 \end{equation}
 For this gain function $E_{\Lambda_X}[f_A(\Lambda_X,\Lambda)]=\prob{\Lambda\mid
-X H}$ and this
+X, H}$ and therefore 
 maximizing expected gain is 
 equivalent to the most probable annotation problem. Similarly if we define gain
 as the identity function over state paths, we obtain the most probable state
@@ -807,7 +804,7 @@ Therefore for given sequence finding annotation with highest expected gain is
 NP-hard if gain function is part of the input. However, for specific gain
 functions we can maximize expected gain in polynomial time.
 
-The gain function $f_P$ compares the two annotations of the same length position
+The gain function $f_P$ compares two annotations of the same length position
 by position and assigns score $1$ to every position where they are equal.
 \begin{equation}
 f_P(\Lambda,\Lambda') = 
@@ -860,11 +857,11 @@ g(\Lambda,\Lambda',i)=
 \end{cases}
 \end{equation}
 
+\begin{comment}
 From the linearity of the expectation we know that
 \[E_{\Lambda}[f(\Lambda,\Lambda)']=\sum_{i\in
 B_{\Lambda'}}E_{\Lambda}[g(\Lambda,\Lambda',i)]\] We call
 $E_{\Lambda}[g(\Lambda,\Lambda',i)]$ the expected gain of boundary $i$.
-
 
 Algorithm for finding annotation that maximizes the expected gain with function $f$
 is following. At first we compute the $P^i_{c_1,c_2}$, the probability that correct annotation
@@ -897,6 +894,12 @@ polynomial time. This can be implemented in $O(|X||C|^2+|X|m^2)$ time and memory
 where $m$ is the number of states of HMM $H$. More details of implementation
 for HMMs can be found in
 \cite{Nanasi2010mgr}.
+\end{comment}
+Algorithm for optimizing this gain function is similar to the posterior
+decoding and details of implementation for HMMs can be found in
+\cite{Nanasi2010mgr}.  The time complexity of the algorithm is $O(nc^2+nm^2)$
+where $n$ is the length of the sequence, $m$ is the number of states and $c$ is
+the number of labels.
 
 Intuition behind gain function $f$ is following. Like with the Posterior
 decoding, we want to maximize the number of correctly predicted boundaries (the
@@ -910,10 +913,11 @@ gain and therefore it is less likely that they appear in the optimal annotation.
 
 \subsection{Highest Expected Reward Decoding}\label{SECTION:HERD}
 
-The \abbreviation{Highest Expected Reward Decoding}{HERD} is the extension of maximum
-boundary accuracy decoding. We have developed this decoding for prediction of
-recombination of HIV virus.  Further details can be found in \cite{Nanasi2010}
-and in my Master thesis \cite{Nanasi2010mgr}.
+The \abbreviation{Highest Expected Reward Decoding}{HERD} is the extension of
+maximum boundary accuracy decoding. We have developed this decoding for
+prediction of recombination of HIV virus.  Further details can be found in
+\cite{Nanasi2010, Nanasi2010mgr} and in Chapter \ref{CHAPTER:TWOSTAGE}, where we
+extend HERD to reduce the amount of systematic errors.
 
 
 Genome of some viruses (for example HIV or HCV virus) can be divided into
@@ -961,7 +965,7 @@ expected gain for the boundary if there are many annotations with similar
 boundary.
 
 Optimizing this criteria can be done in $O(|X|W|C||T| + n|C|^2W^2)$ time  and
-$O(\sqrt{|X|}|C||V|+W|C||V|+n|C|^2)$ memory. Experimental evaluation,
+\\$O(\sqrt{|X|}|C||V| + W|C||V|+n|C|^2)$ memory. Experimental evaluation,
 optimization algorithm and implementation details can be found in
 \cite{Nanasi2010,Nanasi2010mgr}.
 

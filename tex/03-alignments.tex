@@ -31,7 +31,7 @@ and deletions as to \firstUseOf{indels}.
 
 \begin{example} 
 Consider the  following evolutionary history of hypothetical DNA sequences of two
-current organisms $X$ and $Y$. There was a parent sequence $P$ which evolved into
+living organisms $X$ and $Y$. There was a ancestral sequence $P$ which evolved into
 $X'$ and $Y'$ and after that $X'$ evolved into $X$ and $Y'$ evolves into $Y$.
 These sequences are shown bellow: 
 \begin{verbatim}
@@ -43,14 +43,14 @@ Y:      T C T A G           C C           G A T A G C A
 \end{verbatim}
 %$X$ and $Y$ evolved from parent sequence $P$ through sequences $X'$ and $Y'$.
 During evolution from $P$ to $X'$, four events occurred: deletion of 
-sequences ``TG''  and ``TGAGCT'' and mutations of two bases. During evolution
-from $X'$ to $X$, one base was changed and sequence ``CGACC'' was inserted.  
-Similarly during evolution from $P$ to $Y'$, the two bases mutated and two
-sequences were deleted. During evolution from $Y'$ to $Y$ one base mutated and
+sequences ``TG''  and ``TGAGCT'', and mutations of two bases. During evolution
+from $X'$ to $X$, one base was changed, and sequence ``CGACC'' was inserted.  
+Similarly, during evolution from $P$ to $Y'$, two bases mutated, and two
+sequences were deleted. During evolution from $Y'$ to $Y$ one base mutated, and
 sequence ``CGACC'' was inserted. 
 
-From evolutionary history described above, we can create an alignment of current
-sequences $X$ and $Y$ by removing ancestral sequences $X',Y'$ and $P$, 
+From evolutionary history described above, we can create an alignment of 
+sequences $X$ and $Y$ by removing ancestral sequences, and
 removing columns that contain only gaps and
 replacing gaps with dashes (gap symbols). 
 \begin{verbatim}
@@ -63,7 +63,7 @@ As you can see, homologous symbols do not have to be equal.
 \end{example}
 
 There is only one alignment that reflects the true evolutionary history. Our goal
-is to find this alignment, or at least some alignment, which is as close as
+is to find that alignment, or at least alignment, that is as similar as
 possible. The alignment shown above is a \firstUseOf{global alignment} because it
 is an alignment of whole sequences $X$ and $Y$. A \firstUseOf{local alignment}
 is an alignment of parts of sequences: a local alignment of sequences $X$ and
@@ -76,7 +76,7 @@ most of the methods can be extended also to local alignments.
 
 In this section we will review basic methods for constructing alignments. We
 will discuss basic scoring schemes and algorithms that find optimal alignment
-under these schemes. In this thesis we cover mostly probabilistic methods.
+under these schemes. 
 
 \subsection{Scoring Schemes}
 
@@ -95,19 +95,19 @@ of an entire alignment is the sum of the scores of all ungapped columns plus the
 sum of the scores of all gaps.
 
 In particular
-we will assume that all sequences are from a finite alphabet $\Sigma$. For DNA,
-$\Sigma=\{A,C,G,T\}$, for proteins $\Sigma$ contains $20$ codes of amino acids.
+we will assume that all sequences are from a finite alphabet $\Sigma$. Specifically, the DNA alphabet
+contain $4$ symbols $A,C,G,T$, and protein alphabet contains $20$ codes of amino acids.
 We will score a column containing residues $a$ and $b$ by $S[a,b]$ where $S$ is
 a matrix of size $|\Sigma|\times|\Sigma|$ called \firstUseOf{substitution
 matrix}.  A gap of length $x$ has a score $g+dx$, where $g$ is the gap opening
 penalty and $d$ is the gap extension penalty. Both are usually negative, since we
-want alignments that contains many columns with same or similar symbols. With
-positive gap penalty there will be tendency towards alignments with many gaps
+want alignments that contains many columns with same or similar symbols. 
+Positive gap penalty causes tendency towards alignments with many gaps,
 which reduce the number of aligned residues.  We call this gap scoring scheme an
 affine gap model \cite{Durbin1998}. 
 
-Matrices and gap penalties used as scoring schemes are usually derived from
-frequencies of the substitutions and indels of real alignments. Example of such
+Matrices and gap penalties, used as scoring schemes, are usually derived from
+frequencies of the substitutions and indels in alignments created manually by biologists. Example of such
 matrices are PAM or BLOSUM matrices\cite{Durbin1998}. Additionally, scoring
 matrices can be also derived from theoretical models of evolution, one such
 example is Jukes-Cantor model\cite{Durbin1998}.
@@ -139,7 +139,7 @@ M[i,j] &= \max
 By computing $M[n-1,m-1]$, we have the score of the optimal (highest-scoring) alignment of $X$ and $Y$ \cite{Durbin1998}. 
 
 To cope with gap opening penalty, we have to slightly change the algorithm.
-We define two other matrices $M_X$ and $M_Y$ of same size as $M$. $M_X[i,j]$
+We define two other matrices $M_X$ and $M_Y$ of same size as $M$. Element $M_X[i,j]$
 will contain the highest score of an alignment of sequences $X[:i]$ and $Y[:j]$
 that ends
 with a gap in sequence $X$. $M_Y$ is analogous. Values of these matrices can be computed by the following recurrences.
@@ -171,7 +171,7 @@ M_Y[i,j-1]+d
 To compute the
 value of $M[i,j]$ (and optionally $M_X$ and $M_Y$), these equations use only values
 from neighbouring cells which have at least one coordinate smaller. 
-Therefore we can order computation so that when we compute value $M[i,j]$ the
+Therefore we can order computation of rows of $M$ so that when we compute value $M[i,j]$, the
 necessary values are already computed.
 Let $F$ be
 the function, that takes as input matrix $M$  and coordinates $(i,j)$ and computes $M[i,j]$ according equation
@@ -232,8 +232,9 @@ Pair hidden Markov models are HMMs that generate output on two tapes, resulting
 in two emitted sequences.  Every state can in one step generate one symbol in
 each sequence, or one symbol in one of the sequences or no symbols at all.
 Formally, every state generates a pair of strings $(a,b)$, where $a$ and $b$
-are of length at most one.  Moreover, all pairs with generated with nonzero
-probability by one state have the same length.  Formal definition of pair HMMs
+are of length at most one.  Moreover, every state generate strings of constant 
+length (for example it always generates one symbol on each tape).
+Formal definition of pair HMMs
 is given below. We can use pHMM to define probabilistic scoring schemes for
 alignments.
 
@@ -254,7 +255,7 @@ properties:
 \def\lala#1{\{#1\}}
 \begin{enumerate}[itemsep=-1mm]
 \item
-$\forall v\in V\forall \sigma_1,\sigma_2\in\Sigma\cup\{\varepsilon\}:
+$\forall v\in V,\forall \sigma_1,\sigma_2\in\Sigma\cup\{\varepsilon\}:
 0\leq e_{v,(\sigma_1,\sigma_2)}\leq 1$
 
 \item 
@@ -267,7 +268,7 @@ $d^x_v=|\sigma_1|$ and $d^y_v=|\sigma_2|$
 
 \end{definition}
 
-A state path is defined the same as for HMMs with silent states. Restriction on
+Definition of a state path is the same as for HMMs with silent states. Restriction on
 the state durations (condition $3$ in the definition) ensures that given a
 state path $\pi$ and emitted sequence $X$ and $Y$, for every symbol from $X$
 and $Y$ we can assign a state from $\pi$ that generated that symbol.  However,
@@ -284,7 +285,7 @@ which state path we are using, we will write $D^x_i$ and $D^y_i$ instead of
 $D^x_i(\pi)$ and $D^y_i(\pi)$.
 \end{definition}
 
-Given sequences $X,Y$ and state path $\pi$ that generated them, we 
+Given sequences $X$ and $Y$ and  state path $\pi$, we 
 can tell which symbols were generated by which states. Since every state $v$
 generates exactly $d^x_v$ and $d^y_v$ symbols in $X$ and $Y$ respectively,
 state $\pi_i$ generated pair $(X[D^x_{i-1}:D^x_{i}],Y[D^y_{i-1}:D^y_{i}])$
@@ -297,7 +298,7 @@ In the figure \ref{FIGURE:SIMPLEPHMM} is pair hidden Markov model modeling
 sequence alignment with affine gap model. State $M$ is called match state and
 generates pair of aligned residues and corresponds to matrix $M$ from the sequence
 alignment algorithm. Insert states $I_X$ and $I_Y$ represents gaps,
-generates residues in only one sequence and corresponds to matrices $M_X$ and
+because they generate residues in only one sequence. Insert states correspond to matrices $M_X$ and
 $M_Y$ from the sequence alignment algorithm from section \ref{SECTION:NEEDLE}.
 
 Note that a state path uniquely define an annotation (match state corresponds to
@@ -365,16 +366,16 @@ two-dimensional version, we will add position in the second sequence.
 
 Let $V[i,j,v]$ be the probability of the most probable state path that generated
 $X[:i+1]$ and $Y[:j+1]$ and ended in state $v$. Clearly, $\max_{v\in
-V}V[|X|-1,|Y|-1,v]$ is the probability of the most probable state path that
+V}V[|X|-1,|Y|-1,v]$ is the probability of the most probable state path, that
 generated $X$ and $Y$. Let $B[i,j,v]$ be the last but one state of the most
 probable state path that generated $X[:i+1]$ and $Y[:j+1]$ and ended in state
 $v$. To make it easier, we expect that all states but one are not silent -- they emit
-symbol in at least one sequence. The one silent state $s$ (start state) will have $I_s=1$.
+symbol in at least one sequence. 
  Let $n=|X|$ and $m=|Y|$.
 
 
 \begin{align}
-V[-1,-1,s] &= 1\\
+V[-1,-1,v] &= I_v, v\in V\\
 V[-2,i,v] &= V[j,-2,v] = 0, \forall v\in V,-1 \leq i < n, -1\leq j < m\\
 V[i,j,v] &= \max_{u\in
 V}V[i-d^x_{v},j-d^y_v,u]a_{u,v}e_{v,(X[i-d^x_v:i],Y[j-d^y_v:j])}\label{EQUATION:2DVITERBIF}\\
@@ -389,7 +390,7 @@ In equations \ref{EQUATION:2DVITERBIF} and \ref{EQUATION:2DVITERBIB} boundaries 
 
 
 By finding the last state $v$ of the most probable state path and back-tracing
-from $B[n-1,m-1,v]$ we can reconstruct the most probable state path. Time
+from $B[n-1,m-1,v]$, we can reconstruct the most probable state path. Time
 complexity of this algorithm is $O(nm|V|^2)$ (or $O(nm(|V|+t)$ where $t$ is the
 number of transitions of $H$) and memory requirements are $O(nm|V|)$. However,
 we can use various tricks to decrease memory requirements of such algorithms, as
@@ -464,8 +465,8 @@ alignment $A_{\pi}$. Path $\pi$ with the highest score can be found by a
 two-dimensional version of the Viterbi
 algorithm (section \ref{SECTION:PAIRHMMVITERBI}). Alignment $A_{\pi}$ can be
 constructed from $X,Y$ and $\pi$ in a straightforward
-way: for every match state from $\pi$ that generated $X[i]$ and $Y[j]$ we add
-column $(X[i],Y[j])$. For every indel state in $\pi$ that generates $X[i]$ we
+way: for every match state from $\pi$ that generated $X[i]$ and $Y[j]$, we add
+column $(X[i],Y[j])$. For every indel state in $\pi$ that generates $X[i]$, we
 add to alignment column $(X[i],'-')$. An indel states for the second sequences are
 analogous.  The two-dimensional Viterbi algorithm is used in  most of the
 software tools we will discuss later.
@@ -479,14 +480,9 @@ that
 contain column $(X[i],Y[i])$. Let $\prob{X[i]\sim -_j\mid X,Y,H}$ be the
 probability that $X[i]$ is aligned to a gap that is in $Y$ between positions $j$
 and $j+1$. Similarly let $\prob{-_i\sim Y[j]\mid X,Y,H}$ be the probability that $Y[j]$
-is aligned to a gap in $X$ between positions $i$ and $i+1$. Finally, let
-$\prob{X[i]\sim - \mid X,Y,H}$ be the probability that $X[i]$ is aligned to a
-gap at any position and let $\prob{-\sim Y[j]\mid X,Y,H}$\todo{toto vlastne nepouzijem} be the probability
-that $Y[j]$ is aligned to a gap at any position.  Posterior probabilities
+is aligned to a gap in $X$ between positions $i$ and $i+1$.  Posterior probabilities
 defined above can be computed by the two-dimensional version of the
-Forward-Backward algorithm (probability that a symbol is aligned to a gap at any position
-is the sum of the probabilities that symbol is aligned to a gap at position $i$
-for all possible positions $i$).
+Forward-Backward algorithm.
 
 Let alignment $A$ of sequences $X$ and $Y$ have length $n$ and
 consists of columns $a_0,a_1,\dots,$ $a_{n-1}$. Each column is a pair
@@ -508,7 +504,8 @@ the product of the posterior probabilities of its columns:
 \[A = \arg\max_{A'\in Al(X,Y)}\prod_{0\leq i <
 |A'|}P(a'_i)\] where $Al(X,Y)$ denote the set of all  alignments of sequences
 $X$ and $Y$. Similarly we can define \abbreviation{Marginalized posterior
-decoding}{MPD}: Let $P'(a_i)$ be the marginalized posterior probability:
+decoding}{MPD}: the marginalized posterior probability $P'(a_i)$ is defined as
+follows.
 \[
 P'(a_i) = \begin{cases}
 P(a_i) & \text{if $x_i$ and $y_i$ are not gap symbols}\\
@@ -516,7 +513,7 @@ P(a_i) & \text{if $x_i$ and $y_i$ are not gap symbols}\\
 \sum_{0\leq j < |X|} \prob{-_{j}\sim y_i\mid X,Y,H}  & \text{if $x_i$ is gap symbol and $y_i$ not}
 \end{cases}
 \]
-Then the MPD finds an alignment $A$ that maximizes the product of the
+The MPD finds an alignment $A$ that maximizes the product of the
 marginalized posterior probability:
 \[A = \arg\max_{A\in Al(X,Y)}\prod_{0\leq i < |A'|)}P'(a'_i)\] 
 
@@ -528,7 +525,7 @@ computed (in $O(|X||Y|k^2)$ time where $k$ is the number of states of pHMM), we
 can find the alignment that maximizes the desired function in $O(|X||Y|)$ time
 by dynamic programming similar to the Needleman-Wunsch algorithm.  The
 difference is that we use the posterior probabilities instead of the
-substitution scores and gap scores. The recurrence for PD following:
+substitution scores and gap scores. The recurrence for PD is following:
 \begin{align} 
 M[-1,i] &= 0, 0\leq i < m\\\
 M[i,-1] &= 0, 0< i < n\\
@@ -550,8 +547,8 @@ In this section we describe several pair hidden Markov models (or generalized
 pair hidden Markov models) with gene structures incorporated into their
 topology. These models were used either to align coding DNA or proteins to a
 genome or to find genes. Every gene consists of two types of sequences: exons
-which encode amino-acids, and introns, which are removed before translation
-(some genes do no have any introns). The total length of remaining exons have
+(which encode amino-acids), and introns, which are removed before translation.
+The total length of remaining exons have
 to be multiple of three; each triplet of nucleotides is called codon and it
 encodes one of $20$ amino-acids. However, the length of individual exons is not
 necessary the multiple of three. The coding sequence of a gene begins with a
@@ -565,18 +562,18 @@ We introduce several comparative gene finders. Comparative gene finders
 use evidence from two organisms to find genes. They use pHMM to simultaneously
 align and annotate  two sequences. The advantage finding genes in two organisms
 simultaneously is that we can use the evidence from two related organisms to
-detect genes that are in both organisms.
+detect genes, that are in both organisms.
 
 \paragraph{}
 Meyer {\it et al. (2002)} developed comparative gene finder \firstUseOf{DoubleScan}.
-Generally, DoubleScan has GpHMM with $54$ states with following substructures: 
+Generally, DoubleScan has $54$-state GpHMM with following substructures: 
 substructure that emits exons, substructure that emits introns
 and substructure that generate intergenic regions. Each substructure has three
 copies in the model: one for emitting in both sequences, and one for emitting in one sequence.
 \nocite{Meyer2002}
 
-Decoding method of DoubleScan is the Viterbi algorithms, with stepping stone
-algorithm (from Section \ref{SECTION:SSA}). They use BLASTN \cite{Altschul1990}
+Decoding method of DoubleScan is the Viterbi algorithm, with stepping stone
+algorithm (see Section \ref{SECTION:SSA}). They use BLASTN \cite{Altschul1990}
 for computing initial seed of local alignments. They restrict the Viterbi
 algorithm to follow the alignments in the subset allowing tolerance 15 bases
 \cite{Meyer2002}.
@@ -586,8 +583,8 @@ algorithm to follow the alignments in the subset allowing tolerance 15 bases
 generalized pair hidden Markov model \cite{Alexanderson2004} with some states
 being also high-order states (with dependence on previous emissions). It
 predicts gene structures for a pair of related eukaryotic organisms. SLAMs
-decoding method is the Viterbi algorithm.  To reduce the running time of the VA
-align sequences within $3$ bases around alignment obtained by AVID global
+decoding method is the Viterbi algorithm.  To reduce the running time of the VA,
+SLAM align sequences within $3$ bases around alignment obtained by AVID global
 alignment tool \cite{Bray2003}. 
 Topology of the model can be found in figure
 \ref{FIGURE:SLAM}.
@@ -610,14 +607,15 @@ stands for start codon and $F$ stand for stop codon.  $Intron_i$ models intron i
 $i$-th position.
 }\label{FIGURE:SLAM} \end{figure}
 
-\paragraph{} \firstUseOf{TWAIN} is comparative gene-finder based on GpHMM and
-uses intereresting decoding algorithm \cite{Majoros2005}: at first it
+\paragraph{} \firstUseOf{TWAIN} is comparative gene-finder based on GpHMM with 
+ intereresting decoding algorithm \cite{Majoros2005}: at first it
 independently annotates input sequences using gene-finder TIGRscan
-\cite{Majoros2004} finding signals (splice sites, start/stop codons, \dots) and
-creating two parse graphs (one for each sequence): signals form vertices
-(corresponds to a state of the GpHMM), two signals are connected with an edge
-if one can follow other, the probability of an edge is determined by the
-probability of the most probable state path between those two states in the
+\cite{Majoros2004}, finding signals (splice sites, start/stop codons, \dots).
+Then creates parse graphs for each sequence:
+signals form vertices, which
+corresponds to a state of the GpHMM. Two signals are connected with an edge
+if one can follow other in a gene. The probability of an edge is determined by the
+probability of the most probable state path between corresponding two states in the
 TIGRscan's HMM.
 
 TWAIN then creates graph $G$ by cartesian product of two parse graphs, omitting
@@ -702,7 +700,7 @@ penalty. Therefore we can say that affine gap penalties correspond to geometric
 distribution of indel lengths.
 
 Using non-affine gap model can improve alignment quality.  Problem with
-geometric distribution (or affine gap penalties) it that they are not realistic
+geometric distribution (or affine gap penalties) is that they are not realistic
 \cite{Cartwright2009,Lunter2008}.  Therefore some other distribution might be
 more appropriate, for example zeta distribution \cite{Cartwright2009}, or
 combination of several geometric distributions to approximate the distribution
@@ -737,15 +735,15 @@ sequence are omitted.
 Let $H$ be a simple pair hidden Markov model with two pairs of indel states.
 Let $I_1$ and $I_2$ be indel states that generate gaps in the first sequence
 connected with match state $M$ as in the figure \ref{FIGURE:TWOCOMPONENT}.  Gaps
-in alignments (in the first sequence) that are generated by such a model have
+in alignments (in the first sequence) generated by such a model have
 length distribution $d(n)=(a_1p_1^{n-1}(1-p_1)+a_2p_2^{n-1}(1-p_2)), n>0$ and
-$d(0) = 1-a_1 - a_2$ where $n$ is the length of the gap ($n=0$ means that there
-is no gap), $a_1$ and $a_2$ are probabilities of entering state $I_1$ and $I_2$
+$d(0) = 1-a_1 - a_2$, where $n$ is the length of the gap,
+$a_1$ and $a_2$ are probabilities of entering state $I_1$ and $I_2$
 respectively and $p_1$ and $p_2$ are probabilities of remaining in state $I_1$
 and $I_2$ respectively.  This is equivalent to the generalized pair hidden
 Markov model $H'$ with one indel state for every sequence which has
 $d'(n)=d(n)/(1-d(0))$ as its duration distribution (in generalized states we
-want to generate at least one gap. The $d(0)$ should by modeled by the
+want to generate at least one gap. Zero-length gap should be modeled by the
 probabilities of incoming and outgoing transitions to the generalized state). Both models define the same
 distribution of alignments  and running the Forward-Backward algorithm or the
 Forward algorithm will give the same results. However, alignments constructed by
@@ -754,11 +752,11 @@ the Viterbi algorithm can be different for $H$ and $H'$.
 Problem is that in the generalized model the Viterbi algorithm gaps of length
 $n$ have ``score'' $d(n)$ but in the non-generalized pair hidden Markov model it
 will be $m(n)=\max\{a_1p_1^{n-1}(1-p_1),a_2p_2^{n-1}(1-p_2)\}, n>0$ and
-$m(0)=1-a_1-a_2$.  These two scores are different ($d(n)$ is always higher) and
-therefore it is possible that the Viterbi algorithm reconstruct different
+$m(0)=1-a_1-a_2$.  These two scores are different ($d(n)$ is always higher).
+It is possible that the Viterbi algorithm reconstruct different
 alignments. Therefore if we are using the Viterbi algorithm, we should either
-construct a gadget so that $m'(n)$ will be a better approximation of $d(n)$
-($d(n)$ is the distribution for the original model) or use a generalized pair
+construct a gadget so that $m'(n)$ will be a better approximation of $d(n)$,
+or use a generalized pair
 hidden Markov model for the Viterbi algorithm.
 
 %co chcem povedat: niekedy je lepsie pouzit iny gapmodel -- jeden pre kratke
@@ -778,7 +776,7 @@ rate of evolution.  Submodels are connected with a single silent state.  Since
 FEAST is a local alignment tool, it also contains one additional submodel for
 generating an unaligned pair of  sequences  at both ends of the sequences.
 
-To construct an alignment (either local or global) FEAST uses the Viterbi
+To construct an alignment FEAST uses the Viterbi
 algorithm. Like many local aligners, FEAST uses a seeding heuristics to reduce
 computational complexity of finding local alignments.  At first it uses six
 different space seeds to get candidate seed and then extends those seeds using
@@ -799,24 +797,25 @@ the Posterior decoding as a decoding method.
 \subsection{Biases In Alignments}
 \label{SECTION:BIASES}
 Lunter {\it et al. (2008)} conducted an extensive survey concerning biases in
-alignment. They considered three types of biases associated with gaps. These gap
-biases are also discussed in \cite{Durbin1998}. By \firstUseOf{true alignment}
+alignment. They considered three types of biases associated with gaps \cite{Durbin1998}. 
+By \firstUseOf{true alignment}
 we mean an alignment that corresponds to the actual evolution history.  Since
 true alignments are unknown for real data we can simulate evolution on randomly
 generated sequences, this obtaining a dataset of ``true'' alignments.
+Lunter {\it et al.} studied following biases.
 
 \begin{itemize}[itemsep=-1mm]
 
-\item \firstUseOf{Gap wander} means that a gap is in a different location that in
+\item \firstUseOf{Gap wander} means, that a gap is in a different location that in
 the true alignment. Is is due to random short similarities around the borders of
 gaps that are indistinguishable from true homologies.
 
-\item \firstUseOf{Gap attraction} is occurs when two gaps are near each other.
-In such case merging those gaps and introducing a few mismatches might lead to
+\item \firstUseOf{Gap attraction} occurs when two gaps are near each other.
+In such case, merging those gaps and introducing a few mismatches might lead to
 higher score. 
 
 \item \firstUseOf{Gap anihilation} occurs when there are two gaps of the same
-length, one in each both sequence. Since indels are not so common, removing both
+length, one in each sequence. Since indels are not so common, removing both
 gaps while introducing new mismatches might increase the score of an alignment.
 
 \end{itemize}
@@ -830,7 +829,6 @@ They measure the alignment quality by \firstUseOf{sensitivity}, which is the
 ratio of the correctly predicted alignment columns to all homologous columns in
 the true alignment \cite{Lunter2008}. 
 
-\todo{vyhodit cisla?}
 In the first experiment, authors use a simple model of evolution obtaining
 alignments with the expected sequence identity $0.705$ with geometric gap model.
 The sequences were then realigned using the Viterbi algorithm with the same
@@ -853,7 +851,7 @@ different models on the alignment quality. They simulated evolution with
 parameters that are close to the parameters of human-mouse evolution. They
 simulated for example the large-scale variation of GC content, GC-content
 dependent indel and substitution rates and GC-independent local substitution
-rate variation \cite{Lunter2008}.  From simulation they obtained $20,000$
+rate variation \cite{Lunter2008}.  They simulated  $20,000$
 homologous sequence pairs with average length of $700$ nucleotides. They add
 flanking sequences of length $100$ nucleotides to the generated sequences  to
 simulate local alignments.
@@ -890,12 +888,7 @@ than for PD.
 The main outcome of this experiment is that proper decoding method can improve
 the alignment quality while the use of a simpler model doest not significantly
 reduce the alignment quality. However, Lunter {\it et al.} use in their
-simulations models only relatively simple models of the evolution. By
-incorporating information about gene stricture into alignment models combined
-with the use of the right decoding algorithm we can improve alignments further.
-This will be discussed in the next chapter. 
-
-
+simulations models only relatively simple models of the evolution.
 
 \section{Algorithmic Improvements}\label{SECTION:ALGORITHMICIMPROVEMENTS}
 
@@ -996,16 +989,24 @@ If we set $k=\sqrt n$ then the memory complexity will be $O(m\sqrt n)$. By
 using $l$ recursive applications of this technique we can obtain algorithm with
 memory complexity $O(m\sqrt[l]{ n})$.
 
-Even more space reduction can be obtained using the Hirschberg algorithm \cite{Hirschberg1975}. The idea is
-the following: if we want an alignment of sequences $X$ and $Y$ that has bases $X_i$
+Checkpointing can be used to decrease the memory complexity of the Viterbi
+algorithm with back-tracing procedure and the Posterior decoding to $O(\sqrt n
+m)$.  Similarly, this technique can be used to reduce memory complexity of the
+algorithms for pHMMs to $O(nm\sqrt n )$ where $n$ is the length of the longer
+sequences and $m$ is the number of states of HMM.
+
+Even more reduction in memory requirements can be obtained using the Hirschberg
+algorithm \cite{Hirschberg1975}. 
+The idea is
+following: if we want an alignment of sequences $X$ and $Y$ that has bases $X_i$
 and $Y_j$ aligned, we have to  do dynamic programming only in submatrices
 $M_1=M[0:i,0:j]$ and $M_2=M[i:n-1,j:m-1]$. If $i=\lceil n/2\rceil$ then
 the total number of cells in those matrices is roughly half of the number of
 cells in $M$. The Hirschberg algorithm incorporates a procedure to compute 
-$j$ such that $X_i, i=\lceil n/2\rceil$ is aligned to $Y_j$ in optimal alignment of both sequences in $O(nm)$
-time and $O(n+m)$ memory. If $X_i$ is aligned to a gap, it finds $j$ such
+$j$ such that $X_{\lceil n/2\rceil}$ is aligned to $Y_j$ in the optimal alignment. This procedure takes $O(nm)$
+time and $O(n+m)$ memory (alignment algorithm that keeps only one row of $M$ in memory). If $X_i$ is aligned to a gap, it finds $j$ such
 that $X_i$ is aligned to gap that comes right after $X_j$.
-The algorithm then uses such $j$ to determine submatrices $M_1,M_2$ and finds alignments in them recursively.
+The algorithm then uses $j$ to determine submatrices $M_1,M_2$ and finds alignments in submatrices recursively.
 The optimal alignment is a concatenation of optimal alignments in matrices $M_1$ and
 $M_2$.
 
@@ -1015,47 +1016,7 @@ of the standard dynamic programming.  The Hirschberg algorithm keeps in memory
 only a constant number of rows of $M$,  and therefore the memory requirements
 are $O(n+m)$. The Hirschberg algorithm reduces memory more than checkpointing,
 but checkpointing can be applied to a wider class of algorithms. 
-Checkpointing can be used to decrease the memory complexity of the Viterbi
-algorithm with back-tracing procedure and the Posterior decoding to $O(\sqrt n
-m)$.  Similarly, this technique can be used to reduce memory complexity of the
-algorithms for pHMMs to $O(nm\sqrt n )$ where $n$ is the length of the longer
-sequences and $m$ is the number of states of HMM.
 
-\subsubsection{The Viterbi Algorithm}
-As we described in section \ref{SECTION:VITERBI}, in the Viterbi algorithm we compute values
-$V[i, v]$ (the probability of the most probable state path ending in state $v$
-and generating the prefix of the input sequence of length $i$) and $B[i, v]$
-containing the previous state in the most probable state path, which is used in
-back-tracing.
-
-While back-tracing, we need access to values of matrix $B$ in decreasing order.
-We need only matrix $B$ and last row of $F$. From $i$-th row of $F$ we can
-recompute $i+1$-th row of $B$. Therefore we will remember every $k$-th row of
-$V$ from which we will recompute blocks of matrix $B$. $B$ will be split into
-blocks $B_0=B[1:k+1,:],B_1=[k+1:2k+2,:],\dots,B_i=B[ik+1:{i+1}k+1,:],\dots$ We
-will keep in the memory exactly one block of $B$. If we need row that is in
-block $B_i$ but $B_i$ is not in memory, we discard current block and compute
-block $B_i$ from $V[ik,\cdot]$. Since we need rows of $B$ in decreasing order,
-we recompute every block exactly once. If $k=\theta(\sqrt n)$ then the memory
-complexity is  $O(n+m\sqrt n)$.
-
-For two dimensional version we keep every $k$-th matrix $V[ik,\cdot,\cdot]$.
-Algorithm is analogous to one-dimensional version or to the checkpointing
-technique for the Needleman-Wunsch algorithm
-
-
-\subsubsection{The Posterior Decoding}
-
-In the Posterior decoding need to interlace computations of $F[i,v]$ and
-$B[i,v]$ to compute $F[i,v]\cdot B[i,v]$ for all $0\leq i<n,v\in V$. We will
-compute $F$ using the checkpointing technique (we compute every $k$-th row of
-$F$ and keep in memory only one block).  $B[i,v]$ will be computed row by row
-with the version of the  Backward algorithm that need only $O(m)$ memory. When
-we compute $B[i,v]$, we also compute $F[i,v]$ by checkpointing technique (if $i$ is in
-current block then return $F[i,v]$ from current block. Otherwise discard current
-block and recompute the block for row $i$). With this approach we can
-compute the posterior values with the $O(m\sqrt n)$ memory. We recompute every row at most
-once and therefore the time complexity is $O(n(m+t))$.
 
 \subsection{Exploiting Sequence Repetition}
 
@@ -1072,7 +1033,7 @@ has border length $O(t+u)$ and size $O(tu)$).
 
 The first such technique is called Four-Russian technique \cite{Arlazaroff1970,
 GusfieldBook} and can be used for computing edit distance or sequence alignment
-with some restriction of the scoring matrix. It divides the dynamic programming
+with some restriction on the scoring matrix. It divides the dynamic programming
 matrix into equally sized blocks and pre-computes the output cells for all
 possible input cells and all possible blocks (the differences between values of
 the input cells are small, so all possible inputs can be enumerated). By
@@ -1088,7 +1049,7 @@ of such blocks has three predecessors blocks that are obtained by using
 predecessor segments \cite{Crochemore2002}. Crochemore {\it et al.} developed
 technique to compute the values of the output cells from the predecessor blocks
 and input cells in $O(b)$ time where $b$ is the total border length of the
-block. It utilizes the $O(A+B)$ algorithm for computing row minima/maxima in
+block. It utilizes the $O(A+B)$ algorithm for computing row minima and maxima in
 totally a monotone matrix of size $A\times B$ \cite{Aggarwal1987}.  The total
 time complexity of this algorithm is $O(n^2/\log n)$ time
 \cite{Crochemore2002}.
