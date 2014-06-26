@@ -184,7 +184,7 @@ is the most-likely state path $\pi$ that generates $X$? Formally, Viterbi
 algorithm finds a state path maximizing $\Pr\left( \pi\mid X,H \right)$. Since
 \[\Pr\left(\pi\mid X,H\right) = \frac{\Pr\left(\pi,X,\mid
 H\right)}{\Pr\left(X\mid H\right)}\] and quantity $\Pr\left(X\mid H\right)$ is
-fixed, the most probable state path $\pi$ also maximizes $\Pr\left(X,\pi\mid H\right)$. 
+fixed, therefore the most probable state path $\pi$ also maximizes $\Pr\left(X,\pi\mid H\right)$. 
 
 The Viterbi algorithm is very similar to the  Forward algorithm. It starts with computing
 Viterbi variables $V[i,v]$. Variable $V[i,v]$ stores the probability of the most probable 
